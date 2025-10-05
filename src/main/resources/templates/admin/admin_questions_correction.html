@@ -106,111 +106,136 @@
                 </style>
 
                 <div style="">
-                <select name="firSel" id="firSel"
-                        style="padding-left:5px; height: 30px; width:120px; font-size: 12px; border:1px solid #e2e2e2; outline: none;"
-                        required>
-                    <option value="" selected>1차분류 선택</option>
-                    <option value="product">주문 상품 문의</option>
-                    <option value="delivery">배송 관련 문의</option>
-                    <option value="pay">결제 관련 문의</option>
-                    <option value="collect">회수 지연 문의</option>
-                </select>
+                    <form th:action="@{/admin/FAQ/modify/list}" method="post">
+                        <input type="hidden" name="id" th:value="${adminFAQDTO.id}">
+                        <input type="hidden" name="board_type" th:value="${adminFAQDTO.board_type}">
+                        <input type="hidden" name="hits" th:value="${adminFAQDTO.hits}">
+                        <input type="hidden" name="created_at" th:value="${adminFAQDTO.created_at}">
+                        <select name="board_type2" id="firSel"
+                                th:data-prev="${adminFAQDTO.board_type2}"
+                                style="padding-left:5px; height: 30px; width:120px; font-size: 12px; border:1px solid #e2e2e2; outline: none;"
+                                required>
+                            <option value="">1차분류 선택</option>
+                            <option value="member">회원</option>
+                            <option value="event">쿠폰 / 이벤트</option>
+                            <option value="pay">주문 / 결제</option>
+                            <option value="delivery">배송</option>
+                            <option value="cancel">취소 / 반품 / 교환</option>
+                            <option value="trip">여행 / 숙박 / 항공</option>
+                            <option value="safe">안전거래</option>
+                        </select>
 
-                <select name="secSel" id="secSel"
-                        style="padding-left:5px; height: 30px; width:180px; font-size: 12px; border:1px solid #e2e2e2; outline: none; margin-left:6px;"
-                        disabled required>
-                    <option value="">2차분류 선택</option>
-                </select>
+                        <select name="board_type3" id="secSel"
+                                style="padding-left:5px; height: 30px; width:180px; font-size: 12px; border:1px solid #e2e2e2; outline: none; margin-left:6px;"
+                                th:data-prev="${adminFAQDTO.board_type3}"
+                                disabled required>
+                            <option value="">2차분류 선택</option>
+                        </select>
                 </div>
                 
                 <script>
                     document.addEventListener('DOMContentLoaded', () => {
-                    // 1차 -> 2차 매핑
-                    // key는 1차 value와 동일하게 설정 (product/delivery/pay/collect)
-                    const subMap = {
-                        product: [
-                        { value: 'missing',   text: '상품 누락/오배송/불량' },
-                        { value: 'option',    text: '옵션 변경(색상/사이즈)' },
-                        { value: 'restock',   text: '재입고/상품재고 문의' },
-                        { value: 'cancel',    text: '주문 취소/변경' },
-                        { value: 'detail',    text: '상품 상세 정보 문의' },
-                        ],
-                        delivery: [
-                        { value: 'addr',      text: '배송지 변경' },
-                        { value: 'delay',     text: '배송 지연' },
-                        { value: 'loss',      text: '분실/파손' },
-                        { value: 'intl',      text: '해외배송 문의' },
-                        { value: 'fee',       text: '배송비/도서산간' },
-                        ],
-                        pay: [
-                        { value: 'method',    text: '결제 수단/실패' },
-                        { value: 'install',   text: '무이자/할부' },
-                        { value: 'cashrcpt',  text: '현금영수증/지출증빙' },
-                        { value: 'refund',    text: '환불 처리/일정' },
-                        { value: 'receipt',   text: '영수증 재발행' },
-                        ],
-                        collect: [
-                        { value: 'collect_delay', text: '수거 지연' },
-                        { value: 'reschedule',    text: '방문일정 변경' },
-                        { value: 'courier',       text: '기사 연락/요청사항' },
-                        { value: 'label',         text: '반품 라벨/포장' },
-                        { value: 'recollect',     text: '재수거 요청' },
-                        ],
-                    };
+                        // 1차 -> 2차 매핑
+                        // key는 1차 셀렉트의 value와 동일해야 합니다.
+                        const subMap = {
+                            member: [
+                                { value: 'signup',   text: '가입' },
+                                { value: 'withdraw', text: '탈퇴' },
+                                { value: 'account',  text: '회원정보' },
+                                { value: 'login',    text: '로그인' },
+                            ],
+                            event: [
+                                { value: 'couponissue',  text: '쿠폰발급' },
+                                { value: 'couponuse',    text: '쿠폰사용' },
+                                { value: 'eventjoin',    text: '이벤트참여' },
+                                { value: 'winnercheck',  text: '당첨확인' },
+                            ],
+                            pay: [
+                                { value: 'orderguide',     text: '주문방법' },
+                                { value: 'paymentmethod',  text: '결제수단' },
+                                { value: 'paymenterror',   text: '결제오류' },
+                                { value: 'receipt',        text: '영수증/증빙' },
+                            ],
+                            delivery: [
+                                { value: 'tracking',        text: '배송조회' },
+                                { value: 'deliverytime',    text: '배송기간' },
+                                { value: 'deliveryfee',     text: '배송비' },
+                                { value: 'globalshipping',  text: '해외배송' },
+                            ],
+                            cancel: [
+                                { value: 'ordercancel',   text: '주문취소' },
+                                { value: 'refund',        text: '반품' },
+                                { value: 'exchange',      text: '교환' },
+                                { value: 'refundprocess', text: '환불처리' },
+                            ],
+                            trip: [
+                                { value: 'reservation',  text: '예약' },
+                                { value: 'payment',      text: '결제' },
+                                { value: 'changecancel', text: '변경/취소' },
+                                { value: 'guide',        text: '이용안내' },
+                            ],
+                            safe: [
+                                { value: 'security',     text: '보안공지' },
+                                { value: 'alert',        text: '사기주의' },
+                                { value: 'safepayment',  text: '안전결제' },
+                                { value: 'privacy',      text: '개인정보보호' },
+                            ],
+                        };
 
-                    const first  = document.getElementById('firSel');
-                    const second = document.getElementById('secSel');
+                        const first  = document.getElementById('firSel');
+                        const second = document.getElementById('secSel');
 
-                    // 2차 초기화
-                    function resetSecond() {
-                        second.innerHTML = '<option value="">2차분류 선택</option>';
-                        second.disabled = true;
-                    }
+                        function resetSecond() {
+                            second.innerHTML = '<option value="">2차분류 선택</option>';
+                            second.disabled = true;
+                        }
+                        function fillSecond(list) {
+                            resetSecond();
+                            list.forEach(opt => {
+                                const o = document.createElement('option');
+                                o.value = opt.value;
+                                o.textContent = opt.text;
+                                second.appendChild(o);
+                            });
+                            second.disabled = false;
+                        }
+                        function selectByValueOrText(selectEl, prev) {
+                            if (!prev) return;
+                            // value로 먼저 매칭
+                            const byValue = [...selectEl.options].find(o => o.value === prev);
+                            if (byValue) { selectEl.value = prev; return; }
+                            // 텍스트로도 허용(혹시 서버가 라벨을 보낼 때)
+                            const byText = [...selectEl.options].find(o => o.textContent.trim() === prev.trim());
+                            if (byText) selectEl.value = byText.value;
+                        }
 
-                    // 2차 옵션 채우기
-                    function fillSecond(list) {
-                        resetSecond();
-                        list.forEach(opt => {
-                        const o = document.createElement('option');
-                        o.value = opt.value;
-                        o.textContent = opt.text;
-                        second.appendChild(o);
-                        });
-                        second.disabled = false;
-                    }
+                        // 초기 세팅: 서버에서 내려준 prev 값으로 고정
+                        const prevFirst  = (first.dataset.prev  || '').trim(); // ex) 'member'
+                        const prevSecond = (second.dataset.prev || '').trim(); // ex) 'signup'
 
-                    // 최초 상태
-                    resetSecond();
-
-                    // 1차 변경 시 2차 갱신
-                    first.addEventListener('change', () => {
-                        const key = first.value;
-                        if (subMap[key]) {
-                        fillSecond(subMap[key]);
-                        // 첫 옵션(placeholder)로 포커스 유지
-                        second.value = '';
+                        if (prevFirst && subMap[prevFirst]) {
+                            first.value = prevFirst;               // 1차 선택
+                            fillSecond(subMap[prevFirst]);         // 2차 목록 채우기
+                            // onchange 자동 submit 방지
+                            const oldOnchange = second.onchange;
+                            second.onchange = null;
+                            selectByValueOrText(second, prevSecond);  // 2차 선택
+                            second.onchange = oldOnchange;
                         } else {
-                        resetSecond();
+                            // prevFirst가 없거나 매핑이 없으면 기본 상태
+                            resetSecond();
                         }
-                    });
 
-                    // (선택) 폼 제출 시 필수값 검사 예시
-                    const form = first.closest('form');
-                    if (form) {
-                        form.addEventListener('submit', (e) => {
-                        if (!first.value) {
-                            alert('1차분류를 선택해주세요.');
-                            first.focus();
-                            e.preventDefault();
-                            return;
-                        }
-                        if (second.disabled || !second.value) {
-                            alert('2차분류를 선택해주세요.');
-                            second.focus();
-                            e.preventDefault();
-                        }
+                        // 1차 변경 시 2차 갱신
+                        first.addEventListener('change', () => {
+                            const key = first.value;
+                            if (subMap[key]) {
+                                fillSecond(subMap[key]);
+                                second.value = '';
+                            } else {
+                                resetSecond();
+                            }
                         });
-                    }
                     });
                     </script>
                 </div>
@@ -220,21 +245,28 @@
             <div style="display:flex; align-items:center; border-bottom:1px solid #e0e0e0; padding:12px 8px;">
                 <label for="title" style="width:100px; font-weight:bold;">제목</label>
                 <input type="text" id="title" placeholder="제목을 입력합니다."
-                    style="width:500px; padding:8px; border:3px solid #ccc;">
+                    style="width:500px; padding:8px; border:1px solid #ccc;" name="title"
+                th:value="${adminFAQDTO.title}">
             </div>
 
             <!-- 내용 -->
             <div style="display:flex; align-items:flex-start; border-bottom:1px solid #e0e0e0; padding:12px 8px;">
                 <label for="content" style="width:100px; font-weight:bold;">내용</label>
                 <textarea id="content" placeholder="내용을 입력합니다."
-                    style="width:500px; height:280px; padding:8px; border:3px solid #ccc; resize:none;"></textarea>
+                    style="width:500px; height:280px; padding:8px; border:1px solid #ccc; resize:none;" name="content"
+                th:text="${adminFAQDTO.content}"></textarea>
             </div>
             </div>
 
             <!-- 버튼 영역 -->
             <div style="text-align:center; margin-top:-70px; margin-left: 650px;">
-                    <button style="border:none; background-color: #760c0c; color:white; font-size: 10px; font-weight: 300; height:25px; width:62px;">취소하기</button>
-                    <button style="margin-left:auto; border:none; background-color: black; color:white; font-size: 10px; font-weight: 300; height:25px; width:62px;">수정하기</button>
+                    <button type="button"
+                            th:onclick="|location.href='@{/admin/FAQ/view(id=${adminFAQDTO.id})}'|"
+                            style="cursor:pointer; border:none; background-color: #760c0c; color:white; font-size: 10px; font-weight: 300; height:25px; width:62px;">취소하기</button>
+                    <button style="cursor:pointer; margin-left:auto; border:none; background-color: black; color:white; font-size: 10px; font-weight: 300; height:25px; width:62px;"
+                    type="submit">수정하기</button>
+                </form>
+
             </div>
     </main>
 

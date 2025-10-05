@@ -277,18 +277,19 @@
 
                     <div style=" height: 100px; margin-top:40px; display: flex; justify-content: center;">
                         <input th:if="${pageResponseDTO.prev}"
-                               th:onclick="|location.href='@{/admin/inquiry/list(pg=${pageResponseDTO.start - 1})}'|"
+                               th:onclick="|location.href='@{/admin/inquiry/search(pg=${pageResponseDTO.start - 1}, board_type2=${pageResponseDTO.board_type2}, board_type3=${pageResponseDTO.board_type3})}'|"
                                type="button" class="prev-page" value="< 이전">
 
-                        <th:block th:each="num:${#numbers.sequence(pageResponseDTO.start, pageResponseDTO.end)}">
-                            <input th:onclick="|location.href='@{/admin/inquiry/list(pg=${num})}'|"
+                        <th:block th:if="${pageResponseDTO.end >= pageResponseDTO.start}"
+                                  th:each="num:${#numbers.sequence(pageResponseDTO.start, pageResponseDTO.end)}">
+                            <input th:onclick="|location.href='@{/admin/inquiry/search(pg=${num}, board_type2=${pageResponseDTO.board_type2}, board_type3=${pageResponseDTO.board_type3})}'|"
                                    th:class="${num == pageResponseDTO.pg ? 'current' : 'num'}"
                                    type="button"
                                    th:value="${num}" />
                         </th:block>
 
                         <input th:if="${pageResponseDTO.next}"
-                               th:onclick="|location.href='@{/admin/inquiry/list(pg=${pageResponseDTO.end + 1})}'|"
+                               th:onclick="|location.href='@{/admin/inquiry/search(pg=${pageResponseDTO.end + 1}, board_type2=${pageResponseDTO.board_type2}, board_type3=${pageResponseDTO.board_type3})}'|"
                                type="button" class="next-page" value="다음 >" style="">
                     </div>
     </main>
@@ -322,6 +323,28 @@
 </style>
 
 <script>
+    // 1차분류, 2차분류가 풀리지 않게
+    document.addEventListener('DOMContentLoaded', () => {
+        const first  = document.getElementById('firSel');
+        const second = document.getElementById('secSel');
+
+        // 서버에서 내려준 현재 선택값
+        const currentFirst  = /*[[${pageResponseDTO.board_type2}]]*/ '';
+        const currentSecond = /*[[${pageResponseDTO.board_type3}]]*/ '';
+
+        if (currentFirst) {
+            first.value = currentFirst;
+            // 기존에 선언한 subMap과 fillSecond 재사용
+            if (subMap[currentFirst]) {
+                fillSecond(subMap[currentFirst]);
+                second.disabled = false;
+                if (currentSecond) {
+                    second.value = currentSecond;
+                }
+            }
+        }
+    });
+
 // 아코디언: 클릭 시 높이를 실제 내용 높이로 애니메이션
 document.querySelectorAll('.euro-nav__title').forEach(title => {
   title.style.cursor = 'pointer'; // 클릭 가능 시각화(선택)

@@ -64,58 +64,43 @@
             </section>
         </aside>
         </div>
-        <div style="border:1px solid #e2e2e2;"></div>
+        <div style="border-left:1px solid #e2e2e2;"></div>
         <!-- 오른쪽 콘텐츠 영역 -->
           <div style="margin-left:40px; width:900px; height:1000px; border:none; padding:20px; box-sizing:border-box; font-family:'Noto Sans KR', sans-serif;">
 
             <!-- 제목 + 경로 -->
-            <div style="display: flex;">
-                    <div style="font-size: 20px; font-weight: 800; margin-top:16px; margin-bottom:5px;">자주묻는질문 작성</div>
+            <div class="title-line" style="border-bottom: 2px solid #ccc;">
+            <div style="font-size: 20px; font-weight: 800; margin-top:16px; margin-bottom:5px;">자주묻는질문 목록</div>
                     <div style="margin-left: auto; margin-top:auto; margin-bottom:4px;font-size: 12px;">HOME > 고객센터 > <span style="font-weight: 800;">자주묻는질문</span></div>
-                </div>
-                <hr style="border:none; border-top:1px solid gray; margin-top:0px;">
-                <div style="padding-left:10px;">
-                <div style="display: flex; align-items: center; margin-top: 25px; margin-bottom:20px;">
-                    <form action="" method="post" style="display: flex; ">
-                        
-                </div>
+             </div>
+            <!-- 1. 검색 -->
+            <div style="margin-bottom:20px;">
+              <!-- 1. 검색 -->
+            <style>
+            .radio-btn {
+              display: none; /* 실제 라디오 버튼은 숨김 */
+            }
 
-            
-            <!-- 2. 테이블 -->
-            <!-- 폼 박스 -->
-            <div style="width:100%; height: 500px; margin:50px auto; font-family:'맑은 고딕', sans-serif; font-size:14px; color:#333; background:#fff; border-top:2px solid #000;">
+            .radio-label {
+              border: 3px solid #ccc;
+              background: #fff;
+              padding: 5px 40px;
+              cursor: pointer;
+              margin-top: 20px;
+              display: inline-block;
+            }
 
-            <!-- 유형 -->
-            <div style="display:flex; align-items:center; border-bottom:1px solid #e0e0e0; padding:12px 8px;">
-                <label for="cycleBtn" style="width:100px; font-weight:bold;">유형</label>
-                <style>
-                .radio-btn {
-                display: none; /* 실제 라디오 버튼은 숨김 */
-                }
+            .radio-btn:checked + .radio-label {
+              background: #ddd; /* 선택된 버튼 강조 */
+            }
+            </style>
 
-                .radio-label {
-                border: 3px solid #ccc;
-                background: #fff;
-                padding: 5px 40px;
-                cursor: pointer;
-                margin-top: 5px;
-                display: inline-block;
-                }
-
-                .radio-btn:checked + .radio-label {
-                background: #ddd; /* 선택된 버튼 강조 */
-                }
-                </style>
-
-                <div>
-                <div>
-                <form th:action="@{/admin/FAQ/write}" method="post">
-                    <input type="hidden" name="board_type" value="faq">
-                    <input type="hidden" name="hits" value="0">
+            <div style="margin-top:30px;margin-bottom:20px;">
+                <form th:action="@{/admin/FAQ/search}" method="get">
                     <select name="board_type2" id="firSel"
                             style="padding-left:5px; height: 30px; width:120px; font-size: 12px; border:1px solid #e2e2e2; outline: none;"
                             required>
-                        <option value="">1차분류 선택</option>
+                        <option value="" selected>1차분류 선택</option>
                         <option value="member">회원</option>
                         <option value="event">쿠폰 / 이벤트</option>
                         <option value="pay">주문 / 결제</option>
@@ -127,11 +112,13 @@
 
                     <select name="board_type3" id="secSel"
                             style="padding-left:5px; height: 30px; width:180px; font-size: 12px; border:1px solid #e2e2e2; outline: none; margin-left:6px;"
+                            onchange="this.form.submit()"
                             disabled required>
                         <option value="">2차분류 선택</option>
                     </select>
+                </form>
                 </div>
-                
+
                 <script>
                     document.addEventListener('DOMContentLoaded', () => {
                         // 1차 -> 2차 매핑
@@ -181,13 +168,16 @@
                             ],
                         };
 
-                        const first  = document.getElementById('firSel');
-                        const second = document.getElementById('secSel');
+                        const first  = document.getElementById('firSel'); // 1차
+                        const second = document.getElementById('secSel'); // 2차
 
+                        // 2차 초기화
                         function resetSecond() {
                             second.innerHTML = '<option value="">2차분류 선택</option>';
                             second.disabled = true;
                         }
+
+                        // 2차 옵션 채우기
                         function fillSecond(list) {
                             resetSecond();
                             list.forEach(opt => {
@@ -198,73 +188,120 @@
                             });
                             second.disabled = false;
                         }
-                        function selectByValueOrText(selectEl, prev) {
-                            if (!prev) return;
-                            // value로 먼저 매칭
-                            const byValue = [...selectEl.options].find(o => o.value === prev);
-                            if (byValue) { selectEl.value = prev; return; }
-                            // 텍스트로도 허용(혹시 서버가 라벨을 보낼 때)
-                            const byText = [...selectEl.options].find(o => o.textContent.trim() === prev.trim());
-                            if (byText) selectEl.value = byText.value;
-                        }
 
-                        // 초기 세팅: 서버에서 내려준 prev 값으로 고정
-                        const prevFirst  = (first.dataset.prev  || '').trim(); // ex) 'member'
-                        const prevSecond = (second.dataset.prev || '').trim(); // ex) 'signup'
-
-                        if (prevFirst && subMap[prevFirst]) {
-                            first.value = prevFirst;               // 1차 선택
-                            fillSecond(subMap[prevFirst]);         // 2차 목록 채우기
-                            // onchange 자동 submit 방지
-                            const oldOnchange = second.onchange;
-                            second.onchange = null;
-                            selectByValueOrText(second, prevSecond);  // 2차 선택
-                            second.onchange = oldOnchange;
-                        } else {
-                            // prevFirst가 없거나 매핑이 없으면 기본 상태
-                            resetSecond();
-                        }
+                        // 최초 상태
+                        resetSecond();
 
                         // 1차 변경 시 2차 갱신
                         first.addEventListener('change', () => {
-                            const key = first.value;
+                            const key = first.value; // 예: 'member'
                             if (subMap[key]) {
                                 fillSecond(subMap[key]);
-                                second.value = '';
+                                second.value = ''; // placeholder 유지
                             } else {
                                 resetSecond();
                             }
                         });
+
+                        // (선택) 폼 제출 시 필수값 검사 예시
+                        const form = first.closest('form');
+                        if (form) {
+                            form.addEventListener('submit', (e) => {
+                                if (!first.value) {
+                                    alert('1차분류를 선택해주세요.');
+                                    first.focus();
+                                    e.preventDefault();
+                                    return;
+                                }
+                                if (second.disabled || !second.value) {
+                                    alert('2차분류를 선택해주세요.');
+                                    second.focus();
+                                    e.preventDefault();
+                                }
+                            });
+                        }
                     });
-                    </script>
-                </div>
-            </div>
+                </script>
 
-            <div style="display:flex; align-items:center; border-bottom:1px solid #e0e0e0; padding:12px 8px;">
-                <label for="title" style="width:100px; font-weight:bold;">제목</label>
-                <input type="text" id="title" placeholder="제목을 입력합니다."
-                    style="width:500px; padding:8px; border:1px solid #ccc;"
-                name="title">
-            </div>
 
-            <!-- 내용 -->
-            <div style="display:flex; align-items:flex-start; border-bottom:1px solid #e0e0e0; padding:12px 8px;">
-                <label for="content" style="width:100px; font-weight:bold; margin-top: 120px;">내용</label>
-                <textarea id="content" placeholder="내용을 입력합니다."
-                    style="width:500px; height:280px; padding:8px; border:1px solid #ccc; resize:none;"
-                          name="content"></textarea>
-            </div>
-            </div>
+                <!-- 2. 테이블 -->
+            <table style="width:100%; border-collapse:collapse; text-align:center; font-size:14px;">
+              <thead>
+                <tr style="border-top:2px solid #000; border-bottom:1px solid #ccc; background:#fff;">
+                  <th style="padding:15px;"><input type="checkbox"></th>
+                  <th style="width:30px;">번호</th>
+                  <th style="width:104px;">1차 유형</th>
+                  <th style="width:73px;">2차 유형</th>
+                  <th style="width:350px;">제목</th>
+                  <th style="width:45px;">조회</th>
+                  <th>날짜</th>
+                  <th style="width:52px;">관리</th>
+                  
+                </tr>
+              </thead>
+              <tbody>
+                <tr th:each="admin, stat: ${pageResponseDTO.dtoList}"
+                        style="border-bottom:1px solid #e2e2e2; height:70px;vertical-align: middle;">
+                  <td><input type="checkbox"></td>
+                    <td th:text="${#lists.size(pageResponseDTO.dtoList) - stat.index}">10</td>
+                    <td th:text="${admin.board_type2 == 'member' ? '회원' :
+                    (admin.board_type2 == 'event' ? '쿠폰 / 이벤트' :
+                    (admin.board_type2 == 'pay' ? '주문 / 결제' :
+                    (admin.board_type2 == 'delivery' ? '배송' :
+                    (admin.board_type2 == 'cancel' ? '취소 / 반품 / 교환' :
+                    (admin.board_type2 == 'trip' ? '여행 / 숙박 / 항공' :
+                    (admin.board_type2 == 'safe' ? '안전거래' : ''))))))}">1차유형</td>
+                    <td th:text="${admin.board_type3 == 'signup' ? '가입' :
+                    (admin.board_type3 == 'withdraw' ? '탈퇴' :
+                    (admin.board_type3 == 'account' ? '회원정보' :
+                    (admin.board_type3 == 'login' ? '로그인' :
+                    (admin.board_type3 == 'couponissue' ? '쿠폰발급' :
+                    (admin.board_type3 == 'couponuse' ? '쿠폰사용' :
+                    (admin.board_type3 == 'eventjoin' ? '이벤트참여' :
+                    (admin.board_type3 == 'winnercheck' ? '당첨확인' :
+                    (admin.board_type3 == 'orderguide' ? '주문방법' :
+                    (admin.board_type3 == 'paymentmethod' ? '결제수단' :
+                    (admin.board_type3 == 'paymenterror' ? '결제오류' :
+                    (admin.board_type3 == 'receipt' ? '영수증/증빙' :
+                    (admin.board_type3 == 'tracking' ? '배송조회' :
+                    (admin.board_type3 == 'deliverytime' ? '배송기간' :
+                    (admin.board_type3 == 'deliveryfee' ? '배송비' :
+                    (admin.board_type3 == 'globalshipping' ? '해외배송' :
+                    (admin.board_type3 == 'ordercancel' ? '주문취소' :
+                    (admin.board_type3 == 'refund' ? '반품' :
+                    (admin.board_type3 == 'exchange' ? '교환' :
+                    (admin.board_type3 == 'refundprocess' ? '환불처리' :
+                    (admin.board_type3 == 'reservation' ? '예약' :
+                    (admin.board_type3 == 'payment' ? '결제' :
+                    (admin.board_type3 == 'changecancel' ? '변경/취소' :
+                    (admin.board_type3 == 'guide' ? '이용안내' :
+                    (admin.board_type3 == 'security' ? '보안공지' :
+                    (admin.board_type3 == 'alert' ? '사기주의' :
+                    (admin.board_type3 == 'safepayment' ? '안전결제' :
+                    (admin.board_type3 == 'privacy' ? '개인정보보호' : '')))))))))))))))))))))))))))}">2차유형</td>
+                    <td style="text-align: left;padding-left: 40px;"><a th:href="@{/admin/FAQ/view(id=${admin.id})}">[[${admin.title}]]</a></td>
+                    <td th:text="${admin.hits}">120</td>
+                    <td th:text="${#temporals.format(admin.created_at, 'yyyy-MM-dd')}">00.00.00</td>
+                    <td>
+                        <div>
+                            <a th:href="@{/admin/FAQ/modify/list(id=${admin.id})}"
+                               style="text-decoration:none; margin-right:0px;">[ 수정 ]</a>
+                        </div>
+                        <div>
+                            <a th:href="@{/admin/FAQ/delete(id=${admin.id})}"
+                               th:onclick="|return confirm('정말로 삭제하시겠습니까?')|"
+                               style="text-decoration:none;">[ 삭제 ]</a>
+                        </div>
+                     </td>
+              </tbody>
+            </table>
 
-            <!-- 버튼 영역 -->
-            <div style="text-align:center; margin-top:-70px;">
-            <button type="button"
-                    th:onclick="|location.href='@{/admin/FAQ/list}'|"
-                    style="cursor:pointer; border:none; background-color: #760c0c; color:white; font-size: 10px; font-weight: 300; height:25px; width:62px;">취소하기</button>
-            <button type="submit"
-                    style="cursor:pointer; margin-left:auto; border:none; background-color: black; color:white; font-size: 10px; font-weight: 300; height:25px; width:62px;">등록하기</button>
-                </form>
-            </div>
+            <!-- 3. 하단 버튼 영역 -->
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-top:20px;">
+              <button style="cursor:pointer; border:none; background-color: #760c0c; color:white; font-size: 10px; font-weight: 300; height:25px; width:62px;">선택삭제</button>
+                    <button style="cursor:pointer; margin-left:auto; border:none; background-color: black; color:white; font-size: 10px; font-weight: 300; height:25px; width:62px;"
+                            th:onclick="|location.href='@{/admin/FAQ/write}'|">작성하기</button>
+          </div>
     </main>
 
     <style>

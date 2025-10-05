@@ -14,14 +14,21 @@ public interface AdminMapper {
     public List<CouponsNowDTO> selectAllCouponsNow(@Param("pageRequestDTO") PageRequestDTO pageRequestDTO);
     public List<AdminEmployDTO> selectAllAdminEmploy(@Param("pageRequestDTO") PageRequestDTO pageRequestDTO);
     public List<AdminAnnouncementDTO> selectAllAdminAnnouncement(@Param("pageRequestDTO") PageRequestDTO pageRequestDTO);
+    public List<AdminFAQDTO> selectAllAdminFAQ(@Param("pageRequestDTO") PageRequestDTO pageRequestDTO);
+    public List<AdminInquiryDTO> selectAllAdminInquiry(@Param("pageRequestDTO") PageRequestDTO pageRequestDTO);
 
     // 항상 동일(total 세기)
     public int selectCountTotal(@Param("pageRequestDTO") PageRequestDTO pageRequestDTO);
     public int selectCountTotalCouponsNow(@Param("pageRequestDTO") PageRequestDTO pageRequestDTO);
     public int selectCountTotalAdminEmploy(@Param("pageRequestDTO") PageRequestDTO pageRequestDTO);
     public int selectCountTotalAdminAnnouncement(@Param("pageRequestDTO") PageRequestDTO pageRequestDTO);
+    public int selectCountTotalAdminFAQ(@Param("pageRequestDTO") PageRequestDTO pageRequestDTO);
+    public int selectCountTotalAdminInquiry(@Param("pageRequestDTO") PageRequestDTO pageRequestDTO);
 
     // 관리자_고객센터_채용하기 선택삭제 구현
     public void deleteAdminEmploy(int id);
+
+    // 관리자_고객센터_문의하기 댓글 구현
+    public AdminCommentDTO selectInquiryComment(@Param("AdminCommentDTO") AdminCommentDTO adminCommentDTO);
 
 }

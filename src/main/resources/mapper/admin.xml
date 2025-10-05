@@ -196,4 +196,220 @@
         SELECT COUNT(*) FROM board A
         <include refid="searchAnnouncementWhere"/>
     </select>
+
+    <!--    개별로 작성할 부분(덩어리 구분) -->
+
+    <!-- 1차/2차 모두를 안전하게 거르는 WHERE 공통 조각 -->
+    <sql id="searchFAQWhere">
+        <where>
+            AND A.board_type = 'faq'
+
+            <!-- 1차 유형(member/event/...)이 들어온 경우만 조건 추가 -->
+            <if test="pageRequestDTO.board_type2 != null and pageRequestDTO.board_type2 != ''">
+                AND A.board_type2 = #{pageRequestDTO.board_type2}
+
+                <!-- 2차 유형이 들어온 경우: 해당 1차에서 '허용되는' 값일 때만 조건 추가 -->
+                <if test="pageRequestDTO.board_type3 != null and pageRequestDTO.board_type3 != ''">
+                    <choose>
+                        <!-- 회원 -->
+                        <when test="pageRequestDTO.board_type2 == 'member'
+                      and (pageRequestDTO.board_type3 == 'signup'
+                           or pageRequestDTO.board_type3 == 'withdraw'
+                           or pageRequestDTO.board_type3 == 'account'
+                           or pageRequestDTO.board_type3 == 'login')">
+                            AND A.board_type3 = #{pageRequestDTO.board_type3}
+                        </when>
+
+                        <!-- 쿠폰/이벤트 -->
+                        <when test="pageRequestDTO.board_type2 == 'event'
+                      and (pageRequestDTO.board_type3 == 'couponissue'
+                           or pageRequestDTO.board_type3 == 'couponuse'
+                           or pageRequestDTO.board_type3 == 'eventjoin'
+                           or pageRequestDTO.board_type3 == 'winnercheck')">
+                            AND A.board_type3 = #{pageRequestDTO.board_type3}
+                        </when>
+
+                        <!-- 주문/결제 -->
+                        <when test="pageRequestDTO.board_type2 == 'pay'
+                      and (pageRequestDTO.board_type3 == 'orderguide'
+                           or pageRequestDTO.board_type3 == 'paymentmethod'
+                           or pageRequestDTO.board_type3 == 'paymenterror'
+                           or pageRequestDTO.board_type3 == 'receipt')">
+                            AND A.board_type3 = #{pageRequestDTO.board_type3}
+                        </when>
+
+                        <!-- 배송 -->
+                        <when test="pageRequestDTO.board_type2 == 'delivery'
+                      and (pageRequestDTO.board_type3 == 'tracking'
+                           or pageRequestDTO.board_type3 == 'deliverytime'
+                           or pageRequestDTO.board_type3 == 'deliveryfee'
+                           or pageRequestDTO.board_type3 == 'globalshipping')">
+                            AND A.board_type3 = #{pageRequestDTO.board_type3}
+                        </when>
+
+                        <!-- 취소/반품/교환 -->
+                        <when test="pageRequestDTO.board_type2 == 'cancel'
+                      and (pageRequestDTO.board_type3 == 'ordercancel'
+                           or pageRequestDTO.board_type3 == 'refund'
+                           or pageRequestDTO.board_type3 == 'exchange'
+                           or pageRequestDTO.board_type3 == 'refundprocess')">
+                            AND A.board_type3 = #{pageRequestDTO.board_type3}
+                        </when>
+
+                        <!-- 여행/숙박/항공 -->
+                        <when test="pageRequestDTO.board_type2 == 'trip'
+                      and (pageRequestDTO.board_type3 == 'reservation'
+                           or pageRequestDTO.board_type3 == 'payment'
+                           or pageRequestDTO.board_type3 == 'changecancel'
+                           or pageRequestDTO.board_type3 == 'guide')">
+                            AND A.board_type3 = #{pageRequestDTO.board_type3}
+                        </when>
+
+                        <!-- 안전거래 -->
+                        <when test="pageRequestDTO.board_type2 == 'safe'
+                      and (pageRequestDTO.board_type3 == 'security'
+                           or pageRequestDTO.board_type3 == 'alert'
+                           or pageRequestDTO.board_type3 == 'safepayment'
+                           or pageRequestDTO.board_type3 == 'privacy')">
+                            AND A.board_type3 = #{pageRequestDTO.board_type3}
+                        </when>
+
+                        <!-- 그 외 조합은 무시(= 2차 조건을 아예 넣지 않음) -->
+                        <otherwise/>
+                    </choose>
+                </if>
+            </if>
+        </where>
+    </sql>
+
+    <select id="selectAllAdminFAQ" resultType="kr.co.bnk_marketproject_be.dto.AdminFAQDTO">
+        SELECT
+        *
+        FROM board A
+        <include refid="searchFAQWhere"/>
+        ORDER BY A.created_at DESC
+        OFFSET 0 ROWS
+        FETCH NEXT 10 ROWS ONLY
+    </select>
+
+    <select id="selectCountTotalAdminFAQ" resultType="int">
+        SELECT COUNT(*) FROM board A
+        <include refid="searchFAQWhere"/>
+    </select>
+
+    <!--    개별로 작성할 부분(덩어리 구분) -->
+
+    <!-- 1차/2차 모두를 안전하게 거르는 WHERE 공통 조각 -->
+    <sql id="searchInquiryWhere">
+        <where>
+            AND A.board_type = 'inquiry'
+
+            <!-- 1차 유형(member/event/...)이 들어온 경우만 조건 추가 -->
+            <if test="pageRequestDTO.board_type2 != null and pageRequestDTO.board_type2 != ''">
+                AND A.board_type2 = #{pageRequestDTO.board_type2}
+
+                <!-- 2차 유형이 들어온 경우: 해당 1차에서 '허용되는' 값일 때만 조건 추가 -->
+                <if test="pageRequestDTO.board_type3 != null and pageRequestDTO.board_type3 != ''">
+                    <choose>
+                        <!-- 회원 -->
+                        <when test="pageRequestDTO.board_type2 == 'member'
+                      and (pageRequestDTO.board_type3 == 'signup'
+                           or pageRequestDTO.board_type3 == 'withdraw'
+                           or pageRequestDTO.board_type3 == 'account'
+                           or pageRequestDTO.board_type3 == 'login')">
+                            AND A.board_type3 = #{pageRequestDTO.board_type3}
+                        </when>
+
+                        <!-- 쿠폰/이벤트 -->
+                        <when test="pageRequestDTO.board_type2 == 'event'
+                      and (pageRequestDTO.board_type3 == 'couponissue'
+                           or pageRequestDTO.board_type3 == 'couponuse'
+                           or pageRequestDTO.board_type3 == 'eventjoin'
+                           or pageRequestDTO.board_type3 == 'winnercheck')">
+                            AND A.board_type3 = #{pageRequestDTO.board_type3}
+                        </when>
+
+                        <!-- 주문/결제 -->
+                        <when test="pageRequestDTO.board_type2 == 'pay'
+                      and (pageRequestDTO.board_type3 == 'orderguide'
+                           or pageRequestDTO.board_type3 == 'paymentmethod'
+                           or pageRequestDTO.board_type3 == 'paymenterror'
+                           or pageRequestDTO.board_type3 == 'receipt')">
+                            AND A.board_type3 = #{pageRequestDTO.board_type3}
+                        </when>
+
+                        <!-- 배송 -->
+                        <when test="pageRequestDTO.board_type2 == 'delivery'
+                      and (pageRequestDTO.board_type3 == 'tracking'
+                           or pageRequestDTO.board_type3 == 'deliverytime'
+                           or pageRequestDTO.board_type3 == 'deliveryfee'
+                           or pageRequestDTO.board_type3 == 'globalshipping')">
+                            AND A.board_type3 = #{pageRequestDTO.board_type3}
+                        </when>
+
+                        <!-- 취소/반품/교환 -->
+                        <when test="pageRequestDTO.board_type2 == 'cancel'
+                      and (pageRequestDTO.board_type3 == 'ordercancel'
+                           or pageRequestDTO.board_type3 == 'refund'
+                           or pageRequestDTO.board_type3 == 'exchange'
+                           or pageRequestDTO.board_type3 == 'refundprocess')">
+                            AND A.board_type3 = #{pageRequestDTO.board_type3}
+                        </when>
+
+                        <!-- 여행/숙박/항공 -->
+                        <when test="pageRequestDTO.board_type2 == 'trip'
+                      and (pageRequestDTO.board_type3 == 'reservation'
+                           or pageRequestDTO.board_type3 == 'payment'
+                           or pageRequestDTO.board_type3 == 'changecancel'
+                           or pageRequestDTO.board_type3 == 'guide')">
+                            AND A.board_type3 = #{pageRequestDTO.board_type3}
+                        </when>
+
+                        <!-- 안전거래 -->
+                        <when test="pageRequestDTO.board_type2 == 'safe'
+                      and (pageRequestDTO.board_type3 == 'security'
+                           or pageRequestDTO.board_type3 == 'alert'
+                           or pageRequestDTO.board_type3 == 'safepayment'
+                           or pageRequestDTO.board_type3 == 'privacy')">
+                            AND A.board_type3 = #{pageRequestDTO.board_type3}
+                        </when>
+
+                        <!-- 그 외 조합은 무시(= 2차 조건을 아예 넣지 않음) -->
+                        <otherwise/>
+                    </choose>
+                </if>
+            </if>
+        </where>
+    </sql>
+
+    <select id="selectAllAdminInquiry" resultType="kr.co.bnk_marketproject_be.dto.AdminInquiryDTO">
+        SELECT
+        A.id                    AS id,
+        A.board_type            AS board_type,
+        A.board_type2           AS board_type2,
+        A.board_type3           AS board_type3,
+        A.title                 AS title,
+        A.user_id               AS userId,
+        A.content               AS content,
+        A.hits                  AS hits,
+        A.look                  AS look,
+        A.created_at            AS createdAt
+        FROM board A
+        <include refid="searchInquiryWhere"/>
+        ORDER BY A.created_at DESC
+        OFFSET #{pageRequestDTO.offset} ROWS
+        FETCH NEXT #{pageRequestDTO.size} ROWS ONLY
+    </select>
+
+    <select id="selectCountTotalAdminInquiry" resultType="int">
+        SELECT COUNT(*) FROM board A
+        <include refid="searchInquiryWhere"/>
+    </select>
+    
+    <select id="selectInquiryComment" resultType="kr.co.bnk_marketproject_be.dto.AdminCommentDTO">
+        SELECT
+        *
+        FROM COMMENTS
+        WHERE BID=#{BID}
+    </select>
 </mapper>
