@@ -1,4 +1,4 @@
-<div th:replace="~{admin/_header.html}"></div>
+    <div th:replace="~{admin/_header.html}"></div>
 
     <main style="display: flex; justify-content: center; border-top:1px solid #e2e2e2;">
         <div>
@@ -13,19 +13,20 @@
                 <li class="euro-nav__item"><a href="#">버전관리</a></li>
             </ul>
             </section>
+
             <section class="euro-nav__group">
             <h4 class="euro-nav__title" style="">상점관리</h4>
             <ul class="euro-nav__list">
-                <li class="euro-nav__item"><a href="/admin/store_list.html">상점목록</a></li>
-                <li class="euro-nav__item"><a href="/admin/sale_status.html">매출현황</a></li>
+                <li class="euro-nav__item"><a href="/adminFAQDTO/store_list.html">상점목록</a></li>
+                <li class="euro-nav__item"><a href="/adminFAQDTO/sale_status.html">매출현황</a></li>
             </ul>
             </section>
 
             <section class="euro-nav__group">
             <h4 class="euro-nav__title" style="">회원관리</h4>
             <ul class="euro-nav__list">
-                <li class="euro-nav__item"><a href="/admin/member_list.html">회원목록</a></li>
-                <li class="euro-nav__item"><a href="/admin/point_management.html">포인트관리</a></li>
+                <li class="euro-nav__item"><a href="/adminFAQDTO/member_list.html">회원목록</a></li>
+                <li class="euro-nav__item"><a href="/adminFAQDTO/point_management.html">포인트관리</a></li>
             </ul>
             </section>
 
@@ -56,8 +57,8 @@
             <section class="euro-nav__group">
             <h4 class="euro-nav__title" style="">고객센터</h4>
             <ul class="euro-nav__list">
-                <li class="euro-nav__item"><a href="/admin/announcement_list.html">공지사항</a></li>
-                <li class="euro-nav__item is-active"><a href="/admin/questions_list.html">자주묻는질문</a></li>
+                <li class="euro-nav__item"><a href="/adminFAQDTO/announcement_list.html">공지사항</a></li>
+                <li class="euro-nav__item is-active"><a href="/adminFAQDTO/questions_list.html">자주묻는질문</a></li>
                 <li class="euro-nav__item"><a href="#">문의하기</a></li>
                 <li class="euro-nav__item"><a href="#">채용하기</a></li>
             </ul>
@@ -97,30 +98,75 @@
                         background:#fff; font-weight:bold; ">유형</th>
               <td style="padding:8px; 
                         border-top:2px solid #999; 
-                        border-bottom:1px solid #eee;">회원 - 가입</td>
+                        border-bottom:1px solid #eee;">
+                  <span th:text="${adminFAQDTO.board_type2 == 'member' ? '회원' :
+                    (adminFAQDTO.board_type2 == 'event' ? '쿠폰 / 이벤트' :
+                    (adminFAQDTO.board_type2 == 'pay' ? '주문 / 결제' :
+                    (adminFAQDTO.board_type2 == 'delivery' ? '배송' :
+                    (adminFAQDTO.board_type2 == 'cancel' ? '취소 / 반품 / 교환' :
+                    (adminFAQDTO.board_type2 == 'trip' ? '여행 / 숙박 / 항공' :
+                    (adminFAQDTO.board_type2 == 'safe' ? '안전거래' : ''))))))}"></span><span> - </span>
+                  <span th:text="${adminFAQDTO.board_type3 == 'signup' ? '가입' :
+                    (adminFAQDTO.board_type3 == 'withdraw' ? '탈퇴' :
+                    (adminFAQDTO.board_type3 == 'account' ? '회원정보' :
+                    (adminFAQDTO.board_type3 == 'login' ? '로그인' :
+                    (adminFAQDTO.board_type3 == 'couponissue' ? '쿠폰발급' :
+                    (adminFAQDTO.board_type3 == 'couponuse' ? '쿠폰사용' :
+                    (adminFAQDTO.board_type3 == 'eventjoin' ? '이벤트참여' :
+                    (adminFAQDTO.board_type3 == 'winnercheck' ? '당첨확인' :
+                    (adminFAQDTO.board_type3 == 'orderguide' ? '주문방법' :
+                    (adminFAQDTO.board_type3 == 'paymentmethod' ? '결제수단' :
+                    (adminFAQDTO.board_type3 == 'paymenterror' ? '결제오류' :
+                    (adminFAQDTO.board_type3 == 'receipt' ? '영수증/증빙' :
+                    (adminFAQDTO.board_type3 == 'tracking' ? '배송조회' :
+                    (adminFAQDTO.board_type3 == 'deliverytime' ? '배송기간' :
+                    (adminFAQDTO.board_type3 == 'deliveryfee' ? '배송비' :
+                    (adminFAQDTO.board_type3 == 'globalshipping' ? '해외배송' :
+                    (adminFAQDTO.board_type3 == 'ordercancel' ? '주문취소' :
+                    (adminFAQDTO.board_type3 == 'refund' ? '반품' :
+                    (adminFAQDTO.board_type3 == 'exchange' ? '교환' :
+                    (adminFAQDTO.board_type3 == 'refundprocess' ? '환불처리' :
+                    (adminFAQDTO.board_type3 == 'reservation' ? '예약' :
+                    (adminFAQDTO.board_type3 == 'payment' ? '결제' :
+                    (adminFAQDTO.board_type3 == 'changecancel' ? '변경/취소' :
+                    (adminFAQDTO.board_type3 == 'guide' ? '이용안내' :
+                    (adminFAQDTO.board_type3 == 'security' ? '보안공지' :
+                    (adminFAQDTO.board_type3 == 'alert' ? '사기주의' :
+                    (adminFAQDTO.board_type3 == 'safepayment' ? '안전결제' :
+                    (adminFAQDTO.board_type3 == 'privacy' ? '개인정보보호' : '')))))))))))))))))))))))))))}"></span>
+                  
+              </td>
             </tr>
             <tr style="height:44px;">
               <th style="text-align:left; padding:8px; 
                         border-bottom:1px solid #eee; /* 중간 연한 선 */ 
                         background: #fff; font-weight:bold;">제목</th>
-              <td style="padding:8px; border-bottom:1px solid #eee;">개인회원과 법인회원에 차이가 있나요?</td>
+              <td style="padding:8px; border-bottom:1px solid #eee;"
+              th:text="${adminFAQDTO.title}">개인회원과 법인회원에 차이가 있나요?</td>
             </tr>
             <tr style="height:66px;"> <!-- 내용 부분은 기본보다 커서 약간 더 늘려줌 -->
               <th style="text-align:left; padding:8px; 
                         border-bottom:1px solid #ccc; /* 맨 아래 조금 얇게 */ 
                         background:#fff; font-weight:bold;">내용</th>
-              <td style="padding:20px; line-height:1.6; border-bottom:1px solid #ccc;">
-                개인회원은 본인인증, 법인회원은 사업자등록번호를 기준으로 사업자 인증 후 가입 가능합니다.
-                개인회원에서 법인회원(사업자회원)으로 전환은 불가하므로 법인회원 (사업자회원) 
-                전환은 신규 가입으로 진행을 해야합니다
+              <td style="padding:20px; line-height:1.6; border-bottom:1px solid #ccc; padding-left: 7px;">
+                <span th:utext="${#strings.replace(
+                      #strings.replace(
+                        #strings.replace(
+                          #strings.replace(adminFAQDTO.content, '.', '.<br/>'),
+                        '!', '!<br/>'),
+                      '?', '?<br/>'),
+                    '✔', '<br/>✔')}"></span>
               </td>
             </tr>
           </table>
 
             <div style="text-align:end;">
-            <button style="border:none; background-color: #760c0c; color:white; font-size: 10px; font-weight: 300; height:25px; width:62px;">삭제</button>
-            <button style="border:none; background-color: #760c0c; color:white; font-size: 10px; font-weight: 300; height:25px; width:62px;">수정</button>
-            <button style="margin-left:auto; border:none; background-color: black; color:white; font-size: 10px; font-weight: 300; height:25px; width:62px;">목록</button>
+            <button style="cursor: pointer;border:none; background-color: #760c0c; color:white; font-size: 10px; font-weight: 300; height:25px; width:62px;"
+                    th:onclick="|if(confirm('정말로 삭제하시겠습니까?')) location.href='@{/admin/FAQ/delete(id=${adminFAQDTO.id})}';|">삭제</button>
+            <button style="cursor: pointer;border:none; background-color: #760c0c; color:white; font-size: 10px; font-weight: 300; height:25px; width:62px;"
+                    th:onclick="|location.href='@{/admin/FAQ/modify/list(id=${adminFAQDTO.id})}'|">수정</button>
+            <button style="cursor: pointer; margin-left:auto; border:none; background-color: black; color:white; font-size: 10px; font-weight: 300; height:25px; width:62px;"
+                    th:onclick="|location.href='@{/admin/FAQ/list}'|">목록</button>
 
             </div>
           </div>

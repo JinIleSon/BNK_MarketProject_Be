@@ -4,6 +4,8 @@ import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.Where;
 
+import java.time.LocalDateTime;
+
 @Getter @Setter
 @Builder
 @NoArgsConstructor @AllArgsConstructor
@@ -19,12 +21,14 @@ public class AdminInquiry {
 
     @Column(name="BOARD_TYPE", length=200, nullable = false)
     private String boardType; // "inquiry"
-
-    @Column(name="USER_ID", length=200)
-    private String userId;
+    private String board_type2;
+    private String board_type3;
 
     @Column(name="TITLE", length=200, nullable=false)
     private String title;
+
+    @Column(name="USER_ID", length=200)
+    private String userId;
 
     // @Lob 제거 (DB는 VARCHAR2(200))
     @Column(name="CONTENT")
@@ -37,10 +41,15 @@ public class AdminInquiry {
     private String email;
 
     @Column(name="CREATED_AT", insertable = false, updatable = false)
-    private String createdAt;
+    private LocalDateTime createdAt;
+    private void onCreate() {
+        if (createdAt == null) createdAt = LocalDateTime.now();
+    }
 
     @Column(name="UPDATED_AT", insertable = false, updatable = false)
     private String updatedAt;
+
+    private int hits;
 
     @Column(name="LOOK")
     private Long look;
