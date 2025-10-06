@@ -1,9 +1,8 @@
-package kr.co.bnk_marketproject_be.dto;
+package kr.co.bnk_marketproject_be.entity;
 
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import jakarta.persistence.*;
+import lombok.*;
+import org.hibernate.annotations.CreationTimestamp;
 import org.springframework.format.annotation.DateTimeFormat;
 
 import java.time.LocalDate;
@@ -13,8 +12,12 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class AdminEmployDTO {
+@Entity
+@Table(name = "employ")
+public class AdminEmploy {
 
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
     private String department;
     private String career;
@@ -26,6 +29,7 @@ public class AdminEmployDTO {
     private LocalDate recruit_from;
     @DateTimeFormat(iso = DateTimeFormat.ISO.DATE)
     private LocalDate recruit_to;
+    @CreationTimestamp
     private LocalDateTime created_at;
     private String note;
 }
