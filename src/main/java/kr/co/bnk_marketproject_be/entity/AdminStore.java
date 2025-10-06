@@ -18,6 +18,12 @@ public class AdminStore {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
 
+    // 추가 필드
+    @Column(name = "board_type")
+    private String boardType;
+
+    private String user_id;
+    private String password;
     private String busname;
     private String rep;
     private String cornum;
@@ -25,10 +31,10 @@ public class AdminStore {
     private String tel;
     private String manage;
     private String look;
-
-    // 추가 필드
-    @Column(name = "BOARD_TYPE")
-    private String boardType;
+    private String fax;
+    private String zipcode;
+    private String address1;
+    private String address2;
 
     // 추가 필드 - 페이지네이션
     @Transient
