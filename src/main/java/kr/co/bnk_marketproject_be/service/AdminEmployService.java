@@ -3,9 +3,12 @@ package kr.co.bnk_marketproject_be.service;
 import kr.co.bnk_marketproject_be.dto.AdminEmployDTO;
 import kr.co.bnk_marketproject_be.dto.PageRequestDTO;
 import kr.co.bnk_marketproject_be.dto.PageResponseAdminEmployDTO;
+import kr.co.bnk_marketproject_be.entity.AdminEmploy;
 import kr.co.bnk_marketproject_be.mapper.AdminMapper;
+import kr.co.bnk_marketproject_be.repository.AdminEmployRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -15,6 +18,8 @@ import java.util.List;
 @Service
 public class AdminEmployService {
     private final AdminMapper adminMapper;
+    private final AdminEmployRepository  adminEmployRepository;
+    private final ModelMapper  modelMapper;
 
     public PageResponseAdminEmployDTO selectAdminEmployAll(PageRequestDTO pageRequestDTO) {
         // MyBatis 처리
@@ -37,4 +42,9 @@ public class AdminEmployService {
     public void delete(int id){
         adminMapper.deleteAdminEmploy(id);
     };
+
+    // 채용등록(register)
+    public void registerEmploy(AdminEmployDTO adminEmployDTO){
+        adminEmployRepository.save(modelMapper.map(adminEmployDTO, AdminEmploy.class));
+    }
 }
