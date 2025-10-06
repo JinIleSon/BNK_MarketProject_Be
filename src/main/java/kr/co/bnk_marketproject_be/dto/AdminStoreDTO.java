@@ -15,8 +15,11 @@ public class AdminStoreDTO {
     private int id;
 
     // 추가 필드
+    @Column(name="board_type")
     private String boardType;
 
+    private String user_id;
+    private String password;
     private String busname;
     private String rep;
     private String cornum;
@@ -24,6 +27,10 @@ public class AdminStoreDTO {
     private String tel;
     private String manage;
     private String look;
+    private String fax;
+    private String zipcode;
+    private String address1;
+    private String address2;
 
     // 추가 필드 - 페이지네이션
     @Transient
