@@ -25,7 +25,7 @@ public class AdminMember {
     private String grade;
     private String point;
     private String tel;
-
+    private String content;
     private String created_at;
     private String look;
 
@@ -36,7 +36,7 @@ public class AdminMember {
     // 추가 필드 - 페이지네이션
     @Transient
     private String name;
-    @Transient
+    @Column(name = "user_id")
     private String userId;
     @Transient
     private String email;
