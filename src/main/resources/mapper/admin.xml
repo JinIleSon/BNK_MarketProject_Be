@@ -6,6 +6,72 @@
 <mapper namespace="kr.co.bnk_marketproject_be.mapper.AdminMapper">
 
     <!--    개별로 작성할 부분(덩어리 구분) -->
+    <select id="selectMember" resultType="kr.co.bnk_marketproject_be.dto.AdminMemberDTO">
+        SELECT
+        U.user_id as user_id,
+        U.name,
+        U.gender,
+        B.grade,
+        B.look,
+        B.email,
+        B.tel,
+        U.postcode       AS "zipcode",
+        U.address        AS "address1",
+        U.detail_address AS "address2",
+        B.created_at as "created_at",
+        U.updated_at as "updated_at",
+        B.content
+        FROM users U
+        JOIN (
+        SELECT
+        user_id, grade, look, email, tel, created_at, content,
+        ROW_NUMBER() OVER (PARTITION BY user_id ORDER BY created_at DESC) AS rn
+        FROM board
+        WHERE board_type = 'memberlist'
+        ) B
+        ON B.user_id = U.user_id
+        AND B.rn = 1
+        WHERE U.user_id = #{user_id}
+
+    </select>
+
+<!--    탈퇴회원 비활성화하기-->
+    <update id="updateMember" parameterType="string">
+        BEGIN
+        UPDATE users
+        SET
+        email = 'deleted_user@nichiya.com',
+        password = 'DELETED',
+        name = '탈퇴회원',
+        phone = NULL,
+        address = NULL,
+        ROLE = NULL,
+        created_at = NULL,
+        updated_at = NULL,
+        birth = NULL,
+        postcode = NULL,
+        gender = NULL,
+        detail_address = NULL
+        WHERE user_id = #{userId};
+
+        UPDATE board
+        SET
+        rep = '탈퇴회원',
+        cornum = NULL,
+        comnum = NULL,
+        tel = NULL,
+        manage = NULL,
+        look = NULL,
+        gender = NULL,
+        grade = NULL,
+        point = NULL,
+        email = NULL,
+        created_at = NULL,
+        hits = NULL
+        WHERE user_id = #{userId};
+        END;
+    </update>
+    <!--    개별로 작성할 부분(덩어리 구분) -->
 
     <sql id="searchWhere">
         <where>

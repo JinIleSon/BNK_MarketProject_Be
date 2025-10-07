@@ -1,11 +1,15 @@
 package kr.co.bnk_marketproject_be.service;
 
 import com.querydsl.core.Tuple;
+import jakarta.transaction.Transactional;
 import kr.co.bnk_marketproject_be.dto.*;
 import kr.co.bnk_marketproject_be.dto.AdminMemberDTO;
 import kr.co.bnk_marketproject_be.entity.AdminMember;
 import kr.co.bnk_marketproject_be.entity.AdminMember;
+import kr.co.bnk_marketproject_be.entity.User;
+import kr.co.bnk_marketproject_be.mapper.AdminMapper;
 import kr.co.bnk_marketproject_be.repository.AdminMemberRepository;
+import kr.co.bnk_marketproject_be.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
@@ -21,7 +25,9 @@ import java.util.List;
 public class AdminMemberService {
 
     private final AdminMemberRepository adminMemberRepository;
+    private final UserRepository  userRepository;
 
+    private final AdminMapper adminMapper;
     private final ModelMapper modelMapper;
 
     public PageResponseAdminMemberDTO findAdminMemberAll(PageRequestDTO pageRequestDTO){
@@ -68,5 +74,41 @@ public class AdminMemberService {
                 .dtoList(dtoList)
                 .total(total)
                 .build();
+    }
+
+    public AdminMemberDTO selectMember(String user_id){
+        return adminMapper.selectMember(user_id);
+    }
+
+    @Transactional
+    public void modifyMember(AdminMemberDTO adminMemberDTO){
+        if (adminMemberRepository.existsById(adminMemberDTO.getId())) {
+            AdminMember adminMember = adminMemberRepository.findById(adminMemberDTO.getId())
+                    .orElseThrow(() -> new IllegalArgumentException("회원이 존재하지 않습니다." + adminMemberDTO.getId()));
+            // AdminMember(BOARD) - 허용한 것만 덮기
+            if (adminMemberDTO.getName() != null)        adminMember.setRep(adminMemberDTO.getName());
+            if (adminMemberDTO.getGender() != null)     adminMember.setGender(adminMemberDTO.getGender());
+            if (adminMemberDTO.getGrade() != null)      adminMember.setGrade(adminMemberDTO.getGrade());
+            if (adminMemberDTO.getTel() != null)        adminMember.setTel(adminMemberDTO.getTel());
+            if (adminMemberDTO.getLook() != null)       adminMember.setLook(adminMemberDTO.getLook());
+            if (adminMemberDTO.getContent() != null)    adminMember.setContent(adminMember.getContent());
+            // point 등은 폼에서 안 받으면 건드리지 않음
+            User user = userRepository.findByUserId(adminMemberDTO.getUserId());
+            user.setUserId(adminMemberDTO.getUserId());
+            user.setName(adminMemberDTO.getName());
+            user.setGender(adminMemberDTO.getGender());
+            user.setEmail(adminMemberDTO.getEmail());
+            user.setPhone(adminMemberDTO.getTel());
+            user.setPostcode(adminMemberDTO.getZipcode());
+            user.setAddress(adminMemberDTO.getAddress1());
+            user.setDetailAddress(adminMemberDTO.getAddress2());
+            user.setCreated_at(adminMemberDTO.getCreated_at());
+            if(adminMemberDTO.getUpdated_at() != null) user.setUpdated_at(adminMemberDTO.getUpdated_at());
+        }
+    }
+
+    @Transactional
+    public void updateOneMember(String userId){
+        adminMapper.updateMember(userId);
     }
 }

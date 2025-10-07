@@ -31,4 +31,8 @@ public interface AdminMapper {
     // 관리자_고객센터_문의하기 댓글 구현
     public AdminCommentDTO selectInquiryComment(@Param("AdminCommentDTO") AdminCommentDTO adminCommentDTO);
 
+    // 수정을 위한 불러오기(회원수정)
+    public AdminMemberDTO selectMember(@Param("user_id") String user_id);
+    // 탈퇴된 회원 정보 수거(아이디 제외 null)
+    public void updateMember(@Param("userId") String userId);
 }
