@@ -1,20 +1,19 @@
 package kr.co.bnk_marketproject_be.controller;
 
+import jakarta.servlet.http.HttpServletRequest;
 import kr.co.bnk_marketproject_be.dto.AdminSiteConfigDTO;
 import kr.co.bnk_marketproject_be.service.AdminSiteConfigService;
 import kr.co.bnk_marketproject_be.service.AdminStorageService;
 import lombok.extern.slf4j.Slf4j;
 import lombok.RequiredArgsConstructor;
-import org.springframework.security.web.csrf.CsrfToken;
 import org.springframework.ui.Model;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import org.springframework.core.env.Environment;
+
+import java.util.List;
 
 @Slf4j
 @Controller
@@ -24,12 +23,13 @@ public class AdminBasicController {
     private final AdminSiteConfigService siteConfigService;
     private final Environment environment;
     private final AdminStorageService storageService;
+
     //기본설정
     // ===== GET =====
     @GetMapping("/admin/admin_basic")
-    public String adminBasic(Model model, CsrfToken csrfToken) {
-        // CSRF 토큰 터치(세션 생성용)
-        csrfToken.getToken();
+    public String adminBasic(Model model, HttpServletRequest request) {
+
+        request.getSession();
 
         AdminSiteConfigDTO config = siteConfigService.get();
         if (config == null) config = new AdminSiteConfigDTO();  // 프리필 비어도 에러는 안 나게
@@ -124,32 +124,4 @@ public class AdminBasicController {
     private String blankToNull(String s) {
         return (s == null || s.isBlank()) ? null : s;
     }
-
-
-
-
-    //베너관리
-    @GetMapping("/admin/admin_banner")
-    public String adminBanner(){
-        return "admin/admin_banner";
-    }
-
-    //약관관리
-    @GetMapping("/admin/admin_policy")
-    public String adminPolicy(){
-        return "admin/admin_policy";
-    }
-
-    //카테고리
-    @GetMapping("/admin/admin_category")
-    public String adminCategory(){
-        return "admin/admin_category";
-    }
-
-    //버전관리
-    @GetMapping("/admin/admin_version")
-    public String adminVersion(){
-        return "admin/admin_version";
-    }
-
 }
