@@ -71,6 +71,16 @@
         WHERE user_id = #{userId};
         END;
     </update>
+
+    <!--    개별로 작성할 부분(덩어리 구분) -->
+    <delete id="deleteProduct">
+        BEGIN
+            DELETE FROM product_images  WHERE product_code = #{product_code};
+            DELETE FROM product_options WHERE product_code = #{product_code};
+            DELETE FROM products        WHERE product_code = #{product_code};
+        END;
+    </delete>
+
     <!--    개별로 작성할 부분(덩어리 구분) -->
 
     <sql id="searchWhere">

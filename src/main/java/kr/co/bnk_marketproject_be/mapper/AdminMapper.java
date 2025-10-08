@@ -35,4 +35,7 @@ public interface AdminMapper {
     public AdminMemberDTO selectMember(@Param("user_id") String user_id);
     // 탈퇴된 회원 정보 수거(아이디 제외 null)
     public void updateMember(@Param("userId") String userId);
+
+    // 상품 삭제
+    public void deleteProduct(@Param("product_code") int product_code);
 }
