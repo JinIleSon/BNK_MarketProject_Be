@@ -1,9 +1,6 @@
-package kr.co.bnk_marketproject_be.dto;
+package kr.co.bnk_marketproject_be.entity;
 
-import com.fasterxml.jackson.annotation.JsonFormat;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Transient;
+import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -17,8 +14,12 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class CouponsDTO {
+@Entity
+@Table(name = "coupons")
+public class Coupons {
 
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
     private int users_id;
     private String code;
@@ -26,9 +27,9 @@ public class CouponsDTO {
     private int discount_value;
     private String company;
 
-    @DateTimeFormat(pattern = "yyyy-MM-dd'T'HH:mm")
+    @DateTimeFormat(iso = DateTimeFormat.ISO.DATE)
     private LocalDateTime valid_from;
-    @DateTimeFormat(pattern = "yyyy-MM-dd'T'HH:mm")
+    @DateTimeFormat(iso = DateTimeFormat.ISO.DATE)
     private LocalDateTime valid_to;
 
     private String status;

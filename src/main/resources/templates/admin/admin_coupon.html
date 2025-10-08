@@ -104,11 +104,13 @@
                         th:text="${admin.code}">10121211341</a></td>
                         <td th:text="${admin.discount_type}">개별상품 할인</td>
                         <td th:text="${admin.coupon_name}">10월 한달 감사 쿠폰</td>
-                        <td th:text="${admin.discount_value} + ' 할인'"></td>
+                        <td th:text="${admin.discount_value == 0 ? '배송비 무료' :
+                                                (admin.discount_value < 100 ? admin.discount_value + '% 할인' :
+                                                (admin.discount_value + '원 할인'))}"></td>
                         <td>
                             <span th:text="${#temporals.format(admin.valid_from, 'yyyy-MM-dd')}">0000-00-00</span> <br>~
                             <span th:text="${#temporals.format(admin.valid_to, 'yyyy-MM-dd')}">0000-00-00</span></td>
-                        <td th:text="${admin.name}">(주)다있어</td>
+                        <td th:text="${admin.company}">(주)다있어</td>
                         <td th:text="${admin.issuecount}">102</td>
                         <td th:text="${admin.usercount}">43</td>
                         <td th:with="st=${#strings.trim(admin.status)}"
@@ -137,7 +139,7 @@
                                                 th:text="${admin.code}">10121211341</td>
                                             <th style="font-size:14px;">발급처</th>
                                             <td style="font-size:14px;"
-                                                th:text="${admin.name}">(주)다있어</td>
+                                                th:text="${admin.company}">(주)다있어</td>
                                         </tr>
                                         <tr >
                                             <th style="font-size: 14px;">쿠폰종류</th>
@@ -156,7 +158,9 @@
                                         <tr>
                                             <th style="font-size: 14px;">혜택</th>
                                             <td style="font-size:14px;"
-                                                th:text="${admin.discount_value} + '원 할인'">2,000 원 할인</td>
+                                                th:text="${admin.discount_value == 0 ? '배송비 무료' :
+                                                (admin.discount_value < 100 ? admin.discount_value + '% 할인' :
+                                                (admin.discount_value + '원 할인'))}">2,000 원 할인</td>
                                             <td></td>
                                             <td></td>
                                         </tr>
@@ -172,13 +176,18 @@
                                             <th style="font-size: 14px; height:200px;">유의사항</th>
                                             <td style="font-size:14px;">
                                                 <div>
-                                                    <div>상품 중복 할인 쿠폰</div>
-                                                    <div>- 상품 1개에 대해 사용 가능</div>
-                                                    <div>- 판매자 즉시할인/상품할인 쿠폰과 중복 사용 가능</div>
+                                                    <div><span th:text="${admin.discount_type}"></span> 쿠폰</div>
+                                                    <div
+                                                            th:with="raw=${admin.note} ?: '', txt=${#strings.trim(raw)}, i=${#strings.indexOf(txt,'-')}"
+                                                            th:utext="${i == -1
+                                                                        ? txt
+                                                                        : #strings.substring(txt,0,i+1)
+                                                                          + #strings.replace(#strings.substring(txt,i+1), '-', '<br>-')}">
+                                                    </div>
                                                 </div>
                                                 <div>
                                                     <div style="margin-top:20px;">사용처</div>
-                                                    <div th:text="'- ' + ${admin.name}">- (주)다있어</div>
+                                                    <div th:utext="'- ' + ${admin.company}">- (주)다있어</div>
                                                 </div>
                                             </td>
                                             <td></td>
@@ -281,7 +290,11 @@
 <!-- ▼ 쿠폰등록 폼 템플릿 -->
 <template id="couponRegTemplate">
   <div class="ship-form__wrap">
-    <form id="couponRegForm">
+    <form id="couponRegForm" method="post" th:action="@{/admin/coupon/register}">
+        <input type="hidden" name="users_id" value="61">
+        <input type="hidden" name="status" value="발급중">
+        <input type="hidden" name="issuecount" value="0">
+        <input type="hidden" name="usercount" value="0">
       <table class="ship-form__table">
         <colgroup>
           <col style="width:120px;"><col><col style="width:120px;"><col>
@@ -289,47 +302,47 @@
         <tbody>
           <tr>
             <th>발급처</th>
-            <td><input class="ipt" name="issuer" placeholder="(주)다있어" value="(주)다있어" required style="width: 400px;"></td>
+            <td><input class="ipt" name="company" placeholder="(주) NICHIYA" required style="width: 400px;"></td>
           </tr>
           <tr>
             <th>쿠폰종류</th>
             <td>
-              <select class="sel" name="type" required style="width:140px;">
+              <select class="sel" name="discount_type" required style="width:140px;">
                 <option value="" hidden>종류선택</option>
-                <option value="item">개별상품 할인</option>
-                <option value="order">주문상품 할인</option>
-                <option value="shipfree">배송비 무료</option>
+                <option value="개별상품 할인">개별상품 할인</option>
+                <option value="주문상품 할인">주문상품 할인</option>
+                <option value="배송비 무료">배송비 무료</option>
               </select>
             </td>
           </tr>
           <tr>
             <th>쿠폰명</th>
-            <td colspan="3"><input class="ipt" name="name" maxlength="40" placeholder="예) 10월 한달 감사 쿠폰" required style="width: 400px;"></td>
+            <td colspan="3"><input class="ipt" name="coupon_name" maxlength="40" placeholder="예) 10월 한달 감사 쿠폰" required style="width: 400px;"></td>
           </tr>
           <tr style="">
             <th>혜택</th>
             <td colspan="3">
               <div style="display:flex; flex-wrap:wrap; gap:14px;">
                     <div style="display: flex; flex-direction: column;">
-                        <label style="margin-bottom:9px;"><input type="radio" name="benefit" value="1000off" required> 1,000원 할인</label>
-                        <label style="margin-bottom:9px;"><input type="radio" name="benefit" value="10pct"> 10% 할인</label>
-                        <label><input type="radio" name="benefit" value="shipfree"> 배송비 무료</label>
+                        <label style="margin-bottom:9px;"><input type="radio" name="discount_value" value="1000" required> 1,000원 할인</label>
+                        <label style="margin-bottom:9px;"><input type="radio" name="discount_value" value="10"> 10% 할인</label>
+                        <label><input type="radio" name="discount_value" value="0"> 배송비 무료</label>
                     </div>
                     <div style="display: flex; flex-direction: column;">
-                        <label style="margin-bottom:9px;"><input type="radio" name="benefit" value="2000off"> 2,000원 할인</label>
-                        <label><input type="radio" name="benefit" value="20pct"> 20% 할인</label>
+                        <label style="margin-bottom:9px;"><input type="radio" name="discount_value" value="2000"> 2,000원 할인</label>
+                        <label><input type="radio" name="discount_value" value="20"> 20% 할인</label>
                     </div>
                     <div style="display: flex; flex-direction: column;">
-                        <label style="margin-bottom:9px;"><input type="radio" name="benefit" value="3000off"> 3,000원 할인</label>
-                        <label><input type="radio" name="benefit" value="30pct"> 30% 할인</label>
+                        <label style="margin-bottom:9px;"><input type="radio" name="discount_value" value="3000"> 3,000원 할인</label>
+                        <label><input type="radio" name="discount_value" value="30"> 30% 할인</label>
                     </div>
                     <div style="display: flex; flex-direction: column;">
-                        <label style="margin-bottom:9px;"><input type="radio" name="benefit" value="4000off"> 4,000원 할인</label>
-                        <label><input type="radio" name="benefit" value="40pct"> 40% 할인</label>
+                        <label style="margin-bottom:9px;"><input type="radio" name="discount_value" value="4000"> 4,000원 할인</label>
+                        <label><input type="radio" name="discount_value" value="40"> 40% 할인</label>
                     </div>
                     <div style="display: flex; flex-direction: column;">
-                        <label style="margin-bottom:9px;"><input type="radio" name="benefit" value="5000off"> 5,000원 할인</label>
-                        <label><input type="radio" name="benefit" value="50pct"> 50% 할인</label>
+                        <label style="margin-bottom:9px;"><input type="radio" name="discount_value" value="5000"> 5,000원 할인</label>
+                        <label><input type="radio" name="discount_value" value="50"> 50% 할인</label>
                     </div>
                     <style>
                         input[type="radio"] {
@@ -349,17 +362,9 @@
               <div style="display:grid; gap:10px;">
                 <!-- 절대기간 -->
                 <label style="display:flex; align-items:center; gap:8px;">
-                  <input type="radio" name="dateMode" value="range" checked>
-                  <input type="date" class="ipt" name="startDate" style="max-width:180px;">
+                  <input required type="datetime-local" class="ipt" name="valid_from" style="max-width:180px;">
                   ~
-                  <input type="date" class="ipt" name="endDate" style="max-width:180px;">
-                </label>
-                <!-- 상대기간 -->
-                <label style="display:flex; align-items:center; gap:8px;">
-                  <input type="radio" name="dateMode" value="relative">
-                  발급일로부터
-                  <input type="number" class="ipt" name="withinDays" min="1" style="max-width:110px;">
-                  일 이내
+                  <input required type="datetime-local" class="ipt" name="valid_to" style="max-width:180px;">
                 </label>
               </div>
             </td>
@@ -367,14 +372,15 @@
           <tr>
             <th>유의사항</th>
             <td colspan="3">
-              <textarea class="txt" name="memo" placeholder="- 상품 1개에 대해 사용 가능&#10;- 판매자 즉시할인/상품할인 쿠폰과 중복 사용 가능"></textarea>
+              <textarea class="txt" name="note" placeholder="- 상품 1개에 대해 사용 가능&#10;- 판매자 즉시할인/상품할인 쿠폰과 중복 사용 가능"
+              th:text="|- 상품 1개에 대해 사용 가능&#10;- 판매자 즉시할인/상품할인 쿠폰과 중복 사용 가능|"></textarea>
             </td>
           </tr>
         </tbody>
       </table>
       <div class="ship-form__actions" style="justify-content:center; gap:8px;">
-        <button type="button" class="btn-secondary" id="couponRegCancelBtn" style="font-weight: 300;">취소</button>
-        <button type="submit" class="btn-primary" style="font-weight: 300;">등록</button>
+        <button type="button" class="btn-secondary" id="couponRegCancelBtn" style="cursor:pointer;font-weight: 300;">취소</button>
+        <button type="submit" class="btn-primary" style="cursor:pointer;font-weight: 300;">등록</button>
       </div>
     </form>
   </div>
@@ -747,15 +753,6 @@ document.querySelectorAll('table a[href="#"]:not(.coupon-link)').forEach(a=>{
                 const cancelBtn = body.querySelector('#couponRegCancelBtn');
                 if (cancelBtn) cancelBtn.addEventListener('click', closeCouponReg, { once: true });
 
-                // 폼 제출
-                const form = body.querySelector('#couponRegForm');
-                if (form) {
-                    form.addEventListener('submit', (e) => {
-                        e.preventDefault();
-                        alert('쿠폰이 등록되었습니다.');
-                        closeCouponReg();
-                    }, { once: true });
-                }
             }
 
             function closeCouponReg () {
@@ -769,6 +766,40 @@ document.querySelectorAll('table a[href="#"]:not(.coupon-link)').forEach(a=>{
             if (open)  open.addEventListener('click', openCouponReg);
             if (close) close.addEventListener('click', closeCouponReg);
             modal.addEventListener('click', (e) => { if (e.target === modal) closeCouponReg(); });
+        })();
+        (function(){
+            // '종료' 버튼 중복 confirm/alert 방지: 캡처 단계에서 처리하고 이벤트를 차단
+            document.addEventListener('click', function(e){
+                const btn = e.target.closest('button.end-btn:not([disabled])');
+                if(!btn) return;                // 다른 클릭은 무시
+
+                e.preventDefault();
+                e.stopImmediatePropagation();   // 이후에 등록된 중복 핸들러들 모두 차단
+
+                const tr = btn.closest('tr');
+                const statusTd = tr && tr.querySelector('td:nth-child(9)'); // 상태 컬럼
+                if(!statusTd) return;
+
+                const statusText = (statusTd.textContent || '').trim();
+                if(statusText !== '발급중') return; // 이미 종료/기타면 아무 것도 안 함
+
+                // 확인/취소 모달
+                if(!confirm('해당 쿠폰을 종료하시겠습니까?')) return; // 취소 시: 그대로 종료 (알림 없음)
+
+                // 확인 시: 기존 동작 그대로
+                statusTd.textContent = '종료';
+                statusTd.classList.remove('st-open');
+                statusTd.classList.add('st-closed');
+
+                btn.disabled = true;
+                btn.classList.add('is-disabled');      // 기존 스타일 유지
+                // 혹시 인라인 스타일을 쓰던 코드도 있었으므로 그대로 반영
+                btn.style.backgroundColor = 'gray';
+                btn.style.color = 'white';
+                btn.style.cursor = 'not-allowed';
+
+                alert('쿠폰이 종료되었습니다.');
+            }, true); // <-- capture 단계에서 선처리
         })();
     </script>
 <div th:replace="~{admin/_footer.html}"></div>

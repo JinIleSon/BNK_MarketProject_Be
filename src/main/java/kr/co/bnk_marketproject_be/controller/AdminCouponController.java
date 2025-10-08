@@ -1,5 +1,6 @@
 package kr.co.bnk_marketproject_be.controller;
 
+import kr.co.bnk_marketproject_be.dto.CouponsDTO;
 import kr.co.bnk_marketproject_be.dto.PageRequestDTO;
 import kr.co.bnk_marketproject_be.dto.PageResponseAdminCouponDTO;
 import kr.co.bnk_marketproject_be.service.AdminCouponService;
@@ -8,6 +9,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
 
 @Slf4j
 @RequiredArgsConstructor
@@ -34,5 +36,13 @@ public class AdminCouponController {
         model.addAttribute("pageResponseDTO", pageResponseAdminCouponDTO);
 
         return "admin/admin_coupon_searchList";
+    }
+
+    @PostMapping("/admin/coupon/register")
+    public String register(CouponsDTO couponsDTO) {
+        log.info("couponsDTO={}", couponsDTO);
+
+        adminCouponService.register(couponsDTO);
+        return "redirect:/admin/coupon/list";
     }
 }
