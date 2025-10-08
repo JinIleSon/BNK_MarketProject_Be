@@ -12,8 +12,6 @@ import lombok.NoArgsConstructor;
 public class ProductOptionsDTO {
 
     private int id;
-    private int products_id;
     private String option_name;
-    private String option_value;
-    private int stock;
+    private int product_code;
 }
