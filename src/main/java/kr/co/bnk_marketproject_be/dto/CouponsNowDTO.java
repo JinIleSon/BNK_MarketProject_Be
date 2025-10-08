@@ -19,6 +19,8 @@ public class CouponsNowDTO {
     private String used_at;
     private int coupons_id;
     private int users_id;
+    private String company;
+    private String note;
 
     // 추가 필드 - user_id(users 테이블) - 유저 아이디 가져오기
     private String user_id;

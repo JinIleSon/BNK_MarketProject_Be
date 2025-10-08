@@ -149,6 +149,8 @@
         C.discount_value as discount_value,
         C.valid_from as valid_from,
         C.valid_to as valid_to,
+        C.company,
+        C.note,
         U.name,
         U.user_id as user_id
         FROM coupons_now A

@@ -108,7 +108,16 @@
                                 style="color:red;">
                             미사용
                         </td>
-                        <td th:text="${admin.used_at}">0000-00-00<br>00:00:00</td>
+                        <td th:text="${admin.used_at == null ? '-' :
+                                      (#strings.contains(admin.used_at, 'T')
+                                        ? T(java.time.OffsetDateTime).parse(admin.used_at)
+                                            .format(T(java.time.format.DateTimeFormatter).ofPattern('yyyy-MM-dd HH:mm:ss'))
+                                        : T(java.time.LocalDateTime).parse(
+                                            admin.used_at,
+                                            T(java.time.format.DateTimeFormatter).ofPattern('yyyy-MM-dd HH:mm:ss[.SSS][.SS][.S]')
+                                          ).format(T(java.time.format.DateTimeFormatter).ofPattern('yyyy-MM-dd HH:mm:ss'))
+                                      )
+                                    }">-</td>
                         <td><button class="stop-btn" style="height:30px; border: 1px solid #e2e2e2;">중단</button></td>
                         <!-- ▼ 배송입력 모달 콘텐츠 템플릿 -->
                         <template class="shipFormTemplate" th:inline="text">
@@ -122,7 +131,7 @@
                                                 >[[${admin.code}]]</td>
                                             <th style="font-size:14px;">발급처</th>
                                             <td style="font-size:14px;"
-                                                >(주)다있어</td>
+                                                ><span th:text="${admin.company}"></span></td>
                                         </tr>
                                         <tr>
                                             <th style="font-size:14px;">발급번호</th>
@@ -151,7 +160,9 @@
                                         <tr>
                                             <th style="font-size:14px;">혜택</th>
                                             <td style="font-size:14px;"
-                                                >[[${#numbers.formatInteger(admin.discount_value,0)}]]원 할인</td>
+                                                ><span th:text="${admin.discount_value == 0 ? '배송비 무료' :
+                                                (admin.discount_value < 100 ? admin.discount_value + '% 할인' :
+                                                (admin.discount_value + '원 할인'))}"></span></td>
                                             <td></td><td></td>
                                         </tr>
                                         <tr>
@@ -168,11 +179,16 @@
                                             <th style="font-size:14px; height:200px;">유의사항</th>
                                             <td style="font-size:14px;"
                                                 >
-                                                <div>상품 중복 할인 쿠폰</div>
-                                                <div>- 상품 1개에 대해 사용 가능</div>
-                                                <div>- 판매자 즉시할인/상품할인 쿠폰과 중복 사용 가능</div>
+                                                <div><span th:text="${admin.discount_type}"></span> 쿠폰</div>
+                                                <div
+                                                        th:with="raw=${admin.note} ?: '', txt=${#strings.trim(raw)}, i=${#strings.indexOf(txt,'-')}"
+                                                        th:utext="${i == -1
+                                                                        ? txt
+                                                                        : #strings.substring(txt,0,i+1)
+                                                                          + #strings.replace(#strings.substring(txt,i+1), '-', '<br>-')}">
+                                                </div>
                                                 <div style="margin-top:20px;">사용처</div>
-                                                <div>- (주)다있어</div>
+                                                <div th:utext="'- ' + ${admin.company}">- (주)다있어</div>
                                             </td>
                                             <td></td><td></td>
                                         </tr>
