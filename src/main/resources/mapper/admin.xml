@@ -84,7 +84,7 @@
                         AND A.coupon_name LIKE '%' || #{pageRequestDTO.keyword} || '%'
                     </when>
                     <when test="pageRequestDTO.searchType == 'name'">
-                        AND U.name LIKE '%' || #{pageRequestDTO.keyword} || '%'
+                        AND A.company LIKE '%' || #{pageRequestDTO.keyword} || '%'
                     </when>
                 </choose>
             </if>
@@ -94,19 +94,18 @@
     <select id="selectAllCoupons" resultType="kr.co.bnk_marketproject_be.dto.CouponsDTO">
         SELECT
         A.code,
+        A.company,
+        A.note,
         A.discount_type as discount_type,
         A.coupon_name as coupon_name,
         A.discount_value as discount_value,
         TO_CHAR(A.valid_from, 'YYYY-MM-DD HH24:MI:SS') as valid_from,
         TO_CHAR(A.valid_to, 'YYYY-MM-DD HH24:MI:SS') as valid_to,
-        U.name,
         A.issuecount,
         A.usercount,
         A.status,
         TO_CHAR(A.created_at, 'YYYY-MM-DD HH24:MI:SS') AS created_at
         FROM coupons A
-        JOIN users U
-        ON A.users_id = U.id
         <include refid="searchWhere"/>
         ORDER BY A.id DESC
         OFFSET #{pageRequestDTO.offset} ROWS
@@ -115,8 +114,6 @@
 
     <select id="selectCountTotal" resultType="int">
         SELECT COUNT(*) FROM coupons A
-        JOIN users U
-        ON A.users_id = U.id
         <include refid="searchWhere"/>
     </select>
 
@@ -152,6 +149,8 @@
         C.discount_value as discount_value,
         C.valid_from as valid_from,
         C.valid_to as valid_to,
+        C.company,
+        C.note,
         U.name,
         U.user_id as user_id
         FROM coupons_now A
