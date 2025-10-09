@@ -1,5 +1,65 @@
 <div th:replace="~{admin/_header.html}"></div>
+<style>
+    .title-line {
+        width: 880px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-left: 20px;
+    }
+    table {
+        border-collapse: collapse;
+        width: 880px;
+        margin-left: 20px;
+    }
+    tr{
+        border-top: 1px solid #ddd;
+        border-bottom: 1px solid #ddd;
+    }
+    th {
+        font-weight: normal;
+    }
+    .th-blue {
+        border-top: 1px solid #ddd;
+        border-bottom: 1px solid #ddd;
+        width: 100px;
+        height: 150px;
+        background-color: #dde6f3;
+    }
+    .th-gray {
+        padding: 10px;
+        background-color: #f2f2f2;
+        text-align: left;
+    }
+    .btn {
+        padding: 8px 12px;
+        background-color: #6FADCF;
+        color: #fff;
+        border: none;
+        cursor: pointer;
+        float: right;
+    }
+    .status-gap {
+        height: 10px;
+        border: none;
+    }
+    .terms-box {
+        padding: 5px;
+    }
 
+    .terms-content {
+        border: 1px solid #ddd;
+        padding: 12px;
+        line-height: 1.6;
+        font-size: 14px;
+        color: #333;
+    }
+    html{ scrollbar-gutter: stable; }
+    .icon-btn {
+        background:none; border:1px solid #000; cursor:pointer;
+        width:40px; height:40px; display:grid; place-items:center;
+    }
+</style>
     <main style="display: flex; justify-content: center; border-top:1px solid #e2e2e2;">
         <div>
         <aside class="euro-nav" aria-label="관리자 사이드 메뉴" style="">
@@ -89,14 +149,7 @@
                     <tr>
                     <th class="th-blue">약관내용</th>
                     <td class="terms-box">
-                        <div class="terms-content">
-                        <b>제 1 조 (목적)</b><br>
-                        이 약관은 주식회사 케이마켓 쇼핑몰(이하 “회사”라 함)이 운영하는 케이마켓 인터넷오픈마켓사이트
-                        (www.Kmarket.co.kr 이하 “케이마켓”이라 함)와 스마트폰 등 이동통신기기를 통해 제공되는 케이마켓
-                        모바일 애플리케이션(이하 “모바일 케이마켓”이라 함)에서 등록·제공하는 전자상거래 관련 서비스 및
-                        기타 서비스(이하 “서비스”라 함)를 이용하는 자 간의 권리·의무를 규정하고 이의 원활한 이행을
-                        도모함을 그 목적으로 합니다.
-                        </div>
+                        <div class="terms-content" th:text="${Config.termsBuyer}">약관 내용이 여기에 표시됩니다.</div>
                     </td>
                     </tr>
                 </table>
@@ -116,14 +169,7 @@
                     <tr>
                     <th class="th-blue">약관내용</th>
                     <td class="terms-box">
-                        <div class="terms-content">
-                        <b>제 2 조 (판매회원 약관)</b><br>
-                        이 약관은 케이마켓에 판매회원으로 가입하여 상품을 등록·판매하고, 회사가 제공하는 전자상거래
-                        관련 서비스 및 기타 부가 서비스를 이용하는 자(이하 “판매회원”이라 함)의 권리·의무, 그리고
-                        회사와 판매회원 간의 제반 사항을 규정함을 목적으로 합니다. 판매회원은 회사가 정한 절차에 따라
-                        가입 및 인증을 완료하여야 하며, 본 약관에 동의함으로써 케이마켓에서 제공하는 온라인 및 모바일
-                        환경상의 서비스 이용과 관련된 권리와 의무를 성실히 이행하여야 합니다.
-                        </div>
+                        <div class="terms-content" th:text="${Config.termsSeller}">약관 내용이 여기에 표시됩니다.</div>
                     </td>
                     </tr>
                 </table>
@@ -143,13 +189,7 @@
                     <tr>
                     <th class="th-blue">약관내용</th>
                     <td class="terms-box">
-                        <div class="terms-content">
-                        <b>제 3 조 (전자금융거래 약관)</b><br>
-                        이 약관은 판매회원 및 이용자가 케이마켓을 통하여 전자지급결제대행, 예치금 관리, 환불처리 등 전자적
-                        방식으로 이루어지는 금융거래 서비스를 이용함에 있어 회사와 이용자 간의 권리·의무를 명확히 하고 안전한
-                        거래를 보장하기 위함을 목적으로 합니다. 회사는 관련 법령을 준수하여 전자금융거래의 안정성과 신뢰성을 확보하며,
-                        이용자는 본 약관에 따라 해당 서비스를 이용함으로써 이에 동의한 것으로 간주됩니다.
-                        </div>
+                        <div class="terms-content" th:text="${Config.termsFinance}">약관 내용이 여기에 표시됩니다.</div>
                     </td>
                     </tr>
                 </table>
@@ -169,13 +209,7 @@
                     <tr>
                     <th class="th-blue">약관내용</th>
                     <td class="terms-box">
-                        <div class="terms-content">
-                        <b>제 4 조 (위치정보 이용약관)</b><br>
-                        이 약관은 케이마켓 모바일 애플리케이션 등에서 제공되는 위치기반 서비스를 이용함에 있어 회사와 이용자 간의 권리·의무 및 책임사항을
-                        규정함을 목적으로 합니다. 회사는 위치정보의 수집·이용·제공 과정에서 관련 법령을 준수하며, 이용자는 서비스 이용 과정에서 본인의
-                        위치정보가 활용될 수 있음을 인지하고 이에 동의하여야 합니다. 회사는 이용자의 권익 보호를 위하여 위치정보 처리에 관한 절차와 안전성
-                        확보에 최선을 다합니다.
-                        </div>
+                        <div class="terms-content" th:text="${Config.termsLocation}">약관 내용이 여기에 표시됩니다.</div>
                     </td>
                     </tr>
                 </table>
@@ -195,13 +229,7 @@
                     <tr>
                     <th class="th-blue">약관내용</th>
                     <td class="terms-box">
-                        <div class="terms-content">
-                        <b>제 5 조 (개인정보처리방침)</b><br>
-                        이 약관은 케이마켓 서비스 제공과 관련하여 수집되는 이용자의 개인정보 처리방침을 규정함을 목적으로 합니다. 회사는 개인정보보호법
-                        등 관련 법령을 준수하여 이용자의 개인정보를 수집·이용·보관·파기하며, 그 과정에서 개인정보의 안전성 확보와 권익 보호를 위하여
-                        필요한 기술적·관리적 조치를 강구합니다. 또한, 이용자는 회사의 개인정보 처리와 관련하여 고지되는 범위와 절차에 동의하며, 회사는
-                        개인정보의 처리 목적 달성 후 지체 없이 파기하거나 법령에 따라 보관합니다.
-                        </div>
+                        <div class="terms-content" th:text="${Config.termsPrivacy}">약관 내용이 여기에 표시됩니다.</div>
                     </td>
                     </tr>
                 </table>
@@ -209,10 +237,270 @@
                     <button type="submit" class="btn">수정하기</button>
                 </div>
             </form>
+
+            <!-- ===== 약관 수정 모달 ===== -->
+            <div class="modal-backdrop" id="termsModalBackdrop" aria-hidden="true"></div>
+            <div class="modal" id="termsModal" role="dialog" aria-modal="true"
+                 aria-labelledby="termsModalTitle" aria-hidden="true">
+                <div class="modal-dialog" tabindex="-1" style="border-radius:0 !important; width:720px; max-width:calc(100% - 40px);">
+                    <div class="modal-header" style="border-radius:0 !important;">
+                        <div>
+                            <span id="termsModalTitle">약관 수정</span>
+                            <span class="date" id="termsModalSubTitle" style="margin-left:10px; opacity:.85;"></span>
+                        </div>
+                        <button class="modal-close" type="button" aria-label="닫기" id="termsClose">✕</button>
+                    </div>
+
+                    <form id="termsForm" class="modal-body review-form" method="post" action="/NICHIYA/admin/terms">
+                        <!-- CSRF 토큰(프로젝트에 맞게 바인딩) -->
+                        <!--<input type="hidden" name="_csrf" th:value="${_csrf.token}">-->
+                        <!-- 어떤 섹션인지(BUYER/SELLER/FINANCE/LOCATION/PRIVACY) -->
+                        <input type="hidden" name="type" id="termsType">
+
+                        <table class="review-grid" style="border-top:1px solid #eee;">
+                            <tr>
+                                <td>약관 내용</td>
+                                <td>
+            <textarea id="termsTextarea" name="content" maxlength="500"
+                      placeholder="수정할 약관 내용을 입력하세요 (최대 500자)"
+                      style="width:100%; min-height:160px;"></textarea>
+                                    <div class="char-count"><span id="termsCount">0</span>/500</div>
+                                </td>
+                            </tr>
+                        </table>
+
+                        <div class="review-actions" style="display:flex; gap:10px; justify-content:center; margin-top:16px;">
+                            <button type="button" id="termsCancel"
+                                    style="min-width:120px; height:38px; border:0; background:#ccc; color:#fff;">취소</button>
+                            <button type="submit"
+                                    style="min-width:120px; height:38px; border:0; background:black; color:#fff; font-weight:500;">저장</button>
+                        </div>
+
+                        <button class="sr-only" id="termsSentinel">끝</button>
+                    </form>
+                </div>
+            </div>
+
         </div>
     </main>
 
-    <style>
+<!-- 모달 전용 스타일 -->
+<style>
+    /* 전체 오버레이 */
+    .modal-backdrop {
+        position: fixed; inset: 0;
+        background: rgba(0,0,0,.45);
+        display: none;
+        z-index: 9998;
+    }
+    .modal-backdrop.is-open { display: block; }
+
+    /* 모달 박스 */
+    .modal {
+        position: fixed; inset: 0;
+        display: none;
+        place-items: center;
+        z-index: 9999;
+    }
+    .modal.is-open { display: grid; }
+
+    .modal-dialog {
+        width: 860px; max-width: calc(100% - 40px);
+        background: #fff; border-radius: 10px;
+        box-shadow: 0 20px 60px rgba(0,0,0,.25);
+        overflow: hidden;
+        font-family: sans-serif;
+    }
+    /* 상단 바 */
+    .modal-header {
+        background: black; color:#fff;
+        padding: 4px 16px; font-weight: 700;
+        display: flex; align-items: center; justify-content: space-between;
+    }
+    .modal-header .date { font-weight: 400; opacity:.9; margin-left: 12px; }
+    .modal-close {
+        appearance: none; border: 0; background: transparent;
+        color:#fff; font-size: 20px; cursor: pointer; padding: 4px 8px;
+    }
+    /* 본문 */
+    .modal-body { padding: 0; }
+    .section {
+        padding: 14px 18px;
+    }
+    .section-title {
+        font-weight: 700; margin-bottom: 8px;
+    }
+    table.order-info {
+        width: 100%; border-collapse: collapse; font-size: 14px;
+    }
+    .order-info th, .order-info td {
+        border-bottom: 1px solid #eee; padding: 10px; vertical-align: middle;
+    }
+    .order-info thead th {
+        background: #dedede; color:#fff; font-size: 12px; height: 38px;
+    }
+    .thumb { width: 120px; }
+    .price {
+        font-size: 18px; font-weight: 800; margin-top: 8px;
+    }
+    .right { text-align: right; white-space: nowrap; }
+    /* 배송정보 표 */
+    .kv { width: 100%; border-collapse: collapse; font-size: 14px; }
+    .kv td { border-bottom: 1px solid #eee; padding: 10px; padding-left: 13px; }
+    .kv td:first-child {height: 45px; background-color: #f2f2f2; text-align: center; width: 130px; }
+    /* 접근성 포커스 트랩용 */
+    .sr-only { position:absolute; width:1px; height:1px; padding:0; margin:-1px; overflow:hidden; clip:rect(0,0,0,0); border:0; }
+
+    /* ===== 리뷰 모달 보강 ===== */
+    .review-form { padding: 18px; }
+    .review-grid { width:100%; border-collapse: collapse; font-size:14px; }
+    .review-grid td { border-bottom:1px solid #eee; padding:10px; }
+    .review-grid td:first-child { width:120px; text-align:center; background:#f2f2f2; }
+    .review-title {
+        border:none; border-bottom:1px solid gray; width:270px; outline:none;
+        height:34px; padding:6px 8px; box-sizing:border-box;
+    }
+    .review-textarea {
+        width:100%; resize:none; outline:none; padding:8px; box-sizing:border-box; height:160px;
+    }
+    .review-actions { display:flex; justify-content:center; gap:10px; margin-top:16px; }
+    .char-count { font-size:12px; color:#666; text-align:right; margin-top:6px; }
+
+    /* 별점: 기본은 빈 별(☆), 선택/호버 시 채움(★) */
+    .rating { display:inline-flex; flex-direction: row-reverse; gap:4px; }
+    .rating input { position:absolute; opacity:0; }
+    .rating label { cursor:pointer; font-size:22px; line-height:1; }
+
+    /* 기본은 빈 별 */
+    .rating label::before { content: '☆'; }
+
+    /* 선택된 값과 그 왼쪽(시각적 기준)까지 채움 */
+    .rating input:checked ~ label::before { content: '★'; }
+
+    /* 마우스 올렸을 때 미리보기(호버 구간까지 채움) */
+    .rating label:hover::before,
+    .rating label:hover ~ label::before { content: '★'; }
+</style>
+
+
+<script>
+    (function(){
+        // 섹션 제목 → 서버 type 매핑
+        const TYPE_MAP = {
+            '구매회원 약관': 'BUYER',
+            '판매회원 약관': 'SELLER',
+            '전자금융거래 약관': 'FINANCE',
+            '위치정보 이용약관': 'LOCATION',
+            '개인정보처리방침 약관': 'PRIVACY'
+        };
+
+        // 모달 요소
+        const $backdrop  = document.getElementById('termsModalBackdrop');
+        const $modal     = document.getElementById('termsModal');
+        const $dialog    = $modal.querySelector('.modal-dialog');
+        const $close     = document.getElementById('termsClose');
+        const $cancel    = document.getElementById('termsCancel');
+        const $form      = document.getElementById('termsForm');
+        const $textarea  = document.getElementById('termsTextarea');
+        const $type      = document.getElementById('termsType');
+        const $title     = document.getElementById('termsModalTitle');
+        const $subTitle  = document.getElementById('termsModalSubTitle');
+        const $count     = document.getElementById('termsCount');
+        const $sentinel  = document.getElementById('termsSentinel');
+
+        let lastFocusedBtn = null; // 포커스 복귀용
+
+        // 글자 수 카운트
+        function updateCount(){
+            $count.textContent = ($textarea.value || '').length;
+        }
+        $textarea.addEventListener('input', updateCount);
+
+        // 모달 열기
+        function openTermsModal(sectionTitle, initialText){
+            $title.textContent = '약관 수정';
+            $subTitle.textContent = `- ${sectionTitle}`;
+            $textarea.value = (initialText || '').trim();
+            updateCount();
+            $type.value = TYPE_MAP[sectionTitle] || 'UNKNOWN';
+
+            $backdrop.classList.add('is-open');
+            $modal.classList.add('is-open');
+
+            // 포커스 트랩 시작
+            setTimeout(() => $dialog.focus(), 0);
+        }
+
+        // 모달 닫기
+        function closeTermsModal(){
+            $backdrop.classList.remove('is-open');
+            $modal.classList.remove('is-open');
+            // 포커스 복귀
+            if (lastFocusedBtn) lastFocusedBtn.focus();
+        }
+
+        // ESC/배경 클릭 닫기
+        document.addEventListener('keydown', (e) => {
+            if (!$modal.classList.contains('is-open')) return;
+            if (e.key === 'Escape') closeTermsModal();
+        });
+        $backdrop.addEventListener('click', closeTermsModal);
+        $close.addEventListener('click', closeTermsModal);
+        $cancel.addEventListener('click', closeTermsModal);
+
+        // 접근성: 포커스 트랩 (sentinel로 순환)
+        $sentinel.addEventListener('focus', () => $close.focus());
+
+        // ===== “수정하기” 버튼들에 연결 =====
+        // 기준: 각 섹션 하단의 버튼들 중 텍스트가 '수정하기' 인 버튼
+        const editButtons = Array.from(document.querySelectorAll('form .btn'))
+            .filter(b => b.textContent.trim() === '수정하기');
+
+        editButtons.forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                e.preventDefault();
+
+                lastFocusedBtn = btn;
+
+                // 섹션 제목과 본문 텍스트 추출
+                // table 이전에 있는 .title-line 안의 텍스트를 제목으로 사용
+                const rightBar = btn.closest('div[style*="text-align:right"]');
+                const table = rightBar?.previousElementSibling;
+                const titleLine = table?.previousElementSibling; // .title-line
+                const sectionTitle = (titleLine?.innerText || '').trim(); // 예: "구매회원 약관"
+                const readDiv = table?.querySelector('.terms-content');
+                const initialText = (readDiv?.innerText || '').trim();
+
+                openTermsModal(sectionTitle, initialText);
+            });
+        });
+
+        // ===== 기본 submit으로 서버 전송 (/NICHIYA/admin/terms) =====
+        // 필요 시 클라이언트 검증 추가
+        $form.addEventListener('submit', (e) => {
+            if (!$type.value || $type.value === 'UNKNOWN') {
+                e.preventDefault();
+                alert('알 수 없는 섹션입니다. 페이지를 새로고침 후 다시 시도해 주세요.');
+                return;
+            }
+            if (!$textarea.value.trim()) {
+                e.preventDefault();
+                alert('약관 내용을 입력해 주세요.');
+                return;
+            }
+            if ($textarea.value.length > 500) {
+                e.preventDefault();
+                alert('약관 내용은 500자 이내여야 합니다.');
+                return;
+            }
+            // 정상 submit → 닫기는 서버 응답 후 페이지 리로드로 처리
+        });
+
+    })();
+</script>
+
+
+<style>
         .euro-nav__list {
             max-height: 0;                /* 기본은 접힘 */
             overflow: hidden;             /* 안 보이게 */
