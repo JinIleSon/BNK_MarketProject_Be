@@ -9,6 +9,8 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.math.BigDecimal;
+
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
@@ -40,4 +42,28 @@ public class Orders {
     // 추가 필드 - count(orders_id)
     @Transient
     private int orders_count;
+
+    // 주문상세 추가 필드
+    @Transient
+    private String name;
+    @Transient
+    private String phone;
+    @Transient
+    private int quantity;
+    @Transient
+    private int product_code;
+    @Transient
+    private String product_name;
+    @Transient
+    private BigDecimal price;
+    @Transient
+    private int discount;
+    @Transient
+    private int delichar;
+    @Transient
+    private String url;
+    @Transient
+    private String ruphone;
+    @Transient
+    private String suname;
 }

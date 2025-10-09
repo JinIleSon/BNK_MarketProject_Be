@@ -83,6 +83,49 @@
 
     <!--    개별로 작성할 부분(덩어리 구분) -->
 
+    <select id="selectOrders" resultType="kr.co.bnk_marketproject_be.dto.OrdersDTO">
+    SELECT
+    o.order_code,
+    u.name,
+    u.PHONE,
+    pa.METHOD,
+    pa.STATUS,
+    oi.quantity,
+    pi.url,
+    p.product_code,
+    p.PRODUCT_NAME,
+    p.price,
+    p.discount,
+    p.DELICHAR,
+    ((p.PRICE  - p.DISCOUNT) * oi.QUANTITY + p.DELICHAR) AS total_amount,
+    d.recipient,
+    d.ADDRESS,
+    ru.phone AS ruphone,
+    su.name AS suname
+    FROM orders o
+    JOIN users u
+    ON o.users_id = u.ID
+    JOIN payments pa
+    ON o.id = pa.orders_id
+    JOIN order_items oi
+    ON o.id = oi.ORDERS_ID
+    JOIN products p
+    ON oi.PRODUCTS_ID = p.id
+    JOIN PRODUCT_IMAGES pi
+    ON p.id = pi.PRODUCTS_ID
+    JOIN DELIVERIES d
+    ON d.ORDERS_ID = o.id
+    LEFT JOIN users ru
+    ON TRIM(ru.name) = TRIM(d.recipient)
+    LEFT JOIN SELLERS s
+    ON s.id = p.SELLERS_ID
+    LEFT JOIN users su
+    ON su.id = s.USERS_ID
+    WHERE o.order_code=#{order_code}
+    </select>
+
+    <!--    개별로 작성할 부분(덩어리 구분) -->
+
     <select id="selectDeliveries" resultType="kr.co.bnk_marketproject_be.dto.DeliveriesDTO">
         SELECT
         pi.url,

@@ -16,6 +16,7 @@ public interface AdminMapper {
     public List<AdminAnnouncementDTO> selectAllAdminAnnouncement(@Param("pageRequestDTO") PageRequestDTO pageRequestDTO);
     public List<AdminFAQDTO> selectAllAdminFAQ(@Param("pageRequestDTO") PageRequestDTO pageRequestDTO);
     public List<AdminInquiryDTO> selectAllAdminInquiry(@Param("pageRequestDTO") PageRequestDTO pageRequestDTO);
+    public List<OrdersDTO> selectOrders(@Param("order_code") String order_code);
 
     // 항상 동일(total 세기)
     public int selectCountTotal(@Param("pageRequestDTO") PageRequestDTO pageRequestDTO);
