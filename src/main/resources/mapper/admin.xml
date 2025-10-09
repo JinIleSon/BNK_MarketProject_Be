@@ -83,6 +83,57 @@
 
     <!--    개별로 작성할 부분(덩어리 구분) -->
 
+    <select id="selectDeliveries" resultType="kr.co.bnk_marketproject_be.dto.DeliveriesDTO">
+        SELECT
+        pi.url,
+        p.product_code,
+        p.product_name,
+        u.name AS seller,
+        p.price AS price,
+        count(i.orders_id) AS item_count,
+        d.delichar,
+        o.total_amount as total_amount,
+        o.order_code as order_code,
+        d.recipient,
+        u.phone,
+        d.address,
+        d.delicom,
+        d.invoice,
+        d.note,
+        TO_CHAR(d.receipt, 'YYYY-MM-DD HH24:MI:SS') AS receipt
+        FROM deliveries d
+        JOIN orders o
+        on d.orders_id = o.id
+        JOIN users u
+        on u.id = o.users_id
+        JOIN order_items i
+        on o.id = i.orders_id
+        JOIN products p
+        on i.products_id = p.id
+        JOIN product_images pi
+        on pi.product_code = p.product_code
+        JOIN sellers s
+        on s.id = p.sellers_id
+        WHERE o.order_code = #{order_code}
+        group by pi.url,
+        p.product_code,
+        p.product_name,
+        d.delichar,
+        o.total_amount,
+        o.order_code,
+        d.recipient,
+        u.phone,
+        d.address,
+        d.delicom,
+        d.invoice,
+        d.note,
+        d.receipt,
+        u.name,
+        p.price
+    </select>
+
+    <!--    개별로 작성할 부분(덩어리 구분) -->
+
     <sql id="searchWhere">
         <where>
             <if test="pageRequestDTO.searchType != null and pageRequestDTO.keyword != ''">

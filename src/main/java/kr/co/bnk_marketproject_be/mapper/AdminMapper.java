@@ -38,4 +38,7 @@ public interface AdminMapper {
 
     // 상품 삭제
     public void deleteProduct(@Param("product_code") int product_code);
+
+    // 배송상세
+    public DeliveriesDTO selectDeliveries(@Param("order_code") String order_code);
 }

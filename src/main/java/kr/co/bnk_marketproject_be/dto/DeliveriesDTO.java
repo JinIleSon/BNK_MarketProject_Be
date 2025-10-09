@@ -6,6 +6,8 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.math.BigDecimal;
+
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
@@ -23,6 +25,7 @@ public class DeliveriesDTO {
     private String recipient;
     private int delichar;
     private String receipt;
+    private String note;
 
     public String getReceipt() {
         return receipt.substring(0, 19);
@@ -42,4 +45,17 @@ public class DeliveriesDTO {
     // 추가 필드 - order_items의 주문 건수(count (*))
     @Transient
     private int item_count;
+
+    // 배송상세를 위한 추가필드(7개의 테이블)
+    @Transient
+    private String url;
+    @Transient
+    private int product_code;
+    @Transient
+    private String phone;
+    @Transient
+    private String seller;
+    @Transient
+    private BigDecimal price;
+
 }

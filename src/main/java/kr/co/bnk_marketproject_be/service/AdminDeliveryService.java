@@ -7,6 +7,7 @@ import kr.co.bnk_marketproject_be.dto.PageRequestDTO;
 import kr.co.bnk_marketproject_be.dto.PageResponseAdminDeliveryDTO;
 import kr.co.bnk_marketproject_be.entity.Deliveries;
 import kr.co.bnk_marketproject_be.entity.Deliveries;
+import kr.co.bnk_marketproject_be.mapper.AdminMapper;
 import kr.co.bnk_marketproject_be.repository.AdminDeliveryRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -23,6 +24,8 @@ import java.util.List;
 public class AdminDeliveryService {
 
     private final AdminDeliveryRepository adminDeliveryRepository;
+
+    private final AdminMapper adminMapper;
 
     private final ModelMapper modelMapper;
 
@@ -75,5 +78,10 @@ public class AdminDeliveryService {
                 .dtoList(dtoList)
                 .total(total)
                 .build();
+    }
+
+    public DeliveriesDTO selectDelivery(String order_code){
+        DeliveriesDTO deliveriesDTO = adminMapper.selectDeliveries(order_code);
+        return deliveriesDTO;
     }
 }
