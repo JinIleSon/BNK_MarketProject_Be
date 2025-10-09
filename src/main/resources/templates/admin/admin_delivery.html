@@ -163,7 +163,7 @@
                 <!-- 주문상세 콘텐츠 템플릿: '첫번째 사진' 영역 그대로 -->
 <template id="orderDetailTemplate">
   <!-- ↓↓↓ 여기부터 기존 “첫번째 사진” 영역 전체를 그대로 붙여넣기 ↓↓↓ -->
-  <div style="font-size:18px; margin-bottom:10px; font-weight: 800;">상품정보</div>
+    <div style="font-size:18px; margin-bottom:10px; font-weight: 800;">상품정보 <span id="extraCount" style="font-size:14px; color:black; font-weight:400; margin-left:4px;"></span></div>
   <table style="border-collapse: collapse; border:none; width:1270px; text-align: center; ">
       <tr style="height:50px;border-top: 4px solid black; border-bottom: 1px solid #dddddd;">
         <td style="width:60px;"></td>
@@ -171,7 +171,7 @@
         <td style="">상품명</td>
         <td style="">판매자</td>
         <td style="">가격</td>
-        <td style="">수량</td>
+        <td style="">건수</td>
         <td style="">배송비</td>
         <td style="">결제금액</td>
       </tr>
@@ -602,6 +602,17 @@ document.querySelectorAll('table tr').forEach(tr=>{
             orderModalBody.appendChild(node);
 
             const $ = sel => orderModalBody.querySelector(sel);
+
+            // ▽ '외 n건' 표기 로직
+            const count = Number(dto.item_count || 0);
+            const extra = orderModalBody.querySelector('#extraCount');
+            if (extra) {
+                if (count > 1) {
+                    extra.textContent = `외 ${count - 1}건`;
+                } else {
+                    extra.textContent = ''; // 1건이면 비워둠
+                }
+            }
 
             /** Thymeleaf의 @{/{p}(p=...)}와 비슷한 규칙으로 변환
              * - 비어있거나 공백이면  /images/no-image.png 로 대체
