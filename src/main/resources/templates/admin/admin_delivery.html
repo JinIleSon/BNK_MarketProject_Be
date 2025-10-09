@@ -640,7 +640,7 @@ document.querySelectorAll('table tr').forEach(tr=>{
             // 상품정보
             $('#product_code')   && ($('#product_code').textContent   = dto.product_code ?? '');
             $('#product_name')   && ($('#product_name').textContent   = dto.product_name ?? '');
-            $('#seller')         && ($('#seller').textContent         = dto.seller ?? '');          // 컬럼 없으면 공란
+            $('#seller')         && ($('#seller').textContent         = (dto.suname ?? dto.seller ?? ''));  // 컬럼 없으면 공란
             $('#price')          && ($('#price').textContent          = dto.price != null ? asMoney(dto.price) : ''); // 없으면 공란
             $('#item_count')     && ($('#item_count').textContent     = dto.item_count ?? '');      // count(...) AS item_count
             $('#delichar')       && ($('#delichar').textContent       = dto.delichar != null ? asMoney(dto.delichar) : '');

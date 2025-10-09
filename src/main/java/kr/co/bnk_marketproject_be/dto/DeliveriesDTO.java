@@ -57,5 +57,7 @@ public class DeliveriesDTO {
     private String seller;
     @Transient
     private BigDecimal price;
+    @Transient
+    private String suname;
 
 }

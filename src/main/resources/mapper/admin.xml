@@ -131,9 +131,9 @@
         pi.url,
         p.product_code,
         p.product_name,
-        u.name AS seller,
-        p.price AS price,
-        count(i.orders_id) AS item_count,
+        u.name,
+        p.price,
+        count(i.orders_id) as item_count,
         d.delichar,
         o.total_amount as total_amount,
         o.order_code as order_code,
@@ -143,7 +143,8 @@
         d.delicom,
         d.invoice,
         d.note,
-        TO_CHAR(d.receipt, 'YYYY-MM-DD HH24:MI:SS') AS receipt
+        TO_CHAR(d.receipt, 'YYYY-MM-DD HH24:MI:SS') AS receipt,
+        su.name AS suname
         FROM deliveries d
         JOIN orders o
         on d.orders_id = o.id
@@ -157,6 +158,10 @@
         on pi.product_code = p.product_code
         JOIN sellers s
         on s.id = p.sellers_id
+        LEFT JOIN SELLERS s
+        ON s.id = p.SELLERS_ID
+        LEFT JOIN users su
+        ON su.id = s.USERS_ID
         WHERE o.order_code = #{order_code}
         group by pi.url,
         p.product_code,
@@ -172,7 +177,8 @@
         d.note,
         d.receipt,
         u.name,
-        p.price
+        p.price,
+        su.name
     </select>
 
     <!--    개별로 작성할 부분(덩어리 구분) -->
