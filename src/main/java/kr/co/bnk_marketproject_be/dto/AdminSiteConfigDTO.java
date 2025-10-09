@@ -28,4 +28,9 @@ public class AdminSiteConfigDTO {
     private String csEmail;         // 고객센터 이메일
     private String efinDisputeTel;  // 전자금융거래 분쟁담당
     private String copyrightText;   // 카피라이트
+    private String termsBuyer;     // TERMS_BUYER
+    private String termsSeller;    // TERMS_SELLER
+    private String termsFinance;   // TERMS_FINANCE
+    private String termsLocation;  // TERMS_LOCATION
+    private String termsPrivacy;   // TERMS_PRIVACY
 }

@@ -23,13 +23,18 @@
         <result property="csEmail"         column="CS_EMAIL"/>
         <result property="efinDisputeTel"  column="EFIN_DISPUTE_TEL"/>
         <result property="copyrightText"   column="COPYRIGHT_TEXT"/>
+        <result property="termsBuyer"    column="TERMS_BUYER"/>
+        <result property="termsSeller"   column="TERMS_SELLER"/>
+        <result property="termsFinance"  column="TERMS_FINANCE"/>
+        <result property="termsLocation" column="TERMS_LOCATION"/>
+        <result property="termsPrivacy"  column="TERMS_PRIVACY"/>
     </resultMap>
 
     <select id="selectOne" resultMap="SiteConfigMap">
         SELECT ID, SITE_TITLE, SITE_SUBTITLE, VERSION, UPDATED_AT,HEADER_LOGO,FOOTER_LOGO,FAVICON, COMPANY_NAME, CEO_NAME, BIZ_REG_NO, MAIL_ORDER_NO,
                ADDR_BASE, ADDR_DETAIL,
                CS_TEL, CS_HOURS, CS_EMAIL, EFIN_DISPUTE_TEL,
-               COPYRIGHT_TEXT
+               COPYRIGHT_TEXT, TERMS_BUYER, TERMS_SELLER, TERMS_FINANCE, TERMS_LOCATION, TERMS_PRIVACY
         FROM SITE_CONFIG
         ORDER BY ID
             FETCH FIRST 1 ROWS ONLY
@@ -40,7 +45,7 @@
                                  COMPANY_NAME, CEO_NAME, BIZ_REG_NO, MAIL_ORDER_NO,
                                  ADDR_BASE, ADDR_DETAIL,
                                  CS_TEL, CS_HOURS, CS_EMAIL, EFIN_DISPUTE_TEL,
-                                 COPYRIGHT_TEXT)
+                                 COPYRIGHT_TEXT, TERMS_BUYER, TERMS_SELLER, TERMS_FINANCE, TERMS_LOCATION, TERMS_PRIVACY)
         VALUES (
                        (SELECT COALESCE(MAX(ID),0)+1 FROM SITE_CONFIG),
                        #{siteTitle},
@@ -59,8 +64,13 @@
                        #{csHours},
                        #{csEmail},
                        #{efinDisputeTel},
-                       #{copyrightText}
-                       SYSTIMESTAMP
+                       #{copyrightText},
+                       #{termsBuyer},
+                       #{termsSeller},
+                       #{termsFinance},
+                       #{termsLocation},
+                       #{termsPrivacy}
+                                  SYSTIMESTAMP
                )
     </insert>
 
@@ -97,6 +107,12 @@
             <if test="csEmail        != null">CS_EMAIL         = #{csEmail},</if>
             <if test="efinDisputeTel != null">EFIN_DISPUTE_TEL = #{efinDisputeTel},</if>
             <if test="copyrightText  != null">COPYRIGHT_TEXT   = #{copyrightText},</if>
+            <if test="termsBuyer    != null">TERMS_BUYER    = #{termsBuyer},</if>
+            <if test="termsSeller   != null">TERMS_SELLER   = #{termsSeller},</if>
+            <if test="termsFinance  != null">TERMS_FINANCE  = #{termsFinance},</if>
+            <if test="termsLocation != null">TERMS_LOCATION = #{termsLocation},</if>
+            <if test="termsPrivacy  != null">TERMS_PRIVACY  = #{termsPrivacy},</if>
+
             UPDATED_AT = SYSTIMESTAMP
         </set>
         WHERE ID = (SELECT MIN(ID) FROM SITE_CONFIG)
