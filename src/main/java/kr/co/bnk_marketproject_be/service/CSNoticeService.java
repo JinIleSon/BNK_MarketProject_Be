@@ -1,60 +1,32 @@
 package kr.co.bnk_marketproject_be.service;
 
 import kr.co.bnk_marketproject_be.dto.CSNoticeDTO;
-import kr.co.bnk_marketproject_be.entity.CSNotice;
-import kr.co.bnk_marketproject_be.repository.CSNoticeRepository;
+import kr.co.bnk_marketproject_be.mapper.CSNoticeMapper;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
 
 @Service
 @RequiredArgsConstructor
 public class CSNoticeService {
 
-    private final CSNoticeRepository csNoticeRepository;
+    private final CSNoticeMapper csNoticeMapper;
 
-    // 공지사항 리스트 (최신글 5개)
-    public Page<CSNoticeDTO> getNoticeList(int page) {
-        Pageable pageable = PageRequest.of(page, 5, Sort.by("createdAt").descending());
-        return csNoticeRepository.findAll(pageable)
-                .map(n -> new CSNoticeDTO(
-                        n.getNoticeid(),
-                        n.getCategory(),
-                        n.getTitle(),
-                        n.getContent(),
-                        n.getStatus(),
-                        n.getCreatedAt()
-                ));
+    // 공지사항 목록
+    public List<CSNoticeDTO> getNoticeList(int page, String boardType) {
+        int pageSize = 5;
+        int offset = page * pageSize;
+        return csNoticeMapper.selectNoticeList(boardType, offset, pageSize);
     }
 
-    // 카테고리별 공지사항 리스트
-    public Page<CSNoticeDTO> getNoticeListByCategory(int page, String category) {
-        Pageable pageable = PageRequest.of(page, 5, Sort.by("createdAt").descending());
-        return csNoticeRepository.findByCategory(category, pageable)
-                .map(n -> new CSNoticeDTO(
-                        n.getNoticeid(),
-                        n.getCategory(),
-                        n.getTitle(),
-                        n.getContent(),
-                        n.getStatus(),
-                        n.getCreatedAt()
-                ));
+    // 공지사항 개수
+    public int getTotalCount(String boardType) {
+        return csNoticeMapper.countNotices(boardType);
     }
 
     // 공지사항 상세
-    public CSNoticeDTO getNoticeDetail(Integer id) {
-        CSNotice n = csNoticeRepository.findById(id)
-                .orElseThrow(() -> new IllegalArgumentException("공지사항 없음"));
-        return new CSNoticeDTO(
-                n.getNoticeid(),
-                n.getCategory(),
-                n.getTitle(),
-                n.getContent(),
-                n.getStatus(),
-                n.getCreatedAt()
-        );
+    public CSNoticeDTO getNoticeDetail(Long id) {
+        return csNoticeMapper.selectNoticeDetail(id);
     }
 }
