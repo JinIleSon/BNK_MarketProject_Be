@@ -24,7 +24,7 @@ public class UserDTO {
     private String detailAddress;
 
     //@Builder.Default // 기본 초기화, 추후계획예정
-    private String role = "member";
+    private String role = "user";
 
     private String created_at;
     private String updated_at;
