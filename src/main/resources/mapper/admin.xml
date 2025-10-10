@@ -6,6 +6,55 @@
 <mapper namespace="kr.co.bnk_marketproject_be.mapper.AdminMapper">
 
     <!--    개별로 작성할 부분(덩어리 구분) -->
+    <select id="selectSalesAll" resultType="kr.co.bnk_marketproject_be.dto.SalesDTO">
+        SELECT
+        s.BRAND_NAME,
+        s.BIZ_REGISTRATION_NUMBER,
+        COUNT(DISTINCT oi.ORDERS_ID) AS order_count,
+        COUNT(DISTINCT CASE WHEN o.status = '결제완료' THEN oi.ORDERS_ID END) AS completed_count,
+        COUNT(DISTINCT CASE
+        WHEN d.RECEIPT &lt;= SYSDATE - 1 AND d.RECEIPT > SYSDATE - 3
+        THEN oi.ORDERS_ID END) AS shipping_count,
+        COUNT(DISTINCT CASE
+        WHEN d.RECEIPT &lt;= SYSDATE - 3
+        THEN oi.ORDERS_ID END) AS delivered_count,
+        NVL(SUM(
+        CASE
+        WHEN oi.ORDERS_ID IS NOT NULL
+        THEN (NVL(p.PRICE,0) - NVL(p.DISCOUNT,0)) * NVL(oi.QUANTITY,1) + NVL(p.DELICHAR,0)
+        END
+        ), 0) AS order_total,
+        NVL(SUM(
+        CASE
+        WHEN o.status = '결제완료'
+        THEN (NVL(p.PRICE,0) - NVL(p.DISCOUNT,0)) * NVL(oi.QUANTITY,1) + NVL(p.DELICHAR,0)
+        END
+        ), 0) AS sales_total
+        FROM sellers s
+        LEFT JOIN products     p  ON p.SELLERS_ID  = s.id
+        LEFT JOIN order_items  oi ON oi.PRODUCTS_ID = p.id
+        LEFT JOIN orders       o  ON o.id          = oi.ORDERS_ID
+        LEFT JOIN deliveries   d  ON d.ORDERS_ID   = o.id
+        GROUP BY s.BRAND_NAME, s.BIZ_REGISTRATION_NUMBER
+        ORDER BY order_total DESC
+        OFFSET #{pageRequestDTO.offset} ROWS
+        FETCH NEXT #{pageRequestDTO.size} ROWS ONLY
+    </select>
+
+    <select id="selectCountTotalSales" resultType="int">
+        SELECT COUNT(*)
+        FROM (
+            SELECT s.BRAND_NAME
+            FROM sellers s
+            LEFT JOIN products     p  ON p.SELLERS_ID  = s.id
+            LEFT JOIN order_items  oi ON oi.PRODUCTS_ID = p.id
+            LEFT JOIN orders       o  ON o.id          = oi.ORDERS_ID
+            LEFT JOIN deliveries   d  ON d.ORDERS_ID   = o.id
+            GROUP BY s.BRAND_NAME, s.BIZ_REGISTRATION_NUMBER
+        )
+    </select>
+
+    <!--    개별로 작성할 부분(덩어리 구분) -->
     <select id="selectMember" resultType="kr.co.bnk_marketproject_be.dto.AdminMemberDTO">
         SELECT
         U.user_id as user_id,
@@ -71,6 +120,8 @@
         WHERE user_id = #{userId};
         END;
     </update>
+
+
 
     <!--    개별로 작성할 부분(덩어리 구분) -->
     <delete id="deleteProduct">
