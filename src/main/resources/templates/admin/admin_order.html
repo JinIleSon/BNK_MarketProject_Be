@@ -1,5 +1,5 @@
 <div th:replace="~{admin/_noneStickyHeader.html}"></div>
-
+<body th:data-ctx="@{/}">
     <main style="border-top:1px solid #e2e2e2; display: flex; justify-content: center; ">
         <div>
         <aside class="euro-nav" aria-label="관리자 사이드 메뉴" style="">
@@ -99,7 +99,10 @@
                     <tr th:each="admin, stat:${pageResponseDTO.dtoList}"
                             style="border-bottom:1px solid #e2e2e2; height:70px;vertical-align: middle;">
                         <td
-                        ><a href="#" style="font-weight: 800;" th:text="${admin.order_code}">10121211341</a></td>
+                        ><a href="#" style="font-weight: 800;" th:text="${admin.order_code}"
+                        class="order-link" th:attr="data-order-no=${admin.order_code},
+                                                    data-detail-url=@{/admin/order/detail}"
+                        >10121211341</a></td>
                         <td th:text="${admin.userId}">abc123</td>
                         <td th:text="${admin.user_name}">김유신</td>
                         <td th:text="${admin.orders_count}">2</td>
@@ -112,14 +115,15 @@
                             style="color:#8bd8a7">결제완료</td>
                         <td th:text="${admin.created_at}">0000-00-00 00:00:00</td>
                         <td>
-                            <button style="height:30px; border: 1px solid #e2e2e2;"
-                            class="ship-btn" 
-                            data-order-no="10121211341"
-                            data-recipient="김유신"
-                            data-zip="12345"
-                            data-addr1="부산광역시 부산진구 부전동 123"
-                            data-addr2="OO 빌딩 3층 301호"
-                            data-etc="문 앞에 놓아주세요">배송하기</button>
+                            <button style="cursor:pointer;height:30px; border: 1px solid #e2e2e2;"
+                            class="ship-btn"
+                            th:attr="
+                            data-order-no=${admin.order_code},
+                            data-recipient=${admin.recipient},
+                            data-zip=${admin.postcode},
+                            data-addr1=${admin.user_address},
+                            data-addr2=${admin.detail_address}
+                            ">배송하기</button>
                         </td>
                     </tr>
                 </table>
@@ -286,7 +290,7 @@
 <template id="shipFormTemplate">
   <div class="ship-form__wrap">
     <!-- 제목 라인은 모달 헤더에서 렌더링하므로 여기엔 폼만 -->
-    <form>
+    <form th:action="@{/admin/delivery/register}" method="post">
       <table class="ship-form__table">
         <colgroup>
           <col style="width:140px">
@@ -295,47 +299,49 @@
         <tbody>
           <tr>
             <th style="font-size: 14px;">주문번호</th>
-            <td><input type="text" class="ipt" id="sf-orderNo" readonly style=""></td>
+            <td><input type="text" name="order_code" class="ipt" id="sf-orderNo" readonly style="" required></td>
           </tr>
           <tr>
             <th style="font-size: 14px;">수령인</th>
-            <td><input type="text" class="ipt" id="sf-recipient" placeholder="홍길동" style="outline: none;"></td>
+            <td><input type="text" name="recipient" class="ipt" id="sf-recipient" placeholder="홍길동" required style="outline: none;"></td>
           </tr>
           <tr>
             <th style="font-size: 14px;">우편번호</th>
-            <td><input type="text" class="ipt" id="sf-zip" placeholder="12345" style="outline: none;"></td>
+            <td><input type="text" name="zipcode" class="ipt" id="sf-zip" placeholder="12345" required style="outline: none;"></td>
           </tr>
           <tr>
             <th style="font-size: 14px;">기본주소</th>
-            <td><input type="text" class="ipt" id="sf-addr1" placeholder="부산광역시 부산진구 부전동 123" style="outline: none;"></td>
+            <td><input type="text" name="address" class="ipt" id="sf-addr1" placeholder="부산광역시 부산진구 부전동 123" required style="outline: none;"></td>
           </tr>
           <tr>
             <th style="font-size: 14px;">상세주소</th>
-            <td><input type="text" class="ipt"id="sf-addr2" placeholder="OO 빌딩 3층 301호" style="outline: none;"></td>
+            <td><input type="text" name="address2" class="ipt" id="sf-addr2" placeholder="OO 빌딩 3층 301호" required style="outline: none;"></td>
           </tr>
           <tr>
             <th style="font-size: 14px;">택배사</th>
             <td>
-              <select class="sel" style="padding-left:6px; outline: none;">
+              <select class="delicom" name="delicom" style="padding-left:6px; outline: none; height:33px; border: 1px solid #d0d0d0;" required>
                 <option>택배사선택</option>
-                <option>대한통운</option>
-                <option>한진택배</option>
-                <option>롯데택배</option>
+                <option value="대한통운">대한통운</option>
+                <option value="한진택배">한진택배</option>
+                <option value="우체국">우체국</option>
+                <option value="로젠택배">로젠택배</option>
+                <option value="경동택배">경동택배</option>
               </select>
             </td>
           </tr>
           <tr>
             <th style="font-size: 14px;">운송장번호</th>
-            <td><input type="text" class="ipt" placeholder="발급받은 택배 송장번호 입력" style="outline: none;"></td>
+            <td><input type="text" name="invoice" class="ipt" required placeholder="발급받은 택배 송장번호 입력(11자리)" style="outline: none;"></td>
           </tr>
           <tr>
             <th style="font-size: 14px;">기타</th>
-            <td><textarea class="txt" id="sf-etc" placeholder="기타정보입력" style="resize:none; outline: none;" ></textarea></td>
+            <td><textarea class="txt" name="note" id="sf-etc" required placeholder="기타정보입력" style="resize:none; outline: none;" ></textarea></td>
           </tr>
         </tbody>
       </table>
       <div class="ship-form__actions" style="display: flex; justify-content: center;">
-        <button type="button" class="btn-primary" id="shipSubmitBtn" style="background-color: black !important; font-weight:300;">등록하기</button>
+        <button type="submit" class="btn-primary" id="shipSubmitBtn" style="background-color: black !important; font-weight:300;">등록하기</button>
       </div>
     </form>
   </div>
@@ -539,19 +545,7 @@
   const orderModalBody    = document.getElementById('orderModalBody');
   const orderTpl          = document.getElementById('orderDetailTemplate');
 
-  function openOrderModal(orderNoText){
-  document.getElementById('orderModalTitle').textContent = '주문상세';
-  document.getElementById('orderModalNo').textContent = orderNoText || '';
 
-  orderModalBody.innerHTML = '';
-  if (orderTpl){
-    const node = orderTpl.content.cloneNode(true);
-    orderModalBody.appendChild(node);
-  }
-  orderModalOverlay.classList.add('show');
-  orderModalOverlay.setAttribute('aria-hidden', 'false');
-  document.body.style.overflow='hidden';
-  }
   function closeOrderModal(){
     orderModalOverlay.classList.remove('show');
     orderModalOverlay.setAttribute('aria-hidden', 'true');
@@ -564,17 +558,210 @@
   window.addEventListener('keydown', (e)=>{
     if(e.key === 'Escape' && orderModalOverlay.classList.contains('show')) closeOrderModal();
   });
+        // 컨텍스트(/NICHIYA) 끝 슬래시 제거
+        const CTX = (document.body.dataset.ctx || '').replace(/\/$/, '');
 
-  // 목록의 주문번호를 클릭하면 모달 열기
-  document.querySelectorAll('table a[href="#"]').forEach(a=>{
-    a.addEventListener('click', (e)=>{
-      // 주문번호 링크만 대상으로 제한
-      const isOrderNo = /^\d{8,}$/.test(a.textContent.trim());
-      if(!isOrderNo) return;
-      e.preventDefault();
-      openOrderModal(a.textContent.trim());
-    });
-  });
+        function buildImageSrc(url){
+            // 1) null/빈값이면 기본이미지
+            if(!url) return `${CTX}/images/no-image.png`;
+
+            // 2) 절대 URL(http/https)이면 그대로
+            if(/^https?:\/\//i.test(url)) return url;
+
+            // 3) 윈도우 경로 -> 웹 경로
+            let s = String(url).trim().replace(/\\/g, '/');
+
+            // 4) 이미 '/images/...' 로 시작하면 그 뒤만 사용
+            //    또는 '.../images/...' 가 포함돼 있으면 그 뒤만 사용
+            const idx = s.toLowerCase().lastIndexOf('/images/');
+            if (idx !== -1) s = s.substring(idx + '/images/'.length);
+
+            // 5) 디렉토리까지 섞여 있어도 맨 마지막 파일명만 사용
+            s = s.split('/').filter(Boolean).pop();
+
+            // 6) 최종 경로
+            return `${CTX}/images/${s}`;
+        }
+
+        // 통화/숫자 포맷터
+        const cur = new Intl.NumberFormat('ko-KR');
+        // 할인 표기: 0이면 '-' 없이
+        const fmtDiscount = v => {
+            const n = Number(v) || 0;
+            return (n > 0 ? '-' : '') + cur.format(n);
+        };
+
+        // 주문상세 모달 열고 내용 주입 (컨트롤러: GET /admin/order/detail?order_code=...)
+        async function openOrderModal(orderNo, aEl){
+            // 헤더 셋업
+            document.getElementById('orderModalTitle').textContent = '주문상세';
+            document.getElementById('orderModalNo').textContent = orderNo || '';
+
+            // URL 생성 (data-detail-url 우선)
+            const base = (aEl && aEl.dataset.detailUrl) ? aEl.dataset.detailUrl : '/admin/order/detail';
+            const url  = `${base}?order_code=${encodeURIComponent(orderNo)}`;
+
+            // 1) 데이터 가져오기 (컨트롤러에 맞춤)
+            let rows = [];
+            try{
+                const res = await fetch(url, {
+                    headers: { 'Accept': 'application/json' },
+                    credentials: 'same-origin'       // 쿠키/세션 포함
+                });
+
+                // 디버깅용
+                console.log('[order detail]', res.status, url, res.headers.get('content-type'));
+
+                // JSON 아닌 응답(예: 로그인/에러 HTML) 방어
+                const ct = res.headers.get('content-type') || '';
+                if (!res.ok || !ct.includes('application/json')) {
+                    throw new Error(`Bad response: ${res.status} ${ct}`);
+                }
+
+                rows = await res.json();
+            }catch(e){
+                console.error('order detail fetch error:', e);
+                rows = [];
+            }
+
+            if(!Array.isArray(rows) || rows.length === 0){
+                orderModalBody.innerHTML = `<div style="padding:12px;">주문 상세 데이터를 가져오지 못했습니다.</div>`;
+                orderModalOverlay.classList.add('show');
+                orderModalOverlay.setAttribute('aria-hidden','false');
+                document.body.style.overflow = 'hidden';
+                return;
+            }
+
+            // 2) 합계 계산
+            let totalProduct = 0, totalDiscount = 0, totalDeli = 0, totalPay = 0;
+            rows.forEach(r=>{
+                totalProduct  += (r.price || 0) * (r.quantity || 0);
+                totalDiscount += (r.discount || 0) * (r.quantity || 0);
+                totalDeli     += (r.delichar || 0);            // ← 소문자
+                totalPay      += (r.total_amount || 0);
+            });
+
+            const head = rows[0];
+
+            // 품목 행
+            const itemRowsHtml = rows.map(r => `
+  <tr style="border-bottom:1px solid #dddddd;">
+    <td style="display:flex;">
+      <div style="margin:10px;width:80px;height:75px; background:#dddddd;">
+        <img src="${buildImageSrc(r.url)}"
+         alt=""
+         style="width:100%;height:100%;object-fit:cover;">
+      </div>
+    </td>
+    <td>${r.product_code ?? ''}</td>
+    <td>${r.product_name ?? ''}</td>     <!-- ← 소문자 -->
+    <td>${r.suname ?? ''}</td>
+    <td>${cur.format(Number(r.price) || 0)}</td>
+    <td>${fmtDiscount(r.discount)}</td>
+    <td>${r.quantity ?? 0}</td>
+    <td>${cur.format(Number(r.delichar) || 0)}</td>  <!-- ← 소문자 -->
+    <td>${cur.format(Number(r.total_amount) || 0)}</td>
+  </tr>
+`).join('');
+
+            // 4) 본문 렌더
+            orderModalBody.innerHTML = `
+    <div style="font-size:18px; margin-bottom:10px; font-weight:800;">상품정보</div>
+    <table style="border-collapse:collapse; width:100%; text-align:center;">
+      <tr style="height:50px;border-top:4px solid #000;border-bottom:1px solid #ddd;">
+        <td style="width:60px;"></td>
+        <td>상품번호</td>
+        <td>상품명</td>
+        <td>판매자</td>
+        <td>가격</td>
+        <td>할인</td>
+        <td>수량</td>
+        <td>배송비</td>
+        <td>결제금액</td>
+      </tr>
+      ${itemRowsHtml}
+    </table>
+
+    <div style="border:1px solid #f2f2f2; max-width:300px; margin-left:auto; padding:20px; background:#f2f2f2;">
+      <div style="padding-left:7px;padding-right:7px;">
+        <div style="margin-bottom:6px;">총 상품금액<span style="float:right;">${cur.format(totalProduct)} 원</span></div>
+        <div style="margin-bottom:6px;">총 할인금액<span style="float:right;">${fmtDiscount(totalDiscount)} 원</span></div>
+        <div style="margin-bottom:6px;">배송비<span style="float:right;">${cur.format(totalDeli)} 원</span></div>
+        <div style="margin-bottom:6px;">총 결제금액<div style="float:right;"><span style="color:red;">${cur.format(totalPay)}</span> 원</div></div>
+      </div>
+    </div>
+
+    <div style="display:flex;margin-top:14px;margin-bottom:10px;">
+      <div style="font-size:18px;"><b>결제정보</b></div>
+    </div>
+    <div style="border-top:4px solid; width:100%; display:flex; border-bottom:1px solid #ddd;">
+      <div style="width:150px; padding:17px; background:#f2f2f2;">
+        <div style="margin-bottom:6px;">주문정보</div>
+        <div style="margin-bottom:6px;">결제방법</div>
+        <div style="margin-bottom:6px;">주문자</div>
+        <div style="margin-bottom:6px;">연락처</div>
+        <div>결제상태</div>
+      </div>
+      <div style="padding-left:19px; display:flex; flex-direction:column;padding-top:14px;">
+        <div style="margin-bottom:7px;">${head.order_code}</div>
+        <div style="margin-bottom:7px;">${head.method || ''}</div>   <!-- ← 소문자 -->
+        <div style="margin-bottom:7px;">${head.name || ''}</div>
+        <div style="margin-bottom:4px;">${head.phone || ''}</div>    <!-- ← 소문자 -->
+        <div style="margin-bottom:4px; color:${head.status==='결제완료' ? '#4cbf6e' : '#333'};">
+          ${head.status || ''}                                       <!-- ← 소문자 -->
+        </div>
+      </div>
+      <div style="display:flex; align-items:end; margin-left:auto;">
+        <div style="width:210px; margin-right:45px; margin-bottom:8px;">
+          <span>총 결제금액</span>
+          <span style="float:right;">원</span>
+          <span style="color:red; float:right;">${cur.format(totalPay)}</span>
+        </div>
+      </div>
+    </div>
+
+    <div style="display:flex; margin-top:14px; margin-bottom:10px; ">
+      <div style="font-size:18px;"><b>배송정보</b></div>
+    </div>
+    <div style="border-top:4px solid; width:100%; display:flex; border-bottom:1px solid #ddd;">
+      <div style="width:150px; padding:17px; background:#f2f2f2;">
+        <div style="margin-bottom:6px;">수취인</div>
+        <div style="margin-bottom:6px;">연락처</div>
+        <div>배송지 주소</div>
+      </div>
+      <div style="padding-left:19px; display:flex; flex-direction:column; padding-top: 15px;">
+<div style="margin-bottom:7px;">${head.recipient || ''}</div>
+<div style="margin-bottom:7px;">${head.ruphone || ''}</div>
+<div>${head.address || ''}</div>
+      </div>
+    </div>
+  `;
+
+            // 주문합계 컬럼 값 업데이트
+            const orderRow = document.querySelector(`a.order-link[data-order-no="${orderNo}"]`)?.closest('tr');
+            if (orderRow) {
+                // 5번째 셀(주문합계 위치)에 접근
+                const sumCell = orderRow.querySelectorAll('td')[4];
+                if (sumCell) {
+                    sumCell.textContent = cur.format(totalPay); // 숫자 포맷 후 표시
+                }
+            }
+
+            // 5) 모달 표시
+            orderModalOverlay.classList.add('show');
+            orderModalOverlay.setAttribute('aria-hidden','false');
+            document.body.style.overflow = 'hidden';
+        }
+
+        // 주문번호(a.order-link) 클릭 시 상세 열기
+        document.querySelectorAll('a.order-link').forEach(a=>{
+            a.addEventListener('click', (e)=>{
+                e.preventDefault();
+                const orderNo = a.getAttribute('data-order-no') || a.textContent.trim();
+                if(!orderNo) return;
+                openOrderModal(orderNo, a);
+            });
+        });
 // ▼ 배송입력 모달 핸들러
 const shipModalOverlay = document.getElementById('shipModal');
 const shipModalBody    = document.getElementById('shipModalBody');
@@ -620,7 +807,7 @@ document.querySelectorAll('table tr').forEach(tr=>{
   const btn = tr.querySelector('button.ship-btn'); // class 선택자 사용 권장
   if(!btn) return;
 
-  btn.addEventListener('click', (e)=>{
+  btn.addEventListener('click', async (e)=>{
     e.preventDefault();
 
     const tds = tr.querySelectorAll('td');
@@ -629,18 +816,105 @@ document.querySelectorAll('table tr').forEach(tr=>{
     const orderNo = btn.dataset.orderNo || (tds[0].textContent || '').trim();
     const status  = (tds[6].textContent || '').trim();
 
-    if(status === '결제완료'){
-      const prefill = {
-        recipient: btn.dataset.recipient || '',
-        zip:       btn.dataset.zip || '',
-        addr1:     btn.dataset.addr1 || '',
-        addr2:     btn.dataset.addr2 || '',
-        etc:       btn.dataset.etc || ''
+      if (status !== '결제완료') return;
+
+      // 기본은 data-* 값 사용
+      let prefill = {
+          recipient: btn.dataset.recipient || '',
+          zip:       btn.dataset.zip || '',
+          addr1:     btn.dataset.addr1 || '',
+          addr2:     btn.dataset.addr2 || ''
       };
+      // 값이 하나라도 비어있으면 상세 API로 채움
+      if (!prefill.recipient || !prefill.zip || !prefill.addr1 || !prefill.addr2) {
+          try {
+              const base = btn.closest('tr')?.querySelector('a.order-link')?.dataset.detailUrl || '/admin/order/detail';
+              const res  = await fetch(`${base}?order_code=${encodeURIComponent(orderNo)}`, {
+                  headers: { 'Accept': 'application/json' },
+                  credentials: 'same-origin'
+              });
+              if (res.ok && (res.headers.get('content-type')||'').includes('application/json')) {
+                  const rows = await res.json();
+                  const head = rows && rows[0] ? rows[0] : {};
+                  prefill = {
+                      recipient: prefill.recipient || head.recipient || '',
+                      zip:       prefill.zip       || head.postcode  || '',
+                      addr1:     prefill.addr1     || head.user_address || head.address || '',
+                      addr2:     prefill.addr2     || head.detail_address || ''
+                  };
+              }
+          } catch(err) {
+              console.error('fallback fetch fail', err);
+          }
+      }
+
       openShipModal(orderNo, prefill);
-    }
+
   });
 });
-  
+        // ========== 캐시 ==========
+        const orderCache = new Map(); // orderNo -> { rows, totalPay }
+
+        // 합계 계산 헬퍼 (openOrderModal과 동일 로직)
+        function calcTotals(rows){
+            let totalPay = 0, totalProduct = 0, totalDiscount = 0, totalDeli = 0;
+            rows.forEach(r=>{
+                totalProduct  += (r.price || 0) * (r.quantity || 0);
+                totalDiscount += (r.discount || 0) * (r.quantity || 0);
+                totalDeli     += (r.delichar || 0);
+                totalPay      += (r.total_amount || 0);
+            });
+            return { totalPay, totalProduct, totalDiscount, totalDeli };
+        }
+
+        // 주문 상세 데이터 가져오기
+        async function fetchOrderRows(orderNo, baseUrl){
+            const url = `${baseUrl}?order_code=${encodeURIComponent(orderNo)}`;
+            const res = await fetch(url, {
+                headers: { 'Accept': 'application/json' },
+                credentials: 'same-origin'
+            });
+            const ct = res.headers.get('content-type') || '';
+            if(!res.ok || !ct.includes('application/json')) throw new Error('bad response');
+            return await res.json();
+        }
+
+        // 페이지 로드 시 테이블의 "주문합계" 채우기
+        async function preloadOrderSums(){
+            const links = document.querySelectorAll('a.order-link');
+            const jobs = Array.from(links).map(async a=>{
+                const orderNo = a.dataset.orderNo || a.textContent.trim();
+                const base    = a.dataset.detailUrl || '/admin/order/detail';
+                const tr      = a.closest('tr');
+                const sumCell = tr?.querySelectorAll('td')[4]; // 5번째 셀 = 주문합계
+                if(!orderNo || !sumCell) return;
+
+                try{
+                    // 캐시 있으면 사용
+                    let cache = orderCache.get(orderNo);
+                    let rows;
+                    if(cache?.rows){
+                        rows = cache.rows;
+                    }else{
+                        rows = await fetchOrderRows(orderNo, base);
+                    }
+                    const { totalPay } = calcTotals(rows);
+                    orderCache.set(orderNo, { rows, totalPay });
+
+                    // 셀 반영
+                    sumCell.textContent = cur.format(totalPay);
+                }catch(err){
+                    console.error('preload sum fail:', orderNo, err);
+                    // 실패 시 기존 값 유지 (혹은 sumCell.textContent = '-';)
+                }
+            });
+
+            // 모두 처리
+            await Promise.allSettled(jobs);
+        }
+
+        // DOM 준비되면 실행
+        document.addEventListener('DOMContentLoaded', preloadOrderSums);
     </script>
 <div th:replace="~{admin/_footer.html}"></div>
+</body>

@@ -5,6 +5,7 @@ import kr.co.bnk_marketproject_be.dto.PageRequestDTO;
 import kr.co.bnk_marketproject_be.dto.PageResponseAdminOrderDTO;
 import kr.co.bnk_marketproject_be.dto.OrdersDTO;
 import kr.co.bnk_marketproject_be.entity.Orders;
+import kr.co.bnk_marketproject_be.mapper.AdminMapper;
 import kr.co.bnk_marketproject_be.repository.AdminOrderRepository;
 import kr.co.bnk_marketproject_be.repository.AdminOrderRepository;
 import lombok.RequiredArgsConstructor;
@@ -22,7 +23,7 @@ import java.util.List;
 public class AdminOrderService {
 
     private final AdminOrderRepository adminOrderRepository;
-
+    private final AdminMapper adminMapper;
     private final ModelMapper modelMapper;
 
     public PageResponseAdminOrderDTO findAdminOrderAll(PageRequestDTO pageRequestDTO) {
@@ -69,5 +70,9 @@ public class AdminOrderService {
                 .dtoList(dtoList)
                 .total(total)
                 .build();
+    }
+
+    public List<OrdersDTO> selectOrders(String order_code){
+        return adminMapper.selectOrders(order_code);
     }
 }

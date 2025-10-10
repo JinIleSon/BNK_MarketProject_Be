@@ -94,7 +94,7 @@
                         <th style="">상품명</th>
                         <th style="">건수</th>
                         <th style="">물품합계</th>
-                        <th style="">배송비</th>
+                        <th  style="">배송비</th>
                         <th style="">배송상태</th>
                         <th style="">접수일</th>
                     </tr>
@@ -110,7 +110,12 @@
                         <td th:text="${admin.product_name}">OOO</td>
                         <td th:text="${admin.item_count}">3</td>
                         <td th:text="${admin.total_amount}">68,400</td>
-                        <td th:text="${admin.delichar == 0 ? '무료' : admin.delichar}">무료</td>
+                        <td class="delichar"
+                            th:text="${
+                                      admin.delichar == null or admin.delichar == '' ? '' :
+                                      ((admin.delichar == 0 or admin.delichar == '0') ? '무료' :
+                                      #numbers.formatDecimal(admin.delichar, 0, 'COMMA', 0, 'POINT'))
+                                    }"></td>
                         <td th:with="now=${T(java.time.LocalDateTime).now()},
                               fmt=${T(java.time.format.DateTimeFormatter).ofPattern('yyyy-MM-dd HH:mm:ss')},
                               rec=${T(java.time.LocalDateTime).parse(admin.receipt, fmt)},
@@ -163,7 +168,7 @@
                 <!-- 주문상세 콘텐츠 템플릿: '첫번째 사진' 영역 그대로 -->
 <template id="orderDetailTemplate">
   <!-- ↓↓↓ 여기부터 기존 “첫번째 사진” 영역 전체를 그대로 붙여넣기 ↓↓↓ -->
-  <div style="font-size:18px; margin-bottom:10px; font-weight: 800;">상품정보</div>
+    <div style="font-size:18px; margin-bottom:10px; font-weight: 800;">상품정보 <span id="extraCount" style="font-size:14px; color:black; font-weight:400; margin-left:4px;"></span></div>
   <table style="border-collapse: collapse; border:none; width:1270px; text-align: center; ">
       <tr style="height:50px;border-top: 4px solid black; border-bottom: 1px solid #dddddd;">
         <td style="width:60px;"></td>
@@ -171,7 +176,7 @@
         <td style="">상품명</td>
         <td style="">판매자</td>
         <td style="">가격</td>
-        <td style="">수량</td>
+        <td style="">할인</td>
         <td style="">배송비</td>
         <td style="">결제금액</td>
       </tr>
@@ -185,8 +190,8 @@
           <td id="product_name"></td>
           <td id="seller"></td>           <!-- 컬럼 없으면 그대로 공란 -->
           <td id="price"></td>            <!-- 컬럼 없으면 그대로 공란 -->
-          <td id="item_count"></td>       <!-- count(i.orders_id) AS item_count -->
-          <td id="delichar"></td>
+          <td id="discount"></td>       <!-- count(i.orders_id) AS item_count -->
+          <td class="delichar"></td>
           <td id="total_amount"></td>
       </tr>
   </table>
@@ -586,6 +591,12 @@ document.querySelectorAll('table tr').forEach(tr=>{
         const nf = new Intl.NumberFormat('ko-KR');
         const asMoney = v => (v == null || v === '') ? '' : nf.format(Number(v));
 
+        // ▼ 할인 전용 포맷: 0 → '0', 양수 → '-1,234'
+        const fmtDiscount = (v) => {
+            const n = Math.abs(Number(v) || 0);
+            return n === 0 ? '0' : ('-' + nf.format(n));
+        };
+
         // 모달 열기
         function showOrderModal(orderNoText){
             document.getElementById('orderModalTitle').textContent = '배송상세';
@@ -602,6 +613,29 @@ document.querySelectorAll('table tr').forEach(tr=>{
             orderModalBody.appendChild(node);
 
             const $ = sel => orderModalBody.querySelector(sel);
+            const $$ = sel => orderModalBody.querySelectorAll(sel);
+            const asMoney = v => {
+                if (v == null || v === '') return '';
+                const n = Number(String(v).replace(/[, ]/g, ''));
+                return isNaN(n) ? '' : new Intl.NumberFormat('ko-KR').format(n);
+            };
+
+            console.log('dto.delichar =', dto.delichar); // 값 확인용
+
+            $$('.delichar').forEach(el => {
+                el.textContent = dto.delichar != null ? asMoney(dto.delichar) : '';
+            });
+
+            // ▽ '외 n건' 표기 로직
+            const count = Number(dto.item_count || 0);
+            const extra = orderModalBody.querySelector('#extraCount');
+            if (extra) {
+                if (count > 1) {
+                    extra.textContent = `외 ${count - 1}건`;
+                } else {
+                    extra.textContent = ''; // 1건이면 비워둠
+                }
+            }
 
             /** Thymeleaf의 @{/{p}(p=...)}와 비슷한 규칙으로 변환
              * - 비어있거나 공백이면  /images/no-image.png 로 대체
@@ -629,10 +663,11 @@ document.querySelectorAll('table tr').forEach(tr=>{
             // 상품정보
             $('#product_code')   && ($('#product_code').textContent   = dto.product_code ?? '');
             $('#product_name')   && ($('#product_name').textContent   = dto.product_name ?? '');
-            $('#seller')         && ($('#seller').textContent         = dto.seller ?? '');          // 컬럼 없으면 공란
+            $('#seller')         && ($('#seller').textContent         = (dto.suname ?? dto.seller ?? ''));  // 컬럼 없으면 공란
             $('#price')          && ($('#price').textContent          = dto.price != null ? asMoney(dto.price) : ''); // 없으면 공란
             $('#item_count')     && ($('#item_count').textContent     = dto.item_count ?? '');      // count(...) AS item_count
-            $('#delichar')       && ($('#delichar').textContent       = dto.delichar != null ? asMoney(dto.delichar) : '');
+            $('#discount') && ($('#discount').textContent = dto.discount != null ? fmtDiscount(dto.discount) : '');
+
             $('#total_amount')   && ($('#total_amount').textContent   = dto.total_amount != null ? asMoney(dto.total_amount) : '');
 
             // 배송정보
@@ -644,7 +679,26 @@ document.querySelectorAll('table tr').forEach(tr=>{
             $('#invoice')        && ($('#invoice').textContent        = dto.invoice ?? '');
             $('#note')           && ($('#note').textContent           = dto.note ?? '');
         }
+        // [추가] 목록 테이블의 '배송비' 셀을 모달의 배송비로 동기화
+        function updateListDeliveryFee(orderCode, fee){
+            const nf = new Intl.NumberFormat('ko-KR');
 
+            // 목록에서 현재 주문행 찾기 (a.btn-open-delivery 의 data-order-code 이용)
+            const link = document.querySelector(`a.btn-open-delivery[data-order-code="${orderCode}"]`);
+            if(!link) return;
+
+            const tr = link.closest('tr');
+            const td = tr?.querySelector('td.delichar'); // 목록의 '배송비' 칸(이미 class="delichar"로 되어 있음)
+            if(!td) return;
+
+            // 값 정리 및 표기
+            if (fee == null || fee === '') { td.textContent = ''; return; }
+
+            const n = Number(String(fee).replace(/[, ]/g,''));
+            if (isNaN(n)) { td.textContent = ''; return; }
+
+            td.textContent = (n === 0) ? '무료' : nf.format(n);
+        }
         // 클릭 → fetch → 렌더
         document.addEventListener('click', async (e) => {
             const btn = e.target.closest('.btn-open-delivery');
@@ -670,6 +724,10 @@ document.querySelectorAll('table tr').forEach(tr=>{
 
                 const dto = await res.json();
                 renderOrderDetail(dto);
+
+                // [추가] 목록 테이블의 '배송비' 칸도 서버에서 받은 진짜 값으로 동기화
+                updateListDeliveryFee(orderCode, dto.delichar);
+
                 // 모달 헤더의 번호를 서버 응답 기준으로 보정
                 document.getElementById('orderModalNo').textContent = dto.invoice ?? invoiceText;
             } catch (err) {
@@ -677,6 +735,63 @@ document.querySelectorAll('table tr').forEach(tr=>{
                 orderModalBody.innerHTML = '<div style="padding:24px;color:#c00;">배송 정보를 불러오지 못했습니다.</div>';
             }
         });
-  
+        (() => {
+            const nf = new Intl.NumberFormat('ko-KR');
+            document.querySelectorAll('td.delichar').forEach(td => {
+                const raw = (td.textContent || '').trim();
+                if (raw === '') return;
+
+                // '1,500', ' 1500 ' 같은 값도 숫자로 인식되게 정규화
+                const norm = raw.replace(/[, ]/g, '');
+                const num  = Number(norm);
+
+                if (isNaN(num)) return;            // 숫자가 아니면 건드리지 않음
+                td.textContent = (num === 0) ? '무료' : nf.format(num);
+            });
+        })();
+        /* [추가] 페이지 진입 시 전체 행 배송비 갱신 */
+        async function refreshAllDeliveryFees({ concurrency = 5 } = {}) {
+            // 목록에서 주문번호(anchor) 전부 수집
+            const links = Array.from(
+                document.querySelectorAll('a.btn-open-delivery[data-order-code]')
+            );
+
+            // 과한 동시 호출을 막기 위해 간단한 동시성 제한
+            const queue = links.slice();
+            const workers = Array.from(
+                { length: Math.min(concurrency, queue.length) },
+                () => worker()
+            );
+
+            async function worker() {
+                while (queue.length) {
+                    const link = queue.shift();
+                    const orderCode = link.dataset.orderCode;
+                    if (!orderCode) continue;
+
+                    try {
+                        const res = await fetch(
+                            `${CTX}/admin/onedelivery/list?order_code=${encodeURIComponent(orderCode)}`,
+                            { headers: { Accept: 'application/json' } }
+                        );
+                        if (!res.ok) continue;
+
+                        const dto = await res.json();
+                        // 목록의 배송비 칸을 서버의 진짜 값으로 덮어쓰기
+                        updateListDeliveryFee(orderCode, dto.delichar);
+                    } catch (e) {
+                        // 실패한 건은 패스(콘솔만 찍고 계속)
+                        console.warn('배송비 갱신 실패:', orderCode, e);
+                    }
+                }
+            }
+
+            await Promise.all(workers);
+        }
+
+        // DOM이 준비되면 자동 실행
+        window.addEventListener('DOMContentLoaded', () => {
+            refreshAllDeliveryFees(); // 필요 시 {concurrency: 3} 등으로 조절
+        });
     </script>
 <div th:replace="~{admin/_footer.html}"></div>

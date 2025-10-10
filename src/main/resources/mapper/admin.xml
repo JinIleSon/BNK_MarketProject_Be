@@ -83,16 +83,65 @@
 
     <!--    개별로 작성할 부분(덩어리 구분) -->
 
+    <select id="selectOrders" resultType="kr.co.bnk_marketproject_be.dto.OrdersDTO">
+    SELECT
+    o.order_code as order_code,
+    u.name as name,
+    u.PHONE as phone,
+    pa.METHOD as method,
+    pa.STATUS as status,
+    oi.quantity as quantity,
+    pi.url as url,
+    p.product_code as product_code,
+    p.PRODUCT_NAME as product_name,
+    p.price as price,
+    p.discount as discount,
+    p.DELICHAR as delichar,
+    ((p.PRICE  - p.DISCOUNT) * oi.QUANTITY + p.DELICHAR) AS total_amount,
+    d.recipient as recipient,
+    d.ADDRESS as address,
+    ru.phone AS ruphone,
+    su.name AS suname,
+    recu.address as user_address,
+    recu.POSTCODE as postcode,
+    recu.DETAIL_ADDRESS as detail_address
+    FROM orders o
+    JOIN users u
+    ON o.users_id = u.ID
+    JOIN payments pa
+    ON o.id = pa.orders_id
+    JOIN order_items oi
+    ON o.id = oi.ORDERS_ID
+    JOIN products p
+    ON oi.PRODUCTS_ID = p.id
+    JOIN PRODUCT_IMAGES pi
+    ON p.id = pi.PRODUCTS_ID
+    JOIN DELIVERIES d
+    ON d.ORDERS_ID = o.id
+    LEFT JOIN users ru
+    ON TRIM(ru.name) = TRIM(d.recipient)
+    LEFT JOIN SELLERS s
+    ON s.id = p.SELLERS_ID
+    LEFT JOIN users su
+    ON su.id = s.USERS_ID
+    LEFT JOIN users recu
+    ON recu.name = d.RECIPIENT
+    WHERE o.order_code=#{order_code}
+    </select>
+
+    <!--    개별로 작성할 부분(덩어리 구분) -->
+
     <select id="selectDeliveries" resultType="kr.co.bnk_marketproject_be.dto.DeliveriesDTO">
         SELECT
         pi.url,
         p.product_code,
         p.product_name,
-        u.name AS seller,
-        p.price AS price,
-        count(i.orders_id) AS item_count,
-        d.delichar,
-        o.total_amount as total_amount,
+        u.name,
+        p.price,
+        count(i.orders_id) as item_count,
+        p.delichar,
+        p.discount,
+        ((p.PRICE  - p.DISCOUNT) * i.QUANTITY + p.DELICHAR) AS total_amount,
         o.order_code as order_code,
         d.recipient,
         u.phone,
@@ -100,7 +149,8 @@
         d.delicom,
         d.invoice,
         d.note,
-        TO_CHAR(d.receipt, 'YYYY-MM-DD HH24:MI:SS') AS receipt
+        TO_CHAR(d.receipt, 'YYYY-MM-DD HH24:MI:SS') AS receipt,
+        su.name AS suname
         FROM deliveries d
         JOIN orders o
         on d.orders_id = o.id
@@ -114,12 +164,17 @@
         on pi.product_code = p.product_code
         JOIN sellers s
         on s.id = p.sellers_id
+        LEFT JOIN SELLERS s
+        ON s.id = p.SELLERS_ID
+        LEFT JOIN users su
+        ON su.id = s.USERS_ID
         WHERE o.order_code = #{order_code}
         group by pi.url,
         p.product_code,
         p.product_name,
-        d.delichar,
-        o.total_amount,
+        p.delichar,
+        p.discount,
+        ((p.PRICE  - p.DISCOUNT) * i.QUANTITY + p.DELICHAR),
         o.order_code,
         d.recipient,
         u.phone,
@@ -129,9 +184,24 @@
         d.note,
         d.receipt,
         u.name,
-        p.price
+        p.price,
+        su.name
     </select>
 
+
+    <insert id="insertDeliveries">
+        insert into deliveries(orders_id, order_code, recipient, zipcode, address, address2, delicom, invoice, note, receipt)
+        values ((SELECT COALESCE(MAX(orders_id), 0) + 1 FROM deliveries),
+        #{deliveriesDTO.order_code},
+        #{deliveriesDTO.recipient},
+        #{deliveriesDTO.zipcode},
+        #{deliveriesDTO.address},
+        #{deliveriesDTO.address2},
+        #{deliveriesDTO.delicom, jdbcType=VARCHAR},
+        #{deliveriesDTO.invoice},
+        #{deliveriesDTO.note},
+        systimestamp)
+    </insert>
     <!--    개별로 작성할 부분(덩어리 구분) -->
 
     <sql id="searchWhere">

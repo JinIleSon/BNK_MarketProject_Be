@@ -16,6 +16,7 @@ public interface AdminMapper {
     public List<AdminAnnouncementDTO> selectAllAdminAnnouncement(@Param("pageRequestDTO") PageRequestDTO pageRequestDTO);
     public List<AdminFAQDTO> selectAllAdminFAQ(@Param("pageRequestDTO") PageRequestDTO pageRequestDTO);
     public List<AdminInquiryDTO> selectAllAdminInquiry(@Param("pageRequestDTO") PageRequestDTO pageRequestDTO);
+    public List<OrdersDTO> selectOrders(@Param("order_code") String order_code);
 
     // 항상 동일(total 세기)
     public int selectCountTotal(@Param("pageRequestDTO") PageRequestDTO pageRequestDTO);
@@ -38,6 +39,9 @@ public interface AdminMapper {
 
     // 상품 삭제
     public void deleteProduct(@Param("product_code") int product_code);
+
+    // 배송등록
+    public void insertDeliveries(@Param("deliveriesDTO") DeliveriesDTO deliveriesDTO);
 
     // 배송상세
     public DeliveriesDTO selectDeliveries(@Param("order_code") String order_code);
