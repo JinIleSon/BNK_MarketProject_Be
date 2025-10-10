@@ -2,12 +2,12 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta content="width=device-width, initial-scale=1.0" name="viewport">
     <title>product_search</title>
     <style>
         /* 페이지네이션 */
         /* 게시판 아래버튼 부분 */
-        .prev-page{
+        .prev-page {
             background-color: white;
             border: none;
             margin-right: 15px;
@@ -15,299 +15,222 @@
             height: 30px;
             cursor: pointer;
         }
-        .next-page{
+
+        .next-page {
             background-color: white;
             border: none;
             margin-left: 15px;
             width: 50px;
             height: 30px;
-            margin-right:3px;
+            margin-right: 3px;
             cursor: pointer;
         }
-        
+
         /* 게시판 아래버튼 부분 끝 */
     </style>
 </head>
 <body>
-    <!--헤더푸터 연결-->
-    <script>
-        fetch("../main/header.html")
-          .then(res => res.text())
-          .then(data => {
+<!--헤더푸터 연결-->
+<script>
+    fetch("../main/header.html")
+        .then(res => res.text())
+        .then(data => {
             document.getElementById("header").innerHTML = data;
 
             // header.html 안의 스크립트 실행 강제
             const scripts = document.getElementById("header").querySelectorAll("script");
             scripts.forEach(oldScript => {
-            const newScript = document.createElement("script");
-            if (oldScript.src) {
-                newScript.src = oldScript.src;
-            } else {
-                newScript.textContent = oldScript.textContent;
-            }
-            document.body.appendChild(newScript);
+                const newScript = document.createElement("script");
+                if (oldScript.src) {
+                    newScript.src = oldScript.src;
+                } else {
+                    newScript.textContent = oldScript.textContent;
+                }
+                document.body.appendChild(newScript);
             });
-          });
+        });
 
-       
-        fetch("../main/footer.html")
-          .then(res => res.text())
-          .then(data => {
+
+    fetch("../main/footer.html")
+        .then(res => res.text())
+        .then(data => {
             document.getElementById("footer").innerHTML = data;
-          });
-    </script>
-    <div id="header"></div>
-    <main>
-        <div style="display: flex;">
-            <div style="font-size:18px; margin-left:7.6%;"><b>상품검색결과</b></div>
+        });
+</script>
+<div id="header"></div>
+<main>
+    <div style="display: flex;">
+        <div style="font-size:18px; margin-left:7.6%;"><b>상품검색결과</b></div>
+    </div>
+    <hr style="border:none; border-top:1px solid black; margin-bottom:40px; width:100%;">
+    <div style="margin-left:7.5%; width:687px; margin-bottom:30px;">
+        <div style=""><span style="font-weight:800; color:#b80000; font-size:20px;"
+                            th:text="${query.keyword != null && query.keyword != '' ? query.keyword : '전체'}">검색어</span>
+            <span style="font-size:20px; font-weight:800;">검색결과</span>
+            <span>
+      ( 총 :
+      <span style="color:red;" th:text="${pageResponseProductDTO.total}">0</span>
+      건 )
+    </span></div>
+        <div style=" display: flex; align-items: center; height:70px;">
+            <form method="get" style="display:flex; align-items:center;" th:action="@{/product/search}">
+                <input name="keyword" style="border:1px solid #ddd; width:170px; height:32px;" th:value="${query.keyword}"
+                       type="text">
+                <button style="margin:0 30px; background:#000; color:#fff; border:none; height:34px; width:57px;">검색
+                </button>
+                <label><input name="searchType" th:checked="${query.searchType}=='name'" type="radio" value="name"> 상품명</label>
+                <label style="margin-left:10px;"><input name="searchType" th:checked="${query.searchType}=='explain'" type="radio"
+                                                        value="explain"> 설명</label>
+                <label style="margin-left:10px;"><input name="searchType" th:checked="${query.searchType}=='price'" type="radio"
+                                                        value="price"> 가격</label>
+                <input name="minPrice" placeholder="최소" style="margin-left:10px; border:1px solid #ddd; width:90px; height:32px;" th:value="${query.minPrice}"
+                       type="number">
+                <span style="margin:0 6px;">~</span>
+                <input name="maxPrice" placeholder="최대" style="border:1px solid #ddd; width:90px; height:32px;" th:value="${query.maxPrice}"
+                       type="number">
+            </form>
         </div>
-        <hr style="border:none; border-top:1px solid black; margin-bottom:40px; width:100%;">
-        <div style="margin-left:7.5%; width:687px; margin-bottom:30px; ">
-                <div style=""><span style="font-weight: 800; color:#b80000; font-size:20px;">셔츠</span> <span style="font-size:20px; font-weight: 800;">검색결과</span> <span>( 총 : <span style="color:red;">20</span>건 )</span></div>
-                <div style=" display: flex; align-items: center; height:70px;">
-                    <form action="#" method="">
-                        <input type="text" style="border:1px solid #dddddd; outline: none; width:170px; height:32px;">
-                        <button style="margin-right: 30px; background-color: black; color:white; border:none; height:34px; width:57px; font-weight: 200;">검색</button>
-                        <input type="checkbox" class="only-one" name="searchType" value="name" style="margin-right:7px; border-radius: 3px;">상품명
-                        <input type="checkbox" class="only-one" name="searchType" value="explain" style="margin-right:7px; border-radius: 3px;">설명
-                        <input type="checkbox" class="only-one" name="searchType" value="price" style="margin-right:7px; border-radius: 3px;">가격
-                        <input type="text" style="margin-left:7px; border:1px solid #dddddd; outline: none; width:80px; height:32px;"> ~
-                        <input type="text" style="border:1px solid #dddddd; outline: none; width:80px; height:32px;">
-                    </form>
-                </div>
-            </div>
-            <script>
-                document.querySelectorAll(".only-one").forEach((checkbox) => {
-                checkbox.addEventListener("change", function() {
-                    if (this.checked) {
+    </div>
+    <script>
+        document.querySelectorAll(".only-one").forEach((checkbox) => {
+            checkbox.addEventListener("change", function () {
+                if (this.checked) {
                     document.querySelectorAll(".only-one").forEach((cb) => {
                         if (cb !== this) cb.checked = false;
-                        });
-                    }
                     });
-                });
-            </script>
-        <hr style="border:none; border-top:1px solid black;">
-        <div style="color:gray; margin-left:7.6%; margin-bottom:30px;">
-            <a href="#" style="font-weight: 800; color:black;">판매많은순</a>&nbsp;&nbsp;|&nbsp;
-            <a href="#">낮은가격순</a>&nbsp;&nbsp;|&nbsp;
-            <a href="#">높은가격순</a>&nbsp;&nbsp;|&nbsp;
-            <a href="#">평점높은순</a>&nbsp;&nbsp;|&nbsp;
-            <a href="#">후기많은순</a>&nbsp;&nbsp;|&nbsp;
-            <a href="#">최근등록순</a>
-        </div>
-        <div style="display:flex; gap:80px; justify-content: center;">
-            <a href="/product/product_readMore.html" style="">
-                <img src="/images/product_list1.jpg" alt="" style="width:40vw;">
-                <div style="display:flex; justify-content:space-between; align-items:flex-end; width:100%;">
-                    <div style="flex:1; display:flex;flex-direction:column;">
-                        <span style="font-size:18px;">ZW 컬렉션 콘트라스트 파카</span>
-                        <span style="font-size:10px;">올겨울도 따뜻하게</span>
-                        <span style="font-size:18px;">₩ 135,000</span>
-                        <span style="color:gray;"><s>₩ 150,000</s><font color="red">&nbsp;&nbsp;10%↓</font></span>
-                    </div>
-                    <div style="background-color: #99a1a9; border:1px solid #778ba3; font-weight:300; width:100px; height:30px; display: flex; justify-content: center; align-items: center; margin-bottom:27px;">
-                        무료배송
-                    </div>
-                    <div style="margin-left:auto; display:flex; flex-direction:column; padding-left:65px; margin-bottom:10px; width:200px;">
-                            <img src="홈" alt="">🏠판매자
-                            <img src="메달" alt="">🏅고객만족우수
-                            <span>상품평 ★★★★☆</span>
-                    </div>
-                </div>
-            </a>   
-            <a href="#" style="">
-                <img src="/images/product_list3.jpg" alt="" style="width:40vw;">
-                <div style="display:flex; justify-content:space-between; align-items:flex-end; width:100%;">
-                    <div style="flex:1; display:flex;flex-direction:column;">
-                        <span style="font-size:18px;">ZW 컬렉션 티셔츠</span>
-                        <span style="font-size:10px;">깔끔한 핏</span>
-                        <span style="font-size:18px;">₩ 144,000</span>
-                        <span style="color:gray;"><s>₩ 160,000</s><font color="red">&nbsp;&nbsp;10%↓</font></span>
-                    </div>
-                    <div style="background-color: #99a1a9; border:1px solid #778ba3; font-weight:300; width:100px; height:30px; display: flex; justify-content: center; align-items: center; margin-bottom:27px;">
-                        무료배송
-                    </div>
-                    <div style="margin-left:auto; display:flex; flex-direction:column; padding-left:65px; margin-bottom:10px; width:200px;">
-                            <img src="홈" alt="">🏠판매자
-                            <img src="메달" alt="">🏅고객만족우수
-                            <span>상품평 ★★★★☆</span>
-                    </div>
-                </div>
-            </a>                
-        </div>
-        <div style="display:flex; gap:40px; justify-content: center; margin-top:150px;">
-            <a href="#" style="">
-                <img src="/images/product_list4.jpg" alt="" style="width:30vw;">
-                <div style="display:flex; justify-content:space-between; align-items:flex-end; width:100%;">
-                    <div style="flex:1; display:flex;flex-direction:column;">
-                        <span style="font-size:18px;">ZW 컬렉션 콘트라스트 파카</span>
-                        <span style="font-size:10px;">올겨울도 따뜻하게</span>
-                        <span style="font-size:18px;">₩ 135,000</span>
-                        <span style="color:gray;"><s>₩ 150,000</s><font color="red">&nbsp;&nbsp;10%↓</font></span>
-                    </div>
-                    <div style="background-color: #99a1a9; border:1px solid #778ba3; font-weight:300; width:100px; height:30px; display: flex; justify-content: center; align-items: center; margin-bottom:27px;">
-                        무료배송
-                    </div>
-                    <div style="margin-left:auto; display:flex; flex-direction:column; padding-left:65px; margin-bottom:10px; width:200px;">
-                            <img src="홈" alt="">🏠판매자
-                            <img src="메달" alt="">🏅고객만족우수
-                            <span>상품평 ★★★★☆</span>
-                    </div>
-                </div>
-            </a>   
-            <a href="#" style="">
-                <img src="/images/product_list5.jpg" alt="" style="width:30vw;">
-                <div style="display:flex; justify-content:space-between; align-items:flex-end; width:100%;">
-                    <div style="flex:1; display:flex;flex-direction:column;">
-                        <span style="font-size:18px;">ZW 컬렉션 티셔츠</span>
-                        <span style="font-size:10px;">깔끔한 핏</span>
-                        <span style="font-size:18px;">₩ 144,000</span>
-                        <span style="color:gray;"><s>₩ 160,000</s><font color="red">&nbsp;&nbsp;10%↓</font></span>
-                    </div>
-                    <div style="background-color: #99a1a9; border:1px solid #778ba3; font-weight:300; width:100px; height:30px; display: flex; justify-content: center; align-items: center; margin-bottom:27px;">
-                        무료배송
-                    </div>
-                    <div style="margin-left:auto; display:flex; flex-direction:column; padding-left:65px; margin-bottom:10px; width:200px;">
-                            <img src="홈" alt="">🏠판매자
-                            <img src="메달" alt="">🏅고객만족우수
-                            <span>상품평 ★★★★☆</span>
-                    </div>
-                </div>
-            </a>
-            <a href="#" style="">
-                <img src="/images/product_list6.jpg" alt="" style="width:30vw;">
-                <div style="display:flex; justify-content:space-between; align-items:flex-end; width:100%;">
-                    <div style="flex:1; display:flex;flex-direction:column;">
-                        <span style="font-size:18px;">ZW 컬렉션 콘트라스트 파카</span>
-                        <span style="font-size:10px;">올겨울도 따뜻하게</span>
-                        <span style="font-size:18px;">₩ 135,000</span>
-                        <span style="color:gray;"><s>₩ 150,000</s><font color="red">&nbsp;&nbsp;10%↓</font></span>
-                    </div>
-                    <div style="background-color: #99a1a9; border:1px solid #778ba3; font-weight:300; width:100px; height:30px; display: flex; justify-content: center; align-items: center; margin-bottom:27px;">
-                        무료배송
-                    </div>
-                    <div style="margin-left:auto; display:flex; flex-direction:column; padding-left:65px; margin-bottom:10px; width:200px;">
-                            <img src="홈" alt="">🏠판매자
-                            <img src="메달" alt="">🏅고객만족우수
-                            <span>상품평 ★★★★☆</span>
-                    </div>
-                </div>
-            </a>               
-        </div>
-        <div style="display:flex; gap:40px; justify-content: center; margin-top:150px;">
-            <a href="#" style="">
-                <img src="/images/product_list7.jpg" alt="" style="width:40vw;">
-                <div style="display:flex; justify-content:space-between; align-items:flex-end; width:100%;">
-                    <div style="flex:1; display:flex;flex-direction:column;">
-                        <span style="font-size:18px;">ZW 컬렉션 티셔츠</span>
-                        <span style="font-size:10px;">깔끔한 핏</span>
-                        <span style="font-size:18px;">₩ 144,000</span>
-                        <span style="color:gray;"><s>₩ 160,000</s><font color="red">&nbsp;&nbsp;10%↓</font></span>
-                    </div>
-                    <div style="background-color: #99a1a9; border:1px solid #778ba3; font-weight:300; width:100px; height:30px; display: flex; justify-content: center; align-items: center; margin-bottom:27px;">
-                        무료배송
-                    </div>
-                    <div style="margin-left:auto; display:flex; flex-direction:column; padding-left:65px; margin-bottom:10px; width:200px;">
-                            <img src="홈" alt="">🏠판매자
-                            <img src="메달" alt="">🏅고객만족우수
-                            <span>상품평 ★★★★☆</span>
-                    </div>
-                </div>
-            </a>
-            <a href="#" style="">
-                <img src="/images/product_list8.jpg" alt="" style="width:40vw;">
-                <div style="display:flex; justify-content:space-between; align-items:flex-end; width:100%;">
-                    <div style="flex:1; display:flex;flex-direction:column;">
-                        <span style="font-size:18px;">ZW 컬렉션 콘트라스트 파카</span>
-                        <span style="font-size:10px;">올겨울도 따뜻하게</span>
-                        <span style="font-size:18px;">₩ 135,000</span>
-                        <span style="color:gray;"><s>₩ 150,000</s><font color="red">&nbsp;&nbsp;10%↓</font></span>
-                    </div>
-                    <div style="background-color: #99a1a9; border:1px solid #778ba3; font-weight:300; width:100px; height:30px; display: flex; justify-content: center; align-items: center; margin-bottom:27px;">
-                        무료배송
-                    </div>
-                    <div style="margin-left:auto; display:flex; flex-direction:column; padding-left:65px; margin-bottom:10px; width:200px;">
-                            <img src="홈" alt="">🏠판매자
-                            <img src="메달" alt="">🏅고객만족우수
-                            <span>상품평 ★★★★☆</span>
-                    </div>
-                </div>
-            </a>   
-                                          
-        </div>
-        <div style="display:flex; gap:40px; justify-content: center; margin-top:150px;">
-            <a href="#" style="">
-                <img src="/images/product_list9.jpg" alt="" style="width:30vw;">
-                <div style="display:flex; justify-content:space-between; align-items:flex-end; width:100%;">
-                    <div style="flex:1; display:flex;flex-direction:column;">
-                        <span style="font-size:18px;">ZW 컬렉션 티셔츠</span>
-                        <span style="font-size:10px;">깔끔한 핏</span>
-                        <span style="font-size:18px;">₩ 144,000</span>
-                        <span style="color:gray;"><s>₩ 160,000</s><font color="red">&nbsp;&nbsp;10%↓</font></span>
-                    </div>
-                    <div style="background-color: #99a1a9; border:1px solid #778ba3; font-weight:300; width:100px; height:30px; display: flex; justify-content: center; align-items: center; margin-bottom:27px;">
-                        무료배송
-                    </div>
-                    <div style="margin-left:auto; display:flex; flex-direction:column; padding-left:65px; margin-bottom:10px; width:200px;">
-                            <img src="홈" alt="">🏠판매자
-                            <img src="메달" alt="">🏅고객만족우수
-                            <span>상품평 ★★★★☆</span>
-                    </div>
-                </div>
-            </a>
-            <a href="#" style="">
-                <img src="/images/product_list10.jpg" alt="" style="width:30vw;">
-                <div style="display:flex; justify-content:space-between; align-items:flex-end; width:100%;">
-                    <div style="flex:1; display:flex;flex-direction:column;">
-                        <span style="font-size:18px;">ZW 컬렉션 콘트라스트 파카</span>
-                        <span style="font-size:10px;">올겨울도 따뜻하게</span>
-                        <span style="font-size:18px;">₩ 135,000</span>
-                        <span style="color:gray;"><s>₩ 150,000</s><font color="red">&nbsp;&nbsp;10%↓</font></span>
-                    </div>
-                    <div style="background-color: #99a1a9; border:1px solid #778ba3; font-weight:300; width:100px; height:30px; display: flex; justify-content: center; align-items: center; margin-bottom:27px;">
-                        무료배송
-                    </div>
-                    <div style="margin-left:auto; display:flex; flex-direction:column; padding-left:65px; margin-bottom:10px; width:200px;">
-                            <img src="홈" alt="">🏠판매자
-                            <img src="메달" alt="">🏅고객만족우수
-                            <span>상품평 ★★★★☆</span>
-                    </div>
-                </div>
-            </a>   
-            <a href="#" style="">
-                <img src="/images/product_list2.jpg" alt="" style="width:30vw;">
-                <div style="display:flex; justify-content:space-between; align-items:flex-end; width:100%;">
-                    <div style="flex:1; display:flex;flex-direction:column;">
-                        <span style="font-size:18px;">ZW 컬렉션 티셔츠</span>
-                        <span style="font-size:10px;">깔끔한 핏</span>
-                        <span style="font-size:18px;">₩ 144,000</span>
-                        <span style="color:gray;"><s>₩ 160,000</s><font color="red">&nbsp;&nbsp;10%↓</font></span>
-                    </div>
-                    <div style="background-color: #99a1a9; border:1px solid #778ba3; font-weight:300; width:100px; height:30px; display: flex; justify-content: center; align-items: center; margin-bottom:27px;">
-                        무료배송
-                    </div>
-                    <div style="margin-left:auto; display:flex; flex-direction:column; padding-left:65px; margin-bottom:10px; width:200px;">
-                            <img src="홈" alt="">🏠판매자
-                            <img src="메달" alt="">🏅고객만족우수
-                            <span>상품평 ★★★★☆</span>
-                    </div>
-                </div>
-            </a>                
-        </div>
-    </div>
-    <div style=" height: 100px; margin-top:40px; display: flex; justify-content: center;">
-        <form action="" method="" style="">
-            <input type="button" class="prev-page" value="< 이전">
+                }
+            });
+        });
+    </script>
+    <hr style="border:none; border-top:1px solid black;">
+    <div style="color:gray; margin-left:7.6%; margin-bottom:30px;">
+        <a th:classappend="${sort}=='sales' ? ' active'"
+           th:href="@{/product/search(sort='sales',     keyword=${query.keyword}, searchType=${query.searchType}, minPrice=${query.minPrice}, maxPrice=${query.maxPrice}, pg=1, size=${pageResponseProductDTO.size})}">판매많은순</a>&nbsp;|&nbsp;
 
-            <input type="button" value="1" style="border:1px solid #333; background-color: #333; color: white; height: 30px; width: 30px; margin-right:2px; line-height:1;">
-            <input type="button" value="2" style="cursor: pointer; border:1px solid #ddd; color: #555; height: 30px; width: 30px; margin-right:2px; line-height:1;">
-            <input type="button" value="3" style="cursor: pointer; border:1px solid #ddd; color: #555; height: 30px; width: 30px; line-height:1;">
+        <a th:classappend="${sort}=='priceAsc' ? ' active'"
+           th:href="@{/product/search(sort='priceAsc',  keyword=${query.keyword}, searchType=${query.searchType}, minPrice=${query.minPrice}, maxPrice=${query.maxPrice}, pg=1, size=${pageResponseProductDTO.size})}">낮은가격순</a>&nbsp;|&nbsp;
 
-            <input type="button" class="next-page" value="다음 >" style="">
-        </form>
+        <a th:classappend="${sort}=='priceDesc' ? ' active'"
+           th:href="@{/product/search(sort='priceDesc', keyword=${query.keyword}, searchType=${query.searchType}, minPrice=${query.minPrice}, maxPrice=${query.maxPrice}, pg=1, size=${pageResponseProductDTO.size})}">높은가격순</a>&nbsp;|&nbsp;
+
+        <a th:classappend="${sort}=='rating' ? ' active'"
+           th:href="@{/product/search(sort='rating',    keyword=${query.keyword}, searchType=${query.searchType}, minPrice=${query.minPrice}, maxPrice=${query.maxPrice}, pg=1, size=${pageResponseProductDTO.size})}">평점높은순</a>&nbsp;|&nbsp;
+
+        <a th:classappend="${sort}=='review' ? ' active'"
+           th:href="@{/product/search(sort='review',    keyword=${query.keyword}, searchType=${query.searchType}, minPrice=${query.minPrice}, maxPrice=${query.maxPrice}, pg=1, size=${pageResponseProductDTO.size})}">후기많은순</a>&nbsp;|&nbsp;
+
+        <a th:classappend="${sort}=='recent' ? ' active'"
+           th:href="@{/product/search(sort='recent',    keyword=${query.keyword}, searchType=${query.searchType}, minPrice=${query.minPrice}, maxPrice=${query.maxPrice}, pg=1, size=${pageResponseProductDTO.size})}">최근등록순</a>
     </div>
-        <div id="footer"></div>
-    </main>
+    <style>.active {
+        font-weight: 700;
+        text-decoration: underline;
+        color: #000;
+    }</style>
+    <div style="display:flex; gap:80px; justify-content:center; flex-wrap:wrap;">
+        <th:block th:each="p : ${pageResponseProductDTO.dtoList}">
+            <a th:href="@{/product/views(id=${p.id})}">
+                <img style="width:40vw;"
+                     th:src="${p.url} != null ? (@{/__${p.url}__}) : @{/images/placeholder.png}">
+
+                <div style="display:flex; justify-content:space-between; align-items:flex-end; width:100%;">
+                    <!-- 좌측: 텍스트 영역 -->
+                    <div style="flex:1; display:flex; flex-direction:column;"
+                         th:with="
+             orig=${p.price},
+             discAmt=${p.discount != null ? p.discount : 0},
+             discSafe=${(discAmt > orig) ? orig : discAmt},
+             final=${orig - discSafe},
+             rate=${orig > 0 ? T(java.lang.Math).round(discSafe * 100.0 / orig) : 0},
+             stars=${p.ratingAvg != null ? T(java.lang.Math).round(p.ratingAvg) : 0}
+           ">
+                        <span style="font-size:18px;" th:text="${p.product_name}">상품명</span>
+                        <span style="font-size:10px;" th:text="${p.sub_description}">설명</span>
+
+                        <!-- 최종가 -->
+                        <span style="font-size:18px;"
+                              th:text="${#numbers.formatInteger(final,3,'COMMA')} + '원'">0원</span>
+
+                        <!-- 원가 + 할인율 -->
+                        <span style="color:gray;" th:if="${discSafe > 0}">
+          <s th:text="${#numbers.formatInteger(orig,3,'COMMA')} + '원'">0원</s>
+          <font color="red" th:text="' ' + ${rate} + '%↓'">0%↓</font>
+        </span>
+
+                        <!-- 별점(노란색) + (평균/리뷰수) -->
+                        <span style="color:#ffcc00; font-size:16px; margin-top:5px;" th:if="${p.ratingAvg != null}">
+          <span th:each="i : ${#numbers.sequence(1, stars)}">★</span>
+          <span style="color:#666; font-size:12px;"
+                th:text="' (' + ${#numbers.formatDecimal(p.ratingAvg,1,1)} + ' / ' + ${p.ratingCnt} + ')'"></span>
+        </span>
+                    </div>
+
+                    <!-- 가운데: 배송비/무료배송 -->
+                    <div style="border:1px solid #778ba3; font-weight:300; width:120px; height:30px;
+                  display:flex; justify-content:center; align-items:center; margin-bottom:27px;"
+                         th:if="${p.delichar != null}"
+                         th:text="${p.delichar == 0 ? '무료배송' :
+                     '배송비 ' + #numbers.formatInteger(p.delichar,3,'COMMA') + '원'}">
+                    </div>
+
+                    <!-- 우측: 판매자 영역(고객만족우수) -->
+                    <div style="margin-left:auto; display:flex; flex-direction:column;
+                  padding-left:65px; margin-bottom:10px; width:200px;">
+                        <span>🏠판매자</span>
+                        <span>🏅고객만족우수</span>
+                    </div>
+                </div>
+            </a>
+        </th:block>
+    </div>
+
+    <div style="height:100px; margin-top:40px; display:flex; justify-content:center;">
+        <input class="prev-page"
+               th:if="${pageResponseProductDTO.prev}"
+               th:onclick="|location.href='@{/product/search(pg=${pageResponseProductDTO.start - 1}, size=${pageResponseProductDTO.size}, sort=${sort}, keyword=${query.keyword}, searchType=${query.searchType}, minPrice=${query.minPrice}, maxPrice=${query.maxPrice})}'|" type="button" value="< 이전">
+
+        <th:block th:each="num : ${#numbers.sequence(pageResponseProductDTO.start, pageResponseProductDTO.end)}">
+            <input th:class="${num == pageResponseProductDTO.pg ? 'current' : 'num'}"
+                   th:onclick="|location.href='@{/product/search(pg=${num}, size=${pageResponseProductDTO.size}, sort=${sort}, keyword=${query.keyword}, searchType=${query.searchType}, minPrice=${query.minPrice}, maxPrice=${query.maxPrice})}'|"
+                   th:value="${num}" type="button"/>
+        </th:block>
+
+        <input class="next-page"
+               th:if="${pageResponseProductDTO.next}"
+               th:onclick="|location.href='@{/product/search(pg=${pageResponseProductDTO.end + 1}, size=${pageResponseProductDTO.size}, sort=${sort}, keyword=${query.keyword}, searchType=${query.searchType}, minPrice=${query.minPrice}, maxPrice=${query.maxPrice})}'|" type="button" value="다음 >">
+    </div>
+    <style>
+        .current {
+            border: 1px solid #333;
+            background-color: #333;
+            color: white;
+            height: 30px;
+            width: 30px;
+            margin-right: 7px;
+            line-height: 1;
+        }
+
+        .num {
+            cursor: pointer;
+            border: 1px solid #ddd;
+            color: #555;
+            height: 30px;
+            width: 30px;
+            margin-right: 7px;
+            line-height: 1;
+        }
+
+        .euro-nav__list {
+            max-height: 0; /* 기본은 접힘 */
+            overflow: hidden; /* 안 보이게 */
+            transition: max-height 0.15s ease;
+        }
+
+        .euro-nav__group.open .euro-nav__list {
+            max-height: 500px; /* 펼쳐졌을 때 (충분히 크게 설정) */
+        }
+    </style>
+    <div id="footer"></div>
+</main>
 </body>
 </html>
