@@ -32,7 +32,7 @@ public class User{
     private String detailAddress;
 
     @Builder.Default
-    private String role = "MEMBER";
+    private String role = "user";
 
     @CreationTimestamp
     private String created_at;
