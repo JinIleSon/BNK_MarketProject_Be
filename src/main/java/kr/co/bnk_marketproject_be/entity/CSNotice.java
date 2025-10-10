@@ -2,45 +2,39 @@ package kr.co.bnk_marketproject_be.entity;
 
 import jakarta.persistence.*;
 import lombok.*;
-import org.hibernate.annotations.CreationTimestamp;
-
+import org.hibernate.annotations.Where;
 import java.time.LocalDateTime;
-
 
 @Getter
 @Setter
-@ToString
 @NoArgsConstructor
 @AllArgsConstructor
-@Builder
 @Entity
-@Table(name="NOTICE")
-
+@Table(name = "BOARD")
+@Where(clause = "UPPER(BOARD_TYPE) = 'NOTICE'")
 public class CSNotice {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "SEQ_BOARD")
+    private Long id;
 
-    @Column(name = "NOTICE_ID")
-    private int noticeid;
-    private String category;
+    @Column(name = "BOARD_TYPE", length = 100)
+    private String boardType;
+
+    @Column(name = "TITLE", length = 200)
     private String title;
 
-    @Lob
+    @Column(name = "CONTENT")
     private String content;
 
-    private String status;
-
-    @CreationTimestamp
     @Column(name = "CREATED_AT")
     private LocalDateTime createdAt;
 
     @Column(name = "UPDATED_AT")
     private LocalDateTime updatedAt;
 
-
-
-
-
-
+    @PrePersist
+    public void prePersist() {
+        if (this.boardType == null) this.boardType = "NOTICE";
+    }
 }

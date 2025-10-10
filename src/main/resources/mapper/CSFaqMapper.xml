@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="kr.co.bnk_marketproject_be.mapper.CSFaqMapper">
+
+    <!-- FAQ 목록 -->
+    <select id="selectFaqList" resultType="kr.co.bnk_marketproject_be.dto.CSNoticeDTO">
+        SELECT *
+        FROM BOARD
+        WHERE BOARD_TYPE = 'FAQ'
+        ORDER BY CREATED_AT DESC
+    </select>
+
+    <!-- FAQ 상세 -->
+    <select id="selectFaqDetail" resultType="kr.co.bnk_marketproject_be.dto.CSNoticeDTO">
+        SELECT *
+        FROM BOARD
+        WHERE BOARD_TYPE = 'FAQ' AND ID = #{id}
+    </select>
+
+    <!-- FAQ 등록 (관리자용) -->
+    <insert id="insertFaq" parameterType="kr.co.bnk_marketproject_be.dto.CSNoticeDTO">
+        INSERT INTO BOARD (BOARD_TYPE, TITLE, CONTENT, CREATED_AT)
+        VALUES ('FAQ', #{title}, #{content}, SYSDATE)
+    </insert>
+
+</mapper>
