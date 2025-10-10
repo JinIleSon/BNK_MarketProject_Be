@@ -1,5 +1,6 @@
 package kr.co.bnk_marketproject_be.dto;
 
+import jakarta.persistence.Column;
 import jakarta.persistence.Transient;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -23,16 +24,19 @@ public class DeliveriesDTO {
     private String invoice;
     private String delicom;
     private String recipient;
-    private int delichar;
+    private Integer delichar;
     private String receipt;
     private String note;
+    private String zipcode;
+    private String address2;
+
 
     public String getReceipt() {
-        return receipt.substring(0, 19);
+        if (receipt == null) return null;
+        return receipt.substring(0, Math.min(19, receipt.length()));
     }
 
     // 추가 필드 - order_code(주문번호), total_amount(물품합계) - orders 테이블
-    @Transient
     private String order_code;
 
     @Transient
@@ -56,8 +60,11 @@ public class DeliveriesDTO {
     @Transient
     private String seller;
     @Transient
+    @Column(precision = 19, scale = 2)
     private BigDecimal price;
     @Transient
     private String suname;
+    @Transient
+    private BigDecimal discount;
 
 }

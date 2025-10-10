@@ -69,4 +69,10 @@ public class OrdersDTO {
     private String recipient;
     @Transient
     private String address;
+    @Transient
+    private String postcode;
+    @Transient
+    private String user_address;
+    @Transient
+    private String detail_address;
 }

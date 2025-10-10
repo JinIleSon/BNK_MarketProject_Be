@@ -115,14 +115,15 @@
                             style="color:#8bd8a7">결제완료</td>
                         <td th:text="${admin.created_at}">0000-00-00 00:00:00</td>
                         <td>
-                            <button style="height:30px; border: 1px solid #e2e2e2;"
-                            class="ship-btn" 
-                            data-order-no="10121211341"
-                            data-recipient="김유신"
-                            data-zip="12345"
-                            data-addr1="부산광역시 부산진구 부전동 123"
-                            data-addr2="OO 빌딩 3층 301호"
-                            data-etc="문 앞에 놓아주세요">배송하기</button>
+                            <button style="cursor:pointer;height:30px; border: 1px solid #e2e2e2;"
+                            class="ship-btn"
+                            th:attr="
+                            data-order-no=${admin.order_code},
+                            data-recipient=${admin.recipient},
+                            data-zip=${admin.postcode},
+                            data-addr1=${admin.user_address},
+                            data-addr2=${admin.detail_address}
+                            ">배송하기</button>
                         </td>
                     </tr>
                 </table>
@@ -289,7 +290,7 @@
 <template id="shipFormTemplate">
   <div class="ship-form__wrap">
     <!-- 제목 라인은 모달 헤더에서 렌더링하므로 여기엔 폼만 -->
-    <form>
+    <form th:action="@{/admin/delivery/register}" method="post">
       <table class="ship-form__table">
         <colgroup>
           <col style="width:140px">
@@ -298,47 +299,49 @@
         <tbody>
           <tr>
             <th style="font-size: 14px;">주문번호</th>
-            <td><input type="text" class="ipt" id="sf-orderNo" readonly style=""></td>
+            <td><input type="text" name="order_code" class="ipt" id="sf-orderNo" readonly style="" required></td>
           </tr>
           <tr>
             <th style="font-size: 14px;">수령인</th>
-            <td><input type="text" class="ipt" id="sf-recipient" placeholder="홍길동" style="outline: none;"></td>
+            <td><input type="text" name="recipient" class="ipt" id="sf-recipient" placeholder="홍길동" required style="outline: none;"></td>
           </tr>
           <tr>
             <th style="font-size: 14px;">우편번호</th>
-            <td><input type="text" class="ipt" id="sf-zip" placeholder="12345" style="outline: none;"></td>
+            <td><input type="text" name="zipcode" class="ipt" id="sf-zip" placeholder="12345" required style="outline: none;"></td>
           </tr>
           <tr>
             <th style="font-size: 14px;">기본주소</th>
-            <td><input type="text" class="ipt" id="sf-addr1" placeholder="부산광역시 부산진구 부전동 123" style="outline: none;"></td>
+            <td><input type="text" name="address" class="ipt" id="sf-addr1" placeholder="부산광역시 부산진구 부전동 123" required style="outline: none;"></td>
           </tr>
           <tr>
             <th style="font-size: 14px;">상세주소</th>
-            <td><input type="text" class="ipt"id="sf-addr2" placeholder="OO 빌딩 3층 301호" style="outline: none;"></td>
+            <td><input type="text" name="address2" class="ipt" id="sf-addr2" placeholder="OO 빌딩 3층 301호" required style="outline: none;"></td>
           </tr>
           <tr>
             <th style="font-size: 14px;">택배사</th>
             <td>
-              <select class="sel" style="padding-left:6px; outline: none;">
+              <select class="delicom" name="delicom" style="padding-left:6px; outline: none; height:33px; border: 1px solid #d0d0d0;" required>
                 <option>택배사선택</option>
-                <option>대한통운</option>
-                <option>한진택배</option>
-                <option>롯데택배</option>
+                <option value="대한통운">대한통운</option>
+                <option value="한진택배">한진택배</option>
+                <option value="우체국">우체국</option>
+                <option value="로젠택배">로젠택배</option>
+                <option value="경동택배">경동택배</option>
               </select>
             </td>
           </tr>
           <tr>
             <th style="font-size: 14px;">운송장번호</th>
-            <td><input type="text" class="ipt" placeholder="발급받은 택배 송장번호 입력" style="outline: none;"></td>
+            <td><input type="text" name="invoice" class="ipt" required placeholder="발급받은 택배 송장번호 입력(11자리)" style="outline: none;"></td>
           </tr>
           <tr>
             <th style="font-size: 14px;">기타</th>
-            <td><textarea class="txt" id="sf-etc" placeholder="기타정보입력" style="resize:none; outline: none;" ></textarea></td>
+            <td><textarea class="txt" name="note" id="sf-etc" required placeholder="기타정보입력" style="resize:none; outline: none;" ></textarea></td>
           </tr>
         </tbody>
       </table>
       <div class="ship-form__actions" style="display: flex; justify-content: center;">
-        <button type="button" class="btn-primary" id="shipSubmitBtn" style="background-color: black !important; font-weight:300;">등록하기</button>
+        <button type="submit" class="btn-primary" id="shipSubmitBtn" style="background-color: black !important; font-weight:300;">등록하기</button>
       </div>
     </form>
   </div>
@@ -804,7 +807,7 @@ document.querySelectorAll('table tr').forEach(tr=>{
   const btn = tr.querySelector('button.ship-btn'); // class 선택자 사용 권장
   if(!btn) return;
 
-  btn.addEventListener('click', (e)=>{
+  btn.addEventListener('click', async (e)=>{
     e.preventDefault();
 
     const tds = tr.querySelectorAll('td');
@@ -813,16 +816,40 @@ document.querySelectorAll('table tr').forEach(tr=>{
     const orderNo = btn.dataset.orderNo || (tds[0].textContent || '').trim();
     const status  = (tds[6].textContent || '').trim();
 
-    if(status === '결제완료'){
-      const prefill = {
-        recipient: btn.dataset.recipient || '',
-        zip:       btn.dataset.zip || '',
-        addr1:     btn.dataset.addr1 || '',
-        addr2:     btn.dataset.addr2 || '',
-        etc:       btn.dataset.etc || ''
+      if (status !== '결제완료') return;
+
+      // 기본은 data-* 값 사용
+      let prefill = {
+          recipient: btn.dataset.recipient || '',
+          zip:       btn.dataset.zip || '',
+          addr1:     btn.dataset.addr1 || '',
+          addr2:     btn.dataset.addr2 || ''
       };
+      // 값이 하나라도 비어있으면 상세 API로 채움
+      if (!prefill.recipient || !prefill.zip || !prefill.addr1 || !prefill.addr2) {
+          try {
+              const base = btn.closest('tr')?.querySelector('a.order-link')?.dataset.detailUrl || '/admin/order/detail';
+              const res  = await fetch(`${base}?order_code=${encodeURIComponent(orderNo)}`, {
+                  headers: { 'Accept': 'application/json' },
+                  credentials: 'same-origin'
+              });
+              if (res.ok && (res.headers.get('content-type')||'').includes('application/json')) {
+                  const rows = await res.json();
+                  const head = rows && rows[0] ? rows[0] : {};
+                  prefill = {
+                      recipient: prefill.recipient || head.recipient || '',
+                      zip:       prefill.zip       || head.postcode  || '',
+                      addr1:     prefill.addr1     || head.user_address || head.address || '',
+                      addr2:     prefill.addr2     || head.detail_address || ''
+                  };
+              }
+          } catch(err) {
+              console.error('fallback fetch fail', err);
+          }
+      }
+
       openShipModal(orderNo, prefill);
-    }
+
   });
 });
         // ========== 캐시 ==========
