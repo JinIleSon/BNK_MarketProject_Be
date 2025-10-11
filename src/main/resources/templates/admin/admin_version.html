@@ -78,89 +78,21 @@
                     <div style="padding:10px; background-color: #f3f3f3; height:40px; margin-top:15px;">사이트 버전 목록입니다.</div>
                     <table style="margin-top:12px; border-collapse: collapse; width:100%; font-size:12px; text-align: center; ">
                     <tr style="border-top:1px solid gray; height:50px; border-bottom:1px solid #e2e2e2;">
-                        <th style="width:37px;"><input type="checkbox"></th>
+                        <th style="width:37px;"><input type="checkbox" id="selAll"></th>
                         <th style="width:130px;">번호</th>
                         <th>버전</th>
                         <th>작성자</th>
                         <th>등록일시</th>
                         <th>변경내역</th>
                     </tr>
-                    <tr style="border-bottom:1px solid #e2e2e2; height:70px;vertical-align: middle;">
-                        <td><input type="checkbox"></td>
-                        <td>1</td>
-                        <td>0.0.1-SNAPSHOT</td>
-                        <td>chhak0503</td>
-                        <td>2024.10.13 17:12:00</td>
-                        <td>
-                            <a href="#"
-                                class="open-coupon"
-                                >[확인]</a>
-                        </td>
-                    </tr>
-                    <tr style="border-bottom:1px solid #e2e2e2; height:70px;vertical-align: middle;">
-                        <td><input type="checkbox"></td>
-                        <td>1</td>
-                        <td>0.0.1-SNAPSHOT</td>
-                        <td>chhak0503</td>
-                        <td>2024.10.13 17:12:00</td>
-                        <td>
-                            <a href="#"
-                                class="open-coupon"
-                                >[확인]</a>
-                        </td>
-                    </tr>
-                    <tr style="border-bottom:1px solid #e2e2e2; height:70px;vertical-align: middle;">
-                        <td><input type="checkbox"></td>
-                        <td>1</td>
-                        <td>0.0.1-SNAPSHOT</td>
-                        <td>chhak0503</td>
-                        <td>2024.10.13 17:12:00</td>
-                        <td>
-                            <a href="#"
-                                class="open-coupon"
-                                >[확인]</a>
-                        </td>
-                    </tr>
-                    <tr style="border-bottom:1px solid #e2e2e2; height:70px;vertical-align: middle;">
-                        <td><input type="checkbox"></td>
-                        <td>1</td>
-                        <td>0.0.1-SNAPSHOT</td>
-                        <td>chhak0503</td>
-                        <td>2024.10.13 17:12:00</td>
-                        <td>
-                            <a href="#"
-                                class="open-coupon"
-                                >[확인]</a>
-                        </td>
-                    </tr>
-                    <tr style="border-bottom:1px solid #e2e2e2; height:70px;vertical-align: middle;">
-                        <td><input type="checkbox"></td>
-                        <td>1</td>
-                        <td>0.0.2-SNAPSHOT</td>
-                        <td>chhak0503</td>
-                        <td>2024.10.13 17:12:00</td>
-                        <td>
-                            <a href="#"
-                                class="open-coupon"
-                                >[확인]</a>
-                        </td>
-                    </tr>
+
+                        <tbody id="versionTbody"></tbody>
+
                     
                 </table>
                 <div style="display: flex; margin-top:25px;">
-                    <button style="border:none; background-color: #760c0c; color:white; font-size: 10px; font-weight: 300; height:25px; width:62px;">선택삭제</button>
-                    <button id="openRegBtn" style="margin-left:auto; border:none; background-color: black; color:white; font-size: 10px; font-weight: 300; height:25px; width:62px;">등록</button>
-                </div>
-                <div style=" height: 100px; margin-top:40px; display: flex; justify-content: center;">
-                    <form action="" method="" style="">
-                        <input type="button" class="prev-page" value="< 이전">
-
-                        <input type="button" value="1" style="border:1px solid #333; background-color: #333; color: white; height: 30px; width: 30px; margin-right:2px; line-height:1;">
-                        <input type="button" value="2" style="cursor: pointer; border:1px solid #ddd; color: #555; height: 30px; width: 30px; margin-right:2px; line-height:1;">
-                        <input type="button" value="3" style="cursor: pointer; border:1px solid #ddd; color: #555; height: 30px; width: 30px; line-height:1;">
-
-                        <input type="button" class="next-page" value="다음 >" style="">
-                    </form>
+                    <button id="btnDelete" style="border:none; background:#760c0c; color:#fff; font-size:10px; height:25px; width:62px;">선택삭제</button>
+                    <button id="openRegBtn" style="margin-left:auto; border:none; background:#000; color:#fff; font-size:10px; height:25px; width:62px;">수정</button>
                 </div>
             <div style="margin-top:300px;"></div>
         </div>
@@ -331,150 +263,162 @@
   padding-left: 16px !important;  /* 원하는 값으로 */
 }
     </style>
-    <script>
-// ===== 쿠폰정보 모달 열기/닫기 =====
-const shipModalOverlay = document.getElementById('shipModal');
-const shipModalBody    = document.getElementById('shipModalBody');
-const shipModalClose   = document.getElementById('shipModalClose');
-let   shipTpl          = document.getElementById('shipFormTemplate');
+<script>
+    // ===== 공통 DOM =====
+    const shipModalOverlay = document.getElementById('shipModal');
+    const shipModalBody    = document.getElementById('shipModalBody');
+    const shipModalClose   = document.getElementById('shipModalClose');
+    let   shipTpl          = document.getElementById('shipFormTemplate');
 
-function openShipModal(data){
-  if (!shipTpl) shipTpl = document.getElementById('shipFormTemplate');
+    const regModalOverlay  = document.getElementById('regModal');
+    const regModalBody     = document.getElementById('regModalBody');
+    const regModalClose    = document.getElementById('regModalClose');
+    let   regTpl           = document.getElementById('regFormTemplate');
 
-  // 헤더 타이틀 & 상단 번호/버전
-  document.getElementById('shipModalTitle').textContent = '버전확인';
+    const tbody            = document.getElementById('versionTbody');
+    const selAllChk        = document.getElementById('selAll');
+    const btnDelete        = document.getElementById('btnDelete');
+    const btnOpenReg       = document.getElementById('openRegBtn');
 
-  // 본문 채우기(템플릿 클론)
-  shipModalBody.innerHTML = '';
-  shipModalBody.appendChild(shipTpl.content.cloneNode(true));
+    // ===== 유틸 =====
+    function fmt(ts){
+        if(!ts) return '';
+        const d = new Date(ts);
+        if (isNaN(d)) return ts;
+        const pad = n => n.toString().padStart(2,'0');
+        return `${d.getFullYear()}.${pad(d.getMonth()+1)}.${pad(d.getDate())} ${pad(d.getHours())}:${pad(d.getMinutes())}:${pad(d.getSeconds())}`;
+    }
 
-   // ▼ 버전 값 채우기
-  const verCell = shipModalBody.querySelector('.js-version-cell');
-  if (verCell) verCell.textContent = data.version || '-';
+    function rowHtml(v){
+        const memo = (v.changeLog || '').replaceAll('"','&quot;');
+        return `
+    <tr style="border-bottom:1px solid #e2e2e2; height:70px;vertical-align: middle;">
+      <td><input type="checkbox" class="row-chk" data-id="${v.id}"></td>
+      <td>${v.id ?? ''}</td>
+      <td>${v.version ?? ''}</td>
+      <td>${v.author ?? ''}</td>
+      <td>${fmt(v.updatedAt || v.createdAt)}</td>
+      <td><a href="#" class="open-coupon" data-memo="${memo}">[확인]</a></td>
+    </tr>
+  `;
+    }
 
-  // 폼 요소 선택
-  const $    = sel => shipModalBody.querySelector(sel);
-  const form = $('#couponRegForm');
+    // ===== 목록 로드 =====
+    async function loadList(){
+        const res = await fetch('/NICHIYA/api/admin/versions', { method: 'GET' });
+        const list = await res.json();
+        tbody.innerHTML = list.map(rowHtml).join('');
+        selAllChk.checked = false;
+    }
 
-  // 값 바인딩
-  const issuerInp = form.querySelector('input[name="issuer"]');
-  const typeSel   = form.querySelector('select[name="type"]');
-  const nameInp   = form.querySelector('input[name="name"]');
-  const memoTa    = form.querySelector('textarea[name="memo"]');
+    // ===== 변경내역(확인) 모달 =====
+    function openShipModal(data){
+        if (!shipTpl) shipTpl = document.getElementById('shipFormTemplate');
+        document.getElementById('shipModalTitle').textContent = '버전확인';
+        shipModalBody.innerHTML = '';
+        shipModalBody.appendChild(shipTpl.content.cloneNode(true));
 
-  if (issuerInp) issuerInp.value = data.issuer || issuerInp.placeholder || '';
-  if (typeSel && data.type) typeSel.value = data.type;
-  if (nameInp) nameInp.value = data.name || '';
-  if (memoTa)  memoTa.value  = (data.memo || '').replace(/&#10;/g, '\n');
+        const verCell = shipModalBody.querySelector('.js-version-cell');
+        if (verCell) verCell.textContent = data.version || '-';
 
-  // 혜택 라디오 선택
-  if (data.benefit){
-    const b = form.querySelector(`input[name="benefit"][value="${data.benefit}"]`);
-    if (b) b.checked = true;
-  }
+        const memoTa  = shipModalBody.querySelector('textarea[name="memo"]');
+        if (memoTa) memoTa.value = data.memo || '';
 
-  // 기간 세팅 (YYYY-MM-DD ~ YYYY-MM-DD)
-  if (data.period && data.period.includes('~')){
-    const [s,e] = data.period.split('~').map(x=>x.trim());
-    const sInp = form.querySelector('input[name="startDate"]');
-    const eInp = form.querySelector('input[name="endDate"]');
-    if (sInp) sInp.value = s && s!=='0000-00-00' ? s : '';
-    if (eInp) eInp.value = e && e!=='0000-00-00' ? e : '';
-    const r = form.querySelector('input[name="dateMode"][value="range"]');
-    if (r) r.checked = true;
-  }
+        const bottomCloseBtn = shipModalBody.querySelector('#modalCloseBtn');
+        if (bottomCloseBtn) bottomCloseBtn.addEventListener('click', closeShipModal);
 
-  // 취소/등록
-  const cancelBtn = form.querySelector('#couponRegCancelBtn');
-  if (cancelBtn) cancelBtn.addEventListener('click', closeShipModal);
-  
+        shipModalOverlay.classList.add('show');
+        shipModalOverlay.setAttribute('aria-hidden','false');
+        document.body.style.overflow = 'hidden';
+    }
 
-// ▼ 닫기 버튼 연결
-const subform = shipModalBody.querySelector('#couponRegForm');
-const bottomCloseBtn = shipModalBody.querySelector('#modalCloseBtn');
-if (bottomCloseBtn) bottomCloseBtn.addEventListener('click', closeShipModal);
+    function closeShipModal(){
+        shipModalOverlay.classList.remove('show');
+        shipModalOverlay.setAttribute('aria-hidden','true');
+        document.body.style.overflow = '';
+    }
 
-// ▼ 폼 submit은 막기만 (알림 X)
-if (subform) subform.addEventListener('submit', (e) => e.preventDefault());
-  // show
-  shipModalOverlay.classList.add('show');
-  shipModalOverlay.setAttribute('aria-hidden','false');
-  document.body.style.overflow = 'hidden';
-}
+    if (shipModalClose) shipModalClose.addEventListener('click', closeShipModal);
+    shipModalOverlay.addEventListener('click', (e)=>{ if(e.target === shipModalOverlay) closeShipModal(); });
+    window.addEventListener('keydown', (e)=>{ if(e.key==='Escape' && shipModalOverlay.classList.contains('show')) closeShipModal(); });
 
-function closeShipModal(){
-  shipModalOverlay.classList.remove('show');
-  shipModalOverlay.setAttribute('aria-hidden','true');
-  document.body.style.overflow = '';
-}
-
-// 닫기 이벤트
-if (shipModalClose) shipModalClose.addEventListener('click', closeShipModal);
-shipModalOverlay.addEventListener('click', (e)=>{ if(e.target === shipModalOverlay) closeShipModal(); });
-window.addEventListener('keydown', (e)=>{ if(e.key==='Escape' && shipModalOverlay.classList.contains('show')) closeShipModal(); });
-
-// [확인] 클릭 → 모달 오픈
-document.addEventListener('click', (e)=>{
-  const a = e.target.closest('a.open-coupon');
-  if(!a) return;
-  e.preventDefault();
-
-  // 같은 행에서 버전 읽기(체크/번호/버전/작성자/등록/변경내역)
-  const tr  = a.closest('tr');
-  const tds = tr ? tr.querySelectorAll('td') : [];
-  const ver = (tds[2]?.textContent || '').trim();
-
-  const d = a.dataset;
-  openShipModal({
-    couponNo: d.couponNo, issuer: d.issuer, issueNo: d.issueNo,
-    type: d.type, user: d.user, name: d.name, benefit: d.benefit,
-    period: d.period, status: d.status, memo: d.memo, version: ver
-  });
-});
-// ===== 버전등록 모달 열기/닫기 =====
-const regModalOverlay = document.getElementById('regModal');
-const regModalBody    = document.getElementById('regModalBody');
-const regModalClose   = document.getElementById('regModalClose');
-let   regTpl          = document.getElementById('regFormTemplate');
-
-// 열기
-function openRegModal(){
-  if (!regTpl) regTpl = document.getElementById('regFormTemplate');
-  regModalBody.innerHTML = '';
-  regModalBody.appendChild(regTpl.content.cloneNode(true));
-
-  // 폼/버튼 바인딩
-  const form = regModalBody.querySelector('#regForm');
-  const cancelBtn = regModalBody.querySelector('#regModalCloseBtn');
-  if (cancelBtn) cancelBtn.addEventListener('click', closeRegModal);
-  if (form){
-    form.addEventListener('submit', (e)=>{
-      e.preventDefault();
-      // TODO: 저장 로직 추가
-      alert('등록되었습니다.');
-      closeRegModal();
+    // 목록에서 [확인] 클릭
+    document.addEventListener('click', (e)=>{
+        const a = e.target.closest('a.open-coupon');
+        if(!a) return;
+        e.preventDefault();
+        const tr  = a.closest('tr');
+        const tds = tr ? tr.querySelectorAll('td') : [];
+        const ver = (tds[2]?.textContent || '').trim();
+        const memo= a.dataset.memo || '';
+        openShipModal({ version: ver, memo });
     });
-  }
 
-  regModalOverlay.classList.add('show');
-  regModalOverlay.setAttribute('aria-hidden','false');
-  document.body.style.overflow = 'hidden';
-}
+    // ===== 버전 수정 모달 (PUT) =====
+    function openRegModal(){
+        if (!regTpl) regTpl = document.getElementById('regFormTemplate');
+        regModalBody.innerHTML = '';
+        regModalBody.appendChild(regTpl.content.cloneNode(true));
 
-// 닫기
-function closeRegModal(){
-  regModalOverlay.classList.remove('show');
-  regModalOverlay.setAttribute('aria-hidden','true');
-  document.body.style.overflow = '';
-}
+        const form = regModalBody.querySelector('#regForm');
+        form.addEventListener('submit', async (e)=>{
+            e.preventDefault();
+            const version   = regModalBody.querySelector('input.ipt')?.value?.trim() || '';
+            const changeLog = regModalBody.querySelector('textarea.txt')?.value?.trim() || '';
+            if (!version){ alert('버전을 입력해주세요.'); return; }
 
-// 닫기 이벤트들
-if (regModalClose) regModalClose.addEventListener('click', closeRegModal);
-regModalOverlay.addEventListener('click', (e)=>{ if(e.target === regModalOverlay) closeRegModal(); });
-window.addEventListener('keydown', (e)=>{ if(e.key==='Escape' && regModalOverlay.classList.contains('show')) closeRegModal(); });
+            await fetch('/NICHIYA/api/admin/versions', {
+                method: 'PUT',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ version, changeLog })
+            });
 
-// “등록” 버튼 클릭 → 등록 모달 열기
-document.getElementById('openRegBtn')?.addEventListener('click', openRegModal);
-    </script>
-    </div>
+            await loadList();
+            closeRegModal();
+        });
+
+        regModalOverlay.classList.add('show');
+        regModalOverlay.setAttribute('aria-hidden','false');
+        document.body.style.overflow = 'hidden';
+    }
+
+    function closeRegModal(){
+        regModalOverlay.classList.remove('show');
+        regModalOverlay.setAttribute('aria-hidden','true');
+        document.body.style.overflow = '';
+    }
+
+    if (regModalClose) regModalClose.addEventListener('click', closeRegModal);
+    regModalOverlay.addEventListener('click', (e)=>{ if(e.target === regModalOverlay) closeRegModal(); });
+    window.addEventListener('keydown', (e)=>{ if(e.key==='Escape' && regModalOverlay.classList.contains('show')) closeRegModal(); });
+
+    document.getElementById('openRegBtn')?.addEventListener('click', openRegModal);
+
+    // ===== 선택삭제 =====
+    btnDelete?.addEventListener('click', async ()=>{
+        const ids = Array.from(document.querySelectorAll('.row-chk:checked'))
+            .map(chk => Number(chk.dataset.id))
+            .filter(Boolean);
+        if (!ids.length){ alert('삭제할 항목을 선택하세요.'); return; }
+        if (!confirm(`${ids.length}건을 삭제할까요?`)) return;
+
+        await fetch('/NICHIYA/api/admin/versions', {
+            method: 'DELETE',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ ids })
+        });
+        await loadList();
+    });
+
+    // 전체선택
+    selAllChk?.addEventListener('change', ()=>{
+        const rows = document.querySelectorAll('.row-chk');
+        rows.forEach(chk => chk.checked = selAllChk.checked);
+    });
+
+    // 최초 로딩
+    loadList();
+</script>
+
+</div>
 <div th:replace="~{admin/_footer.html}"></div>

@@ -33,4 +33,7 @@ public class AdminSiteConfigDTO {
     private String termsFinance;   // TERMS_FINANCE
     private String termsLocation;  // TERMS_LOCATION
     private String termsPrivacy;   // TERMS_PRIVACY
+    private String author; //버전 작성자
+    private String changeLog; //버전 작성시 추가 세부사항 입력란
+
 }

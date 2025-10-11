@@ -28,24 +28,42 @@
         <result property="termsFinance"  column="TERMS_FINANCE"/>
         <result property="termsLocation" column="TERMS_LOCATION"/>
         <result property="termsPrivacy"  column="TERMS_PRIVACY"/>
+        <result property="author"      column="AUTHOR"/>
+        <result property="changeLog"   column="CHANGE_LOG"/>
     </resultMap>
 
+    <!-- ✅ 단건 조회 -->
     <select id="selectOne" resultMap="SiteConfigMap">
         SELECT ID, SITE_TITLE, SITE_SUBTITLE, VERSION, UPDATED_AT,HEADER_LOGO,FOOTER_LOGO,FAVICON, COMPANY_NAME, CEO_NAME, BIZ_REG_NO, MAIL_ORDER_NO,
                ADDR_BASE, ADDR_DETAIL,
                CS_TEL, CS_HOURS, CS_EMAIL, EFIN_DISPUTE_TEL,
-               COPYRIGHT_TEXT, TERMS_BUYER, TERMS_SELLER, TERMS_FINANCE, TERMS_LOCATION, TERMS_PRIVACY
+               COPYRIGHT_TEXT, TERMS_BUYER, TERMS_SELLER, TERMS_FINANCE, TERMS_LOCATION, TERMS_PRIVACY, AUTHOR, CHANGE_LOG
         FROM SITE_CONFIG
         ORDER BY ID
             FETCH FIRST 1 ROWS ONLY
     </select>
 
+    <!-- ✅ 목록 조회 -->
+    <select id="findAll" resultMap="SiteConfigMap">
+        SELECT ID, SITE_TITLE, SITE_SUBTITLE, VERSION, UPDATED_AT,
+               HEADER_LOGO, FOOTER_LOGO, FAVICON,
+               COMPANY_NAME, CEO_NAME, BIZ_REG_NO, MAIL_ORDER_NO,
+               ADDR_BASE, ADDR_DETAIL,
+               CS_TEL, CS_HOURS, CS_EMAIL, EFIN_DISPUTE_TEL,
+               COPYRIGHT_TEXT, TERMS_BUYER, TERMS_SELLER, TERMS_FINANCE, TERMS_LOCATION, TERMS_PRIVACY,
+               AUTHOR, CHANGE_LOG
+        FROM SITE_CONFIG
+        ORDER BY UPDATED_AT DESC, ID DESC
+    </select>
+
+    <!-- ✅ 삽입  -->
     <insert id="insert" parameterType="kr.co.bnk_marketproject_be.dto.AdminSiteConfigDTO">
         INSERT INTO SITE_CONFIG (ID, SITE_TITLE, SITE_SUBTITLE, VERSION, UPDATED_AT,HEADER_LOGO,FOOTER_LOGO,FAVICON,
                                  COMPANY_NAME, CEO_NAME, BIZ_REG_NO, MAIL_ORDER_NO,
                                  ADDR_BASE, ADDR_DETAIL,
                                  CS_TEL, CS_HOURS, CS_EMAIL, EFIN_DISPUTE_TEL,
-                                 COPYRIGHT_TEXT, TERMS_BUYER, TERMS_SELLER, TERMS_FINANCE, TERMS_LOCATION, TERMS_PRIVACY)
+                                 COPYRIGHT_TEXT, TERMS_BUYER, TERMS_SELLER, TERMS_FINANCE, TERMS_LOCATION, TERMS_PRIVACY
+        ,AUTHOR, CHANGE_LOG)
         VALUES (
                        (SELECT COALESCE(MAX(ID),0)+1 FROM SITE_CONFIG),
                        #{siteTitle},
@@ -69,11 +87,14 @@
                        #{termsSeller},
                        #{termsFinance},
                        #{termsLocation},
-                       #{termsPrivacy}
-                                  SYSTIMESTAMP
+                       #{termsPrivacy},
+                       #{author},
+                       #{changeLog}
+                        SYSTIMESTAMP
                )
     </insert>
 
+    <!-- ✅ 갱신 -->
     <update id="update" parameterType="kr.co.bnk_marketproject_be.dto.AdminSiteConfigDTO">
         UPDATE SITE_CONFIG
         <set>
@@ -112,11 +133,24 @@
             <if test="termsFinance  != null">TERMS_FINANCE  = #{termsFinance},</if>
             <if test="termsLocation != null">TERMS_LOCATION = #{termsLocation},</if>
             <if test="termsPrivacy  != null">TERMS_PRIVACY  = #{termsPrivacy},</if>
+            <if test="author != null and author != ''">
+                AUTHOR = #{author},
+            </if>
+            <if test="changeLog != null and changeLog != ''">
+                CHANGE_LOG = #{changeLog},
+            </if>
 
             UPDATED_AT = SYSTIMESTAMP
         </set>
         WHERE ID = (SELECT MIN(ID) FROM SITE_CONFIG)
     </update>
 
-
+    <!-- ✅ 선택삭제 -->
+    <delete id="deleteByIds">
+        DELETE FROM SITE_CONFIG
+        WHERE ID IN
+        <foreach collection="ids" item="id" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
 </mapper>
