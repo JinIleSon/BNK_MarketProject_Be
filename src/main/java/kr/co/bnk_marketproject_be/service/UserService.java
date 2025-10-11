@@ -51,14 +51,13 @@ public class UserService {
         return userRepository.existsByPhone(phone);
     }
 
-    public UserDTO getUser(String userId){
-
+    public UserDTO getUser(String userId) {
         User user = userRepository.findByUserId(userId);
-
+        if (user == null) {
+            throw new IllegalArgumentException("존재하지 않는 사용자입니다.");
+        }
         return modelMapper.map(user, UserDTO.class);
-
     }
-
 
     /**
      * 서버사이드 회원가입 처리: 세션 인증 확인, 중복 체크, 비밀번호 암호화, DB 저장
@@ -176,6 +175,28 @@ public class UserService {
         }
 
         return userOpt.map(user -> modelMapper.map(user, UserDTO.class));
+    }
+
+    // 아이디 + 이메일로 사용자 검증
+    public boolean verifyUserForPasswordReset(String userId, String email, String phone) {
+        Optional<User> userOpt = Optional.empty();
+        if (email != null && !email.isBlank()) {
+            userOpt = userRepository.findByUserIdAndEmail(userId, email);
+        } else if (phone != null && !phone.isBlank()) {
+            userOpt = userRepository.findByUserIdAndPhone(userId, phone);
+        }
+        return userOpt.isPresent();
+    }
+
+    // 새 비밀번호 저장
+    public void resetPassword(String userId, String newPassword) {
+        User user = userRepository.findByUserId(userId);
+        if (user == null) {
+            throw new IllegalArgumentException("존재하지 않는 사용자입니다.");
+        }
+
+        user.setPassword(passwordEncoder.encode(newPassword));
+        userRepository.save(user);
     }
 
 

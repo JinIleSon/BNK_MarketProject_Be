@@ -22,8 +22,13 @@ public interface UserRepository extends JpaRepository<User, Integer> {
     public int countByEmail(String email);
     public int countByPhone(String phone);
 
+    // 아이디 찾기
     Optional<User> findByNameAndEmail(String name, String email);
     Optional<User> findByNameAndPhone(String name, String phone);
+
+    // 비밀번호 찾기
+    Optional<User> findByUserIdAndEmail(String userId, String email);
+    Optional<User> findByUserIdAndPhone(String userId, String phone);
 
 }
 
