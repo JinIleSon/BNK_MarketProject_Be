@@ -25,8 +25,13 @@ public class ProductsDTO {
     private int discount;
     private int hits;
     private int point;
+    private int sub_description;
+    private Integer delichar;
 
     // 뷰에서 쓰는 필드 추가
     private String url;        // 제품 이미지 URL
     private String user_name;  // 판매자 이름(qUser.name);
+    private Double ratingAvg;   // 평균 별점 (null 가능)
+    private Integer ratingCnt;  // 리뷰 수
+
 }
