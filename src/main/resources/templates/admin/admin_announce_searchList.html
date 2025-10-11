@@ -136,7 +136,8 @@
 
             <div style="display: flex; margin-top:25px;">
                     <button style="border:none; background-color: #760c0c; color:white; font-size: 10px; font-weight: 300; height:25px; width:62px;">선택삭제</button>
-                    <button style="margin-left:auto; border:none; background-color: black; color:white; font-size: 10px; font-weight: 300; height:25px; width:62px;">상품등록</button>
+                    <button style="cursor:pointer;margin-left:auto; border:none; background-color: black; color:white; font-size: 10px; font-weight: 300; height:25px; width:62px;"
+                            th:onclick="|location.href='@{/admin/announcement/write}'|">작성하기</button>
                 </div>
               <div style=" height: 100px; margin-top:40px; display: flex; justify-content: center;">
                   <input th:if="${pageResponseDTO.prev}"
