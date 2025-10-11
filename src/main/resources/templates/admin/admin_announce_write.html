@@ -2,67 +2,68 @@
 
     <main style="display: flex; justify-content: center; border-top:1px solid #e2e2e2;">
         <div>
-        <aside class="euro-nav" aria-label="관리자 사이드 메뉴" style="">
-            <section class="euro-nav__group">
-            <h4 class="euro-nav__title" style="">환경설정</h4>
-            <ul class="euro-nav__list">
-                <li class="euro-nav__item"><a href="#">기본설정</a></li>
-                <li class="euro-nav__item"><a href="#">배너관리</a></li>
-                <li class="euro-nav__item"><a href="#">약관관리</a></li>
-                <li class="euro-nav__item"><a href="#">카테고리</a></li>
-                <li class="euro-nav__item"><a href="#">버전관리</a></li>
-            </ul>
-            </section>
-            <section class="euro-nav__group">
-            <h4 class="euro-nav__title" style="">상점관리</h4>
-            <ul class="euro-nav__list">
-                <li class="euro-nav__item"><a href="/admin/store_list.html">상점목록</a></li>
-                <li class="euro-nav__item"><a href="/admin/sale_status.html">매출현황</a></li>
-            </ul>
-            </section>
+            <aside class="euro-nav" aria-label="관리자 사이드 메뉴" style="">
+                <section class="euro-nav__group">
+                    <h4 class="euro-nav__title" style="">환경설정</h4>
+                    <ul class="euro-nav__list">
+                        <li class="euro-nav__item"><a href="#">기본설정</a></li>
+                        <li class="euro-nav__item"><a href="#">배너관리</a></li>
+                        <li class="euro-nav__item"><a href="#">약관관리</a></li>
+                        <li class="euro-nav__item"><a href="#">카테고리</a></li>
+                        <li class="euro-nav__item"><a href="#">버전관리</a></li>
+                    </ul>
+                </section>
 
-            <section class="euro-nav__group">
-            <h4 class="euro-nav__title" style="">회원관리</h4>
-            <ul class="euro-nav__list">
-                <li class="euro-nav__item"><a href="/admin/member_list.html">회원목록</a></li>
-                <li class="euro-nav__item"><a href="/admin/point_management.html">포인트관리</a></li>
-            </ul>
-            </section>
+                <section class="euro-nav__group">
+                    <h4 class="euro-nav__title" style="">상점관리</h4>
+                    <ul class="euro-nav__list">
+                        <li class="euro-nav__item"><a th:href="@{/admin/shop/list}">상점목록</a></li>
+                        <li class="euro-nav__item"><a th:href="@{/admin/sales/list}">매출현황</a></li>
+                    </ul>
+                </section>
 
-            <section class="euro-nav__group">
-            <h4 class="euro-nav__title" style="">상품관리</h4>
-            <ul class="euro-nav__list">
-                <li class="euro-nav__item"><a href="#">상품목록</a></li>
-                <li class="euro-nav__item"><a href="#">상품등록</a></li>
-            </ul>
-            </section>
+                <section class="euro-nav__group">
+                    <h4 class="euro-nav__title" style="">회원관리</h4>
+                    <ul class="euro-nav__list">
+                        <li class="euro-nav__item"><a th:href="@{/admin/member/list}">회원목록</a></li>
+                        <li class="euro-nav__item"><a th:href="@{/admin/point/list}">포인트관리</a></li>
+                    </ul>
+                </section>
 
-            <section class="euro-nav__group">
-            <h4 class="euro-nav__title" style="">주문관리</h4>
-            <ul class="euro-nav__list">
-                <li class="euro-nav__item"><a href="#">주문현황</a></li>
-                <li class="euro-nav__item"><a href="#">배송현황</a></li>
-            </ul>
-            </section>
+                <section class="euro-nav__group">
+                    <h4 class="euro-nav__title" style="">상품관리</h4>
+                    <ul class="euro-nav__list">
+                        <li class="euro-nav__item"><a th:href="@{/admin/product/list}">상품목록</a></li>
+                        <li class="euro-nav__item"><a th:href="@{/admin/productReg/list}">상품등록</a></li>
+                    </ul>
+                </section>
 
-            <section class="euro-nav__group">
-            <h4 class="euro-nav__title" style="">쿠폰관리</h4>
-            <ul class="euro-nav__list">
-                <li class="euro-nav__item"><a href="#">쿠폰목록</a></li>
-                <li class="euro-nav__item"><a href="#">쿠폰발급현황</a></li>
-            </ul>
-            </section>
+                <section class="euro-nav__group">
+                    <h4 class="euro-nav__title" style="">주문관리</h4>
+                    <ul class="euro-nav__list">
+                        <li class="euro-nav__item"><a th:href="@{/admin/order/list}">주문현황</a></li>
+                        <li class="euro-nav__item"><a th:href="@{/admin/delivery/list}">배송현황</a></li>
+                    </ul>
+                </section>
 
-            <section class="euro-nav__group">
-            <h4 class="euro-nav__title" style="">고객센터</h4>
-            <ul class="euro-nav__list">
-                <li class="euro-nav__item is-active"><a href="/admin/announcement_list.html">공지사항</a></li>
-                <li class="euro-nav__item"><a href="/admin/questions_list.html">자주묻는질문</a></li>
-                <li class="euro-nav__item"><a href="#">문의하기</a></li>
-                <li class="euro-nav__item"><a href="#">채용하기</a></li>
-            </ul>
-            </section>
-        </aside>
+                <section class="euro-nav__group">
+                    <h4 class="euro-nav__title" style="">쿠폰관리</h4>
+                    <ul class="euro-nav__list">
+                        <li class="euro-nav__item"><a th:href="@{/admin/coupon/list}">쿠폰목록</a></li>
+                        <li class="euro-nav__item"><a th:href="@{/admin/couponsnow/list}">쿠폰발급현황</a></li>
+                    </ul>
+                </section>
+
+                <section class="euro-nav__group">
+                    <h4 class="euro-nav__title" style="">고객센터</h4>
+                    <ul class="euro-nav__list">
+                        <li class="euro-nav__item is-active"><a th:href="@{/admin/announcement/list}">공지사항</a></li>
+                        <li class="euro-nav__item"><a th:href="@{/admin/FAQ/list}">자주묻는질문</a></li>
+                        <li class="euro-nav__item"><a th:href="@{/admin/inquiry/list}">문의하기</a></li>
+                        <li class="euro-nav__item"><a th:href="@{/admin/employ/list}">채용하기</a></li>
+                    </ul>
+                </section>
+            </aside>
         </div>
         <div style="border-left:1px solid #e2e2e2;"></div>
         <!-- 오른쪽 콘텐츠 영역 -->
@@ -86,37 +87,123 @@
             <!-- 유형 -->
             <div style="display:flex; align-items:center; border-bottom:1px solid #e0e0e0; padding:12px 8px;">
             <label for="searchType" style="width:100px; font-weight:bold;">유형</label>
-            
-            <form action="" method="post" style="display:flex; align-items:center;">
-                <select name="searchType" id="searchType" 
-                style="width:82px; height:28px; padding-left:5px; margin-right:3px; border:1px solid #bfbfbf; font-size:10px !important;">
-                <option value="notice">안내</option>
-                <option value="presentation">발표</option>
-                <option value="product">상품</option>
-                <option value="service">고객서비스</option>
+
+            <form th:action="@{/admin/announcement/write}" method="post" style="display:flex; align-items:center;">
+                <input type="hidden" name="board_type" value="notice">
+                <input type="hidden" name="hits" value="0">
+                <input type="hidden" name="created_at" id="created_at">
+                <select name="board_type2" id="typeLv1" required
+                style="width:100px; height:28px; padding-left:5px; margin-right:3px; border:1px solid #bfbfbf; font-size:10px !important;">
+                    <option value="">1차 유형 선택</option>
+                    <option value="all">전체</option>
+                    <option value="memberservice">고객서비스</option>
+                    <option value="safe">안전거래</option>
+                    <option value="danger">위해상품</option>
+                    <option value="event">이벤트당첨</option>
                 </select>
-            </form>
+                <select name="board_type3" id="typeLv2" disabled required
+                style="margin-left:5px; width:100px; height:28px; padding-left:5px; margin-right:3px; border:1px solid #bfbfbf; font-size:10px !important;">
+                    <option value="">2차 유형 선택</option>
+                </select>
+
             </div>
 
             <div style="display:flex; align-items:center; border-bottom:1px solid #e0e0e0; padding:12px 8px;">
                 <label for="title" style="width:100px; font-weight:bold;">제목</label>
-                <input type="text" id="title" placeholder=""
-                    style="width:500px; padding:8px; border:3px solid #ccc;">
+                <input type="text" name="title" id="title" placeholder="제목을 입력해주세요." required
+                    style="width:500px; padding:8px; border:1px solid #ccc;">
             </div>
 
             <!-- 내용 -->
             <div style="display:flex; align-items:flex-start; border-bottom:1px solid #e0e0e0; padding:12px 8px;">
                 <label for="content" style="width:100px; font-weight:bold;">내용</label>
-                <textarea id="content" placeholder=""
-                    style="width:500px; height:280px; padding:8px; border:3px solid #ccc; resize:none;"></textarea>
+                <textarea id="content" name="content" placeholder="내용을 입력해주세요." required
+                    style="width:500px; height:280px; padding:8px; border:1px solid #ccc; resize:none;"></textarea>
             </div>
             </div>
 
             <!-- 버튼 영역 -->
             <div style="text-align:center; margin-top:-70px;">
-            <button style="border:none; background-color: #760c0c; color:white; font-size: 10px; font-weight: 300; height:25px; width:62px;">취소하기</button>
-                    <button style="margin-left:auto; border:none; background-color: black; color:white; font-size: 10px; font-weight: 300; height:25px; width:62px;">등록하기</button>
+            <button type="button"
+                    th:onclick="|location.href='@{/admin/announcement/list}'|"
+                    style="cursor: pointer; border:none; background-color: #760c0c; color:white; font-size: 10px; font-weight: 300; height:25px; width:62px;">취소하기</button>
+                    <button type="submit"
+                            style="cursor: pointer; margin-left:auto; border:none; background-color: black; color:white; font-size: 10px; font-weight: 300; height:25px; width:62px;">등록하기</button>
             </div>
+              </form>
+              <script>
+                  // 1차 → 2차 유형 매핑
+                  const typeMap = {
+                      all: [
+                          { value: 'guide', text: '안내' },
+                          { value: 'anno',  text: '발표' }
+                      ],
+                      memberservice: [
+                          { value: 'policy',     text: '운영정책' },
+                          { value: 'change',     text: '서비스변경' },
+                          { value: 'inspection', text: '시스템점검' },
+                          { value: 'guide',      text: '이용가이드' }
+                      ],
+                      safe: [
+                          { value: 'security', text: '보안공지' },
+                          { value: 'alert',    text: '사기주의' },
+                          { value: 'privacy',  text: '개인정보보호' },
+                          { value: 'guide',    text: '안전거래가이드' }
+                      ],
+                      danger: [
+                          { value: 'recall',  text: '리콜안내' },
+                          { value: 'stop',    text: '판매중지' },
+                          { value: 'quality', text: '품질점검' },
+                          { value: 'caution', text: '소비자주의' }
+                      ],
+                      event: [
+                          { value: 'winner', text: '당첨자발표' },
+                          { value: 'prize',  text: '경품안내' },
+                          { value: 'guide',  text: '참여방법' },
+                          { value: 'notice', text: '유의사항' }
+                      ]
+                  };
+
+                  function renderTypeLv2(firstSelect, secondSelect, selectedValue = null) {
+                      const firstVal = firstSelect.value;
+                      // 기본 옵션 초기화
+                      secondSelect.innerHTML = '<option value="">2차 유형 선택</option>';
+
+                      if (!firstVal || !typeMap[firstVal]) {
+                          secondSelect.disabled = true;
+                          return;
+                      }
+
+                      typeMap[firstVal].forEach(({ value, text }) => {
+                          const opt = document.createElement('option');
+                          opt.value = value;
+                          opt.textContent = text;
+                          if (selectedValue && selectedValue === value) opt.selected = true;
+                          secondSelect.appendChild(opt);
+                      });
+
+                      secondSelect.disabled = false;
+                  }
+
+                  document.addEventListener('DOMContentLoaded', () => {
+                      const lv1 = document.getElementById('typeLv1');
+                      const lv2 = document.getElementById('typeLv2');
+
+                      // 서버에서 내려온 기존 선택값 복원 (data-selected 또는 현재 value)
+                      const preset = lv2.getAttribute('data-selected') || lv2.value || null;
+
+                      // 초기 렌더링
+                      renderTypeLv2(lv1, lv2, preset);
+
+                      // 변경 시 갱신
+                      lv1.addEventListener('change', () => renderTypeLv2(lv1, lv2));
+
+                      // created_at 시간 넣기
+                      const now = new Date();
+                      // ISO 8601 형식 (예: 2025-10-04T15:30:00)
+                      document.getElementById("created_at").value = now.toISOString().slice(0, 19);
+                  });
+              </script>
     </main>
 
     <style>

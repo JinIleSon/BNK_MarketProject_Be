@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>사업자정보확인 | NICHIYA</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Bodoni+Moda:opsz,wght@6..96,500&family=Noto+Sans+KR:wght@300;400;500;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg: #fff;
+      --fg: #0a0a0a;
+      --muted: #6b7280;
+      --line: #e5e7eb;
+      --accent: #0a0a0a;
+    }
+    * { box-sizing: border-box; }
+    html { background: var(--bg); color: var(--fg); font-family: 'Noto Sans KR', system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, 'Apple SD Gothic Neo', 'Malgun Gothic', 'Noto Sans KR', sans-serif; }
+    body { margin: 0; }
+    .wrap { max-width: 1040px; margin: 0 auto; padding: 32px 20px 96px; }
+    header { display: flex; align-items: center; justify-content: space-between; gap: 16px; }
+    .brand { font-family: 'Bodoni Moda', serif; font-size: 32px; letter-spacing: 2px; }
+    .crumb { font-size: 12px; color: var(--muted); margin-top: 8px; }
+    .title { margin: 28px 0 8px; font-size: 28px; font-weight: 700; }
+    .desc { color: var(--muted); margin-bottom: 28px; }
+
+    .card {
+      border: 1px solid var(--line);
+      border-radius: 12px;
+      padding: 20px;
+      background: #fff;
+    }
+
+    .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+    @media (max-width: 800px) { .grid { grid-template-columns: 1fr; } }
+
+    .dl { display: grid; grid-template-columns: 180px 1fr; row-gap: 10px; column-gap: 12px; }
+    @media (max-width: 600px) { .dl { grid-template-columns: 120px 1fr; } }
+    .dl dt { color: var(--muted); }
+    .dl dd { margin: 0; }
+
+    .note { padding: 14px 16px; border-left: 3px solid var(--accent); background: #fafafa; color: #374151; border-radius: 8px; }
+    .hr { height: 1px; background: var(--line); margin: 28px 0; }
+
+    a { color: var(--accent); text-underline-offset: 3px; }
+    .btn { display: inline-flex; align-items: center; gap: 8px; height: 44px; padding: 0 16px; border-radius: 10px; border: 1px solid var(--fg); background: var(--fg); color: #fff; text-decoration: none; font-weight: 600; }
+    .btn--ghost { background: transparent; color: var(--fg); }
+
+    footer { margin-top: 48px; font-size: 12px; color: var(--muted); }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <header>
+      <div>
+        <div class="brand">日夜 NICHIYA</div>
+        <div class="crumb">홈 &rsaquo; 고객센터 &rsaquo; 사업자정보확인</div>
+      </div>
+      <nav style="display:flex; gap:8px;">
+        <a class="btn btn--ghost" href="/main/main_main.html">홈으로</a>
+        <a class="btn" href="/customer_service/cs_main.html">고객센터</a>
+      </nav>
+    </header>
+
+    <h1 class="title">사업자정보확인</h1>
+    <p class="desc">NICHIYA의 법적 고지 및 통신판매업자 정보입니다. 아래 정보를 통해 안심하고 서비스를 이용하실 수 있습니다.</p>
+
+    <section class="card" aria-labelledby="corp">
+      <h2 id="corp" style="margin:0 0 16px; font-size:20px;">① 사업자 기본정보</h2>
+      <div class="dl">
+        <dt>상호</dt><dd>NICHIYA 주식회사</dd>
+        <dt>사업자등록번호</dt><dd>123-45-67890</dd>
+        <dt>대표자</dt><dd>TANAKA HARUTO</dd>
+        <dt>주소</dt><dd>서울특별시 강남구 테헤란로 321, 15층 1501호 (역삼동, 니치야타워)</dd>
+        <dt>대표번호</dt><dd>080-123-4567</dd>
+        <dt>대표 이메일</dt><dd>help@nichiya.co.kr</dd>
+      </div>
+    </section>
+
+    <div class="hr"></div>
+
+    <section class="grid">
+      <div class="card" aria-labelledby="tsinfo">
+        <h2 id="tsinfo" style="margin:0 0 16px; font-size:20px;">② 통신판매업 정보</h2>
+        <div class="dl">
+          <dt>신고번호</dt><dd>제2025-서울강남-01234</dd>
+          <dt>발급기관</dt><dd>서울특별시 강남구청</dd>
+          <dt>영업소재지</dt><dd>서울특별시 강남구 테헤란로 321</dd>
+          <dt>업태/종목</dt><dd>도소매 / 의류·잡화 외</dd>
+        </div>
+      </div>
+      <div class="card" aria-labelledby="host">
+        <h2 id="host" style="margin:0 0 16px; font-size:20px;">③ 호스팅 서비스 제공자</h2>
+        <div class="dl">
+          <dt>사업자명</dt><dd>NICHIYA SYSTEMS Co., Ltd.</dd>
+          <dt>담당부서</dt><dd>플랫폼인프라팀</dd>
+          <dt>연락처</dt><dd>infra@nchsys.com</dd>
+        </div>
+      </div>
+    </section>
+
+    <div class="hr"></div>
+
+    <section class="grid">
+      <div class="card" aria-labelledby="cs">
+        <h2 id="cs" style="margin:0 0 16px; font-size:20px;">④ 고객센터 및 분쟁처리</h2>
+        <div class="dl">
+          <dt>운영시간</dt><dd>평일 10:00–17:00 (점심 12:30–13:30)</dd>
+          <dt>문의채널</dt><dd>080-123-4567 / <a href="mailto:help@nichiya.co.kr">help@nichiya.co.kr</a></dd>
+          <dt>분쟁조정</dt><dd>전자상거래법 및 소비자분쟁해결기준에 따름</dd>
+        </div>
+      </div>
+      <div class="card" aria-labelledby="privacy">
+        <h2 id="privacy" style="margin:0 0 16px; font-size:20px;">⑤ 개인정보 보호책임자</h2>
+        <div class="dl">
+          <dt>성명</dt><dd>YAMAMOTO SORA (CPO)</dd>
+          <dt>연락처</dt><dd><a href="mailto:privacy@nichiya.co.kr">privacy@nichiya.co.kr</a></dd>
+          <dt>관련 문서</dt><dd><a href="/policy/policy_terms.html#privacy">개인정보처리방침 바로가기</a></dd>
+        </div>
+      </div>
+    </section>
+
+    <div class="hr"></div>
+
+    <section class="card" aria-labelledby="notice">
+      <h2 id="notice" style="margin:0 0 12px; font-size:20px;">고객안심 안내</h2>
+      <p class="note">
+        NICHIYA는 전자상거래 등에서의 소비자보호에 관한 법률, 전자금융거래법 등 관계법령을 준수합니다. 결제 및 환불, 교환/반품 기준은
+        <a href="/policy/policy_terms.html">이용약관</a>과 <a href="/customer_service/cs_main.html">고객센터</a> 공지에 따릅니다.
+      </p>
+    </section>
+
+    <footer>
+      © NICHIYA Co., Ltd. All rights reserved.
+    </footer>
+  </div>
+
+  <!-- 구조화 데이터 (선택) -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "Organization",
+    "name": "NICHIYA Co., Ltd.",
+    "legalName": "NICHIYA 주식회사",
+    "url": "https://www.nichiya.co.kr/",
+    "telephone": "+82-80-123-4567",
+    "address": {
+      "@type": "PostalAddress",
+      "streetAddress": "테헤란로 321, 15층 1501호 (역삼동, 니치야타워)",
+      "addressLocality": "강남구",
+      "addressRegion": "서울특별시",
+      "postalCode": "06241",
+      "addressCountry": "KR"
+    },
+    "founder": "TANAKA HARUTO",
+    "foundingDate": "2025"
+  }
+  </script>
+</body>
+</html>

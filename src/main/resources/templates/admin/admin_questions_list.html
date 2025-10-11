@@ -2,71 +2,72 @@
 
     <main style="display: flex; justify-content: center; border-top:1px solid #e2e2e2;">
         <div>
-        <aside class="euro-nav" aria-label="관리자 사이드 메뉴" style="">
-            <section class="euro-nav__group">
-            <h4 class="euro-nav__title" style="">환경설정</h4>
-            <ul class="euro-nav__list">
-                <li class="euro-nav__item"><a href="#">기본설정</a></li>
-                <li class="euro-nav__item"><a href="#">배너관리</a></li>
-                <li class="euro-nav__item"><a href="#">약관관리</a></li>
-                <li class="euro-nav__item"><a href="#">카테고리</a></li>
-                <li class="euro-nav__item"><a href="#">버전관리</a></li>
-            </ul>
-            </section>
-            <section class="euro-nav__group">
-            <h4 class="euro-nav__title" style="">상점관리</h4>
-            <ul class="euro-nav__list">
-                <li class="euro-nav__item"><a href="/admin/store_list.html">상점목록</a></li>
-                <li class="euro-nav__item"><a href="/admin/sale_status.html">매출현황</a></li>
-            </ul>
-            </section>
+            <aside class="euro-nav" aria-label="관리자 사이드 메뉴" style="">
+                <section class="euro-nav__group">
+                    <h4 class="euro-nav__title" style="">환경설정</h4>
+                    <ul class="euro-nav__list">
+                        <li class="euro-nav__item"><a href="#">기본설정</a></li>
+                        <li class="euro-nav__item"><a href="#">배너관리</a></li>
+                        <li class="euro-nav__item"><a href="#">약관관리</a></li>
+                        <li class="euro-nav__item"><a href="#">카테고리</a></li>
+                        <li class="euro-nav__item"><a href="#">버전관리</a></li>
+                    </ul>
+                </section>
 
-            <section class="euro-nav__group">
-            <h4 class="euro-nav__title" style="">회원관리</h4>
-            <ul class="euro-nav__list">
-                <li class="euro-nav__item"><a href="/admin/member_list.html">회원목록</a></li>
-                <li class="euro-nav__item"><a href="/admin/point_management.html">포인트관리</a></li>
-            </ul>
-            </section>
+                <section class="euro-nav__group">
+                    <h4 class="euro-nav__title" style="">상점관리</h4>
+                    <ul class="euro-nav__list">
+                        <li class="euro-nav__item"><a th:href="@{/admin/shop/list}">상점목록</a></li>
+                        <li class="euro-nav__item"><a th:href="@{/admin/sales/list}">매출현황</a></li>
+                    </ul>
+                </section>
 
-            <section class="euro-nav__group">
-            <h4 class="euro-nav__title" style="">상품관리</h4>
-            <ul class="euro-nav__list">
-                <li class="euro-nav__item"><a href="#">상품목록</a></li>
-                <li class="euro-nav__item"><a href="#">상품등록</a></li>
-            </ul>
-            </section>
+                <section class="euro-nav__group">
+                    <h4 class="euro-nav__title" style="">회원관리</h4>
+                    <ul class="euro-nav__list">
+                        <li class="euro-nav__item"><a th:href="@{/admin/member/list}">회원목록</a></li>
+                        <li class="euro-nav__item"><a th:href="@{/admin/point/list}">포인트관리</a></li>
+                    </ul>
+                </section>
 
-            <section class="euro-nav__group">
-            <h4 class="euro-nav__title" style="">주문관리</h4>
-            <ul class="euro-nav__list">
-                <li class="euro-nav__item"><a href="#">주문현황</a></li>
-                <li class="euro-nav__item"><a href="#">배송현황</a></li>
-            </ul>
-            </section>
+                <section class="euro-nav__group">
+                    <h4 class="euro-nav__title" style="">상품관리</h4>
+                    <ul class="euro-nav__list">
+                        <li class="euro-nav__item"><a th:href="@{/admin/product/list}">상품목록</a></li>
+                        <li class="euro-nav__item"><a th:href="@{/admin/productReg/list}">상품등록</a></li>
+                    </ul>
+                </section>
 
-            <section class="euro-nav__group">
-            <h4 class="euro-nav__title" style="">쿠폰관리</h4>
-            <ul class="euro-nav__list">
-                <li class="euro-nav__item"><a href="#">쿠폰목록</a></li>
-                <li class="euro-nav__item"><a href="#">쿠폰발급현황</a></li>
-            </ul>
-            </section>
+                <section class="euro-nav__group">
+                    <h4 class="euro-nav__title" style="">주문관리</h4>
+                    <ul class="euro-nav__list">
+                        <li class="euro-nav__item"><a th:href="@{/admin/order/list}">주문현황</a></li>
+                        <li class="euro-nav__item"><a th:href="@{/admin/delivery/list}">배송현황</a></li>
+                    </ul>
+                </section>
 
-            <section class="euro-nav__group">
-            <h4 class="euro-nav__title" style="">고객센터</h4>
-            <ul class="euro-nav__list">
-                <li class="euro-nav__item"><a href="/admin/announcement_list.html">공지사항</a></li>
-                <li class="euro-nav__item is-active"><a href="/admin/questions_list.html">자주묻는질문</a></li>
-                <li class="euro-nav__item"><a href="#">문의하기</a></li>
-                <li class="euro-nav__item"><a href="#">채용하기</a></li>
-            </ul>
-            </section>
-        </aside>
+                <section class="euro-nav__group">
+                    <h4 class="euro-nav__title" style="">쿠폰관리</h4>
+                    <ul class="euro-nav__list">
+                        <li class="euro-nav__item"><a th:href="@{/admin/coupon/list}">쿠폰목록</a></li>
+                        <li class="euro-nav__item"><a th:href="@{/admin/couponsnow/list}">쿠폰발급현황</a></li>
+                    </ul>
+                </section>
+
+                <section class="euro-nav__group">
+                    <h4 class="euro-nav__title" style="">고객센터</h4>
+                    <ul class="euro-nav__list">
+                        <li class="euro-nav__item"><a th:href="@{/admin/announcement/list}">공지사항</a></li>
+                        <li class="euro-nav__item is-active"><a th:href="@{/admin/FAQ/list}">자주묻는질문</a></li>
+                        <li class="euro-nav__item"><a th:href="@{/admin/inquiry/list}">문의하기</a></li>
+                        <li class="euro-nav__item"><a th:href="@{/admin/employ/list}">채용하기</a></li>
+                    </ul>
+                </section>
+            </aside>
         </div>
         <div style="border-left:1px solid #e2e2e2;"></div>
         <!-- 오른쪽 콘텐츠 영역 -->
-          <div style="margin-left:40px; width:900px; height:1000px; border:none; padding:20px; box-sizing:border-box; font-family:'Noto Sans KR', sans-serif;">
+          <div style="margin-left:40px; width:900px; height:1100px; border:none; padding:20px; box-sizing:border-box; font-family:'Noto Sans KR', sans-serif;">
 
             <!-- 제목 + 경로 -->
             <div class="title-line" style="border-bottom: 2px solid #ccc;">
@@ -96,193 +97,215 @@
             </style>
 
             <div style="margin-top:30px;margin-bottom:20px;">
-                <select name="firSel" id="firSel"
-                        style="padding-left:5px; height: 30px; width:120px; font-size: 12px; border:1px solid #e2e2e2; outline: none;"
-                        required>
-                    <option value="" selected>1차분류 선택</option>
-                    <option value="product">주문 상품 문의</option>
-                    <option value="delivery">배송 관련 문의</option>
-                    <option value="pay">결제 관련 문의</option>
-                    <option value="collect">회수 지연 문의</option>
-                </select>
+                <form th:action="@{/admin/FAQ/search}" method="get">
+                    <select name="board_type2" id="firSel"
+                            style="padding-left:5px; height: 30px; width:120px; font-size: 12px; border:1px solid #e2e2e2; outline: none;"
+                            required>
+                        <option value="" selected>1차분류 선택</option>
+                        <option value="member">회원</option>
+                        <option value="event">쿠폰 / 이벤트</option>
+                        <option value="pay">주문 / 결제</option>
+                        <option value="delivery">배송</option>
+                        <option value="cancel">취소 / 반품 / 교환</option>
+                        <option value="trip">여행 / 숙박 / 항공</option>
+                        <option value="safe">안전거래</option>
+                    </select>
 
-                <select name="secSel" id="secSel"
-                        style="padding-left:5px; height: 30px; width:180px; font-size: 12px; border:1px solid #e2e2e2; outline: none; margin-left:6px;"
-                        disabled required>
-                    <option value="">2차분류 선택</option>
-                </select>
+                    <select name="board_type3" id="secSel"
+                            style="padding-left:5px; height: 30px; width:180px; font-size: 12px; border:1px solid #e2e2e2; outline: none; margin-left:6px;"
+                            onchange="this.form.submit()"
+                            disabled required>
+                        <option value="">2차분류 선택</option>
+                    </select>
+                </form>
                 </div>
-                
+
                 <script>
                     document.addEventListener('DOMContentLoaded', () => {
-                    // 1차 -> 2차 매핑
-                    // key는 1차 value와 동일하게 설정 (product/delivery/pay/collect)
-                    const subMap = {
-                        product: [
-                        { value: 'missing',   text: '상품 누락/오배송/불량' },
-                        { value: 'option',    text: '옵션 변경(색상/사이즈)' },
-                        { value: 'restock',   text: '재입고/상품재고 문의' },
-                        { value: 'cancel',    text: '주문 취소/변경' },
-                        { value: 'detail',    text: '상품 상세 정보 문의' },
-                        ],
-                        delivery: [
-                        { value: 'addr',      text: '배송지 변경' },
-                        { value: 'delay',     text: '배송 지연' },
-                        { value: 'loss',      text: '분실/파손' },
-                        { value: 'intl',      text: '해외배송 문의' },
-                        { value: 'fee',       text: '배송비/도서산간' },
-                        ],
-                        pay: [
-                        { value: 'method',    text: '결제 수단/실패' },
-                        { value: 'install',   text: '무이자/할부' },
-                        { value: 'cashrcpt',  text: '현금영수증/지출증빙' },
-                        { value: 'refund',    text: '환불 처리/일정' },
-                        { value: 'receipt',   text: '영수증 재발행' },
-                        ],
-                        collect: [
-                        { value: 'collect_delay', text: '수거 지연' },
-                        { value: 'reschedule',    text: '방문일정 변경' },
-                        { value: 'courier',       text: '기사 연락/요청사항' },
-                        { value: 'label',         text: '반품 라벨/포장' },
-                        { value: 'recollect',     text: '재수거 요청' },
-                        ],
-                    };
+                        // 1차 -> 2차 매핑
+                        // key는 1차 셀렉트의 value와 동일해야 합니다.
+                        const subMap = {
+                            member: [
+                                { value: 'signup',   text: '가입' },
+                                { value: 'withdraw', text: '탈퇴' },
+                                { value: 'account',  text: '회원정보' },
+                                { value: 'login',    text: '로그인' },
+                            ],
+                            event: [
+                                { value: 'couponissue',  text: '쿠폰발급' },
+                                { value: 'couponuse',    text: '쿠폰사용' },
+                                { value: 'eventjoin',    text: '이벤트참여' },
+                                { value: 'winnercheck',  text: '당첨확인' },
+                            ],
+                            pay: [
+                                { value: 'orderguide',     text: '주문방법' },
+                                { value: 'paymentmethod',  text: '결제수단' },
+                                { value: 'paymenterror',   text: '결제오류' },
+                                { value: 'receipt',        text: '영수증/증빙' },
+                            ],
+                            delivery: [
+                                { value: 'tracking',        text: '배송조회' },
+                                { value: 'deliverytime',    text: '배송기간' },
+                                { value: 'deliveryfee',     text: '배송비' },
+                                { value: 'globalshipping',  text: '해외배송' },
+                            ],
+                            cancel: [
+                                { value: 'ordercancel',   text: '주문취소' },
+                                { value: 'refund',        text: '반품' },
+                                { value: 'exchange',      text: '교환' },
+                                { value: 'refundprocess', text: '환불처리' },
+                            ],
+                            trip: [
+                                { value: 'reservation',  text: '예약' },
+                                { value: 'payment',      text: '결제' },
+                                { value: 'changecancel', text: '변경/취소' },
+                                { value: 'guide',        text: '이용안내' },
+                            ],
+                            safe: [
+                                { value: 'security',     text: '보안공지' },
+                                { value: 'alert',        text: '사기주의' },
+                                { value: 'safepayment',  text: '안전결제' },
+                                { value: 'privacy',      text: '개인정보보호' },
+                            ],
+                        };
 
-                    const first  = document.getElementById('firSel');
-                    const second = document.getElementById('secSel');
+                        const first  = document.getElementById('firSel'); // 1차
+                        const second = document.getElementById('secSel'); // 2차
 
-                    // 2차 초기화
-                    function resetSecond() {
-                        second.innerHTML = '<option value="">2차분류 선택</option>';
-                        second.disabled = true;
-                    }
+                        // 2차 초기화
+                        function resetSecond() {
+                            second.innerHTML = '<option value="">2차분류 선택</option>';
+                            second.disabled = true;
+                        }
 
-                    // 2차 옵션 채우기
-                    function fillSecond(list) {
+                        // 2차 옵션 채우기
+                        function fillSecond(list) {
+                            resetSecond();
+                            list.forEach(opt => {
+                                const o = document.createElement('option');
+                                o.value = opt.value;
+                                o.textContent = opt.text;
+                                second.appendChild(o);
+                            });
+                            second.disabled = false;
+                        }
+
+                        // 최초 상태
                         resetSecond();
-                        list.forEach(opt => {
-                        const o = document.createElement('option');
-                        o.value = opt.value;
-                        o.textContent = opt.text;
-                        second.appendChild(o);
+
+                        // 1차 변경 시 2차 갱신
+                        first.addEventListener('change', () => {
+                            const key = first.value; // 예: 'member'
+                            if (subMap[key]) {
+                                fillSecond(subMap[key]);
+                                second.value = ''; // placeholder 유지
+                            } else {
+                                resetSecond();
+                            }
                         });
-                        second.disabled = false;
-                    }
 
-                    // 최초 상태
-                    resetSecond();
-
-                    // 1차 변경 시 2차 갱신
-                    first.addEventListener('change', () => {
-                        const key = first.value;
-                        if (subMap[key]) {
-                        fillSecond(subMap[key]);
-                        // 첫 옵션(placeholder)로 포커스 유지
-                        second.value = '';
-                        } else {
-                        resetSecond();
+                        // (선택) 폼 제출 시 필수값 검사 예시
+                        const form = first.closest('form');
+                        if (form) {
+                            form.addEventListener('submit', (e) => {
+                                if (!first.value) {
+                                    alert('1차분류를 선택해주세요.');
+                                    first.focus();
+                                    e.preventDefault();
+                                    return;
+                                }
+                                if (second.disabled || !second.value) {
+                                    alert('2차분류를 선택해주세요.');
+                                    second.focus();
+                                    e.preventDefault();
+                                }
+                            });
                         }
                     });
+                </script>
 
-                    // (선택) 폼 제출 시 필수값 검사 예시
-                    const form = first.closest('form');
-                    if (form) {
-                        form.addEventListener('submit', (e) => {
-                        if (!first.value) {
-                            alert('1차분류를 선택해주세요.');
-                            first.focus();
-                            e.preventDefault();
-                            return;
-                        }
-                        if (second.disabled || !second.value) {
-                            alert('2차분류를 선택해주세요.');
-                            second.focus();
-                            e.preventDefault();
-                        }
-                        });
-                    }
-                    });
-                    </script>
 
-            <!-- 2. 테이블 -->
+                <!-- 2. 테이블 -->
             <table style="width:100%; border-collapse:collapse; text-align:center; font-size:14px;">
               <thead>
                 <tr style="border-top:2px solid #000; border-bottom:1px solid #ccc; background:#fff;">
-                  <th style="padding:15px;"><input type="checkbox"></th>
-                  <th>번호</th>
-                  <th>1차 유형</th>
-                  <th>2차 유형</th>
-                  <th>제목</th>
-                  <th>조회</th>
+                  <th style="padding:15px; width: 84px;"><input type="checkbox"></th>
+                  <th style="width:30px;">번호</th>
+                  <th style="width:104px;">1차 유형</th>
+                  <th style="width:73px;">2차 유형</th>
+                  <th style="width:350px;">제목</th>
+                  <th style="width:45px;">조회</th>
                   <th>날짜</th>
-                  <th>관리</th>
+                  <th style="width:52px;">관리</th>
                   
                 </tr>
               </thead>
               <tbody>
-                <tr style="border-bottom:1px solid #e2e2e2; height:70px;vertical-align: middle;">
-                  <td><input type="checkbox"></td><td>10</td><td>1차유형</td><td>2차유형</td><td style="text-align: left;padding-left: 40px;">개인회원과 법인회원에 차이가있나요?</td><td>120</td><td>00.00.00</td><td>
-                    <a href="#" style="text-decoration:none; margin-right:8px;">[ 수정 ]</a>
-                    <a href="#" style="text-decoration:none;">[ 삭제 ]</a>
-                  </td>
-                <tr style="border-bottom:1px solid #e2e2e2; height:70px;vertical-align: middle;">
-                  <td><input type="checkbox"></td><td>9</td><td>1차유형</td><td>2차유형</td><td style="text-align: left;padding-left: 40px;">본인인증 시 이미 가입되어 있는 정보라고 나옵니다.</td><td>120</td><td>00.00.00</td><td>
-                  <a href="#" style="text-decoration:none; margin-right:8px;">[ 수정 ]</a>
-                  <a href="#" style="text-decoration:none;">[ 삭제 ]</a>
-                </td>
-                </tr>
-                <tr style="border-bottom:1px solid #e2e2e2; height:70px;vertical-align: middle;">
-                  <td><input type="checkbox"></td><td>8</td><td>1차유형</td><td>2차유형</td><td style="text-align: left;padding-left: 40px;">아이디를 여러개 사용할 수 있나요?</td><td>120</td><td>00.00.00</td><td>
-                  <a href="#" style="text-decoration:none; margin-right:8px;">[ 수정 ]</a>
-                  <a href="#" style="text-decoration:none;">[ 삭제 ]</a>
-                </td>
-                <tr style="border-bottom:1px solid #e2e2e2; height:70px;vertical-align: middle;">
-                  <td><input type="checkbox"></td><td>7</td><td>1차유형</td><td>2차유형</td><td style="text-align: left;padding-left: 40px;">회원 종류 및 혜택 안내</td><td>120</td><td>00.00.00</td><td>
-                  <a href="#" style="text-decoration:none; margin-right:8px;">[ 수정 ]</a>
-                  <a href="#" style="text-decoration:none;">[ 삭제 ]</a>
-                </td>
-                </tr>
-                <tr style="border-bottom:1px solid #e2e2e2; height:70px;vertical-align: middle;">
-                  <td><input type="checkbox"></td><td>6</td><td>1차유형</td><td>2차유형</td><td style="text-align: left;padding-left: 40px;">회원탈퇴 후 재가입이 가능한가요?</td><td>120</td><td>00.00.00</td><td>
-                  <a href="#" style="text-decoration:none; margin-right:8px;">[ 수정 ]</a>
-                  <a href="#" style="text-decoration:none;">[ 삭제 ]</a>
-                </td>
-                </tr>
-                <tr style="border-bottom:1px solid #e2e2e2; height:70px;vertical-align: middle;">
-                  <td><input type="checkbox"></td><td>5</td><td>1차유형</td><td>2차유형</td><td style="text-align: left;padding-left: 40px;">탈퇴하면 개인정보는 모두 삭제되나요?</td><td>120</td><td>00.00.00</td><td>
-                  <a href="#" style="text-decoration:none; margin-right:8px;">[ 수정 ]</a>
-                  <a href="#" style="text-decoration:none;">[ 삭제 ]</a>
-                </td>
-                <tr style="border-bottom:1px solid #e2e2e2; height:70px;vertical-align: middle;">
-                  <td><input type="checkbox"></td><td>4</td><td>1차유형</td><td>2차유형</td><td style="text-align: left;padding-left: 40px;">탈퇴하면 개인정보는 모두 삭제되나요?</td><td>120</td><td>00.00.00</td><td>
-                  <a href="#" style="text-decoration:none; margin-right:8px;">[ 수정 ]</a>
-                  <a href="#" style="text-decoration:none;">[ 삭제 ]</a>
-                </td>
-                </tr>
-                <tr style="border-bottom:1px solid #e2e2e2; height:70px;vertical-align: middle;">
-                  <td><input type="checkbox"></td><td>3</td><td>1차유형</td><td>2차유형</td><td style="text-align: left;padding-left: 40px;">탈퇴하면 개인정보는 모두 삭제되나요?</td><td>120</td><td>00.00.00</td><td>
-                  <a href="#" style="text-decoration:none; margin-right:8px;">[ 수정 ]</a>
-                  <a href="#" style="text-decoration:none;">[ 삭제 ]</a>
-                </td>
-                <tr style="border-bottom:1px solid #e2e2e2; height:70px;vertical-align: middle;">
-                  <td><input type="checkbox"></td><td>2</td><td>1차유형</td><td>2차유형</td><td style="text-align: left;padding-left: 40px;">탈퇴하면 개인정보는 모두 삭제되나요?</td><td>120</td><td>00.00.00</td><td>
-                  <a href="#" style="text-decoration:none; margin-right:8px;">[ 수정 ]</a>
-                  <a href="#" style="text-decoration:none;">[ 삭제 ]</a>
-                </td>
-                </tr>
-                <tr style="border-bottom:1px solid #e2e2e2; height:70px;vertical-align: middle;">
-                  <td><input type="checkbox"></td><td>1</td><td>1차유형</td><td>2차유형</td><td style="text-align: left;padding-left: 40px;">탈퇴하면 개인정보는 모두 삭제되나요?</td><td>120</td><td>00.00.00</td><td>
-                  <a href="#" style="text-decoration:none; margin-right:8px;">[ 수정 ]</a>
-                  <a href="#" style="text-decoration:none;">[ 삭제 ]</a>
-                </td>
-                </tr>
+                <tr th:each="admin, stat: ${pageResponseDTO.dtoList}"
+                        style="border-bottom:1px solid #e2e2e2; height:70px;vertical-align: middle;">
+                  <td><input type="checkbox"></td>
+                    <td th:text="${#lists.size(pageResponseDTO.dtoList) - stat.index}">10</td>
+                    <td th:text="${admin.board_type2 == 'member' ? '회원' :
+                    (admin.board_type2 == 'event' ? '쿠폰 / 이벤트' :
+                    (admin.board_type2 == 'pay' ? '주문 / 결제' :
+                    (admin.board_type2 == 'delivery' ? '배송' :
+                    (admin.board_type2 == 'cancel' ? '취소 / 반품 / 교환' :
+                    (admin.board_type2 == 'trip' ? '여행 / 숙박 / 항공' :
+                    (admin.board_type2 == 'safe' ? '안전거래' : ''))))))}">1차유형</td>
+                    <td th:text="${admin.board_type3 == 'signup' ? '가입' :
+                    (admin.board_type3 == 'withdraw' ? '탈퇴' :
+                    (admin.board_type3 == 'account' ? '회원정보' :
+                    (admin.board_type3 == 'login' ? '로그인' :
+                    (admin.board_type3 == 'couponissue' ? '쿠폰발급' :
+                    (admin.board_type3 == 'couponuse' ? '쿠폰사용' :
+                    (admin.board_type3 == 'eventjoin' ? '이벤트참여' :
+                    (admin.board_type3 == 'winnercheck' ? '당첨확인' :
+                    (admin.board_type3 == 'orderguide' ? '주문방법' :
+                    (admin.board_type3 == 'paymentmethod' ? '결제수단' :
+                    (admin.board_type3 == 'paymenterror' ? '결제오류' :
+                    (admin.board_type3 == 'receipt' ? '영수증/증빙' :
+                    (admin.board_type3 == 'tracking' ? '배송조회' :
+                    (admin.board_type3 == 'deliverytime' ? '배송기간' :
+                    (admin.board_type3 == 'deliveryfee' ? '배송비' :
+                    (admin.board_type3 == 'globalshipping' ? '해외배송' :
+                    (admin.board_type3 == 'ordercancel' ? '주문취소' :
+                    (admin.board_type3 == 'refund' ? '반품' :
+                    (admin.board_type3 == 'exchange' ? '교환' :
+                    (admin.board_type3 == 'refundprocess' ? '환불처리' :
+                    (admin.board_type3 == 'reservation' ? '예약' :
+                    (admin.board_type3 == 'payment' ? '결제' :
+                    (admin.board_type3 == 'changecancel' ? '변경/취소' :
+                    (admin.board_type3 == 'guide' ? '이용안내' :
+                    (admin.board_type3 == 'security' ? '보안공지' :
+                    (admin.board_type3 == 'alert' ? '사기주의' :
+                    (admin.board_type3 == 'safepayment' ? '안전결제' :
+                    (admin.board_type3 == 'privacy' ? '개인정보보호' : '')))))))))))))))))))))))))))}">2차유형</td>
+                    <td style="text-align: left;padding-left: 20px; padding-right:20px;"><a th:href="${admin.look == 0 ?
+                                                                                                    '/admin/inquiry/answer?id=' + admin.id :
+                                                                                                    '/admin/inquiry/view?id=' + admin.id}">[[${admin.title}]]</a></td>
+                    <td style="width:45px;"
+                            th:text="${admin.hits}">120</td>
+                    <td style="width:122px;"
+                            th:text="${#temporals.format(admin.created_at, 'yyyy-MM-dd')}">00.00.00</td>
+                    <td>
+                        <div>
+                            <a th:href="@{/admin/FAQ/modify/list(id=${admin.id})}"
+                                style="text-decoration:none; margin-right:0px;">[ 수정 ]</a>
+                        </div>
+                        <div>
+                        <a th:href="@{/admin/FAQ/delete(id=${admin.id})}"
+                           th:onclick="|return confirm('정말로 삭제하시겠습니까?')|"
+                                style="text-decoration:none;">[ 삭제 ]</a>
+                        </div>
+                     </td>
               </tbody>
             </table>
 
             <!-- 3. 하단 버튼 영역 -->
             <div style="display:flex; justify-content:space-between; align-items:center; margin-top:20px;">
-              <button style="border:none; background-color: #760c0c; color:white; font-size: 10px; font-weight: 300; height:25px; width:62px;">선택삭제</button>
-                    <button style="margin-left:auto; border:none; background-color: black; color:white; font-size: 10px; font-weight: 300; height:25px; width:62px;">작성하기</button>
+              <button style="cursor:pointer; border:none; background-color: #760c0c; color:white; font-size: 10px; font-weight: 300; height:25px; width:62px;">선택삭제</button>
+                    <button style="cursor:pointer; margin-left:auto; border:none; background-color: black; color:white; font-size: 10px; font-weight: 300; height:25px; width:62px;"
+                            th:onclick="|location.href='@{/admin/FAQ/write}'|">작성하기</button>
           </div>
     </main>
 

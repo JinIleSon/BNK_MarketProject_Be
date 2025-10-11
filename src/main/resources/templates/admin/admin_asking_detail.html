@@ -2,68 +2,68 @@
 
     <main style="border-top:1px solid #e2e2e2; display: flex; justify-content: center; ">
         <div>
-        <aside class="euro-nav" aria-label="관리자 사이드 메뉴" style="">
-            <section class="euro-nav__group">
-            <h4 class="euro-nav__title" style="">환경설정</h4>
-            <ul class="euro-nav__list">
-                <li class="euro-nav__item"><a href="#">기본설정</a></li>
-                <li class="euro-nav__item"><a href="#">배너관리</a></li>
-                <li class="euro-nav__item"><a href="#">약관관리</a></li>
-                <li class="euro-nav__item"><a href="#">카테고리</a></li>
-                <li class="euro-nav__item"><a href="#">버전관리</a></li>
-            </ul>
-            </section>
+            <aside class="euro-nav" aria-label="관리자 사이드 메뉴" style="">
+                <section class="euro-nav__group">
+                    <h4 class="euro-nav__title" style="">환경설정</h4>
+                    <ul class="euro-nav__list">
+                        <li class="euro-nav__item"><a href="#">기본설정</a></li>
+                        <li class="euro-nav__item"><a href="#">배너관리</a></li>
+                        <li class="euro-nav__item"><a href="#">약관관리</a></li>
+                        <li class="euro-nav__item"><a href="#">카테고리</a></li>
+                        <li class="euro-nav__item"><a href="#">버전관리</a></li>
+                    </ul>
+                </section>
 
-            <section class="euro-nav__group">
-            <h4 class="euro-nav__title" style="">상점관리</h4>
-            <ul class="euro-nav__list">
-                <li class="euro-nav__item"><a href="#">상점목록</a></li>
-                <li class="euro-nav__item"><a href="#">매출현황</a></li>
-            </ul>
-            </section>
+                <section class="euro-nav__group">
+                    <h4 class="euro-nav__title" style="">상점관리</h4>
+                    <ul class="euro-nav__list">
+                        <li class="euro-nav__item"><a th:href="@{/admin/shop/list}">상점목록</a></li>
+                        <li class="euro-nav__item"><a th:href="@{/admin/sales/list}">매출현황</a></li>
+                    </ul>
+                </section>
 
-            <section class="euro-nav__group">
-            <h4 class="euro-nav__title" style="">회원관리</h4>
-            <ul class="euro-nav__list">
-                <li class="euro-nav__item"><a href="#">회원목록</a></li>
-                <li class="euro-nav__item"><a href="#">포인트관리</a></li>
-            </ul>
-            </section>
+                <section class="euro-nav__group">
+                    <h4 class="euro-nav__title" style="">회원관리</h4>
+                    <ul class="euro-nav__list">
+                        <li class="euro-nav__item"><a th:href="@{/admin/member/list}">회원목록</a></li>
+                        <li class="euro-nav__item"><a th:href="@{/admin/point/list}">포인트관리</a></li>
+                    </ul>
+                </section>
 
-            <section class="euro-nav__group">
-            <h4 class="euro-nav__title" style="">상품관리</h4>
-            <ul class="euro-nav__list">
-                <li class="euro-nav__item"><a href="#">상품목록</a></li>
-                <li class="euro-nav__item"><a href="#">상품등록</a></li>
-            </ul>
-            </section>
+                <section class="euro-nav__group">
+                    <h4 class="euro-nav__title" style="">상품관리</h4>
+                    <ul class="euro-nav__list">
+                        <li class="euro-nav__item"><a th:href="@{/admin/product/list}">상품목록</a></li>
+                        <li class="euro-nav__item"><a th:href="@{/admin/productReg/list}">상품등록</a></li>
+                    </ul>
+                </section>
 
-            <section class="euro-nav__group">
-            <h4 class="euro-nav__title" style="">주문관리</h4>
-            <ul class="euro-nav__list">
-                <li class="euro-nav__item"><a href="#">주문현황</a></li>
-                <li class="euro-nav__item"><a href="#">배송현황</a></li>
-            </ul>
-            </section>
+                <section class="euro-nav__group">
+                    <h4 class="euro-nav__title" style="">주문관리</h4>
+                    <ul class="euro-nav__list">
+                        <li class="euro-nav__item"><a th:href="@{/admin/order/list}">주문현황</a></li>
+                        <li class="euro-nav__item"><a th:href="@{/admin/delivery/list}">배송현황</a></li>
+                    </ul>
+                </section>
 
-            <section class="euro-nav__group">
-            <h4 class="euro-nav__title" style="">쿠폰관리</h4>
-            <ul class="euro-nav__list">
-                <li class="euro-nav__item"><a href="#">쿠폰목록</a></li>
-                <li class="euro-nav__item"><a href="#">쿠폰발급현황</a></li>
-            </ul>
-            </section>
+                <section class="euro-nav__group">
+                    <h4 class="euro-nav__title" style="">쿠폰관리</h4>
+                    <ul class="euro-nav__list">
+                        <li class="euro-nav__item"><a th:href="@{/admin/coupon/list}">쿠폰목록</a></li>
+                        <li class="euro-nav__item"><a th:href="@{/admin/couponsnow/list}">쿠폰발급현황</a></li>
+                    </ul>
+                </section>
 
-            <section class="euro-nav__group">
-            <h4 class="euro-nav__title" style="">고객센터</h4>
-            <ul class="euro-nav__list">
-                <li class="euro-nav__item"><a href="#">공지사항</a></li>
-                <li class="euro-nav__item"><a href="#">자주묻는질문</a></li>
-                <li class="euro-nav__item is-active"><a href="#">문의하기</a></li>
-                <li class="euro-nav__item"><a href="#">채용하기</a></li>
-            </ul>
-            </section>
-        </aside>
+                <section class="euro-nav__group">
+                    <h4 class="euro-nav__title" style="">고객센터</h4>
+                    <ul class="euro-nav__list">
+                        <li class="euro-nav__item"><a th:href="@{/admin/announcement/list}">공지사항</a></li>
+                        <li class="euro-nav__item"><a th:href="@{/admin/FAQ/list}">자주묻는질문</a></li>
+                        <li class="euro-nav__item is-active"><a th:href="@{/admin/inquiry/list}">문의하기</a></li>
+                        <li class="euro-nav__item"><a th:href="@{/admin/employ/list}">채용하기</a></li>
+                    </ul>
+                </section>
+            </aside>
         </div>
         <div style="width:940px; border-left:1px solid #e2e2e2;">
             <div style="margin-left:60px;">
@@ -77,30 +77,79 @@
                 <table style="border-collapse: collapse; width:100%; font-size:12px; margin-top:20px;">
                 <tr style="border-top:1px solid gray; height:50px; border-bottom:1px solid #e2e2e2; vertical-align: middle;">
                     <th style="width:124px; padding:8px; text-align:left;">유형</th>
-                    <td style="padding:8px; text-align:left;">문의 - 기타</td>
+                    <td style="padding:8px; text-align:left;">
+                        <span th:text="${adminInquiryDTO.board_type2 == 'member' ? '회원' :
+                    (adminInquiryDTO.board_type2 == 'event' ? '쿠폰 / 이벤트' :
+                    (adminInquiryDTO.board_type2 == 'pay' ? '주문 / 결제' :
+                    (adminInquiryDTO.board_type2 == 'delivery' ? '배송' :
+                    (adminInquiryDTO.board_type2 == 'cancel' ? '취소 / 반품 / 교환' :
+                    (adminInquiryDTO.board_type2 == 'trip' ? '여행 / 숙박 / 항공' :
+                    (adminInquiryDTO.board_type2 == 'safe' ? '안전거래' : ''))))))}"></span><span> - </span>
+                        <span th:text="${adminInquiryDTO.board_type3 == 'signup' ? '가입' :
+                    (adminInquiryDTO.board_type3 == 'withdraw' ? '탈퇴' :
+                    (adminInquiryDTO.board_type3 == 'account' ? '회원정보' :
+                    (adminInquiryDTO.board_type3 == 'login' ? '로그인' :
+                    (adminInquiryDTO.board_type3 == 'couponissue' ? '쿠폰발급' :
+                    (adminInquiryDTO.board_type3 == 'couponuse' ? '쿠폰사용' :
+                    (adminInquiryDTO.board_type3 == 'eventjoin' ? '이벤트참여' :
+                    (adminInquiryDTO.board_type3 == 'winnercheck' ? '당첨확인' :
+                    (adminInquiryDTO.board_type3 == 'orderguide' ? '주문방법' :
+                    (adminInquiryDTO.board_type3 == 'paymentmethod' ? '결제수단' :
+                    (adminInquiryDTO.board_type3 == 'paymenterror' ? '결제오류' :
+                    (adminInquiryDTO.board_type3 == 'receipt' ? '영수증/증빙' :
+                    (adminInquiryDTO.board_type3 == 'tracking' ? '배송조회' :
+                    (adminInquiryDTO.board_type3 == 'deliverytime' ? '배송기간' :
+                    (adminInquiryDTO.board_type3 == 'deliveryfee' ? '배송비' :
+                    (adminInquiryDTO.board_type3 == 'globalshipping' ? '해외배송' :
+                    (adminInquiryDTO.board_type3 == 'ordercancel' ? '주문취소' :
+                    (adminInquiryDTO.board_type3 == 'refund' ? '반품' :
+                    (adminInquiryDTO.board_type3 == 'exchange' ? '교환' :
+                    (adminInquiryDTO.board_type3 == 'refundprocess' ? '환불처리' :
+                    (adminInquiryDTO.board_type3 == 'reservation' ? '예약' :
+                    (adminInquiryDTO.board_type3 == 'payment' ? '결제' :
+                    (adminInquiryDTO.board_type3 == 'changecancel' ? '변경/취소' :
+                    (adminInquiryDTO.board_type3 == 'guide' ? '이용안내' :
+                    (adminInquiryDTO.board_type3 == 'security' ? '보안공지' :
+                    (adminInquiryDTO.board_type3 == 'alert' ? '사기주의' :
+                    (adminInquiryDTO.board_type3 == 'safepayment' ? '안전결제' :
+                    (adminInquiryDTO.board_type3 == 'privacy' ? '개인정보보호' : '')))))))))))))))))))))))))))}"></span>
+                    </td>
                 </tr>
                 <tr style="border-bottom:1px solid #e2e2e2; height:70px; vertical-align: middle;">
                     <th style="padding:8px; text-align:left;">제목</th>
-                    <td style="padding:8px; text-align:left;">아이디/암호를사용할수있나요?</td>
+                    <td style="padding:8px; text-align:left;"
+                        th:text="${adminInquiryDTO.title}">아이디/암호를사용할수있나요?</td>
                 </tr>
                 <tr style="border-bottom:1px solid #e2e2e2; height:70px; vertical-align: middle;">
                     <th style="padding:8px; text-align:left;">내용</th>
-                    <td style="padding:8px; text-align:left;">전자상거래소비자보호법 제6조 제4항에 따라 사용가능한가요?</td>
+                    <td style="padding:8px; text-align:left;"><span th:utext="${#strings.replace(
+                      #strings.replace(
+                        #strings.replace(
+                          #strings.replace(adminInquiryDTO.content, '.', '.<br/>'),
+                        '!', '!<br/>'),
+                      '?', '?<br/>'),
+                    '✔', '<br/>✔')}"></span></td>
                 </tr>
                 <tr style="border-bottom:1px solid #e2e2e2; height:70px; vertical-align: middle;">
                     <th style="padding:8px; text-align:left;">답변</th>
                     <td style="padding:8px; text-align:left;">
-                    [법적근거] 제17조 소비자보호법<br>
-                    전자상거래법, 소비자 기본법에 따라 사용 불가능합니다.<br>
-                    본 약관의 적용을 받습니다.
+                    <span th:utext="${#strings.replace(
+                      #strings.replace(
+                        #strings.replace(
+                          #strings.replace(adminCommentDTO.content, '.', '.<br/>'),
+                        '!', '!<br/>'),
+                      '?', '?<br/>'),
+                    '✔', '<br/>✔')}"></span>
                     </td>
                 </tr>
                 </table>
                 <div style="display: flex; justify-content: flex-end; margin-top:30px;">
                 <input type="button" value="삭제" 
-                        style="width: 80px; height: 40px; background-color: #000; color: #ffffff; margin-left:8px;">
+                        style="cursor: pointer; border:none;width: 80px; height: 40px; background-color: #760c0c; color: #ffffff; margin-left:8px;"
+                       th:onclick="|if(confirm('정말로 삭제하시겠습니까?')) location.href='@{/admin/inquiry/delete(id=${adminInquiryDTO.id})}';|">
                 <input type="button" value="목록" 
-                        style="width: 80px; height: 40px; background-color: #000; color: #ffffff; margin-left:8px;">
+                        style="cursor: pointer; border:none;width: 80px; height: 40px; background-color: #000; color: #ffffff; margin-left:8px;"
+                       th:onclick="|location.href='@{/admin/inquiry/list}'|">
                 </div>
     </main>
 
@@ -163,8 +212,4 @@ document.querySelectorAll('.euro-nav__title').forEach(title => {
   }, {capture:true});
 });
 </script>
-    <footer style="padding:20px; background-color: #808080; width:100%; height:62px; color:white;">
-        Copyright ©NICHIYA.co.kr All rights reserved. NICHIYA ADMINISTRATOR Version 5.4.1.2
-    </footer>
-</body>
-</html>
+<div th:replace="~{admin/_footer.html}"></div>

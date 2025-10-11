@@ -2,71 +2,72 @@
 
     <main style="display: flex; justify-content: center; border-top:1px solid #e2e2e2;">
         <div>
-        <aside class="euro-nav" aria-label="관리자 사이드 메뉴" style="">
-            <section class="euro-nav__group">
-            <h4 class="euro-nav__title" style="">환경설정</h4>
-            <ul class="euro-nav__list">
-                <li class="euro-nav__item"><a href="#">기본설정</a></li>
-                <li class="euro-nav__item"><a href="#">배너관리</a></li>
-                <li class="euro-nav__item"><a href="#">약관관리</a></li>
-                <li class="euro-nav__item"><a href="#">카테고리</a></li>
-                <li class="euro-nav__item"><a href="#">버전관리</a></li>
-            </ul>
-            </section>
-            <section class="euro-nav__group">
-            <h4 class="euro-nav__title" style="">상점관리</h4>
-            <ul class="euro-nav__list">
-                <li class="euro-nav__item"><a href="/admin/store_list.html">상점목록</a></li>
-                <li class="euro-nav__item"><a href="/admin/sale_status.html">매출현황</a></li>
-            </ul>
-            </section>
+            <aside class="euro-nav" aria-label="관리자 사이드 메뉴" style="">
+                <section class="euro-nav__group">
+                    <h4 class="euro-nav__title" style="">환경설정</h4>
+                    <ul class="euro-nav__list">
+                        <li class="euro-nav__item"><a href="#">기본설정</a></li>
+                        <li class="euro-nav__item"><a href="#">배너관리</a></li>
+                        <li class="euro-nav__item"><a href="#">약관관리</a></li>
+                        <li class="euro-nav__item"><a href="#">카테고리</a></li>
+                        <li class="euro-nav__item"><a href="#">버전관리</a></li>
+                    </ul>
+                </section>
 
-            <section class="euro-nav__group">
-            <h4 class="euro-nav__title" style="">회원관리</h4>
-            <ul class="euro-nav__list">
-                <li class="euro-nav__item"><a href="/admin/member_list.html">회원목록</a></li>
-                <li class="euro-nav__item"><a href="/admin/point_management.html">포인트관리</a></li>
-            </ul>
-            </section>
+                <section class="euro-nav__group">
+                    <h4 class="euro-nav__title" style="">상점관리</h4>
+                    <ul class="euro-nav__list">
+                        <li class="euro-nav__item"><a th:href="@{/admin/shop/list}">상점목록</a></li>
+                        <li class="euro-nav__item"><a th:href="@{/admin/sales/list}">매출현황</a></li>
+                    </ul>
+                </section>
 
-            <section class="euro-nav__group">
-            <h4 class="euro-nav__title" style="">상품관리</h4>
-            <ul class="euro-nav__list">
-                <li class="euro-nav__item"><a href="#">상품목록</a></li>
-                <li class="euro-nav__item"><a href="#">상품등록</a></li>
-            </ul>
-            </section>
+                <section class="euro-nav__group">
+                    <h4 class="euro-nav__title" style="">회원관리</h4>
+                    <ul class="euro-nav__list">
+                        <li class="euro-nav__item"><a th:href="@{/admin/member/list}">회원목록</a></li>
+                        <li class="euro-nav__item"><a th:href="@{/admin/point/list}">포인트관리</a></li>
+                    </ul>
+                </section>
 
-            <section class="euro-nav__group">
-            <h4 class="euro-nav__title" style="">주문관리</h4>
-            <ul class="euro-nav__list">
-                <li class="euro-nav__item"><a href="#">주문현황</a></li>
-                <li class="euro-nav__item"><a href="#">배송현황</a></li>
-            </ul>
-            </section>
+                <section class="euro-nav__group">
+                    <h4 class="euro-nav__title" style="">상품관리</h4>
+                    <ul class="euro-nav__list">
+                        <li class="euro-nav__item"><a th:href="@{/admin/product/list}">상품목록</a></li>
+                        <li class="euro-nav__item"><a th:href="@{/admin/productReg/list}">상품등록</a></li>
+                    </ul>
+                </section>
 
-            <section class="euro-nav__group">
-            <h4 class="euro-nav__title" style="">쿠폰관리</h4>
-            <ul class="euro-nav__list">
-                <li class="euro-nav__item"><a href="#">쿠폰목록</a></li>
-                <li class="euro-nav__item"><a href="#">쿠폰발급현황</a></li>
-            </ul>
-            </section>
+                <section class="euro-nav__group">
+                    <h4 class="euro-nav__title" style="">주문관리</h4>
+                    <ul class="euro-nav__list">
+                        <li class="euro-nav__item"><a th:href="@{/admin/order/list}">주문현황</a></li>
+                        <li class="euro-nav__item"><a th:href="@{/admin/delivery/list}">배송현황</a></li>
+                    </ul>
+                </section>
 
-            <section class="euro-nav__group">
-            <h4 class="euro-nav__title" style="">고객센터</h4>
-            <ul class="euro-nav__list">
-                <li class="euro-nav__item is-active"><a href="/admin/announcement_list.html">공지사항</a></li>
-                <li class="euro-nav__item"><a href="/admin/questions_list.html">자주묻는질문</a></li>
-                <li class="euro-nav__item"><a href="#">문의하기</a></li>
-                <li class="euro-nav__item"><a href="#">채용하기</a></li>
-            </ul>
-            </section>
-        </aside>
+                <section class="euro-nav__group">
+                    <h4 class="euro-nav__title" style="">쿠폰관리</h4>
+                    <ul class="euro-nav__list">
+                        <li class="euro-nav__item"><a th:href="@{/admin/coupon/list}">쿠폰목록</a></li>
+                        <li class="euro-nav__item"><a th:href="@{/admin/couponsnow/list}">쿠폰발급현황</a></li>
+                    </ul>
+                </section>
+
+                <section class="euro-nav__group">
+                    <h4 class="euro-nav__title" style="">고객센터</h4>
+                    <ul class="euro-nav__list">
+                        <li class="euro-nav__item is-active"><a th:href="@{/admin/announcement/list}">공지사항</a></li>
+                        <li class="euro-nav__item"><a th:href="@{/admin/FAQ/list}">자주묻는질문</a></li>
+                        <li class="euro-nav__item"><a th:href="@{/admin/inquiry/list}">문의하기</a></li>
+                        <li class="euro-nav__item"><a th:href="@{/admin/employ/list}">채용하기</a></li>
+                    </ul>
+                </section>
+            </aside>
         </div>
         <div style="border:1px solid #e2e2e2;"></div>
         <!-- 오른쪽 콘텐츠 영역 -->
-          <div style="margin-left:40px; width:900px; height:1000px; padding:20px; box-sizing:border-box; font-family:'Noto Sans KR', sans-serif;">
+          <div style="margin-left:40px; width:900px; height:1100px; padding:20px; box-sizing:border-box; font-family:'Noto Sans KR', sans-serif;">
 
             <!-- 제목 + 경로 -->
             <div class="title-line" style="border-bottom: 2px solid #ccc; width: 857px !important;">
@@ -76,12 +77,18 @@
             <!-- 1. 검색 -->
             <div style="margin-bottom:20px;">
               <!-- 1. 검색 -->
-            <select name="select" id="" style="width:82px; height:28px; padding-left:5px; margin-right:3px; margin-top: 20px; border:1px solid #bfbfbf; font-size: 10px !important;">
-              <option value="name">유형선택</option>
-              <option value="service">고객서비스</option>
-              <option value="event">이벤트 당첨</option>
-              <option value="security">안전거래</option>
-            </select>
+                <form th:action="@{/admin/announcement/search}" method="get">
+                    <select name="board_type2" id=""
+                            style="width:82px; height:28px; padding-left:5px; margin-right:3px; margin-top: 20px; border:1px solid #bfbfbf; font-size: 10px !important;"
+                            onchange="this.form.submit()">
+                      <option value="">유형선택</option>
+                      <option value="all">전체</option>
+                      <option value="memberservice">고객서비스</option>
+                      <option value="safe">안전거래</option>
+                      <option value="danger">위해상품</option>
+                      <option value="event">이벤트당첨</option>
+                    </select>
+                </form>
 
             
               
@@ -102,80 +109,77 @@
                 </tr>
               </thead>
               <tbody>
-                <tr style="border-bottom:1px solid #e2e2e2; height:70px;vertical-align: middle;">
-                  <td><input type="checkbox"></td><td>100</td><td>고객서비스</td><td>[안내] 해외결제 사칭문자 주의</td><td>120</td><td>00.00.00</td><td>
-                    <a href="#" style="text-decoration:none; margin-right:8px;">[ 수정 ]</a>
-                    <a href="#" style="text-decoration:none;">[ 삭제 ]</a>
-                  </td>
-                <tr style="border-bottom:1px solid #e2e2e2; height:70px;vertical-align: middle;">
-                  <td><input type="checkbox"></td><td>99</td><td>이벤트 당첨</td><td>[발표] G.Live X SK스토아 (하남쭈꾸미) 이벤트 당점자</td><td>120</td><td>00.00.00</td><td>
-                  <a href="#" style="text-decoration:none; margin-right:8px;">[ 수정 ]</a>
-                  <a href="#" style="text-decoration:none;">[ 삭제 ]</a>
-                </td>
-                </tr>
-                <tr style="border-bottom:1px solid #e2e2e2; height:70px;vertical-align: middle;">
-                  <td><input type="checkbox"></td><td>98</td><td>안전거래</td><td>[안내]로젠택배 반품 / 교환 수거지시 지연안내</td><td>120</td><td>00.00.00</td><td>
-                  <a href="#" style="text-decoration:none; margin-right:8px;">[ 수정 ]</a>
-                  <a href="#" style="text-decoration:none;">[ 삭제 ]</a>
-                </td>
-                <tr style="border-bottom:1px solid #e2e2e2; height:70px;vertical-align: middle;">
-                  <td><input type="checkbox"></td><td>97</td><td>고객서비스</td><td>[안내]구매회원 이용약관 개정</td><td>120</td><td>00.00.00</td><td>
-                  <a href="#" style="text-decoration:none; margin-right:8px;">[ 수정 ]</a>
-                  <a href="#" style="text-decoration:none;">[ 삭제 ]</a>
-                </td>
-                </tr>
-                <tr style="border-bottom:1px solid #e2e2e2; height:70px;vertical-align: middle;">
-                  <td><input type="checkbox"></td><td>96</td><td>이정재</td><td>[안내] 위치정보이용 약관 개정 공지</td><td>120</td><td>00.00.00</td><td>
-                  <a href="#" style="text-decoration:none; margin-right:8px;">[ 수정 ]</a>
-                  <a href="#" style="text-decoration:none;">[ 삭제 ]</a>
-                </td>
-                </tr>
-                <tr style="border-bottom:1px solid #e2e2e2; height:70px;vertical-align: middle;">
-                  <td><input type="checkbox"></td><td>95</td><td>고객서비스</td><td>[안내] 해외결제 사칭문자 주의</td><td>120</td><td>00.00.00</td><td>
-                  <a href="#" style="text-decoration:none; margin-right:8px;">[ 수정 ]</a>
-                  <a href="#" style="text-decoration:none;">[ 삭제 ]</a>
-                </td>
-                <tr style="border-bottom:1px solid #e2e2e2; height:70px;vertical-align: middle;">
-                  <td><input type="checkbox"></td><td>94</td><td>이벤트 당첨</td><td>[발표] G.Live X SK스토아 (하남쭈꾸미) 이벤트 당점자</td><td>120</td><td>00.00.00</td><td>
-                  <a href="#" style="text-decoration:none; margin-right:8px;">[ 수정 ]</a>
-                  <a href="#" style="text-decoration:none;">[ 삭제 ]</a>
-                </td>
-                </tr>
-                <tr style="border-bottom:1px solid #e2e2e2; height:70px;vertical-align: middle;">
-                  <td><input type="checkbox"></td><td>93</td><td>안전거래</td><td>[안내]로젠택배 반품 / 교환 수거지시 지연안내</td><td>120</td><td>00.00.00</td><td>
-                  <a href="#" style="text-decoration:none; margin-right:8px;">[ 수정 ]</a>
-                  <a href="#" style="text-decoration:none;">[ 삭제 ]</a>
-                </td>
-                <tr style="border-bottom:1px solid #e2e2e2; height:70px;vertical-align: middle;">
-                  <td><input type="checkbox"></td><td>92</td><td>고객서비스</td><td>[안내]구매회원 이용약관 개정</td><td>120</td><td>00.00.00</td><td>
-                  <a href="#" style="text-decoration:none; margin-right:8px;">[ 수정 ]</a>
-                  <a href="#" style="text-decoration:none;">[ 삭제 ]</a>
-                </td>
+                <tr th:each="admin, stat:${pageResponseDTO.dtoList}"
+                        style="border-bottom:1px solid #e2e2e2; height:70px;vertical-align: middle;">
+                  <td><input type="checkbox"></td>
+                    <td th:text="${pageResponseDTO.startNo - stat.index}"
+                        style="width:60px;">100</td>
+                    <td th:text="${admin.board_type2 == 'all' ? '전체' :
+                    (admin.board_type2 == 'memberservice' ? '고객서비스' :
+                    (admin.board_type2 == 'safe' ? '안전거래' :
+                    (admin.board_type2 == 'danger' ? '위해상품' :
+                    (admin.board_type2 == 'event' ? '이벤트당첨' : ''))))}"
+                        style="width:90px;">고객서비스</td>
+                    <td style="width:350px;"><a th:href="@{/admin/announcement/view(id=${admin.id})}">[[${admin.title}]]</a></td>
+                    <td th:text="${admin.hits}"
+                    style="width:55px;">120</td>
+                    <td th:text="${#temporals.format(admin.created_at, 'yyyy-MM-dd')}">00.00.00</td>
+                    <td style="width:60px;">
+                        <div style="margin-left: 8px;"><a th:href="@{/admin/announcement/modify/list(id=${admin.id})}"
+                                                          style="text-decoration:none; margin-right:8px;">[ 수정 ]</a></div>
+                        <div><a th:href="@{/admin/announcement/delete(id=${admin.id})}"
+                                th:onclick="|return confirm('정말로 삭제하시겠습니까?')|"
+                                style="text-decoration:none;">[ 삭제 ]</a></div>
+                    </td>
                 </tr>
               </tbody>
             </table>
 
             <div style="display: flex; margin-top:25px;">
-                    <button style="border:none; background-color: #760c0c; color:white; font-size: 10px; font-weight: 300; height:25px; width:62px;">선택삭제</button>
-                    <button style="margin-left:auto; border:none; background-color: black; color:white; font-size: 10px; font-weight: 300; height:25px; width:62px;">상품등록</button>
+                    <button style="cursor: pointer; border:none; background-color: #760c0c; color:white; font-size: 10px; font-weight: 300; height:25px; width:62px;">선택삭제</button>
+                    <button th:onclick="|location.href='@{/admin/announcement/write}'|"
+                            style="cursor: pointer; margin-left:auto; border:none; background-color: black; color:white; font-size: 10px; font-weight: 300; height:25px; width:62px;">작성하기</button>
                 </div>
-                <div style=" height: 100px; margin-top:40px; display: flex; justify-content: center;">
-                    <form action="" method="" style="">
-                        <input type="button" class="prev-page" value="< 이전">
+              <div style=" height: 100px; margin-top:40px; display: flex; justify-content: center;">
+                  <input th:if="${pageResponseDTO.prev}"
+                         th:onclick="|location.href='@{/admin/announcement/list(pg=${pageResponseDTO.start - 1})}'|"
+                         type="button" class="prev-page" value="< 이전">
 
-                        <input type="button" value="1" style="border:1px solid #333; background-color: #333; color: white; height: 30px; width: 30px; margin-right:2px; line-height:1;">
-                        <input type="button" value="2" style="cursor: pointer; border:1px solid #ddd; color: #555; height: 30px; width: 30px; margin-right:2px; line-height:1;">
-                        <input type="button" value="3" style="cursor: pointer; border:1px solid #ddd; color: #555; height: 30px; width: 30px; line-height:1;">
+                  <th:block th:each="num:${#numbers.sequence(pageResponseDTO.start, pageResponseDTO.end)}">
+                      <input th:onclick="|location.href='@{/admin/announcement/list(pg=${num})}'|"
+                             th:class="${num == pageResponseDTO.pg ? 'current' : 'num'}"
+                             type="button"
+                             th:value="${num}" />
+                  </th:block>
 
-                        <input type="button" class="next-page" value="다음 >" style="">
-                    </form>
-                </div>
+                  <input th:if="${pageResponseDTO.next}"
+                         th:onclick="|location.href='@{/admin/announcement/list(pg=${pageResponseDTO.end + 1})}'|"
+                         type="button" class="next-page" value="다음 >" style="">
+              </div>
             </div>
         </div>
         </div>
     </main>
 
     <style>
+        .current{
+            border:1px solid #333;
+            background-color: #333;
+            color: white;
+            height: 30px;
+            width: 30px;
+            margin-right:7px;
+            line-height:1;
+        }
+        .num {
+            cursor: pointer;
+            border:1px solid #ddd;
+            color: #555;
+            height: 30px;
+            width: 30px;
+            margin-right:7px;
+            line-height:1;
+        }
         .euro-nav__list {
             max-height: 0;                /* 기본은 접힘 */
             overflow: hidden;             /* 안 보이게 */

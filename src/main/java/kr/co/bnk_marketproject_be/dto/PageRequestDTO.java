@@ -26,6 +26,9 @@ public class PageRequestDTO {
     @Builder.Default
     private String boardType = "storelist";
 
+    private String board_type2;
+    private String board_type3;
+
     private String searchType;
     private String keyword;
 

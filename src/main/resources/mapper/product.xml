@@ -1,0 +1,180 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="kr.co.bnk_marketproject_be.mapper.ProductsMapper">
+
+    <!-- 전체 상품 개수 -->
+    <select id="selectTotalProductCount" resultType="int">
+        SELECT COUNT(*) FROM products
+    </select>
+
+    <select id="selectProductListPaged"
+            resultType="kr.co.bnk_marketproject_be.dto.ProductsDTO">
+
+        SELECT
+        p.id,
+        p.product_name                       AS product_name,
+        p.description,
+        p.sub_description                    AS sub_description,
+        p.price,
+        p.discount,
+        p.delichar,
+        -- 메인 이미지
+        pi.url                                AS url,
+
+        -- 파생 지표
+        NVL(sales.sales_cnt, 0)               AS salesCount,   -- 판매량
+        ROUND(NVL(rv.avg_rating, 0), 2)       AS ratingAvg,    -- 평균 별점
+        NVL(rv.review_cnt, 0)                 AS ratingCnt     -- 리뷰 수
+
+        FROM products p
+
+        /* 메인 이미지 조인 */
+        LEFT JOIN product_images pi
+        ON pi.products_id = p.id
+        AND pi.is_main = 'Y'
+
+        /* 판매량: 주문 아이템에서 제품별 수량 합계 */
+        LEFT JOIN (
+        SELECT oi.products_id,
+        SUM(oi.quantity) AS sales_cnt
+        FROM order_items oi
+        GROUP BY oi.products_id
+        ) sales
+        ON sales.products_id = p.id
+
+        /* 리뷰: product_boards에서 type='review'만 */
+        LEFT JOIN (
+        SELECT pb.products_id,
+        AVG(pb.rating) AS avg_rating,
+        COUNT(*)       AS review_cnt
+        FROM product_boards pb
+        WHERE pb.type = 'review'
+        GROUP BY pb.products_id
+        ) rv
+        ON rv.products_id = p.id
+
+        <!-- 정렬: 화이트리스트 -->
+        <choose>
+            <!-- 낮은가격순/높은가격순 : (원가-할인액) = 최종가 기준 -->
+            <when test="sort == 'priceAsc'">
+                ORDER BY (p.price - NVL(p.discount,0)) ASC, p.created_at DESC
+            </when>
+            <when test="sort == 'priceDesc'">
+                ORDER BY (p.price - NVL(p.discount,0)) DESC, p.created_at DESC
+            </when>
+
+            <!-- 평점높은순 / 후기많은순 -->
+            <when test="sort == 'rating'">
+                ORDER BY NVL(rv.avg_rating,0) DESC, NVL(rv.review_cnt,0) DESC, p.created_at DESC
+            </when>
+            <when test="sort == 'review'">
+                ORDER BY NVL(rv.review_cnt,0) DESC, p.created_at DESC
+            </when>
+
+            <!-- 판매많은순 -->
+            <when test="sort == 'sales'">
+                ORDER BY NVL(sales.sales_cnt,0) DESC, p.created_at DESC
+            </when>
+
+            <!-- 최근등록순(기본) -->
+            <otherwise>
+                ORDER BY p.created_at DESC
+            </otherwise>
+        </choose>
+
+        OFFSET #{page.offset} ROWS
+        FETCH NEXT #{page.size} ROWS ONLY
+    </select>
+
+    <select id="selectProductSearch" resultType="kr.co.bnk_marketproject_be.dto.ProductsDTO">
+        SELECT
+        p.id, p.product_code as product_code, p.sellers_id as sellers_id, p.categories_id as categories_id,
+        p.product_name as product_name, p.sub_description as sub_description, p.price, p.discount, p.hits,
+        p.delichar,
+        to_char(p.created_at,'YYYY-MM-DD HH24:MI:SS') as created_at,
+        pi.url AS url,
+        NVL(r.rating_avg,0)   AS ratingAvg,
+        NVL(r.rating_cnt,0)   AS ratingCnt
+        FROM products p
+        LEFT JOIN product_images pi
+        ON pi.products_id = p.id AND pi.is_main = 'Y'
+        /* 평점/리뷰수 집계 */
+        LEFT JOIN (
+        SELECT products_id,
+        AVG(rating) AS rating_avg,
+        COUNT(*)    AS rating_cnt
+        FROM product_boards
+        WHERE type = 'review'
+        GROUP BY products_id
+        ) r ON r.products_id = p.id
+        <where>
+            <if test="req.keyword != null and req.keyword != ''">
+                <choose>
+                    <when test="req.searchType == 'name'">
+                        AND LOWER(p.product_name) LIKE LOWER('%' || #{req.keyword} || '%')
+                    </when>
+                    <when test="req.searchType == 'explain'">
+                        AND LOWER(p.sub_description) LIKE LOWER('%' || #{req.keyword} || '%')
+                    </when>
+                    <otherwise>
+                        AND (LOWER(p.product_name) LIKE LOWER('%' || #{req.keyword} || '%')
+                        OR  LOWER(p.sub_description) LIKE LOWER('%' || #{req.keyword} || '%'))
+                    </otherwise>
+                </choose>
+            </if>
+
+            <!-- 가격 범위 (할인가격 기준) -->
+            <if test="req.minPrice != null">
+                AND (p.price - NVL(p.discount,0)) &gt;= #{req.minPrice}
+            </if>
+            <if test="req.maxPrice != null">
+                AND (p.price - NVL(p.discount,0)) &lt;= #{req.maxPrice}
+            </if>
+        </where>
+
+        <!-- 정렬 -->
+        <choose>
+            <when test="req.sort == 'sales'">
+                ORDER BY p.hits DESC
+            </when>
+            <when test="req.sort == 'priceAsc'">
+                ORDER BY (p.price - NVL(p.discount,0)) ASC
+            </when>
+            <when test="req.sort == 'priceDesc'">
+                ORDER BY (p.price - NVL(p.discount,0)) DESC
+            </when>
+            <when test="req.sort == 'rating'">
+                ORDER BY r.rating_avg DESC NULLS LAST
+            </when>
+            <when test="req.sort == 'review'">
+                ORDER BY r.rating_cnt DESC NULLS LAST
+            </when>
+            <otherwise>
+                ORDER BY p.created_at DESC
+            </otherwise>
+        </choose>
+
+        OFFSET #{req.offset} ROWS FETCH NEXT #{req.size} ROWS ONLY
+    </select>
+
+    <select id="selectProductSearchTotal" resultType="int">
+        SELECT COUNT(*)
+        FROM products p
+        <where>
+            <if test="req.keyword != null and req.keyword != ''">
+                AND (LOWER(p.product_name)   LIKE LOWER('%' || #{req.keyword} || '%')
+                OR  LOWER(p.sub_description)LIKE LOWER('%' || #{req.keyword} || '%'))
+            </if>
+            <if test="req.minPrice != null">
+                AND (p.price - NVL(p.discount,0)) &gt;= #{req.minPrice}
+            </if>
+            <if test="req.maxPrice != null">
+                AND (p.price - NVL(p.discount,0)) &lt;= #{req.maxPrice}
+            </if>
+        </where>
+    </select>
+
+</mapper>

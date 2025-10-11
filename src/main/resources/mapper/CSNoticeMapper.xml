@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="kr.co.bnk_marketproject_be.mapper.CSNoticeMapper">
+
+    <!-- 공지사항 목록 -->
+    <select id="selectNoticeList" resultType="kr.co.bnk_marketproject_be.dto.CSNoticeDTO">
+        SELECT
+        ID AS id,
+        BOARD_TYPE AS boardType,
+        TITLE AS title,
+        CONTENT AS content,
+        CREATED_AT AS createdAt
+        FROM BOARD
+        WHERE UPPER(BOARD_TYPE) = 'NOTICE'
+        <if test="boardType != null and boardType != ''">
+            AND TITLE LIKE '%' || #{boardType} || '%'
+        </if>
+        ORDER BY CREATED_AT DESC
+        OFFSET #{offset} ROWS FETCH NEXT #{pageSize} ROWS ONLY
+    </select>
+
+    <!-- 공지사항 개수 -->
+    <select id="countNotices" resultType="int">
+        SELECT COUNT(*)
+        FROM BOARD
+        WHERE UPPER(BOARD_TYPE) = 'NOTICE'
+        <if test="boardType != null and boardType != ''">
+            AND TITLE LIKE '%' || #{boardType} || '%'
+        </if>
+    </select>
+
+    <!-- 공지사항 상세 -->
+    <select id="selectNoticeDetail" resultType="kr.co.bnk_marketproject_be.dto.CSNoticeDTO">
+        SELECT
+            ID AS id,
+            BOARD_TYPE AS boardType,
+            TITLE AS title,
+            CONTENT AS content,
+            CREATED_AT AS createdAt
+        FROM BOARD
+        WHERE ID = #{id}
+    </select>
+
+</mapper>

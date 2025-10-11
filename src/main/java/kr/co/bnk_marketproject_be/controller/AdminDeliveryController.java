@@ -1,5 +1,6 @@
 package kr.co.bnk_marketproject_be.controller;
 
+import kr.co.bnk_marketproject_be.dto.DeliveriesDTO;
 import kr.co.bnk_marketproject_be.dto.PageRequestDTO;
 import kr.co.bnk_marketproject_be.dto.PageResponseAdminDeliveryDTO;
 import kr.co.bnk_marketproject_be.service.AdminDeliveryService;
@@ -8,6 +9,9 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 
 @Controller
 @RequiredArgsConstructor
@@ -38,6 +42,23 @@ public class AdminDeliveryController {
         model.addAttribute("pageResponseDTO", pageResponseDTO);
 
         return "admin/admin_delivery_searchList";
+    }
+
+    @PostMapping("/admin/delivery/register")
+    public String registerOneDelivery(DeliveriesDTO deliveriesDTO){
+        log.info("deliveriesDTO:{}",deliveriesDTO);
+        adminDeliveryService.insertDeliveries(deliveriesDTO);
+
+        return "redirect:/admin/delivery/list";
+    }
+
+    // JSON 객체를 받기 위해 @ResponseBody 및 @RequestParam을 사용
+    @GetMapping("/admin/onedelivery/list")
+    @ResponseBody
+    public DeliveriesDTO adminOneDelivery(@RequestParam("order_code") String order_code){
+        log.info("order_code:{}",order_code);
+
+        return adminDeliveryService.selectDelivery(order_code);
     }
 }
 

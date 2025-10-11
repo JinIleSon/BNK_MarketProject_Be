@@ -2,68 +2,68 @@
 
     <main style="border-top:1px solid #e2e2e2; display: flex; justify-content: center; ">
         <div>
-        <aside class="euro-nav" aria-label="관리자 사이드 메뉴" style="">
-            <section class="euro-nav__group">
-            <h4 class="euro-nav__title" style="">환경설정</h4>
-            <ul class="euro-nav__list">
-                <li class="euro-nav__item"><a href="#">기본설정</a></li>
-                <li class="euro-nav__item"><a href="#">배너관리</a></li>
-                <li class="euro-nav__item"><a href="#">약관관리</a></li>
-                <li class="euro-nav__item"><a href="#">카테고리</a></li>
-                <li class="euro-nav__item"><a href="#">버전관리</a></li>
-            </ul>
-            </section>
+            <aside class="euro-nav" aria-label="관리자 사이드 메뉴" style="">
+                <section class="euro-nav__group">
+                    <h4 class="euro-nav__title" style="">환경설정</h4>
+                    <ul class="euro-nav__list">
+                        <li class="euro-nav__item"><a href="#">기본설정</a></li>
+                        <li class="euro-nav__item"><a href="#">배너관리</a></li>
+                        <li class="euro-nav__item"><a href="#">약관관리</a></li>
+                        <li class="euro-nav__item"><a href="#">카테고리</a></li>
+                        <li class="euro-nav__item"><a href="#">버전관리</a></li>
+                    </ul>
+                </section>
 
-            <section class="euro-nav__group">
-            <h4 class="euro-nav__title" style="">상점관리</h4>
-            <ul class="euro-nav__list">
-                <li class="euro-nav__item"><a href="#">상점목록</a></li>
-                <li class="euro-nav__item"><a href="#">매출현황</a></li>
-            </ul>
-            </section>
+                <section class="euro-nav__group">
+                    <h4 class="euro-nav__title" style="">상점관리</h4>
+                    <ul class="euro-nav__list">
+                        <li class="euro-nav__item"><a th:href="@{/admin/shop/list}">상점목록</a></li>
+                        <li class="euro-nav__item"><a th:href="@{/admin/sales/list}">매출현황</a></li>
+                    </ul>
+                </section>
 
-            <section class="euro-nav__group">
-            <h4 class="euro-nav__title" style="">회원관리</h4>
-            <ul class="euro-nav__list">
-                <li class="euro-nav__item"><a href="#">회원목록</a></li>
-                <li class="euro-nav__item"><a href="#">포인트관리</a></li>
-            </ul>
-            </section>
+                <section class="euro-nav__group">
+                    <h4 class="euro-nav__title" style="">회원관리</h4>
+                    <ul class="euro-nav__list">
+                        <li class="euro-nav__item"><a th:href="@{/admin/member/list}">회원목록</a></li>
+                        <li class="euro-nav__item"><a th:href="@{/admin/point/list}">포인트관리</a></li>
+                    </ul>
+                </section>
 
-            <section class="euro-nav__group">
-            <h4 class="euro-nav__title" style="">상품관리</h4>
-            <ul class="euro-nav__list">
-                <li class="euro-nav__item"><a href="#">상품목록</a></li>
-                <li class="euro-nav__item"><a href="#">상품등록</a></li>
-            </ul>
-            </section>
+                <section class="euro-nav__group">
+                    <h4 class="euro-nav__title" style="">상품관리</h4>
+                    <ul class="euro-nav__list">
+                        <li class="euro-nav__item"><a th:href="@{/admin/product/list}">상품목록</a></li>
+                        <li class="euro-nav__item"><a th:href="@{/admin/productReg/list}">상품등록</a></li>
+                    </ul>
+                </section>
 
-            <section class="euro-nav__group">
-            <h4 class="euro-nav__title" style="">주문관리</h4>
-            <ul class="euro-nav__list">
-                <li class="euro-nav__item"><a href="#">주문현황</a></li>
-                <li class="euro-nav__item"><a href="#">배송현황</a></li>
-            </ul>
-            </section>
+                <section class="euro-nav__group">
+                    <h4 class="euro-nav__title" style="">주문관리</h4>
+                    <ul class="euro-nav__list">
+                        <li class="euro-nav__item"><a th:href="@{/admin/order/list}">주문현황</a></li>
+                        <li class="euro-nav__item"><a th:href="@{/admin/delivery/list}">배송현황</a></li>
+                    </ul>
+                </section>
 
-            <section class="euro-nav__group">
-            <h4 class="euro-nav__title" style="">쿠폰관리</h4>
-            <ul class="euro-nav__list">
-                <li class="euro-nav__item"><a href="#">쿠폰목록</a></li>
-                <li class="euro-nav__item"><a href="#">쿠폰발급현황</a></li>
-            </ul>
-            </section>
+                <section class="euro-nav__group">
+                    <h4 class="euro-nav__title" style="">쿠폰관리</h4>
+                    <ul class="euro-nav__list">
+                        <li class="euro-nav__item"><a th:href="@{/admin/coupon/list}">쿠폰목록</a></li>
+                        <li class="euro-nav__item"><a th:href="@{/admin/couponsnow/list}">쿠폰발급현황</a></li>
+                    </ul>
+                </section>
 
-            <section class="euro-nav__group">
-            <h4 class="euro-nav__title" style="">고객센터</h4>
-            <ul class="euro-nav__list">
-                <li class="euro-nav__item"><a href="#">공지사항</a></li>
-                <li class="euro-nav__item"><a href="#">자주묻는질문</a></li>
-                <li class="euro-nav__item"><a href="#">문의하기</a></li>
-                <li class="euro-nav__item is-active"><a href="#">채용하기</a></li>
-            </ul>
-            </section>
-        </aside>
+                <section class="euro-nav__group">
+                    <h4 class="euro-nav__title" style="">고객센터</h4>
+                    <ul class="euro-nav__list">
+                        <li class="euro-nav__item"><a th:href="@{/admin/announcement/list}">공지사항</a></li>
+                        <li class="euro-nav__item"><a th:href="@{/admin/FAQ/list}">자주묻는질문</a></li>
+                        <li class="euro-nav__item"><a th:href="@{/admin/inquiry/list}">문의하기</a></li>
+                        <li class="euro-nav__item is-active"><a th:href="@{/admin/employ/list}">채용하기</a></li>
+                    </ul>
+                </section>
+            </aside>
         </div>
         <div style="width:940px; border-left:1px solid #e2e2e2;">
             <div style="margin-left:60px;">
@@ -124,8 +124,8 @@
 
                 </table>
                 <div style="display: flex; justify-content: space-between;">
-                  <input type="button" value="선택삭제" style="width: 80px; height: 40px; background-color: #000; color: #ffffff; margin-top: 30px;">
-                  <input type="button" id="openModalBtn" class="review-btn" value="채용등록" style="width: 80px; height: 40px; background-color: #000; color: #ffffff; margin-top: 30px;">
+                  <input type="button" value="선택삭제" style="cursor:pointer; width: 80px; height: 40px; background-color: #000; color: #ffffff; margin-top: 30px;">
+                  <input type="button" id="openModalBtn" class="review-btn" value="채용등록" style="cursor:pointer; width: 80px; height: 40px; background-color: #000; color: #ffffff; margin-top: 30px;">
 
                     <!-- ===== 상품평 모달 복붙 : 채용등록 모달 (내용만 교체) ===== -->
 <div class="modal-backdrop" id="reviewModalBackdrop" aria-hidden="true"></div>
@@ -137,25 +137,25 @@
       <button class="modal-close" type="button" aria-label="닫기" id="reviewClose">✕</button>
     </div>
 
-    <form id="reviewForm" class="modal-body review-form">
+    <form id="reviewForm" th:action="@{/admin/employ/register}" method="post" class="modal-body review-form">
       <table class="review-grid" style="border-top:1px solid #eee;">
         <tr>
           <td>제목</td>
           <td>
-            <input type="text" id="jobTitle" name="title" placeholder="채용 제목을 입력하세요" style="width:100%;height:34px;">
+            <input required type="text" id="jobTitle" name="title" placeholder="채용 제목을 입력하세요" style="width:100%;height:34px;">
           </td>
         </tr>
 
         <tr>
           <td>채용부서</td>
           <td>
-            <select id="jobDept" name="department" style="width:220px;height:34px;">
+            <select required id="jobDept" name="department" style="width:220px;height:34px;">
               <option value="">채용부서 선택</option>
-              <option value="it">IT</option>
-              <option value="ad">광고사업</option>
-              <option value="run">경영</option>
-              <option value="design">디자인</option>
-              <option value="study">연구개발</option>
+              <option value="IT">IT</option>
+              <option value="광고사업">광고사업</option>
+              <option value="경영">경영</option>
+              <option value="디자인">디자인</option>
+              <option value="연구개발">연구개발</option>
             </select>
           </td>
         </tr>
@@ -163,12 +163,12 @@
         <tr>
           <td>경력사항</td>
           <td>
-            <select id="jobCareer" name="career" style="width:220px;height:34px;">
+            <select required id="jobCareer" name="career" style="width:220px;height:34px;">
               <option value="">경력사항 선택</option>
-              <option value="new">신입</option>
-              <option value="unrelated">무관</option>
-              <option value="four">경력 4년 ~ 15년</option>
-              <option value="two">경력 2년 ~ 15년</option>
+              <option value="신입">신입</option>
+              <option value="무관">무관</option>
+              <option value="경력 4년 ~ 15년">경력 4년 ~ 15년</option>
+              <option value="경력 2년 ~ 15년">경력 2년 ~ 15년</option>
             </select>
           </td>
         </tr>
@@ -176,12 +176,12 @@
         <tr>
           <td>채용형태</td>
           <td>
-            <select id="jobType" name="form" style="width:220px;height:34px;">
+            <select required id="jobType" name="form" style="width:220px;height:34px;">
               <option value="">채용형태 선택</option>
-              <option value="regular">정규직</option>
-              <option value="contract">계약직</option>
-              <option value="freelancer">프리랜서</option>
-              <option value="intern">인턴</option>
+              <option value="정규직">정규직</option>
+              <option value="계약직">계약직</option>
+              <option value="프리랜서">프리랜서</option>
+              <option value="인턴">인턴</option>
             </select>
           </td>
         </tr>
@@ -190,9 +190,9 @@
           <td>모집기간</td>
           <td>
             <div style="display:flex; align-items:center; gap:8px;">
-              <input type="date" id="startDate" name="startDate" style="height:34px;">
+              <input required type="date" id="startDate" name="recruit_from" style="height:34px;">
               <span style="opacity:.7;">~</span>
-              <input type="date" id="endDate" name="endDate" style="height:34px;">
+              <input required type="date" id="endDate" name="recruit_to" style="height:34px;">
             </div>
           </td>
         </tr>
@@ -201,18 +201,18 @@
           <td>비고</td>
           <td>
             <textarea id="jobNote" name="note" placeholder="추가 안내를 입력하세요."
-                      style="width:100%; min-height:120px;"></textarea>
+                      style="width:100%; min-height:120px;" required></textarea>
           </td>
         </tr>
       </table>
 
       <div class="review-actions" style="display:flex; gap:10px; justify-content:center; margin-top:16px;">
         <button type="button" id="reviewCancel"
-                style="min-width:120px; height:38px; border:0; background:#ccc; color:#fff;">
+                style="cursor:pointer;min-width:120px; height:38px; border:0; background:#ccc; color:#fff;">
           취소
         </button>
         <button type="submit"
-                style="min-width:120px; height:38px; border:0; background:black; color:#fff; font-weight:500;">
+                style="cursor:pointer;min-width:120px; height:38px; border:0; background:black; color:#fff; font-weight:500;">
           등록
         </button>
       </div>
@@ -420,9 +420,6 @@ document.querySelectorAll('.euro-nav__title').forEach(title => {
   }, {capture:true});
 });
 </script>
-    <footer style="padding:20px; background-color: #808080; width:100%; height:62px; color:white;">
-        Copyright ©NICHIYA.co.kr All rights reserved. NICHIYA ADMINISTRATOR Version 5.4.1.2
-    </footer>
 
     <script>
   // ===== 채용등록 모달 열기/닫기 (필요한 요소만) =====
@@ -467,5 +464,4 @@ document.querySelectorAll('.euro-nav__title').forEach(title => {
 </script>
 
 
-</body>
-</html>
+<div th:replace="~{admin/_footer.html}"></div>

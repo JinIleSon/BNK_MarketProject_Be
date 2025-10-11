@@ -1,8 +1,12 @@
 package kr.co.bnk_marketproject_be.repository;
 
+import kr.co.bnk_marketproject_be.dto.UserDTO;
 import kr.co.bnk_marketproject_be.entity.User;
+import kr.co.bnk_marketproject_be.mapper.UserMapper;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
+
+import java.util.Optional;
 
 @Repository
 public interface UserRepository extends JpaRepository<User, Integer> {
@@ -17,6 +21,9 @@ public interface UserRepository extends JpaRepository<User, Integer> {
     public int countByName(String name);
     public int countByEmail(String email);
     public int countByPhone(String phone);
+
+    Optional<User> findByNameAndEmail(String name, String email);
+    Optional<User> findByNameAndPhone(String name, String phone);
 
 }
 

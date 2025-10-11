@@ -156,7 +156,7 @@
 </head>
 
 <script>
-    fetch("../main/header.html")
+    fetch("/NICHIYA/main/header.html")
         .then(res => res.text())
         .then(data => {
             document.getElementById("header").innerHTML = data;
@@ -168,10 +168,30 @@
             });
         });
 
-    fetch("../main/footer.html")
+    fetch("/NICHIYA/main/footer.html")
         .then(res => res.text())
         .then(data => { document.getElementById("footer").innerHTML = data; });
 </script>
+
+<script>
+    document.addEventListener("DOMContentLoaded", () => {
+        const result = JSON.parse(localStorage.getItem("findUserResult") || "{}");
+        if (!result.ok) {
+            alert("잘못된 접근입니다.");
+            location.href = "/NICHIYA/member/find_userId.html";
+            return;
+        }
+
+        document.getElementById("name").textContent = result.name;
+        document.getElementById("username").textContent = result.userId;
+        document.getElementById("email").textContent = result.email;
+        document.getElementById("joined").textContent = result.created_at;
+
+        document.querySelector(".btn-ghost").href = "/NICHIYA/member/login";
+        document.querySelector(".btn-primary").href = "/NICHIYA/member/find_password.html";
+    });
+</script>
+
 
 <body>
     <div id="header"></div>

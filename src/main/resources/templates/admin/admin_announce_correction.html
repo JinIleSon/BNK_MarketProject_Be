@@ -1,69 +1,68 @@
 <div th:replace="~{admin/_header.html}"></div>
-
     <main style="display: flex; justify-content: center; border-top:1px solid #e2e2e2;">
         <div>
-        <aside class="euro-nav" aria-label="관리자 사이드 메뉴" style="">
-            <section class="euro-nav__group">
-            <h4 class="euro-nav__title" style="">환경설정</h4>
-            <ul class="euro-nav__list">
-                <li class="euro-nav__item"><a href="#">기본설정</a></li>
-                <li class="euro-nav__item"><a href="#">배너관리</a></li>
-                <li class="euro-nav__item"><a href="#">약관관리</a></li>
-                <li class="euro-nav__item"><a href="#">카테고리</a></li>
-                <li class="euro-nav__item"><a href="#">버전관리</a></li>
-            </ul>
-            </section>
+            <aside class="euro-nav" aria-label="관리자 사이드 메뉴" style="">
+                <section class="euro-nav__group">
+                    <h4 class="euro-nav__title" style="">환경설정</h4>
+                    <ul class="euro-nav__list">
+                        <li class="euro-nav__item"><a href="#">기본설정</a></li>
+                        <li class="euro-nav__item"><a href="#">배너관리</a></li>
+                        <li class="euro-nav__item"><a href="#">약관관리</a></li>
+                        <li class="euro-nav__item"><a href="#">카테고리</a></li>
+                        <li class="euro-nav__item"><a href="#">버전관리</a></li>
+                    </ul>
+                </section>
 
-            <section class="euro-nav__group">
-            <h4 class="euro-nav__title" style="">상점관리</h4>
-            <ul class="euro-nav__list">
-                <li class="euro-nav__item"><a href="/admin/store_list.html">상점목록</a></li>
-                <li class="euro-nav__item"><a href="/admin/sale_status.html">매출현황</a></li>
-            </ul>
-            </section>
+                <section class="euro-nav__group">
+                    <h4 class="euro-nav__title" style="">상점관리</h4>
+                    <ul class="euro-nav__list">
+                        <li class="euro-nav__item"><a th:href="@{/admin/shop/list}">상점목록</a></li>
+                        <li class="euro-nav__item"><a th:href="@{/admin/sales/list}">매출현황</a></li>
+                    </ul>
+                </section>
 
-            <section class="euro-nav__group">
-            <h4 class="euro-nav__title" style="">회원관리</h4>
-            <ul class="euro-nav__list">
-                <li class="euro-nav__item"><a href="/admin/member_list.html">회원목록</a></li>
-                <li class="euro-nav__item"><a href="/admin/point_management.html">포인트관리</a></li>
-            </ul>
-            </section>
+                <section class="euro-nav__group">
+                    <h4 class="euro-nav__title" style="">회원관리</h4>
+                    <ul class="euro-nav__list">
+                        <li class="euro-nav__item"><a th:href="@{/admin/member/list}">회원목록</a></li>
+                        <li class="euro-nav__item"><a th:href="@{/admin/point/list}">포인트관리</a></li>
+                    </ul>
+                </section>
 
-            <section class="euro-nav__group">
-            <h4 class="euro-nav__title" style="">상품관리</h4>
-            <ul class="euro-nav__list">
-                <li class="euro-nav__item"><a href="#">상품목록</a></li>
-                <li class="euro-nav__item"><a href="#">상품등록</a></li>
-            </ul>
-            </section>
+                <section class="euro-nav__group">
+                    <h4 class="euro-nav__title" style="">상품관리</h4>
+                    <ul class="euro-nav__list">
+                        <li class="euro-nav__item"><a th:href="@{/admin/product/list}">상품목록</a></li>
+                        <li class="euro-nav__item"><a th:href="@{/admin/productReg/list}">상품등록</a></li>
+                    </ul>
+                </section>
 
-            <section class="euro-nav__group">
-            <h4 class="euro-nav__title" style="">주문관리</h4>
-            <ul class="euro-nav__list">
-                <li class="euro-nav__item"><a href="#">주문현황</a></li>
-                <li class="euro-nav__item"><a href="#">배송현황</a></li>
-            </ul>
-            </section>
+                <section class="euro-nav__group">
+                    <h4 class="euro-nav__title" style="">주문관리</h4>
+                    <ul class="euro-nav__list">
+                        <li class="euro-nav__item"><a th:href="@{/admin/order/list}">주문현황</a></li>
+                        <li class="euro-nav__item"><a th:href="@{/admin/delivery/list}">배송현황</a></li>
+                    </ul>
+                </section>
 
-            <section class="euro-nav__group">
-            <h4 class="euro-nav__title" style="">쿠폰관리</h4>
-            <ul class="euro-nav__list">
-                <li class="euro-nav__item"><a href="#">쿠폰목록</a></li>
-                <li class="euro-nav__item"><a href="#">쿠폰발급현황</a></li>
-            </ul>
-            </section>
+                <section class="euro-nav__group">
+                    <h4 class="euro-nav__title" style="">쿠폰관리</h4>
+                    <ul class="euro-nav__list">
+                        <li class="euro-nav__item"><a th:href="@{/admin/coupon/list}">쿠폰목록</a></li>
+                        <li class="euro-nav__item"><a th:href="@{/admin/couponsnow/list}">쿠폰발급현황</a></li>
+                    </ul>
+                </section>
 
-            <section class="euro-nav__group">
-            <h4 class="euro-nav__title" style="">고객센터</h4>
-            <ul class="euro-nav__list">
-                <li class="euro-nav__item is-active"><a href="/admin/announcement_list.html">공지사항</a></li>
-                <li class="euro-nav__item"><a href="/admin/questions_list.html">자주묻는질문</a></li>
-                <li class="euro-nav__item"><a href="#">문의하기</a></li>
-                <li class="euro-nav__item"><a href="#">채용하기</a></li>
-            </ul>
-            </section>
-        </aside>
+                <section class="euro-nav__group">
+                    <h4 class="euro-nav__title" style="">고객센터</h4>
+                    <ul class="euro-nav__list">
+                        <li class="euro-nav__item is-active"><a th:href="@{/admin/announcement/list}">공지사항</a></li>
+                        <li class="euro-nav__item"><a th:href="@{/admin/FAQ/list}">자주묻는질문</a></li>
+                        <li class="euro-nav__item"><a th:href="@{/admin/inquiry/list}">문의하기</a></li>
+                        <li class="euro-nav__item"><a th:href="@{/admin/employ/list}">채용하기</a></li>
+                    </ul>
+                </section>
+            </aside>
         </div>
         <div style="border-left:1px solid #e2e2e2;"></div>
         <!-- 오른쪽 콘텐츠 영역 -->
@@ -75,7 +74,6 @@
                     <div style="margin-left: auto; margin-top:auto; margin-bottom:4px;font-size: 12px;">HOME > 고객센터 > <span style="font-weight: 800;">공지사항</span></div>
                 </div>
                 <hr style="border:none; border-top:1px solid gray; margin-top:0px;">
-                <div style="padding-left:10px;">
                 <div style="display: flex; align-items: center; margin-top: 25px; margin-bottom:20px;">
 
             </div>
@@ -85,48 +83,50 @@
             <div style="width:100%; height: 500px; margin:50px auto; font-family:'맑은 고딕', sans-serif; font-size:14px; color:#333; background:#fff; border-top:2px solid #000;">
 
             <!-- 유형 -->
+                <form th:action="@{/admin/announcement/modify/list}" method="post">
+                    <input type="hidden" name="id" th:value="${adminAnnouncementDTO.id}">
+                    <input type="hidden" name="board_type" th:value="${adminAnnouncementDTO.board_type}">
+                    <input type="hidden" name="board_type3" th:value="${adminAnnouncementDTO.board_type3}">
+                    <input type="hidden" name="hits" th:value="${adminAnnouncementDTO.hits}">
+                    <input type="hidden" name="created_at" th:value="${adminAnnouncementDTO.created_at}">
             <div style="display:flex; align-items:center; border-bottom:1px solid #e0e0e0; padding:12px 8px;">
                 <label for="cycleBtn" style="width:100px; font-weight:bold;">유형</label>
                 
-                <select name="select" id="" style="width:82px; height:28px; padding-left:5px; margin-right:3px; border:1px solid #bfbfbf; font-size: 10px !important;">
-                            <option value="name">안내</option>
-                            <option value="code">발표</option>
-                            <option value="seller">상품</option>
-                            <option value="seller">고객서비스</option>
-                            
-                        </select>
+                    <select name="board_type2" id="" style="width:82px; height:28px; padding-left:5px; margin-right:3px; border:1px solid #bfbfbf; font-size: 10px !important;">
+                            <option value="">유형선택</option>
+                            <option value="all" th:selected="${adminAnnouncementDTO.board_type2 == 'all'}">전체</option>
+                            <option value="memberservice" th:selected="${adminAnnouncementDTO.board_type2 == 'memberservice'}">고객서비스</option>
+                            <option value="safe" th:selected="${adminAnnouncementDTO.board_type2 == 'safe'}">안전거래</option>
+                            <option value="danger" th:selected="${adminAnnouncementDTO.board_type2 == 'danger'}">위해상품</option>
+                            <option value="event" th:selected="${adminAnnouncementDTO.board_type2 == 'event'}">이벤트당첨</option>
+                    </select>
                 </div>
-
-                <script>
-                const btn = document.getElementById('cycleBtn');
-                const labels = ["안내", "발표", "상품", "고객서비스"];
-                let idx = 0;
-
-                btn.addEventListener('click', () => {
-                    idx = (idx + 1) % labels.length;
-                    btn.textContent = labels[idx];
-                });
-                </script>
 
             <div style="display:flex; align-items:center; border-bottom:1px solid #e0e0e0; padding:12px 8px;">
                 <label for="title" style="width:100px; font-weight:bold;">제목</label>
-                <input type="text" id="title" placeholder="제목을 입력합니다."
-                    style="width:500px; padding:8px; border:3px solid #ccc;">
+                <input type="text" name="title" id="title" placeholder="제목을 입력합니다."
+                    style="width:500px; padding:8px; border:1px solid #ccc;"
+                    th:value="${adminAnnouncementDTO.title}">
             </div>
 
             <!-- 내용 -->
             <div style="display:flex; align-items:flex-start; border-bottom:1px solid #e0e0e0; padding:12px 8px;">
                 <label for="content" style="width:100px; font-weight:bold;">내용</label>
-                <textarea id="content" placeholder="내용을 입력합니다."
-                    style="width:500px; height:280px; padding:8px; border:3px solid #ccc; resize:none;"></textarea>
+                <textarea id="content" name="content" placeholder="내용을 입력합니다."
+                    style="width:500px; height:280px; padding:8px; border:1px solid #ccc; resize:none;"
+                    th:text="${adminAnnouncementDTO.content}"></textarea>
             </div>
             </div>
 
             <!-- 버튼 영역 -->
             <div style="text-align:center; margin-top:-70px; margin-left: 650px;">
-            <button style="border:none; background-color: #760c0c; color:white; font-size: 10px; font-weight: 300; height:25px; width:62px;">취소하기</button>
-                    <button style="margin-left:auto; border:none; background-color: black; color:white; font-size: 10px; font-weight: 300; height:25px; width:62px;">수정하기</button>
+                <button type="button"
+                        style="cursor: pointer; border:none; background-color: #760c0c; color:white; font-size: 10px; font-weight: 300; height:25px; width:62px;"
+                th:onclick="|location.href='@{/admin/announcement/view(id=${adminAnnouncementDTO.id})}'|">취소하기</button>
+                <button type="submit"
+                        style="cursor: pointer; margin-left:auto; border:none; background-color: black; color:white; font-size: 10px; font-weight: 300; height:25px; width:62px;">수정하기</button>
             </div>
+                </form>
     </main>
 
     <style>

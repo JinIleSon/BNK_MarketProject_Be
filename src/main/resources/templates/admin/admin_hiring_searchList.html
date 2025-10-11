@@ -1,78 +1,78 @@
 <div th:replace="~{admin/_noneStickyHeader.html}"></div>
 
-    <main style="border-top:1px solid #e2e2e2; display: flex; justify-content: center; ">
-        <div>
+<main style="border-top:1px solid #e2e2e2; display: flex; justify-content: center; ">
+    <div>
         <aside class="euro-nav" aria-label="관리자 사이드 메뉴" style="">
             <section class="euro-nav__group">
-            <h4 class="euro-nav__title" style="">환경설정</h4>
-            <ul class="euro-nav__list">
-                <li class="euro-nav__item"><a href="#">기본설정</a></li>
-                <li class="euro-nav__item"><a href="#">배너관리</a></li>
-                <li class="euro-nav__item"><a href="#">약관관리</a></li>
-                <li class="euro-nav__item"><a href="#">카테고리</a></li>
-                <li class="euro-nav__item"><a href="#">버전관리</a></li>
-            </ul>
+                <h4 class="euro-nav__title" style="">환경설정</h4>
+                <ul class="euro-nav__list">
+                    <li class="euro-nav__item"><a href="#">기본설정</a></li>
+                    <li class="euro-nav__item"><a href="#">배너관리</a></li>
+                    <li class="euro-nav__item"><a href="#">약관관리</a></li>
+                    <li class="euro-nav__item"><a href="#">카테고리</a></li>
+                    <li class="euro-nav__item"><a href="#">버전관리</a></li>
+                </ul>
             </section>
 
             <section class="euro-nav__group">
-            <h4 class="euro-nav__title" style="">상점관리</h4>
-            <ul class="euro-nav__list">
-                <li class="euro-nav__item"><a href="#">상점목록</a></li>
-                <li class="euro-nav__item"><a href="#">매출현황</a></li>
-            </ul>
+                <h4 class="euro-nav__title" style="">상점관리</h4>
+                <ul class="euro-nav__list">
+                    <li class="euro-nav__item"><a th:href="@{/admin/shop/list}">상점목록</a></li>
+                    <li class="euro-nav__item"><a th:href="@{/admin/sales/list}">매출현황</a></li>
+                </ul>
             </section>
 
             <section class="euro-nav__group">
-            <h4 class="euro-nav__title" style="">회원관리</h4>
-            <ul class="euro-nav__list">
-                <li class="euro-nav__item"><a href="#">회원목록</a></li>
-                <li class="euro-nav__item"><a href="#">포인트관리</a></li>
-            </ul>
+                <h4 class="euro-nav__title" style="">회원관리</h4>
+                <ul class="euro-nav__list">
+                    <li class="euro-nav__item"><a th:href="@{/admin/member/list}">회원목록</a></li>
+                    <li class="euro-nav__item"><a th:href="@{/admin/point/list}">포인트관리</a></li>
+                </ul>
             </section>
 
             <section class="euro-nav__group">
-            <h4 class="euro-nav__title" style="">상품관리</h4>
-            <ul class="euro-nav__list">
-                <li class="euro-nav__item"><a href="#">상품목록</a></li>
-                <li class="euro-nav__item"><a href="#">상품등록</a></li>
-            </ul>
+                <h4 class="euro-nav__title" style="">상품관리</h4>
+                <ul class="euro-nav__list">
+                    <li class="euro-nav__item"><a th:href="@{/admin/product/list}">상품목록</a></li>
+                    <li class="euro-nav__item"><a th:href="@{/admin/productReg/list}">상품등록</a></li>
+                </ul>
             </section>
 
             <section class="euro-nav__group">
-            <h4 class="euro-nav__title" style="">주문관리</h4>
-            <ul class="euro-nav__list">
-                <li class="euro-nav__item"><a href="#">주문현황</a></li>
-                <li class="euro-nav__item"><a href="#">배송현황</a></li>
-            </ul>
+                <h4 class="euro-nav__title" style="">주문관리</h4>
+                <ul class="euro-nav__list">
+                    <li class="euro-nav__item"><a th:href="@{/admin/order/list}">주문현황</a></li>
+                    <li class="euro-nav__item"><a th:href="@{/admin/delivery/list}">배송현황</a></li>
+                </ul>
             </section>
 
             <section class="euro-nav__group">
-            <h4 class="euro-nav__title" style="">쿠폰관리</h4>
-            <ul class="euro-nav__list">
-                <li class="euro-nav__item"><a href="#">쿠폰목록</a></li>
-                <li class="euro-nav__item"><a href="#">쿠폰발급현황</a></li>
-            </ul>
+                <h4 class="euro-nav__title" style="">쿠폰관리</h4>
+                <ul class="euro-nav__list">
+                    <li class="euro-nav__item"><a th:href="@{/admin/coupon/list}">쿠폰목록</a></li>
+                    <li class="euro-nav__item"><a th:href="@{/admin/couponsnow/list}">쿠폰발급현황</a></li>
+                </ul>
             </section>
 
             <section class="euro-nav__group">
-            <h4 class="euro-nav__title" style="">고객센터</h4>
-            <ul class="euro-nav__list">
-                <li class="euro-nav__item"><a href="#">공지사항</a></li>
-                <li class="euro-nav__item"><a href="#">자주묻는질문</a></li>
-                <li class="euro-nav__item"><a href="#">문의하기</a></li>
-                <li class="euro-nav__item is-active"><a href="#">채용하기</a></li>
-            </ul>
+                <h4 class="euro-nav__title" style="">고객센터</h4>
+                <ul class="euro-nav__list">
+                    <li class="euro-nav__item"><a th:href="@{/admin/announcement/list}">공지사항</a></li>
+                    <li class="euro-nav__item"><a th:href="@{/admin/FAQ/list}">자주묻는질문</a></li>
+                    <li class="euro-nav__item"><a th:href="@{/admin/inquiry/list}">문의하기</a></li>
+                    <li class="euro-nav__item is-active"><a th:href="@{/admin/employ/list}">채용하기</a></li>
+                </ul>
             </section>
         </aside>
-        </div>
-        <div style="width:940px; border-left:1px solid #e2e2e2;">
-            <div style="margin-left:60px;">
-                <div style="display: flex;">
-                    <div style="font-size: 20px; font-weight: 800; margin-top:16px; margin-bottom:5px;">채용하기 목록</div>
-                    <div style="margin-left: auto; margin-top:auto; margin-bottom:4px;font-size: 12px;">HOME > 고객센터 > <span style="font-weight: 800;">채용하기</span></div>
-                </div>
-                <hr style="border:none; border-top:1px solid gray; margin-top:0px;">
-                <div style="padding-left:10px;">
+    </div>
+    <div style="width:940px; border-left:1px solid #e2e2e2;">
+        <div style="margin-left:60px;">
+            <div style="display: flex;">
+                <div style="font-size: 20px; font-weight: 800; margin-top:16px; margin-bottom:5px;">채용하기 목록</div>
+                <div style="margin-left: auto; margin-top:auto; margin-bottom:4px;font-size: 12px;">HOME > 고객센터 > <span style="font-weight: 800;">채용하기</span></div>
+            </div>
+            <hr style="border:none; border-top:1px solid gray; margin-top:0px;">
+            <div style="padding-left:10px;">
                 <div style="display: flex; align-items: center; margin-top: 25px; margin-bottom:20px;">
                     <form th:action="@{/admin/employ/search}" method="get" style="display: flex; ">
                         <select name="searchType" id="" style="width:82px; height:28px; padding-left:5px; margin-right:3px; border:1px solid #bfbfbf; font-size: 10px !important;">
@@ -88,7 +88,7 @@
                 <table style="border-collapse: collapse; width:100%; font-size:12px; text-align: center; ">
                     <tr style="border-top:1px solid gray; height:50px; border-bottom:1px solid #e2e2e2;">
                         <th style="width:40px">
-                          <input type="checkbox" id="checkAll"/>
+                            <input type="checkbox" id="checkAll"/>
                         </th>
                         <th style="width:50px !important;">번호</th>
                         <th style="width:90px !important;">채용부서</th>
@@ -103,7 +103,7 @@
                     <tr style="border-bottom:1px solid #e2e2e2; height:70px;vertical-align: middle;"
                         th:each="admin, stat:${pageResponseDTO.dtoList}">
                         <th style="width: 40px;">
-                          <input type="checkbox" id="checkeach">
+                            <input type="checkbox" id="checkeach">
                         </th>
                         <td><a href="#" style="font-weight: 800;"
                                th:text="${admin.id}">120</a></td>
@@ -124,349 +124,344 @@
 
                 </table>
                 <div style="display: flex; justify-content: space-between;">
-                  <input type="button" value="선택삭제" style="width: 80px; height: 40px; background-color: #000; color: #ffffff; margin-top: 30px;">
-                  <input type="button" id="openModalBtn" class="review-btn" value="채용등록" style="width: 80px; height: 40px; background-color: #000; color: #ffffff; margin-top: 30px;">
+                    <input type="button" value="선택삭제" style="cursor:pointer; width: 80px; height: 40px; background-color: #000; color: #ffffff; margin-top: 30px;">
+                    <input type="button" id="openModalBtn" class="review-btn" value="채용등록" style="cursor:pointer; width: 80px; height: 40px; background-color: #000; color: #ffffff; margin-top: 30px;">
 
                     <!-- ===== 상품평 모달 복붙 : 채용등록 모달 (내용만 교체) ===== -->
-<div class="modal-backdrop" id="reviewModalBackdrop" aria-hidden="true"></div>
-<div class="modal" id="reviewModal" role="dialog" aria-modal="true"
-     aria-labelledby="reviewModalTitle" aria-hidden="true">
-  <div class="modal-dialog" tabindex="-1" style="border-radius:0 !important; width:720px; max-width:calc(100% - 40px);">
-    <div class="modal-header" style="border-radius:0 !important;">
-      <div><span id="reviewModalTitle">채용등록</span></div>
-      <button class="modal-close" type="button" aria-label="닫기" id="reviewClose">✕</button>
-    </div>
+                    <div class="modal-backdrop" id="reviewModalBackdrop" aria-hidden="true"></div>
+                    <div class="modal" id="reviewModal" role="dialog" aria-modal="true"
+                         aria-labelledby="reviewModalTitle" aria-hidden="true">
+                        <div class="modal-dialog" tabindex="-1" style="border-radius:0 !important; width:720px; max-width:calc(100% - 40px);">
+                            <div class="modal-header" style="border-radius:0 !important;">
+                                <div><span id="reviewModalTitle">채용등록</span></div>
+                                <button class="modal-close" type="button" aria-label="닫기" id="reviewClose">✕</button>
+                            </div>
 
-    <form id="reviewForm" class="modal-body review-form">
-      <table class="review-grid" style="border-top:1px solid #eee;">
-        <tr>
-          <td>제목</td>
-          <td>
-            <input type="text" id="jobTitle" name="title" placeholder="채용 제목을 입력하세요" style="width:100%;height:34px;">
-          </td>
-        </tr>
+                            <form id="reviewForm" th:action="@{/admin/employ/register}" method="post" class="modal-body review-form">
+                                <table class="review-grid" style="border-top:1px solid #eee;">
+                                    <tr>
+                                        <td>제목</td>
+                                        <td>
+                                            <input required type="text" id="jobTitle" name="title" placeholder="채용 제목을 입력하세요" style="width:100%;height:34px;">
+                                        </td>
+                                    </tr>
 
-          <tr>
-              <td>채용부서</td>
-              <td>
-                  <select id="jobDept" name="department" style="width:220px;height:34px;">
-                      <option value="">채용부서 선택</option>
-                      <option value="it">IT</option>
-                      <option value="ad">광고사업</option>
-                      <option value="run">경영</option>
-                      <option value="design">디자인</option>
-                      <option value="study">연구개발</option>
-                  </select>
-              </td>
-          </tr>
+                                    <tr>
+                                        <td>채용부서</td>
+                                        <td>
+                                            <select required id="jobDept" name="department" style="width:220px;height:34px;">
+                                                <option value="">채용부서 선택</option>
+                                                <option value="IT">IT</option>
+                                                <option value="광고사업">광고사업</option>
+                                                <option value="경영">경영</option>
+                                                <option value="디자인">디자인</option>
+                                                <option value="연구개발">연구개발</option>
+                                            </select>
+                                        </td>
+                                    </tr>
 
-          <tr>
-              <td>경력사항</td>
-              <td>
-                  <select id="jobCareer" name="career" style="width:220px;height:34px;">
-                      <option value="">경력사항 선택</option>
-                      <option value="new">신입</option>
-                      <option value="unrelated">무관</option>
-                      <option value="four">경력 4년 ~ 15년</option>
-                      <option value="two">경력 2년 ~ 15년</option>
-                  </select>
-              </td>
-          </tr>
+                                    <tr>
+                                        <td>경력사항</td>
+                                        <td>
+                                            <select required id="jobCareer" name="career" style="width:220px;height:34px;">
+                                                <option value="">경력사항 선택</option>
+                                                <option value="신입">신입</option>
+                                                <option value="무관">무관</option>
+                                                <option value="경력 4년 ~ 15년">경력 4년 ~ 15년</option>
+                                                <option value="경력 2년 ~ 15년">경력 2년 ~ 15년</option>
+                                            </select>
+                                        </td>
+                                    </tr>
 
-          <tr>
-              <td>채용형태</td>
-              <td>
-                  <select id="jobType" name="form" style="width:220px;height:34px;">
-                      <option value="">채용형태 선택</option>
-                      <option value="regular">정규직</option>
-                      <option value="contract">계약직</option>
-                      <option value="freelancer">프리랜서</option>
-                      <option value="intern">인턴</option>
-                  </select>
-              </td>
-          </tr>
+                                    <tr>
+                                        <td>채용형태</td>
+                                        <td>
+                                            <select required id="jobType" name="form" style="width:220px;height:34px;">
+                                                <option value="">채용형태 선택</option>
+                                                <option value="정규직">정규직</option>
+                                                <option value="계약직">계약직</option>
+                                                <option value="프리랜서">프리랜서</option>
+                                                <option value="인턴">인턴</option>
+                                            </select>
+                                        </td>
+                                    </tr>
 
-        <tr>
-          <td>모집기간</td>
-          <td>
-            <div style="display:flex; align-items:center; gap:8px;">
-              <input type="date" id="startDate" name="startDate" style="height:34px;">
-              <span style="opacity:.7;">~</span>
-              <input type="date" id="endDate" name="endDate" style="height:34px;">
-            </div>
-          </td>
-        </tr>
+                                    <tr>
+                                        <td>모집기간</td>
+                                        <td>
+                                            <div style="display:flex; align-items:center; gap:8px;">
+                                                <input required type="date" id="startDate" name="recruit_from" style="height:34px;">
+                                                <span style="opacity:.7;">~</span>
+                                                <input required type="date" id="endDate" name="recruit_to" style="height:34px;">
+                                            </div>
+                                        </td>
+                                    </tr>
 
-        <tr>
-          <td>비고</td>
-          <td>
+                                    <tr>
+                                        <td>비고</td>
+                                        <td>
             <textarea id="jobNote" name="note" placeholder="추가 안내를 입력하세요."
-                      style="width:100%; min-height:120px;"></textarea>
-          </td>
-        </tr>
-      </table>
+                      required style="width:100%; min-height:120px;"></textarea>
+                                        </td>
+                                    </tr>
+                                </table>
 
-      <div class="review-actions" style="display:flex; gap:10px; justify-content:center; margin-top:16px;">
-        <button type="button" id="reviewCancel"
-                style="min-width:120px; height:38px; border:0; background:#ccc; color:#fff;">
-          취소
-        </button>
-        <button type="submit"
-                style="min-width:120px; height:38px; border:0; background:black; color:#fff; font-weight:500;">
-          등록
-        </button>
-      </div>
+                                <div class="review-actions" style="display:flex; gap:10px; justify-content:center; margin-top:16px;">
+                                    <button type="button" id="reviewCancel"
+                                            style="cursor:pointer;min-width:120px; height:38px; border:0; background:#ccc; color:#fff;">
+                                        취소
+                                    </button>
+                                    <button type="submit"
+                                            style="cursor:pointer;min-width:120px; height:38px; border:0; background:black; color:#fff; font-weight:500;">
+                                        등록
+                                    </button>
+                                </div>
 
-      <button class="sr-only" id="reviewSentinel">끝</button>
-    </form>
-  </div>
-</div>
+                                <button class="sr-only" id="reviewSentinel">끝</button>
+                            </form>
+                        </div>
+                    </div>
 
 
 
                 </div>
                 <!-- 모달 전용 스타일 -->
-  <style>
-    /* 전체 오버레이 */
-    .modal-backdrop {
-      position: fixed; inset: 0;
-      background: rgba(0,0,0,.45);
-      display: none;
-      z-index: 9998;
-    }
-    .modal-backdrop.is-open { display: block; }
+                <style>
+                    /* 전체 오버레이 */
+                    .modal-backdrop {
+                        position: fixed; inset: 0;
+                        background: rgba(0,0,0,.45);
+                        display: none;
+                        z-index: 9998;
+                    }
+                    .modal-backdrop.is-open { display: block; }
 
-    /* 모달 박스 */
-    .modal {
-      position: fixed; inset: 0;
-      display: none;
-      place-items: center;
-      z-index: 9999;
-    }
-    .modal.is-open { display: grid; }
+                    /* 모달 박스 */
+                    .modal {
+                        position: fixed; inset: 0;
+                        display: none;
+                        place-items: center;
+                        z-index: 9999;
+                    }
+                    .modal.is-open { display: grid; }
 
-    .modal-dialog {
-      width: 860px; max-width: calc(100% - 40px);
-      background: #fff; border-radius: 10px;
-      box-shadow: 0 20px 60px rgba(0,0,0,.25);
-      overflow: hidden;
-      font-family: sans-serif;
-    }
-    /* 상단 바 */
-    .modal-header {
-      background: black; color:#fff;
-      padding: 4px 16px; font-weight: 700;
-      display: flex; align-items: center; justify-content: space-between;
-    }
-    .modal-header .date { font-weight: 400; opacity:.9; margin-left: 12px; }
-    .modal-close {
-      appearance: none; border: 0; background: transparent;
-      color:#fff; font-size: 20px; cursor: pointer; padding: 4px 8px;
-    }
-    /* 본문 */
-    .modal-body { padding: 0; }
-    .section {
-      padding: 14px 18px;
-    }
-    .section-title {
-      font-weight: 700; margin-bottom: 8px;
-    }
-    table.order-info {
-      width: 100%; border-collapse: collapse; font-size: 14px;
-    }
-    .order-info th, .order-info td {
-      border-bottom: 1px solid #eee; padding: 10px; vertical-align: middle;
-    }
-    .order-info thead th {
-      background: #dedede; color:#fff; font-size: 12px; height: 38px;
-    }
-    .thumb { width: 120px; }
-    .price {
-      font-size: 18px; font-weight: 800; margin-top: 8px;
-    }
-    .right { text-align: right; white-space: nowrap; }
-    /* 배송정보 표 */
-    .kv { width: 100%; border-collapse: collapse; font-size: 14px; }
-    .kv td { border-bottom: 1px solid #eee; padding: 10px; padding-left: 13px; }
-    .kv td:first-child {height: 45px; background-color: #f2f2f2; text-align: center; width: 130px; }
-    /* 접근성 포커스 트랩용 */
-    .sr-only { position:absolute; width:1px; height:1px; padding:0; margin:-1px; overflow:hidden; clip:rect(0,0,0,0); border:0; }
+                    .modal-dialog {
+                        width: 860px; max-width: calc(100% - 40px);
+                        background: #fff; border-radius: 10px;
+                        box-shadow: 0 20px 60px rgba(0,0,0,.25);
+                        overflow: hidden;
+                        font-family: sans-serif;
+                    }
+                    /* 상단 바 */
+                    .modal-header {
+                        background: black; color:#fff;
+                        padding: 4px 16px; font-weight: 700;
+                        display: flex; align-items: center; justify-content: space-between;
+                    }
+                    .modal-header .date { font-weight: 400; opacity:.9; margin-left: 12px; }
+                    .modal-close {
+                        appearance: none; border: 0; background: transparent;
+                        color:#fff; font-size: 20px; cursor: pointer; padding: 4px 8px;
+                    }
+                    /* 본문 */
+                    .modal-body { padding: 0; }
+                    .section {
+                        padding: 14px 18px;
+                    }
+                    .section-title {
+                        font-weight: 700; margin-bottom: 8px;
+                    }
+                    table.order-info {
+                        width: 100%; border-collapse: collapse; font-size: 14px;
+                    }
+                    .order-info th, .order-info td {
+                        border-bottom: 1px solid #eee; padding: 10px; vertical-align: middle;
+                    }
+                    .order-info thead th {
+                        background: #dedede; color:#fff; font-size: 12px; height: 38px;
+                    }
+                    .thumb { width: 120px; }
+                    .price {
+                        font-size: 18px; font-weight: 800; margin-top: 8px;
+                    }
+                    .right { text-align: right; white-space: nowrap; }
+                    /* 배송정보 표 */
+                    .kv { width: 100%; border-collapse: collapse; font-size: 14px; }
+                    .kv td { border-bottom: 1px solid #eee; padding: 10px; padding-left: 13px; }
+                    .kv td:first-child {height: 45px; background-color: #f2f2f2; text-align: center; width: 130px; }
+                    /* 접근성 포커스 트랩용 */
+                    .sr-only { position:absolute; width:1px; height:1px; padding:0; margin:-1px; overflow:hidden; clip:rect(0,0,0,0); border:0; }
 
-    /* ===== 리뷰 모달 보강 ===== */
-    .review-form { padding: 18px; }
-    .review-grid { width:100%; border-collapse: collapse; font-size:14px; }
-    .review-grid td { border-bottom:1px solid #eee; padding:10px; }
-    .review-grid td:first-child { width:120px; text-align:center; background:#f2f2f2; }
-    .review-title {
-      border:none; border-bottom:1px solid gray; width:270px; outline:none;
-      height:34px; padding:6px 8px; box-sizing:border-box;
+                    /* ===== 리뷰 모달 보강 ===== */
+                    .review-form { padding: 18px; }
+                    .review-grid { width:100%; border-collapse: collapse; font-size:14px; }
+                    .review-grid td { border-bottom:1px solid #eee; padding:10px; }
+                    .review-grid td:first-child { width:120px; text-align:center; background:#f2f2f2; }
+                    .review-title {
+                        border:none; border-bottom:1px solid gray; width:270px; outline:none;
+                        height:34px; padding:6px 8px; box-sizing:border-box;
+                    }
+                    .review-textarea {
+                        width:100%; resize:none; outline:none; padding:8px; box-sizing:border-box; height:160px;
+                    }
+                    .review-actions { display:flex; justify-content:center; gap:10px; margin-top:16px; }
+                    .char-count { font-size:12px; color:#666; text-align:right; margin-top:6px; }
+
+                    /* 별점: 기본은 빈 별(☆), 선택/호버 시 채움(★) */
+                    .rating { display:inline-flex; flex-direction: row-reverse; gap:4px; }
+                    .rating input { position:absolute; opacity:0; }
+                    .rating label { cursor:pointer; font-size:22px; line-height:1; }
+
+                    /* 기본은 빈 별 */
+                    .rating label::before { content: '☆'; }
+
+                    /* 선택된 값과 그 왼쪽(시각적 기준)까지 채움 */
+                    .rating input:checked ~ label::before { content: '★'; }
+
+                    /* 마우스 올렸을 때 미리보기(호버 구간까지 채움) */
+                    .rating label:hover::before,
+                    .rating label:hover ~ label::before { content: '★'; }
+                </style>
+
+                <div style=" height: 100px; margin-top:40px; display: flex; justify-content: center;">
+                    <input th:if="${pageResponseDTO.prev}"
+                           th:onclick="|location.href='@{/admin/employ/search(pg=${pageResponseDTO.start - 1}, searchType=${pageResponseDTO.searchType}, keyword=${pageResponseDTO.keyword})}'|"
+                           type="button" class="prev-page" value="< 이전">
+
+                    <th:block th:if="${pageResponseDTO.end >= pageResponseDTO.start}"
+                              th:each="num:${#numbers.sequence(pageResponseDTO.start, pageResponseDTO.end)}">
+                        <input th:onclick="|location.href='@{/admin/employ/search(pg=${num}, searchType=${pageResponseDTO.searchType}, keyword=${pageResponseDTO.keyword})}'|"
+                               th:class="${num == pageResponseDTO.pg ? 'current' : 'num'}"
+                               type="button"
+                               th:value="${num}" />
+                    </th:block>
+
+                    <input th:if="${pageResponseDTO.next}"
+                           th:onclick="|location.href='@{/admin/employ/search(pg=${pageResponseDTO.end + 1}, searchType=${pageResponseDTO.searchType}, keyword=${pageResponseDTO.keyword})}'|"
+                           type="button" class="next-page" value="다음 >" style="">
+                </div>
+                <style>
+                    .current{
+                        border:1px solid #333;
+                        background-color: #333;
+                        color: white;
+                        height: 30px;
+                        width: 30px;
+                        margin-right:7px;
+                        line-height:1;
+                    }
+                    .num {
+                        cursor: pointer;
+                        border:1px solid #ddd;
+                        color: #555;
+                        height: 30px;
+                        width: 30px;
+                        margin-right:7px;
+                        line-height:1;
+                    }
+                </style>
+</main>
+
+<style>
+    .euro-nav__list {
+        max-height: 0;                /* 기본은 접힘 */
+        overflow: hidden;             /* 안 보이게 */
+        transition: max-height 0.15s ease;
     }
-    .review-textarea {
-      width:100%; resize:none; outline:none; padding:8px; box-sizing:border-box; height:160px;
+    .euro-nav__group.open .euro-nav__list {
+        max-height: 500px;            /* 펼쳐졌을 때 (충분히 크게 설정) */
     }
-    .review-actions { display:flex; justify-content:center; gap:10px; margin-top:16px; }
-    .char-count { font-size:12px; color:#666; text-align:right; margin-top:6px; }
-
-    /* 별점: 기본은 빈 별(☆), 선택/호버 시 채움(★) */
-    .rating { display:inline-flex; flex-direction: row-reverse; gap:4px; }
-    .rating input { position:absolute; opacity:0; }
-    .rating label { cursor:pointer; font-size:22px; line-height:1; }
-
-    /* 기본은 빈 별 */
-    .rating label::before { content: '☆'; }
-
-    /* 선택된 값과 그 왼쪽(시각적 기준)까지 채움 */
-    .rating input:checked ~ label::before { content: '★'; }
-
-    /* 마우스 올렸을 때 미리보기(호버 구간까지 채움) */
-    .rating label:hover::before,
-    .rating label:hover ~ label::before { content: '★'; }
-  </style>
-
-                    <div style=" height: 100px; margin-top:40px; display: flex; justify-content: center;">
-                        <input th:if="${pageResponseDTO.prev}"
-                               th:onclick="|location.href='@{/admin/employ/search(pg=${pageResponseDTO.start - 1}, searchType=${pageResponseDTO.searchType}, keyword=${pageResponseDTO.keyword})}'|"
-                               type="button" class="prev-page" value="< 이전">
-
-                        <th:block th:if="${pageResponseDTO.end >= pageResponseDTO.start}"
-                                  th:each="num:${#numbers.sequence(pageResponseDTO.start, pageResponseDTO.end)}">
-                            <input th:onclick="|location.href='@{/admin/employ/search(pg=${num}, searchType=${pageResponseDTO.searchType}, keyword=${pageResponseDTO.keyword})}'|"
-                                   th:class="${num == pageResponseDTO.pg ? 'current' : 'num'}"
-                                   type="button"
-                                   th:value="${num}" />
-                        </th:block>
-
-                        <input th:if="${pageResponseDTO.next}"
-                               th:onclick="|location.href='@{/admin/employ/search(pg=${pageResponseDTO.end + 1}, searchType=${pageResponseDTO.searchType}, keyword=${pageResponseDTO.keyword})}'|"
-                               type="button" class="next-page" value="다음 >" style="">
-                    </div>
-                    <style>
-                        .current{
-                            border:1px solid #333;
-                            background-color: #333;
-                            color: white;
-                            height: 30px;
-                            width: 30px;
-                            margin-right:7px;
-                            line-height:1;
-                        }
-                        .num {
-                            cursor: pointer;
-                            border:1px solid #ddd;
-                            color: #555;
-                            height: 30px;
-                            width: 30px;
-                            margin-right:7px;
-                            line-height:1;
-                        }
-                    </style>
-    </main>
-
-    <style>
-.euro-nav__list {
-    max-height: 0;                /* 기본은 접힘 */
-    overflow: hidden;             /* 안 보이게 */
-    transition: max-height 0.15s ease;
-}
-.euro-nav__group.open .euro-nav__list {
-    max-height: 500px;            /* 펼쳐졌을 때 (충분히 크게 설정) */
-}
 </style>
 
 <script>
-// 아코디언: 클릭 시 높이를 실제 내용 높이로 애니메이션
-document.querySelectorAll('.euro-nav__title').forEach(title => {
-  title.style.cursor = 'pointer'; // 클릭 가능 시각화(선택)
-  title.addEventListener('click', () => {
-    const group = title.parentElement;
-    const list  = group.querySelector('.euro-nav__list');
+    // 아코디언: 클릭 시 높이를 실제 내용 높이로 애니메이션
+    document.querySelectorAll('.euro-nav__title').forEach(title => {
+        title.style.cursor = 'pointer'; // 클릭 가능 시각화(선택)
+        title.addEventListener('click', () => {
+            const group = title.parentElement;
+            const list  = group.querySelector('.euro-nav__list');
 
-    const isOpen = group.classList.contains('open');
+            const isOpen = group.classList.contains('open');
 
-    if (isOpen) {
-      // 닫기: 현재 높이를 고정 -> 0으로
-      list.style.maxHeight = list.scrollHeight + 'px';
-      list.offsetHeight; 
-      list.style.maxHeight = '0px';
-      group.classList.remove('open');
-    } else {
-      // 열기: 0 -> 내용 높이
-      group.classList.add('open');
-      list.style.maxHeight = list.scrollHeight + 'px';
+            if (isOpen) {
+                // 닫기: 현재 높이를 고정 -> 0으로
+                list.style.maxHeight = list.scrollHeight + 'px';
+                list.offsetHeight;
+                list.style.maxHeight = '0px';
+                group.classList.remove('open');
+            } else {
+                // 열기: 0 -> 내용 높이
+                group.classList.add('open');
+                list.style.maxHeight = list.scrollHeight + 'px';
 
-      // 애니메이션 끝나면 inline max-height 제거(자연스런 레이아웃)
-      const onEnd = (e) => {
-        if (e.propertyName === 'max-height') {
-          list.style.maxHeight = 'none';
-          list.removeEventListener('transitionend', onEnd);
-        }
-      };
-      list.addEventListener('transitionend', onEnd);
-    }
-  });
-});
-
-const groups = document.querySelectorAll('.euro-nav__group');
-document.querySelectorAll('.euro-nav__title').forEach(title => {
-  title.addEventListener('click', () => {
-    groups.forEach(g => {
-      if (g !== title.parentElement && g.classList.contains('open')) {
-        const l = g.querySelector('.euro-nav__list');
-        l.style.maxHeight = l.scrollHeight + 'px';
-        l.offsetHeight;
-        l.style.maxHeight = '0px';
-        g.classList.remove('open');
-      }
+                // 애니메이션 끝나면 inline max-height 제거(자연스런 레이아웃)
+                const onEnd = (e) => {
+                    if (e.propertyName === 'max-height') {
+                        list.style.maxHeight = 'none';
+                        list.removeEventListener('transitionend', onEnd);
+                    }
+                };
+                list.addEventListener('transitionend', onEnd);
+            }
+        });
     });
-  }, {capture:true});
-});
-</script>
-    <footer style="padding:20px; background-color: #808080; width:100%; height:62px; color:white;">
-        Copyright ©NICHIYA.co.kr All rights reserved. NICHIYA ADMINISTRATOR Version 5.4.1.2
-    </footer>
 
-    <script>
-  // ===== 채용등록 모달 열기/닫기 (필요한 요소만) =====
-  const rModal    = document.getElementById('reviewModal');
-  const rBackdrop = document.getElementById('reviewModalBackdrop');
-  const rCloseBtn = document.getElementById('reviewClose');
-  const rCancel   = document.getElementById('reviewCancel');
-  const openBtn   = document.getElementById('openModalBtn');
-
-  function openReviewModal(){
-    rModal.classList.add('is-open');
-    rBackdrop.classList.add('is-open');
-    document.body.style.overflow = 'hidden';
-    // 접근성: 모달 안으로 포커스 이동
-    rModal.querySelector('.modal-dialog')?.focus();
-  }
-
-  function closeReviewModal(){
-    rModal.classList.remove('is-open');
-    rBackdrop.classList.remove('is-open');
-    document.body.style.overflow = '';
-  }
-
-  openBtn?.addEventListener('click', openReviewModal);
-  rCloseBtn?.addEventListener('click', closeReviewModal);
-  rCancel?.addEventListener('click', closeReviewModal);
-  rBackdrop?.addEventListener('click', (e)=>{
-    if(e.target === rBackdrop) closeReviewModal(); // 빈 배경 클릭 시 닫기
-  });
-
-  // ESC로 닫기
-  document.addEventListener('keydown', (e)=>{
-    if(e.key === 'Escape' && rModal.classList.contains('is-open')) closeReviewModal();
-  });
-
-  // (선택) 폼 제출 막고 콘솔로만 확인하고 싶다면 주석 해제
-  // document.getElementById('reviewForm')?.addEventListener('submit', (e)=>{
-  //   e.preventDefault();
-  //   console.log('채용등록 제출', Object.fromEntries(new FormData(e.target)));
-  //   closeReviewModal();
-  // });
+    const groups = document.querySelectorAll('.euro-nav__group');
+    document.querySelectorAll('.euro-nav__title').forEach(title => {
+        title.addEventListener('click', () => {
+            groups.forEach(g => {
+                if (g !== title.parentElement && g.classList.contains('open')) {
+                    const l = g.querySelector('.euro-nav__list');
+                    l.style.maxHeight = l.scrollHeight + 'px';
+                    l.offsetHeight;
+                    l.style.maxHeight = '0px';
+                    g.classList.remove('open');
+                }
+            });
+        }, {capture:true});
+    });
 </script>
 
+<script>
+    // ===== 채용등록 모달 열기/닫기 (필요한 요소만) =====
+    const rModal    = document.getElementById('reviewModal');
+    const rBackdrop = document.getElementById('reviewModalBackdrop');
+    const rCloseBtn = document.getElementById('reviewClose');
+    const rCancel   = document.getElementById('reviewCancel');
+    const openBtn   = document.getElementById('openModalBtn');
 
-</body>
-</html>
+    function openReviewModal(){
+        rModal.classList.add('is-open');
+        rBackdrop.classList.add('is-open');
+        document.body.style.overflow = 'hidden';
+        // 접근성: 모달 안으로 포커스 이동
+        rModal.querySelector('.modal-dialog')?.focus();
+    }
+
+    function closeReviewModal(){
+        rModal.classList.remove('is-open');
+        rBackdrop.classList.remove('is-open');
+        document.body.style.overflow = '';
+    }
+
+    openBtn?.addEventListener('click', openReviewModal);
+    rCloseBtn?.addEventListener('click', closeReviewModal);
+    rCancel?.addEventListener('click', closeReviewModal);
+    rBackdrop?.addEventListener('click', (e)=>{
+        if(e.target === rBackdrop) closeReviewModal(); // 빈 배경 클릭 시 닫기
+    });
+
+    // ESC로 닫기
+    document.addEventListener('keydown', (e)=>{
+        if(e.key === 'Escape' && rModal.classList.contains('is-open')) closeReviewModal();
+    });
+
+    // (선택) 폼 제출 막고 콘솔로만 확인하고 싶다면 주석 해제
+    // document.getElementById('reviewForm')?.addEventListener('submit', (e)=>{
+    //   e.preventDefault();
+    //   console.log('채용등록 제출', Object.fromEntries(new FormData(e.target)));
+    //   closeReviewModal();
+    // });
+</script>
+
+<div th:replace="~{admin/_footer.html}"></div>

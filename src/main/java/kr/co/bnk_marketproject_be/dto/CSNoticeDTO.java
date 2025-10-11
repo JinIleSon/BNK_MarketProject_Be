@@ -1,18 +1,18 @@
 package kr.co.bnk_marketproject_be.dto;
 
-import lombok.AllArgsConstructor;
-import lombok.Data;
+import lombok.*;
+
 import java.time.LocalDateTime;
 
-@Data
+@Getter
+@Setter
 @AllArgsConstructor
+@NoArgsConstructor
+@Builder
 public class CSNoticeDTO {
-
-    private int noticeid;
-    private String category;
+    private Long id;
+    private String boardType;
     private String title;
     private String content;
-    private String status;
     private LocalDateTime createdAt;
-
 }

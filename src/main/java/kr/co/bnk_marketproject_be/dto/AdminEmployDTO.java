@@ -4,7 +4,9 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.springframework.format.annotation.DateTimeFormat;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 @Data
@@ -20,7 +22,10 @@ public class AdminEmployDTO {
     private String title;
     private String user_name;
     private String status;
-    private LocalDateTime recruit_from;
-    private LocalDateTime recruit_to;
+    @DateTimeFormat(iso = DateTimeFormat.ISO.DATE)
+    private LocalDate recruit_from;
+    @DateTimeFormat(iso = DateTimeFormat.ISO.DATE)
+    private LocalDate recruit_to;
     private LocalDateTime created_at;
+    private String note;
 }

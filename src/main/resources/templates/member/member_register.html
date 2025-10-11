@@ -284,7 +284,7 @@
     <script>
         // ---------- 헤더/푸터 삽입 ----------
         window.addEventListener('DOMContentLoaded', () => {
-            fetch("../main/header.html")
+            fetch("/NICHIYA/main/header.html")
                 .then(res => res.text())
                 .then(data => {
                     const header = document.getElementById("header");
@@ -297,7 +297,7 @@
                     });
                 });
 
-            fetch("../main/footer.html")
+            fetch("/NICHIYA/main/footer.html")
                 .then(res => res.text())
                 .then(data => {
                     const footer = document.getElementById("footer");
@@ -570,7 +570,10 @@
                 phone: phoneInput.value.trim(),
                 postcode: document.getElementById("postcode").value,
                 address: document.getElementById("address").value,
-                detailAddress: document.getElementById("detailAddress").value
+                detailAddress: document.getElementById("detailAddress").value,
+
+                // 🔽 추가: 회원 구분 값 전송
+                role: document.querySelector('input[name="memberType"]:checked')?.value || "user"
             };
 
             try {
@@ -582,7 +585,16 @@
                 const body = await res.json();
                 if (res.ok && body.ok) {
                     alert("회원가입이 완료되었습니다.");
-                    location.href = "/welcome";
+                    //location.href = "/welcome";
+
+                // ✅ 로그인 페이지로 이동 여부 확인
+                if (confirm("로그인 페이지로 이동하시겠습니까?")) {
+                    // ✅ 확인 클릭 시 로그인 페이지로 이동
+                    location.href = "/NICHIYA/member/login";
+                } else {
+                    // ❌ 취소 클릭 시 환영 페이지로 이동 (또는 메인 등)
+                    location.href = "/NICHIYA/member/join";
+                }
                 } else {
                     alert("회원가입 실패: " + (body.error || "알 수 없는 오류"));
                 }

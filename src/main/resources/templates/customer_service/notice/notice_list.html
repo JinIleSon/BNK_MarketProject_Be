@@ -429,7 +429,7 @@
 </head>
 <body>
 
-    <header th:replace="main/header :: header">
+    <header th:replace="~{main/header :: header}">
         <div style="margin-left:2%; width:98%; box-sizing: border-box; margin-top:2%; display:flex; height:230px;">
             <button style="border:none;" id="menuBtn" class="icon-btn" aria-controls="menuOverlay" aria-expanded="false" aria-label="메뉴 열기">
                 <svg width="64" height="64" viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg">
@@ -457,8 +457,6 @@
             </div>
         </div>
     </header>
-
-
 
     <aside id="menuOverlay" class="overlay" aria-hidden="true">
         <div class="overlay__panel">
@@ -531,8 +529,6 @@
                 #header{ display: contents; }
             </style>
 
-
-
             <div style="display: flex; margin-left:20%; margin-top:1%; width:100%;">
                 <nav class="overlay__menu" style="width:100%;">
                     <div style="">
@@ -595,47 +591,47 @@
         <h1>NOTICE</h1>
         <div class="cs_sub_nav">
             <ul>
-                <li th:classappend="${category == null or category == '' or category == '전체'} ? 'on'">
+                <li th:classappend="${boardType == null or boardType == '' or boardType == '전체'} ? 'on'">
                     <a th:href="@{/notice/list}">전체</a>
                 </li>
-                <li th:classappend="${category == '고객서비스'} ? 'on'">
-                    <a th:href="@{/notice/list(category='고객서비스')}">고객서비스</a>
+                <li th:classappend="${boardType == '서비스'} ? 'on'">
+                    <a th:href="@{/notice/list(boardType='서비스')}">고객서비스</a>
                 </li>
-                <li th:classappend="${category == '안전거래'} ? 'on'">
-                    <a th:href="@{/notice/list(category='안전거래')}">안전거래</a>
+                <li th:classappend="${boardType == '안전거래'} ? 'on'">
+                    <a th:href="@{/notice/list(boardType='안전거래')}">안전거래</a>
                 </li>
-                <li th:classappend="${category == '위해상품'} ? 'on'">
-                    <a th:href="@{/notice/list(category='위해상품')}">위해상품</a>
+                <li th:classappend="${boardType == '판매중지'} ? 'on'">
+                    <a th:href="@{/notice/list(boardType='판매중지')}">위해상품</a>
                 </li>
-                <li th:classappend="${category == '이벤트당첨'} ? 'on'">
-                    <a th:href="@{/notice/list(category='이벤트당첨')}">이벤트당첨</a>
+                <li th:classappend="${boardType == '당첨자'} ? 'on'">
+                    <a th:href="@{/notice/list(boardType='당첨자')}">이벤트당첨</a>
                 </li>
             </ul>
         </div>
 
-
         <div class="cs_list_table">
+            <!-- ✅ 추가: "전체" 제목 -->
+            <h2 style="font-size:18px; font-weight:bold;">공지사항</h2>
+
             <p class="total_count">
                 총 <span class="count" th:text="${totalCount}"></span>건
             </p>
+
             <table>
                 <colgroup>
-                    <col style="width: 15%;">
                     <col style="width: auto;">
-                    <col style="width: 20%;">
+                    <col style="width: 25%;">
                 </colgroup>
                 <thead>
                     <tr>
-                        <th>분류</th>
                         <th>제목</th>
                         <th>등록일</th>
                     </tr>
                 </thead>
                 <tbody>
-                <tr th:each="n : ${dtoPage.content}">
-                    <td th:text="${n.category}"></td>
+                <tr th:each="n : ${dtoPage}">
                     <td>
-                        <a th:href="@{/notice/view/{id}(id=${n.noticeid})}" th:text="${n.title}"></a>
+                        <a th:href="@{/notice/view/{id}(id=${n.id}, boardType=${boardType})}" th:text="${n.title}"></a>
                     </td>
                     <td th:text="${#temporals.format(n.createdAt, 'yyyy-MM-dd')}"></td>
                 </tr>
@@ -643,23 +639,38 @@
             </table>
 
             <!-- 페이지네이션 -->
-            <div class="pagination">
-                <!-- 이전 버튼 -->
-                <a th:href="@{/notice/list(page=${dtoPage.number > 0 ? dtoPage.number - 1 : 0}, category=${category})}"><b>이전</b></a>
+            <div class="pagination"
+                 th:with="
+                    start=${T(java.lang.Math).floor(currentPage / 5) * 5},
+                    end=${(start + 4) < (totalPages - 1) ? (start + 4) : (totalPages - 1)}">
 
-                <!-- 페이지 번호 -->
-                <span th:each="i : ${#numbers.sequence(0, dtoPage.totalPages - 1)}">
-                    <a th:href="@{/notice/list(page=${i}, category=${category})}"
+                <!-- 이전 버튼 -->
+                <a th:href="@{/notice/list(
+                        page=${currentPage > 0 ? currentPage - 1 : 0},
+                        boardType=${boardType}
+                    )}">
+                    이전
+                </a>
+
+                <!-- 페이지 번호 5개씩 출력 -->
+                <span th:each="i : ${#numbers.sequence(start, end)}">
+                    <a th:href="@{/notice/list(page=${i}, boardType=${boardType})}"
                        th:text="${i + 1}"
-                       th:classappend="${i == dtoPage.number} ? 'on'"></a>
+                       th:classappend="${i == currentPage} ? 'on'"></a>
                 </span>
 
                 <!-- 다음 버튼 -->
-                <a th:href="@{/notice/list(page=${dtoPage.number < dtoPage.totalPages - 1 ? dtoPage.number + 1 : dtoPage.totalPages - 1}, category=${category})}"><b>다음</b></a>
+                <a th:href="@{/notice/list(
+                        page=${currentPage < totalPages - 1 ? currentPage + 1 : totalPages - 1},
+                        boardType=${boardType}
+                    )}">
+                    다음
+                </a>
             </div>
-    </div>
-<div th:replace="main/footer :: footer"></div>
+        </div>
 
+        </div>
+        <div th:replace="~{main/footer :: footer}"></div>
         <script>
             // --- 요소 가져오기 ---
             const body     = document.body;
@@ -727,6 +738,5 @@
                 });
             });
         </script>
-
 </body>
 </html>

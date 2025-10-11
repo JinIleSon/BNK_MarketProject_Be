@@ -2,67 +2,68 @@
 
     <main style="display: flex; justify-content: center; border-top:1px solid #e2e2e2;">
         <div>
-        <aside class="euro-nav" aria-label="관리자 사이드 메뉴" style="">
-            <section class="euro-nav__group">
-            <h4 class="euro-nav__title" style="">환경설정</h4>
-            <ul class="euro-nav__list">
-                <li class="euro-nav__item"><a href="#">기본설정</a></li>
-                <li class="euro-nav__item"><a href="#">배너관리</a></li>
-                <li class="euro-nav__item"><a href="#">약관관리</a></li>
-                <li class="euro-nav__item"><a href="#">카테고리</a></li>
-                <li class="euro-nav__item"><a href="#">버전관리</a></li>
-            </ul>
-            </section>
-            <section class="euro-nav__group">
-            <h4 class="euro-nav__title" style="">상점관리</h4>
-            <ul class="euro-nav__list">
-                <li class="euro-nav__item"><a href="/admin/store_list.html">상점목록</a></li>
-                <li class="euro-nav__item is-active"><a href="/admin/sale_status.html">매출현황</a></li>
-            </ul>
-            </section>
+            <aside class="euro-nav" aria-label="관리자 사이드 메뉴" style="">
+                <section class="euro-nav__group">
+                    <h4 class="euro-nav__title" style="">환경설정</h4>
+                    <ul class="euro-nav__list">
+                        <li class="euro-nav__item"><a href="#">기본설정</a></li>
+                        <li class="euro-nav__item"><a href="#">배너관리</a></li>
+                        <li class="euro-nav__item"><a href="#">약관관리</a></li>
+                        <li class="euro-nav__item"><a href="#">카테고리</a></li>
+                        <li class="euro-nav__item"><a href="#">버전관리</a></li>
+                    </ul>
+                </section>
 
-            <section class="euro-nav__group">
-            <h4 class="euro-nav__title" style="">회원관리</h4>
-            <ul class="euro-nav__list">
-                <li class="euro-nav__item"><a href="/admin/member_list.html">회원목록</a></li>
-                <li class="euro-nav__item"><a href="/admin/point_management.html">포인트관리</a></li>
-            </ul>
-            </section>
+                <section class="euro-nav__group">
+                    <h4 class="euro-nav__title" style="">상점관리</h4>
+                    <ul class="euro-nav__list">
+                        <li class="euro-nav__item"><a th:href="@{/admin/shop/list}">상점목록</a></li>
+                        <li class="euro-nav__item is-active"><a th:href="@{/admin/sales/list}">매출현황</a></li>
+                    </ul>
+                </section>
 
-            <section class="euro-nav__group">
-            <h4 class="euro-nav__title" style="">상품관리</h4>
-            <ul class="euro-nav__list">
-                <li class="euro-nav__item"><a href="#">상품목록</a></li>
-                <li class="euro-nav__item"><a href="#">상품등록</a></li>
-            </ul>
-            </section>
+                <section class="euro-nav__group">
+                    <h4 class="euro-nav__title" style="">회원관리</h4>
+                    <ul class="euro-nav__list">
+                        <li class="euro-nav__item"><a th:href="@{/admin/member/list}">회원목록</a></li>
+                        <li class="euro-nav__item"><a th:href="@{/admin/point/list}">포인트관리</a></li>
+                    </ul>
+                </section>
 
-            <section class="euro-nav__group">
-            <h4 class="euro-nav__title" style="">주문관리</h4>
-            <ul class="euro-nav__list">
-                <li class="euro-nav__item"><a href="#">주문현황</a></li>
-                <li class="euro-nav__item"><a href="#">배송현황</a></li>
-            </ul>
-            </section>
+                <section class="euro-nav__group">
+                    <h4 class="euro-nav__title" style="">상품관리</h4>
+                    <ul class="euro-nav__list">
+                        <li class="euro-nav__item"><a th:href="@{/admin/product/list}">상품목록</a></li>
+                        <li class="euro-nav__item"><a th:href="@{/admin/productReg/list}">상품등록</a></li>
+                    </ul>
+                </section>
 
-            <section class="euro-nav__group">
-            <h4 class="euro-nav__title" style="">쿠폰관리</h4>
-            <ul class="euro-nav__list">
-                <li class="euro-nav__item"><a href="#">쿠폰목록</a></li>
-                <li class="euro-nav__item"><a href="#">쿠폰발급현황</a></li>
-            </ul>
-            </section>
+                <section class="euro-nav__group">
+                    <h4 class="euro-nav__title" style="">주문관리</h4>
+                    <ul class="euro-nav__list">
+                        <li class="euro-nav__item"><a th:href="@{/admin/order/list}">주문현황</a></li>
+                        <li class="euro-nav__item"><a th:href="@{/admin/delivery/list}">배송현황</a></li>
+                    </ul>
+                </section>
 
-            <section class="euro-nav__group">
-            <h4 class="euro-nav__title" style="">고객센터</h4>
-            <ul class="euro-nav__list">
-                <li class="euro-nav__item"><a href="/admin/announcement_list.html">공지사항</a></li>
-                <li class="euro-nav__item"><a href="/admin/questions_list.html">자주묻는질문</a></li>
-                <li class="euro-nav__item"><a href="#">문의하기</a></li>
-                <li class="euro-nav__item"><a href="#">채용하기</a></li>
-            </ul>
-            </section>
-        </aside>
+                <section class="euro-nav__group">
+                    <h4 class="euro-nav__title" style="">쿠폰관리</h4>
+                    <ul class="euro-nav__list">
+                        <li class="euro-nav__item"><a th:href="@{/admin/coupon/list}">쿠폰목록</a></li>
+                        <li class="euro-nav__item"><a th:href="@{/admin/couponsnow/list}">쿠폰발급현황</a></li>
+                    </ul>
+                </section>
+
+                <section class="euro-nav__group">
+                    <h4 class="euro-nav__title" style="">고객센터</h4>
+                    <ul class="euro-nav__list">
+                        <li class="euro-nav__item"><a th:href="@{/admin/announcement/list}">공지사항</a></li>
+                        <li class="euro-nav__item"><a th:href="@{/admin/FAQ/list}">자주묻는질문</a></li>
+                        <li class="euro-nav__item"><a th:href="@{/admin/inquiry/list}">문의하기</a></li>
+                        <li class="euro-nav__item"><a th:href="@{/admin/employ/list}">채용하기</a></li>
+                    </ul>
+                </section>
+            </aside>
         </div>
         <div style="border-left:1px solid #e2e2e2;"></div>
             <div style="margin-left:40px; width:900px; height:1000px; border:none; padding:20px; box-sizing:border-box; font-family:'Noto Sans KR', sans-serif;">
@@ -88,53 +89,73 @@
             <table style="width:100%; border-collapse:collapse; text-align:center; font-size:14px;">
             <thead>
                 <tr style="border-top:2px solid #000; border-bottom:1px solid #ccc; background:#fafafa; height:50px;">
-                <th style="padding:8px;">번호</th>
-                <th>상호명</th>
-                <th>사업자등록번호</th>
-                <th>주문건수</th>
-                <th>결제완료</th>
-                <th>배송중</th>
-                <th>배송완료</th>
-                <th>구매확정</th>
-                <th>주문합계</th>
-                <th>매출합계</th>
+                <th style="padding:8px; width:61px;">번호</th>
+                <th style="width:180px;">상호명</th>
+                <th style="width:140px;">사업자등록번호</th>
+                <th style="width:81px;">주문건수</th>
+                <th style="width:81px;">결제완료</th>
+                <th style="width:61px;">배송중</th>
+                <th style="width:81px;">배송완료</th>
+                <th style="width:81px;">주문합계</th>
+                <th style="width:81px;">매출합계</th>
                 </tr>
             </thead>
             <tbody>
-                <tr style="border-bottom:1px solid #e2e2e2; height:70px;vertical-align: middle;">
-                <td>5</td><td>(주) 다니와</td><td>112-12-12345</td><td>103</td><td>90</td><td>56</td><td>52</td><td>50</td><td>12,870,600</td><td>10,870,600</td>
+                <tr style="border-bottom:1px solid #e2e2e2; height:70px;vertical-align: middle;"
+                    th:each="admin, stat:${pageResponseDTO.dtoList}">
+                    <td th:text="${pageResponseDTO.startNo - stat.index}">5</td>
+                    <td th:text="${admin.brand_name}">(주) 다니와</td>
+                    <td th:text="${admin.biz_registration_number}">112-12-12345</td>
+                    <td th:text="${admin.order_count}">103</td>
+                    <td th:text="${admin.completed_count}">90</td>
+                    <td th:text="${admin.shipping_count}">56</td>
+                    <td th:text="${admin.delivered_count}">52</td>
+                    <td th:text="${admin.order_total}">12,870,600</td>
+                    <td th:text="${admin.sales_total}">10,870,600</td>
                 </tr>
-                <tr style="border-bottom:1px solid #e2e2e2; height:70px;vertical-align: middle;">
-                <td>4</td><td>(주) 앗남</td><td>112-12-12345</td><td>26</td><td>24</td><td>12</td><td>8</td><td>6</td><td>5,683,200</td><td>5,230,000</td>
-                </tr>
-                <tr style="border-bottom:1px solid #e2e2e2; height:70px;vertical-align: middle;">
-                <td>3</td><td>(주) 핌플즈</td><td>112-12-12345</td><td>36</td><td>27</td><td>20</td><td>16</td><td>14</td><td>18,720,000</td><td>16,720,000</td>
-                </tr>
-                <tr style="border-bottom:1px solid #e2e2e2; height:70px;vertical-align: middle;">
-                <td>2</td><td>누리쿠도</td><td>112-12-12345</td><td>56</td><td>52</td><td>37</td><td>30</td><td>28</td><td>7,581,400</td><td>7,080,800</td>
-                </tr>
-                <tr style="border-bottom:1px solid #e2e2e2; height:70px;vertical-align: middle;">
-                <td>1</td><td>굿데이 스포츠</td><td>112-12-12341</td><td>79</td><td>70</td><td>58</td><td>43</td><td>40</td><td>4,820,700</td><td>4,620,700</td>
-                </tr>
+
             </tbody>
             </table>
-                <div style=" height: 100px; margin-top:40px; display: flex; justify-content: center;">
-                    <form action="" method="" style="">
-                        <input type="button" class="prev-page" value="< 이전">
+                    <div style=" height: 100px; margin-top:40px; display: flex; justify-content: center;">
+                        <input th:if="${pageResponseDTO.prev}"
+                               th:onclick="|location.href='@{/admin/sales/list(pg=${pageResponseDTO.start - 1})}'|"
+                               type="button" class="prev-page" value="< 이전">
 
-                        <input type="button" value="1" style="border:1px solid #333; background-color: #333; color: white; height: 30px; width: 30px; margin-right:2px; line-height:1;">
-                        <input type="button" value="2" style="cursor: pointer; border:1px solid #ddd; color: #555; height: 30px; width: 30px; margin-right:2px; line-height:1;">
-                        <input type="button" value="3" style="cursor: pointer; border:1px solid #ddd; color: #555; height: 30px; width: 30px; line-height:1;">
+                        <th:block th:each="num:${#numbers.sequence(pageResponseDTO.start, pageResponseDTO.end)}">
+                            <input th:onclick="|location.href='@{/admin/sales/list(pg=${num})}'|"
+                                   th:class="${num == pageResponseDTO.pg ? 'current' : 'num'}"
+                                   type="button"
+                                   th:value="${num}" />
+                        </th:block>
 
-                        <input type="button" class="next-page" value="다음 >" style="">
-                    </form>
-                </div>
+                        <input th:if="${pageResponseDTO.next}"
+                               th:onclick="|location.href='@{/admin/sales/list(pg=${pageResponseDTO.end + 1})}'|"
+                               type="button" class="next-page" value="다음 >" style="">
+                    </div>
             </div>
         </div>
         </div>
     </main>
 
     <style>
+        .current{
+            border:1px solid #333;
+            background-color: #333;
+            color: white;
+            height: 30px;
+            width: 30px;
+            margin-right:7px;
+            line-height:1;
+        }
+        .num {
+            cursor: pointer;
+            border:1px solid #ddd;
+            color: #555;
+            height: 30px;
+            width: 30px;
+            margin-right:7px;
+            line-height:1;
+        }
         .euro-nav__list {
             max-height: 0;                /* 기본은 접힘 */
             overflow: hidden;             /* 안 보이게 */
@@ -193,6 +214,226 @@
       });
     }, {capture:true});
   });
-  
+        // ---- 유틸 ----
+        function fmt(n){ return n.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ','); }
+        function num(t){ return +String(t).replace(/[^\d.-]/g,'') || 0; }
+        function rint(min,max){ return Math.floor(Math.random()*(max-min+1))+min; }
+        function byRatio(baseRatio, total, cap){
+            const jitter = 0.8 + Math.random()*0.4; // 0.8~1.2
+            return Math.min(cap, Math.max(0, Math.round(total*(baseRatio*jitter))));
+        }
+
+        (function(){
+            const tbody = document.querySelector('table tbody');
+            if(!tbody) return;
+            const rows = Array.from(tbody.querySelectorAll('tr'));
+            if(rows.length === 0) return;
+
+            // ---- 1) 기준 찾기 (해당 페이지 내 첫 '비어있지 않은' 행, 없으면 localStorage) ----
+            let base = null;
+            for(const tr of rows){
+                const tds = tr.children;
+                const o = num(tds[3].textContent);
+                const c = num(tds[4].textContent);
+                const s = num(tds[5].textContent);
+                const d = num(tds[6].textContent);
+                const ot = num(tds[7].textContent);
+                const st = num(tds[8].textContent);
+                const hasData = o>0 || c>0 || s>0 || d>0 || ot>0 || st>0;
+                if(hasData){
+                    base = {o:o, c:c, s:s, d:d, ot:ot, st:st};
+                    break;
+                }
+            }
+
+            // localStorage 키
+            const LS_KEY = 'sales_baseline_v1';
+            if(!base){
+                try{
+                    const saved = JSON.parse(localStorage.getItem(LS_KEY)||'null');
+                    if(saved) base = saved;
+                }catch(e){}
+            }
+
+            // 기준이 없으면 안전한 디폴트
+            if(!base){
+                base = {o:50, c:30, s:10, d:25, ot:500000, st:400000};
+            }
+
+            // ---- 2) 기준에서 비율/단가 계산 ----
+            const ratioComp = base.o ? base.c/base.o : 0.5;
+            const ratioShip = base.o ? base.s/base.o : 0.2;
+            const ratioDeli = base.o ? base.d/base.o : 0.6;
+            const unitOT = base.o ? base.ot/base.o : 10000;
+            const unitST = base.o ? base.st/base.o :  8000;
+
+            // ---- 3) 모든 행(첫 행 포함) 채우기 ----
+            rows.forEach(tr=>{
+                const tds = tr.children;
+                let order = num(tds[3].textContent);
+                let comp  = num(tds[4].textContent);
+                let ship  = num(tds[5].textContent);
+                let deli  = num(tds[6].textContent);
+                let otot  = num(tds[7].textContent);
+                let stot  = num(tds[8].textContent);
+
+                if(order === 0) order = rint(1, 99);
+                if(comp  === 0) comp  = byRatio(ratioComp, order, 99);
+                if(deli  === 0) deli  = byRatio(ratioDeli, order, 99);
+                if(ship  === 0) ship  = byRatio(ratioShip, order, 99);
+
+                // 논리 보정
+                if(comp > order) comp = order;
+                if(deli > order) deli = order;
+                if(ship + deli > order) ship = Math.max(0, order - deli);
+
+                // 금액(1,000,000 미만)
+                if(otot === 0){
+                    let est = Math.round(order * unitOT * (0.8 + Math.random()*0.4));
+                    if(est >= 1000000){ est = Math.floor(est * (999000/est)); }
+                    otot = Math.max(1000, Math.min(999000, est));
+                }
+                if(stot === 0){
+                    let est = Math.round(order * unitST * (0.8 + Math.random()*0.4));
+                    if(est >= 1000000){ est = Math.floor(est * (999000/est)); }
+                    stot = Math.max(1000, Math.min(999000, est));
+                }
+
+                tds[3].textContent = order;
+                tds[4].textContent = comp;
+                tds[5].textContent = ship;
+                tds[6].textContent = deli;
+                tds[7].textContent = fmt(otot);
+                tds[8].textContent = fmt(stot);
+            });
+
+            // ---- 4) 기준 저장(페이지에 기준 행이 있었다면) ----
+            try{
+                if(base && base.o>0){
+                    localStorage.setItem(LS_KEY, JSON.stringify(base));
+                }
+            }catch(e){}
+        })();
+        // ====== 정렬 기능 (활성 컬럼만 화살표 표시 + hover 스타일) ======
+        (function(){
+            const table = document.querySelector('table');
+            if(!table) return;
+            const tbody = table.querySelector('tbody');
+            const headers = table.querySelectorAll('thead th');
+
+            // 정렬 가능한 컬럼
+            const labels = { 3:'주문건수', 7:'주문합계', 8:'매출합계' };
+
+            // 초기 라벨 저장
+            const baseTexts = {};
+            Object.keys(labels).forEach(i => {
+                baseTexts[i] = headers[i].textContent.trim();
+                headers[i].classList.add('sortable'); // hover 스타일 적용
+            });
+
+            let sortState = { col: null, asc: true };
+            const toNum = v => parseFloat(String(v).replace(/[^\d.-]/g,'')) || 0;
+
+            headers.forEach((th, idx) => {
+                if(!(idx in labels)) return;
+                th.title = `${labels[idx]} 기준으로 정렬`;
+
+                th.addEventListener('click', () => {
+                    const rows = Array.from(tbody.querySelectorAll('tr'));
+                    const asc = sortState.col === idx ? !sortState.asc : false;
+                    sortState = { col: idx, asc };
+
+                    rows.sort((a,b)=>{
+                        const A = toNum(a.children[idx].textContent);
+                        const B = toNum(b.children[idx].textContent);
+                        return asc ? A - B : B - A;
+                    });
+                    rows.forEach(tr => tbody.appendChild(tr));
+
+                    // 헤더 상태 초기화
+                    headers.forEach((h,i)=>{
+                        if(i in labels){
+                            h.style.backgroundColor = '';
+                            h.textContent = baseTexts[i];
+                        }
+                    });
+
+                    // 현재 정렬 중인 컬럼 표시
+                    th.style.backgroundColor = '#f0f0f0';
+                    th.textContent = `${labels[idx]} ${asc ? '▲' : '▼'}`;
+                });
+            });
+        })();
+        /* ----------------------------- 데이터 채우기 함수 ----------------------------- */
+        function fillSalesData(mode){
+            // mode : '일별' | '주간' | '한달'
+            const tbody = document.querySelector('table tbody');
+            if(!tbody) return;
+            const rows = Array.from(tbody.querySelectorAll('tr'));
+
+            // 각 모드별 범위 지정
+            let range = {};
+            switch(mode){
+                case '주간':
+                    range = { orderMin:100, orderMax:999, moneyMin:1_000_000, moneyMax:10_000_000 };
+                    break;
+                case '한달':
+                    range = { orderMin:1000, orderMax:9999, moneyMin:10_000_000, moneyMax:100_000_000 };
+                    break;
+                default: // 일별
+                    range = { orderMin:1, orderMax:99, moneyMin:1_000, moneyMax:999_000 };
+            }
+
+            rows.forEach(tr=>{
+                const tds = tr.children;
+
+                let order = rint(range.orderMin, range.orderMax);
+                let comp  = rint(Math.floor(order*0.3), order);
+                let ship  = rint(Math.floor(order*0.1), Math.floor(order*0.3));
+                let deli  = rint(Math.floor(order*0.3), order);
+
+                // 논리 보정
+                if(comp > order) comp = order;
+                if(deli > order) deli = order;
+                if(ship + deli > order) ship = Math.max(0, order - deli);
+
+                // 금액
+                const otot = rint(range.moneyMin, range.moneyMax);
+                const stot = rint(Math.floor(otot*0.7), otot);
+
+                // 테이블 반영
+                tds[3].textContent = order;
+                tds[4].textContent = comp;
+                tds[5].textContent = ship;
+                tds[6].textContent = deli;
+                tds[7].textContent = fmt(otot);
+                tds[8].textContent = fmt(stot);
+            });
+        }
+
+        /* ----------------------------- select 변경 시 반응 ----------------------------- */
+        (function(){
+            const select = document.querySelector('select[name="select"]');
+            if(!select) return;
+
+            // 페이지 로드 시 기본값(일별)
+            fillSalesData('일별');
+
+            select.addEventListener('change', ()=>{
+                const mode = select.options[select.selectedIndex].textContent.trim();
+                fillSalesData(mode);
+            });
+        })();
     </script>
+<style>
+    /* --- 정렬 가능한 헤더 hover 효과 --- */
+    th.sortable {
+        cursor: pointer;
+        transition: background-color 0.2s ease, color 0.2s ease;
+    }
+    th.sortable:hover {
+        background-color: #f2f2f2;
+        color: #000;
+    }
+</style>
 <div th:replace="~{admin/_footer.html}"></div>

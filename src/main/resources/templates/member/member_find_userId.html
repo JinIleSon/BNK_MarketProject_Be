@@ -208,7 +208,7 @@
 
 <script>
     /* 헤더/푸터 include (기존 유지) */
-    fetch("../main/header.html")
+    fetch("/NICHIYA/main/header.html")
         .then(res => res.text())
         .then(data => {
             document.getElementById("header").innerHTML = data;
@@ -220,7 +220,7 @@
             });
         });
 
-    fetch("../main/footer.html")
+    fetch("/NICHIYA/main/footer.html")
         .then(res => res.text())
         .then(data => { document.getElementById("footer").innerHTML = data; });
 </script>
@@ -299,7 +299,7 @@
             </section>
 
             <div class="actions">
-                <button id="cancelBtn" class="btn secondary" type="button" onclick="location.href='#'">취소</button>
+                <button id="cancelBtn" class="btn secondary" type="button" onclick="location.href='/NICHIYA/member/findresultId'">취소</button>
                 <button id="nextBtn" class="btn" type="button" disabled>다음</button>
             </div>
         </div>
@@ -398,9 +398,39 @@
             else alert('인증번호가 일치하지 않습니다.');
         });
 
+
         // 다음 → 결과 페이지로 이동(실서버 연동 지점)
-        nextBtn.addEventListener('click', () => {
-            if (!validateBasic()) { alert('이름과 연락처 입력 및 인증을 완료해 주세요.'); return; }
+        nextBtn.addEventListener('click', async () => {
+            if (!validateBasic()) {
+                alert('이름과 연락처 입력 및 인증을 완료해 주세요.');
+                return; }
+
+            const payload = {
+                name: $('#name').value.trim(),
+                method: state.method,
+                email: state.method === 'email' ? $('#email').value.trim() : null,
+                phone: state.method === 'phone' ? $('#phone').value.trim() : null
+            };
+
+            try {
+                const res = await fetch('/NICHIYA/user/find-id', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(payload)
+                });
+
+                const data = await res.json();
+
+                if (res.ok && data.ok) {
+                    localStorage.setItem('findUserResult', JSON.stringify(data));
+                    location.href = '/NICHIYA/member/findresultId';
+                } else {
+                    alert(data.message || '아이디를 찾을 수 없습니다.');
+                }
+            } catch (err) {
+                console.error(err);
+                alert('서버 오류가 발생했습니다.');
+            }
 
             // 실제 구현 예 (서버 검증 & 아이디 조회):
             // fetch('/api/account/find-id', {
@@ -419,7 +449,7 @@
             // });
 
             // 데모 전환
-            location.href = '/account/find-id/result';
+            //location.href = '/account/find-id/result';
         });
 
         // 초기

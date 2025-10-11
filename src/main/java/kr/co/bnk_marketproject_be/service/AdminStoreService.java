@@ -1,11 +1,15 @@
 package kr.co.bnk_marketproject_be.service;
 
 import com.querydsl.core.Tuple;
+import jakarta.transaction.Transactional;
 import kr.co.bnk_marketproject_be.dto.AdminStoreDTO;
 import kr.co.bnk_marketproject_be.dto.PageRequestDTO;
 import kr.co.bnk_marketproject_be.dto.PageResponseDTO;
+import kr.co.bnk_marketproject_be.dto.UserDTO;
 import kr.co.bnk_marketproject_be.entity.AdminStore;
+import kr.co.bnk_marketproject_be.entity.User;
 import kr.co.bnk_marketproject_be.repository.AdminStoreRepository;
+import kr.co.bnk_marketproject_be.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
@@ -21,7 +25,7 @@ import java.util.List;
 public class AdminStoreService {
 
     private final AdminStoreRepository adminStoreRepository;
-
+    private final UserRepository userRepository;
     private final ModelMapper modelMapper;
 
     public PageResponseDTO findAdminStoreAll(PageRequestDTO pageRequestDTO){
@@ -70,5 +74,21 @@ public class AdminStoreService {
                 .build();
     }
 
+    @Transactional
+    public void registerStore(AdminStoreDTO adminStoreDTO){
+        adminStoreRepository.save(modelMapper.map(adminStoreDTO, AdminStore.class));
+        UserDTO userDTO = new UserDTO();
+        log.info("adminStoreDTO={}",adminStoreDTO);
+        userDTO.setUserId(adminStoreDTO.getUser_id());
+        userDTO.setPassword(adminStoreDTO.getPassword());
+        userDTO.setName(adminStoreDTO.getName());
+        userDTO.setEmail(adminStoreDTO.getEmail());
+        userDTO.setName(adminStoreDTO.getRep());
+        userDTO.setPhone(adminStoreDTO.getPhone());
+        userDTO.setAddress(adminStoreDTO.getAddress1());
+        userDTO.setDetailAddress(adminStoreDTO.getAddress2());
+        userDTO.setRole("seller");
+        userRepository.save(modelMapper.map(userDTO, User.class));
+    }
 
 }

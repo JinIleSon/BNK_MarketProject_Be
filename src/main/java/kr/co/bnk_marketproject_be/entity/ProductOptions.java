@@ -1,8 +1,6 @@
 package kr.co.bnk_marketproject_be.entity;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -13,14 +11,12 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @Builder
 @Entity
-@Table(name = "PRODUCT_OPTIONS")
+@Table(name = "product_options")
 public class ProductOptions {
 
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
-
-    private int products_id;
     private String option_name;
-    private String option_value;
-    private int stock;
+    private int product_code;
 }

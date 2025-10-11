@@ -1,0 +1,323 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MainPage</title>
+    
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- ① 폰트 로드 (헤드에 추가) -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Bodoni+Moda:opsz,wght@6..96,400;500&family=Noto+Serif+KR:wght@300;400&display=swap" rel="stylesheet">
+
+    <style>
+        html, body { height:100%; margin:0; }  
+        
+        /* Hero 레이아웃 */
+        .hero{
+        position:relative;
+        width:100vw;
+        height:100vh;                
+        overflow:hidden;
+        margin:0 auto;
+        }
+
+        /* 패널 */
+        .panel{
+        position:absolute; inset:0;
+        opacity:0; transform: translateY(40px);
+        transition: transform 600ms ease, opacity 600ms ease;
+        pointer-events:none;
+        }
+        .panel.active{
+        opacity:1; transform: translateY(0);
+        pointer-events:auto;
+        }
+
+        /* 하단 텍스트 탭 */
+        .hero-tabs{
+        position:absolute; left:50%; bottom:24px;
+        transform:translateX(-50%);
+        display:flex; gap:28px; flex-wrap:wrap;
+        align-items:center; justify-content:center;
+        padding:8px 16px;
+        z-index:20;
+        }
+        .hero-tabs .tab{
+        background:none; border:none;
+        color:#fff; mix-blend-mode:normal;
+        font-family:'Bodoni Moda','Noto Serif KR',serif;
+        font-weight:400; letter-spacing:.04em;
+        text-transform:uppercase;
+        cursor:pointer;
+        opacity:.7;
+        }
+        .hero-tabs .tab.active{ opacity:1; font-weight:600; }
+        .hero-tabs .tab:focus-visible{ outline:1px solid #fff; }
+
+        /* 슬라이더  */
+        .main-slider{ position:relative; width:100%; height:100%; }
+        .viewport{ width:100%; height:100%; overflow:hidden; }   
+        .main-slides{
+        display:flex; align-items:center;
+        gap:0;                               
+        height:100%;
+        transition: transform 600ms ease;
+        }
+        .main-slides img{
+        flex:0 0 100%;                     
+        width:100%; height:100%;
+        object-fit:cover;                     
+        }
+
+
+        /* 좌우 버튼 */
+        button.prev, button.next{
+        position:absolute; top:50%; transform:translateY(-50%);
+        width:60px; height:60px; background:none; border:none; cursor:pointer; z-index:10; 
+        }
+        button.prev{ left:16px; } button.next{ right:16px; }
+        button.prev::before, button.next::before{
+        content:''; display:inline-block; width:12px; height:12px;
+        border-top:1px solid #fff; border-right:1px solid #fff;
+        }
+        button.prev::before{ transform:rotate(-135deg); }
+        button.next::before{ transform:rotate(45deg); }
+
+        /* 반응형 */
+        @media (max-width: 768px){
+        .hero{ height:80vh; }
+        .viewport{ width:90vw; height:60vh; }
+        .hero-tabs{ gap:18px; bottom:16px; }
+        }
+    </style>
+</head>
+<body>
+    <div id="header"></div>
+    
+    <main>
+        <!-- HERO -->
+        <section class="hero">
+        <!-- 패널: The New -->
+        <div class="panel active" id="panel-new">
+            <div class="main-slider">
+            <button class="prev"></button>
+            <div class="viewport">
+                <div class="main-slides">
+                <img src="/images/product_list1.jpg" alt="배너1">
+                <img src="/images/product_list2.jpg" alt="배너2">
+                <img src="/images/product_list3.jpg" alt="배너3">
+                <img src="/images/product_list4.jpg" alt="배너4">
+                <img src="/images/product_list5.jpg" alt="배너5">
+                </div>
+            </div>
+            <button class="next"></button>
+            </div>
+        </div>
+
+        <!-- 패널: Best Seller -->
+        <div class="panel" id="panel-best">
+            <div class="main-slider">
+            <button class="prev"></button>
+            <div class="viewport">
+                <div class="main-slides">
+                <!-- 베스트 이미지들 -->
+                <img src="/images/product_list2.jpg" alt="best1">
+                <img src="/images/product_list1.jpg" alt="best2">
+                <img src="/images/product_list3.jpg" alt="best3">
+                <img src="/images/product_list4.jpg" alt="best4">
+                <img src="/images/product_list5.jpg" alt="best5">
+                </div>
+            </div>
+            <button class="next"></button>
+            </div>
+        </div>
+
+        <!-- 패널: Hit Products -->
+        <div class="panel" id="panel-hit">
+            <div class="main-slider">
+            <button class="prev"></button>
+            <div class="viewport">
+                <div class="main-slides">
+                <!-- 히트 이미지들 -->
+                <img src="/images/product_list3.jpg" alt="hit3">
+                <img src="/images/product_list2.jpg" alt="hit1">
+                <img src="/images/product_list1.jpg" alt="hit2">
+                <img src="/images/product_list4.jpg" alt="hit4">
+                <img src="/images/product_list5.jpg" alt="hit5">
+                </div>
+            </div>
+            <button class="next"></button>
+            </div>
+        </div>
+
+        <!-- 패널: Recommend -->
+        <div class="panel" id="panel-reco">
+            <div class="main-slider">
+            <button class="prev"></button>
+            <div class="viewport">
+                <div class="main-slides">
+                <!-- 추천상품 이미지들 -->
+                <img src="/images/product_list4.jpg" alt="reco4">
+                <img src="/images/product_list3.jpg" alt="reco3">
+                <img src="/images/product_list2.jpg" alt="reco1">
+                <img src="/images/product_list1.jpg" alt="reco2">
+                <img src="/images/product_list5.jpg" alt="reco5">
+                </div>
+            </div>
+            <button class="next"></button>
+            </div>
+        </div>
+
+        <!-- 패널: Recent -->
+        <div class="panel" id="panel-recent">
+            <div class="main-slider">
+            <button class="prev"></button>
+            <div class="viewport">
+                <div class="main-slides">
+                <!-- 신상품 이미지들 -->
+                <img src="/images/product_list5.jpg" alt="recent5">
+                <img src="/images/product_list3.jpg" alt="recent3">
+                <img src="/images/product_list2.jpg" alt="recent1">
+                <img src="/images/product_list1.jpg" alt="recent2">
+                <img src="/images/product_list4.jpg" alt="recent4">
+                </div>
+            </div>
+            <button class="next"></button>
+            </div>
+        </div>
+
+        <!-- 패널: Discount -->
+        <div class="panel" id="panel-discount">
+            <div class="main-slider">
+            <button class="prev"></button>
+            <div class="viewport">
+                <div class="main-slides">
+                <!-- 히트 이미지들 -->
+                <img src="/images/product_list2.jpg" alt="discount1">
+                <img src="/images/product_list1.jpg" alt="discount2">
+                <img src="/images/product_list3.jpg" alt="discount3">
+                <img src="/images/product_list4.jpg" alt="discount4">
+                <img src="/images/product_list5.jpg" alt="discount5">
+                </div>
+            </div>
+            <button class="next"></button>
+            </div>
+        </div>
+
+        <!-- 하단 텍스트 탭 -->
+        <nav class="hero-tabs" aria-label="메인 카테고리">
+            <button class="tab active" data-target="#panel-new">The New</button>
+            <button class="tab" data-target="#panel-best">Best Seller</button>
+            <button class="tab" data-target="#panel-hit">Hit Products</button>
+            <button class="tab" data-target="#panel-reco">Recommend</button>
+            <button class="tab" data-target="#panel-recent">Recent</button>
+            <button class="tab" data-target="#panel-discount">Discount</button>
+        </nav>
+        </section>
+    </main>
+
+
+    <div id="footer"></div>
+    <!--헤더푸터 연결-->
+    <script>
+        fetch("header.html")
+          .then(res => res.text())
+          .then(data => {
+            document.getElementById("header").innerHTML = data;
+
+            // header.html 안의 스크립트 실행 강제
+            const scripts = document.getElementById("header").querySelectorAll("script");
+            scripts.forEach(oldScript => {
+            const newScript = document.createElement("script");
+            if (oldScript.src) {
+                newScript.src = oldScript.src;
+            } else {
+                newScript.textContent = oldScript.textContent;
+            }
+            document.body.appendChild(newScript);
+            });
+          });
+
+       
+        fetch("footer.html")
+          .then(res => res.text())
+          .then(data => {
+            document.getElementById("footer").innerHTML = data;
+          });
+    </script>
+    <!--슬라이드-->
+    <script>
+        document.querySelectorAll('.main-slider').forEach((slider) => {
+            const slides = slider.querySelector('.main-slides');
+            const viewport = slider.querySelector('.viewport');
+
+            let index = 0;
+            const slideImages = slider.querySelectorAll('.main-slides img');
+
+            let prevBtn = slider.querySelector('.prev');
+            let nextBtn = slider.querySelector('.next');
+            
+            if (!prevBtn || !nextBtn) {
+                const after = slider.nextElementSibling;
+                const after2 = after && after.nextElementSibling;
+                prevBtn = prevBtn || (after && after.classList.contains('prev') ? after : null);
+                nextBtn = nextBtn || (after2 && after2.classList.contains('next') ? after2 : null);
+            }
+
+            const total = slideImages.length;
+
+            function update() {
+                const width = viewport.clientWidth;
+                slides.style.transform = `translateX(-${index * width}px)`;
+            }
+
+            slideImages.forEach(img => {
+                img.style.flexShrink = '0';
+                img.style.width = '100%';
+            });
+
+            if (nextBtn) {
+                nextBtn.addEventListener('click', () => {
+                index = (index + 1) % total;
+                update();
+                });
+            }
+            if (prevBtn) {
+                prevBtn.addEventListener('click', () => {
+                index = (index - 1 + total) % total;
+                update();
+                });
+            }
+
+            window.addEventListener('resize', update);
+            update(); 
+        });
+    </script>
+    <script>
+    /* 탭으로 패널 전환 */
+    (() => {
+    const tabs   = [...document.querySelectorAll('.hero-tabs .tab')];
+    const panels = tabs
+        .map(t => document.querySelector(t.dataset.target))
+        .filter(Boolean);
+
+    function setActive(nextIdx){
+        tabs.forEach((t,i)=> t.classList.toggle('active', i===nextIdx));
+        panels.forEach((p,i)=> p.classList.toggle('active', i===nextIdx));
+    }
+
+    tabs.forEach((tab,i)=>{
+        tab.addEventListener('click', () => setActive(i));
+        tab.addEventListener('keydown', (e) => {
+        if(e.key==='Enter' || e.key===' '){ e.preventDefault(); setActive(i); }
+        });
+    });
+
+    /* 초기 상태 */
+    setActive(0);
+    })();
+    </script>
+</body>
+</html>

@@ -1,69 +1,70 @@
 <div th:replace="~{admin/_header.html}"></div>
+<script src="//t1.daumcdn.net/mapjsapi/bundle/postcode/prod/postcode.v2.js"></script>
 
     <main style="display: flex; justify-content: center; border-top:1px solid #e2e2e2;">
         <div>
-        <aside class="euro-nav" aria-label="관리자 사이드 메뉴" style="">
-            <section class="euro-nav__group">
-            <h4 class="euro-nav__title" style="">환경설정</h4>
-            <ul class="euro-nav__list">
-                <li class="euro-nav__item"><a href="#">기본설정</a></li>
-                <li class="euro-nav__item"><a href="#">배너관리</a></li>
-                <li class="euro-nav__item"><a href="#">약관관리</a></li>
-                <li class="euro-nav__item"><a href="#">카테고리</a></li>
-                <li class="euro-nav__item"><a href="#">버전관리</a></li>
-            </ul>
-            </section>
+            <aside class="euro-nav" aria-label="관리자 사이드 메뉴" style="">
+                <section class="euro-nav__group">
+                    <h4 class="euro-nav__title" style="">환경설정</h4>
+                    <ul class="euro-nav__list">
+                        <li class="euro-nav__item"><a href="#">기본설정</a></li>
+                        <li class="euro-nav__item"><a href="#">배너관리</a></li>
+                        <li class="euro-nav__item"><a href="#">약관관리</a></li>
+                        <li class="euro-nav__item"><a href="#">카테고리</a></li>
+                        <li class="euro-nav__item"><a href="#">버전관리</a></li>
+                    </ul>
+                </section>
 
-            <section class="euro-nav__group">
-            <h4 class="euro-nav__title" style="">상점관리</h4>
-            <ul class="euro-nav__list">
-                <li class="euro-nav__item is-active"><a href="#">상점목록</a></li>
-                <li class="euro-nav__item"><a href="#">매출현황</a></li>
-            </ul>
-            </section>
+                <section class="euro-nav__group">
+                    <h4 class="euro-nav__title" style="">상점관리</h4>
+                    <ul class="euro-nav__list">
+                        <li class="euro-nav__item is-active"><a th:href="@{/admin/shop/list}">상점목록</a></li>
+                        <li class="euro-nav__item "><a th:href="@{/admin/sales/list}">매출현황</a></li>
+                    </ul>
+                </section>
 
-            <section class="euro-nav__group">
-            <h4 class="euro-nav__title" style="">회원관리</h4>
-            <ul class="euro-nav__list">
-                <li class="euro-nav__item"><a href="#">회원목록</a></li>
-                <li class="euro-nav__item"><a href="#">포인트관리</a></li>
-            </ul>
-            </section>
+                <section class="euro-nav__group">
+                    <h4 class="euro-nav__title" style="">회원관리</h4>
+                    <ul class="euro-nav__list">
+                        <li class="euro-nav__item"><a th:href="@{/admin/member/list}">회원목록</a></li>
+                        <li class="euro-nav__item"><a th:href="@{/admin/point/list}">포인트관리</a></li>
+                    </ul>
+                </section>
 
-            <section class="euro-nav__group">
-            <h4 class="euro-nav__title" style="">상품관리</h4>
-            <ul class="euro-nav__list">
-                <li class="euro-nav__item"><a href="#">상품목록</a></li>
-                <li class="euro-nav__item"><a href="#">상품등록</a></li>
-            </ul>
-            </section>
+                <section class="euro-nav__group">
+                    <h4 class="euro-nav__title" style="">상품관리</h4>
+                    <ul class="euro-nav__list">
+                        <li class="euro-nav__item"><a th:href="@{/admin/product/list}">상품목록</a></li>
+                        <li class="euro-nav__item"><a th:href="@{/admin/productReg/list}">상품등록</a></li>
+                    </ul>
+                </section>
 
-            <section class="euro-nav__group">
-            <h4 class="euro-nav__title" style="">주문관리</h4>
-            <ul class="euro-nav__list">
-                <li class="euro-nav__item"><a href="#">주문현황</a></li>
-                <li class="euro-nav__item"><a href="#">배송현황</a></li>
-            </ul>
-            </section>
+                <section class="euro-nav__group">
+                    <h4 class="euro-nav__title" style="">주문관리</h4>
+                    <ul class="euro-nav__list">
+                        <li class="euro-nav__item"><a th:href="@{/admin/order/list}">주문현황</a></li>
+                        <li class="euro-nav__item"><a th:href="@{/admin/delivery/list}">배송현황</a></li>
+                    </ul>
+                </section>
 
-            <section class="euro-nav__group">
-            <h4 class="euro-nav__title" style="">쿠폰관리</h4>
-            <ul class="euro-nav__list">
-                <li class="euro-nav__item"><a href="#">쿠폰목록</a></li>
-                <li class="euro-nav__item"><a href="#">쿠폰발급현황</a></li>
-            </ul>
-            </section>
+                <section class="euro-nav__group">
+                    <h4 class="euro-nav__title" style="">쿠폰관리</h4>
+                    <ul class="euro-nav__list">
+                        <li class="euro-nav__item"><a th:href="@{/admin/coupon/list}">쿠폰목록</a></li>
+                        <li class="euro-nav__item"><a th:href="@{/admin/couponsnow/list}">쿠폰발급현황</a></li>
+                    </ul>
+                </section>
 
-            <section class="euro-nav__group">
-            <h4 class="euro-nav__title" style="">고객센터</h4>
-            <ul class="euro-nav__list">
-                <li class="euro-nav__item"><a href="#">공지사항</a></li>
-                <li class="euro-nav__item"><a href="#">자주묻는질문</a></li>
-                <li class="euro-nav__item"><a href="#">문의하기</a></li>
-                <li class="euro-nav__item"><a href="#">채용하기</a></li>
-            </ul>
-            </section>
-        </aside>
+                <section class="euro-nav__group">
+                    <h4 class="euro-nav__title" style="">고객센터</h4>
+                    <ul class="euro-nav__list">
+                        <li class="euro-nav__item"><a th:href="@{/admin/announcement/list}">공지사항</a></li>
+                        <li class="euro-nav__item"><a th:href="@{/admin/FAQ/list}">자주묻는질문</a></li>
+                        <li class="euro-nav__item"><a th:href="@{/admin/inquiry/list}">문의하기</a></li>
+                        <li class="euro-nav__item"><a th:href="@{/admin/employ/list}">채용하기</a></li>
+                    </ul>
+                </section>
+            </aside>
 
         </div>
         <div style="width:940px; border-left:1px solid #e2e2e2;">
@@ -83,7 +84,7 @@
                             <option value="tel">연락처</option>
                         </select>
                         <input type="text" name="keyword" placeholder="검색어입력" style="width:140px; height:28px; padding-left:10px; margin-right:3px; border:1px solid #bfbfbf; font-size: 10px !important;">
-                        <input type="submit" value="검색" style="width:50px; height:28px; color:white; background-color: black; border:none; font-size: 12px !important;">
+                        <input type="submit" value="검색" style="cursor:pointer;width:50px; height:28px; color:white; background-color: black; border:none; font-size: 12px !important;">
                     </form>
                 </div>
                 
@@ -123,9 +124,9 @@
               </tbody>
             </table>
             <div style="display: flex; margin-top:25px;">
-                    <button style="border:none; background-color: #760c0c; color:white; font-size: 10px; font-weight: 300; height:25px; width:62px;">선택삭제</button>
+                    <button style="cursor:pointer;border:none; background-color: #760c0c; color:white; font-size: 10px; font-weight: 300; height:25px; width:62px;">선택삭제</button>
                     <button id="openModalBtn"
-                      style="margin-left:auto; border:none; background-color: black; color:white; font-size: 10px; font-weight: 300; height:25px; width:62px;">
+                      style="cursor:pointer;margin-left:auto; border:none; background-color: black; color:white; font-size: 10px; font-weight: 300; height:25px; width:62px;">
                       상점등록
                     </button>
                 </div>
@@ -187,63 +188,94 @@
           <span class="close">&times;</span>
         </div>
         <div class="modal-body">
-          <form>
-            <label>아이디 <input type="text" placeholder="영문, 숫자 4~12자 설정"></label>
-            <label>비밀번호 <input type="password" placeholder="영문, 숫자, 특수문자 8~12자 설정"></label>
-            <label>비밀번호 확인 <input type="password"></label>
-            
-            <label>상호명 <input type="text" placeholder="상호명입력예시 (주)"></label>
-            <label>대표 <input type="text" placeholder="이름입력"></label>
-            <label>사업자등록번호 <input type="text" placeholder="포함 12자리 입력"></label>
-            <label>통신판매업번호 <input type="text" placeholder="포함 12자리 입력"></label>
-            <label>전화번호 <input type="text" placeholder="전화번호입력"></label>
-            <label>팩스 <input type="text" placeholder="팩스번호입력"></label>
-            
-            <label>주소</label>
-            <input type="text" placeholder="우편번호검색"><br>
-            <input type="text" placeholder="기본주소입력"><br>
-            <input type="text" placeholder="상세주소입력">
+          <form th:action="@{/admin/shop/register}" id="shopForm" method="post">
+              <label>아이디
+                  <input id="user_id" type="text" name="user_id" placeholder="영문, 숫자 4~12자 설정" required>
+                  <p id="user_idError" class="error-msg">영문, 숫자 4~12자로 설정해주세요</p>
+              </label>
 
-            <button type="submit" style="background:#4CAF50; color:#fff; border:none; padding:10px 20px; margin-top:15px; cursor:pointer;">
-              등록하기
-            </button>
+              <label>이메일
+                  <input id="email" type="text" name="email" placeholder="이메일 구조를 맞춰주세요." required>
+                  <p id="emailError" class="error-msg">이메일 형식이 올바르지 않습니다</p>
+              </label>
+
+              <label>비밀번호
+                  <input id="password" type="password" name="password" placeholder="영문, 숫자, 특수문자 8~12자 설정" required>
+                  <p id="passwordError" class="error-msg">영문, 숫자, 특수문자를 포함한 8~12자로 입력해주세요</p>
+              </label>
+
+              <label>비밀번호 확인
+                  <input id="password2" type="password" placeholder="비밀번호 확인" required>
+                  <p id="password2Error" class="error-msg">비밀번호가 일치하지 않습니다</p>
+              </label>
+
+              <label>상호명
+                  <input id="busname" type="text" name="busname" placeholder="상호명입력예시 (주)" required>
+                  <p id="busnameError" class="error-msg">상호명을 입력해주세요</p>
+              </label>
+
+              <label>대표
+                  <input id="rep" type="text" name="rep" placeholder="이름입력" required>
+                  <p id="repError" class="error-msg">대표자 이름을 입력해주세요</p>
+              </label>
+
+              <label>사업자등록번호
+                  <input id="cornum" type="text" name="cornum" placeholder="포함 12자리 입력" required>
+                  <p id="cornumError" class="error-msg">사업자등록번호는 XXX-XX-XXXXX 형식으로 입력해주세요</p>
+              </label>
+
+              <label>통신판매업번호
+                  <input id="comnum" type="text" name="comnum" placeholder="예) 2024-서울강남-01139" required>
+                  <p id="comnumError" class="error-msg">통신판매업번호는 YYYY-지역명-번호(4~5자리) 형식이어야 합니다</p>
+              </label>
+
+              <label>전화번호
+                  <input id="tel" type="text" name="tel" placeholder="전화번호입력" required>
+                  <p id="telError" class="error-msg">전화번호는 000-0000-0000 형식으로 입력해주세요</p>
+              </label>
+
+              <label>팩스
+                  <input id="fax" type="text" name="fax" placeholder="팩스번호입력" required>
+                  <p id="faxError" class="error-msg">팩스번호는 000-0000-0000 형식으로 입력해주세요</p>
+              </label>
+
+              <label>주소</label>
+              <input id="zipcode" type="text" name="zipcode" placeholder="우편번호 검색 클릭" required>
+              <p id="zipcodeError" class="error-msg">우편번호는 5자리 숫자로 입력해주세요</p>
+              <input id="address1" type="text" name="address1" placeholder="기본주소 검색" required>
+              <p id="address1Error" class="error-msg">기본주소를 입력해주세요</p>
+              <input id="address2" type="text" name="address2" placeholder="상세주소 입력" required>
+              <p id="address2Error" class="error-msg">상세주소를 입력해주세요</p>
+
+              <button id="submitBtn" type="submit" disabled
+                      style="background:black; color:#fff; border:none; padding:10px 20px; margin-top:15px; cursor:not-allowed; opacity:.5;">
+                  등록하기
+              </button>
           </form>
         </div>
       </div>
     </div>
     <style>
+        .error-msg {
+            color: #e53935;
+            font-size: 12px;
+            margin: 3px 0 8px;
+            display: none;
+        }
+        .is-error {
+            border-color: #e53935 !important;
+            outline: none;
+        }
       /* 모달 스타일 */
       .modal { display:none; position:fixed; z-index:2000; left:0; top:0; width:100%; height:100%; background:rgba(0,0,0,0.5); justify-content:center; align-items:center; }
-      .modal-content { background:#fff; width:500px; padding:20px; border-radius:6px; box-shadow:0 4px 12px rgba(0,0,0,0.2); }
+      .modal-content { background:#fff; width:500px; padding:20px; border-radius:0px; box-shadow:0 4px 12px rgba(0,0,0,0.2); }
       .modal-header { display:flex; justify-content:space-between; align-items:center; border-bottom:1px solid #ddd; margin-bottom:15px; }
       .modal-header .close { font-size:22px; font-weight:bold; cursor:pointer; }
       .modal-body label { display:block; margin-bottom:10px; }
-      .modal-body input { width:100%; padding:6px 8px; margin-top:4px; border:1px solid #aaa; border-radius:4px; }
+      .modal-body input { width:100%; padding:6px 8px; margin-top:4px; border:1px solid #aaa; border-radius:0px; }
     </style>
 
-    <script>
-      // ===== 상점등록 모달 =====
-      const modal = document.getElementById("shopModal");
-      const openModalBtn = document.getElementById("openModalBtn");
-      const closeModalBtn = document.querySelector(".modal .close");
 
-      // 열기
-      openModalBtn.addEventListener("click", () => {
-        modal.style.display = "flex";
-      });
-
-      // 닫기(X)
-      closeModalBtn.addEventListener("click", () => {
-        modal.style.display = "none";
-      });
-
-      // 배경 클릭 시 닫기
-      window.addEventListener("click", (e) => {
-        if (e.target === modal) {
-          modal.style.display = "none";
-        }
-      });
-    </script>
 
     <style>
         .euro-nav__list {
@@ -304,6 +336,338 @@
       });
     }, {capture:true});
   });
-  
+
+
+        // ===== 상점등록 모달 (기존 그대로) =====
+        const modal = document.getElementById("shopModal");
+        const openModalBtn = document.getElementById("openModalBtn");
+        const closeModalBtn = document.querySelector(".modal .close");
+
+        openModalBtn.addEventListener("click", () => {
+            modal.style.display = "flex";
+            modal.setAttribute('aria-hidden', 'false');
+            document.body.style.overflow = 'hidden';
+        });
+        closeModalBtn.addEventListener("click", () => {
+            modal.style.display = "none";
+            modal.setAttribute('aria-hidden', 'true');
+            document.body.style.overflow = '';
+        });
+        window.addEventListener('keydown', (e) => {
+            if ((e.key === 'Escape' || e.key === 'Esc') && modal.style.display === 'flex') {
+                e.preventDefault();
+            }
+        });
+
+        // ===== 검증/마스킹 (기존 그대로) =====
+        const reUserId   = /^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{4,12}$/;
+        const reEmail    = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        const rePass     = /^(?=.*[A-Za-z])(?=.*\d)(?=.*[^\w\s]).{8,12}$/;
+        const reBizNo    = /^\d{3}-\d{2}-\d{5}$/;
+        const reComNum   = /^\d{4}-[가-힣A-Za-z]+-\d{4,5}$/;
+        const rePhone    = /^\d{2,3}-\d{3,4}-\d{4}$/;
+        const reZip      = /^\d{5}$/;
+
+        const f = document.getElementById('shopForm');
+        const submitBtn = document.getElementById('submitBtn');
+
+        // ⚠️ 여기! 중복 선언되던 $ 대신 안전한 이름 사용
+        const byId = (id) => document.getElementById(id);
+
+        const fields = {
+            user_id: byId('user_id'),
+            email: byId('email'),
+            password: byId('password'),
+            password2: byId('password2'),
+            busname: byId('busname'),
+            rep: byId('rep'),
+            cornum: byId('cornum'),
+            comnum: byId('comnum'),
+            tel: byId('tel'),
+            fax: byId('fax'),
+            zipcode: byId('zipcode'),
+            address1: byId('address1'),
+            address2: byId('address2')
+        };
+
+        const autopad = (el, type) => {
+            let v = el.value.replace(/[^\d]/g, '');
+            if (type === 'biz') {
+                if (v.length > 3) v = v.slice(0,3) + '-' + v.slice(3);
+                if (v.length > 6) v = v.slice(0,6) + '-' + v.slice(6,11);
+                v = v.slice(0,13);
+            }
+            if (type === 'tel') {
+                if (v.startsWith('02')) {
+                    if (v.length > 2) v = v.slice(0,2) + '-' + v.slice(2);
+                    if (v.length > 6) v = v.slice(0,6) + '-' + v.slice(6,10);
+                } else {
+                    if (v.length > 3) v = v.slice(0,3) + '-' + v.slice(3);
+                    if (v.length > 7) v = v.slice(0,8) + '-' + v.slice(8,12);
+                }
+            }
+            el.value = v;
+        };
+        fields.cornum.addEventListener('input', () => autopad(fields.cornum,'biz'));
+        fields.tel.addEventListener('input',   () => autopad(fields.tel,'tel'));
+        fields.fax.addEventListener('input',   () => autopad(fields.fax,'tel'));
+
+        const validators = {
+            user_id: v => reUserId.test(v),
+            email: v => reEmail.test(v),
+            password: v => rePass.test(v),
+            password2: v => v === fields.password.value && v.length > 0,
+            busname: v => v.trim().length > 0,
+            rep: v => v.trim().length > 0,
+            cornum: v => reBizNo.test(v),
+            comnum: v => reComNum.test(v.trim()),
+            tel: v => rePhone.test(v),
+            fax: v => rePhone.test(v),
+            zipcode: v => reZip.test(v),
+            address1: v => v.trim().length > 0,
+            address2: v => v.trim().length > 0
+        };
+
+        const touched = new Set();
+        function setError(el, isError, {forceShow=false} = {}) {
+            const msg = byId(el.id + 'Error');
+            const shouldShow = forceShow || touched.has(el.id);
+            if (msg) msg.style.display = (shouldShow && isError) ? 'block' : 'none';
+            el.classList.toggle('is-error', shouldShow && isError);
+        }
+        function validateAll({forceShow=false} = {}) {
+            const results = Object.entries(validators).map(([k, fn]) => {
+                const ok = fn(fields[k].value);
+                setError(fields[k], !ok, {forceShow});
+                return ok;
+            });
+            const allOK = results.every(Boolean);
+            submitBtn.disabled = !allOK;
+            submitBtn.style.cursor = allOK ? 'pointer' : 'not-allowed';
+            submitBtn.style.opacity = allOK ? '1' : '.5';
+            return allOK;
+        }
+        Object.values(fields).forEach(el => {
+            el.addEventListener('input', () => { touched.add(el.id); validateAll(); });
+            el.addEventListener('blur',  () => { touched.add(el.id); validateAll(); });
+        });
+        f.addEventListener('submit', e => {
+            Object.values(fields).forEach(el => touched.add(el.id));
+            if (!validateAll({forceShow:true})) {
+                e.preventDefault();
+                alert('입력값을 다시 확인해주세요. 모든 조건을 충족해야 등록할 수 있습니다.');
+            }
+        });
+        validateAll();
+
+        // ===== 주소 레이어 =====
+        const layerEl = byId('postcodeLayer');
+        // const closeBtn = byId('postcodeLayerClose');
+        const postcodeCloseBtn = byId('postcodeLayerClose');
+
+        function openPostcodeLayer() {
+            // daum 객체가 로드됐는지 방어
+            if (!window.daum || !daum.Postcode) {
+                console.error('Daum Postcode 스크립트가 아직 로드되지 않았습니다.');
+                return;
+            }
+            new daum.Postcode({
+                oncomplete: function(data) {
+                    const roadAddr  = data.roadAddress || '';
+                    const jibunAddr = data.jibunAddress || '';
+                    let extra = '';
+                    if (data.bname && /[동|로|가]$/g.test(data.bname)) extra += data.bname;
+                    if (data.buildingName && data.apartment === 'Y') extra += (extra ? ', ' : '') + data.buildingName;
+                    if (extra) extra = ' (' + extra + ')';
+
+                    fields.zipcode.value  = data.zonecode || '';
+                    fields.address1.value = roadAddr || jibunAddr || '';
+                    fields.address2.focus();
+
+                    try {
+                        touched.add('zipcode'); touched.add('address1'); touched.add('address2');
+                        validateAll();
+                    } catch(e){}
+
+                    closePostcodeLayer();
+                },
+                width: '100%',
+                height: '100%'
+            }).embed(layerEl);
+
+            layerEl.style.display = 'block';
+            document.activeElement && document.activeElement.blur();
+            document.body.style.overflow = 'hidden';
+        }
+
+        function closePostcodeLayer() {
+            layerEl.style.display = 'none';
+            document.body.style.overflow = '';
+        }
+
+        closeBtn.addEventListener('click', closePostcodeLayer);
+
+        // ▶ input 클릭/포커스만으로 열기
+        ['zipcode', 'address1'].forEach(id => {
+            const el = byId(id);
+            if (!el) return;
+            el.setAttribute('readonly', 'readonly'); // 검색만 허용
+            el.style.cursor = 'pointer';
+            el.addEventListener('click', openPostcodeLayer);
+            el.addEventListener('focus', openPostcodeLayer);
+        });
+
+        // (선택) ESC로 닫기
+        window.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape' && layerEl.style.display === 'block') {
+                e.preventDefault();
+                closePostcodeLayer();
+            }
+        });
+        (function () {
+            const byId = (id) => document.getElementById(id);
+            const zipcode  = byId('zipcode');
+            const address1 = byId('address1');
+            const address2 = byId('address2');
+
+            function openPostcodePopup() {
+                if (!window.daum || !daum.Postcode) {
+                    console.error('Daum Postcode 스크립트가 아직 로드되지 않았습니다.');
+                    return;
+                }
+                new daum.Postcode({
+                    oncomplete: function(data) {
+                        const addr = data.roadAddress || data.jibunAddress || '';
+                        zipcode.value  = data.zonecode || '';
+                        address1.value = addr;
+
+                        // 검증 로직과 연동(있을 때만)
+                        try {
+                            touched && touched.add('zipcode');
+                            touched && touched.add('address1');
+                            touched && touched.add('address2');
+                            typeof validateAll === 'function' && validateAll();
+                        } catch(_) {}
+
+                        setTimeout(() => address2 && address2.focus(), 0);
+                    }
+                }).open({
+                    popupName: 'postcodePopup' // 같은 이름으로 재사용(중복 창 방지)
+                    // 필요하면 q: '초기검색어' 를 줄 수도 있어요.
+                });
+            }
+
+            // 팝업 차단을 피하려면 '사용자 제스처'가 필요하므로 click만 바인딩 권장
+            [zipcode, address1].forEach(el => {
+                if (!el) return;
+                el.readOnly = true;       // 직접 타이핑 막고 검색만
+                el.style.cursor = 'pointer';
+                el.addEventListener('click', openPostcodePopup);
+                // 접근성 보강(Enter/Space로도 실행)
+                el.addEventListener('keydown', (e) => {
+                    if (e.key === 'Enter' || e.key === ' ') {
+                        e.preventDefault();
+                        openPostcodePopup();
+                    }
+                });
+            });
+        })();
+        /**
+         * 상태 토글 규칙
+         *  - 운영 준비  --(승인)-->  운영 중
+         *  - 운영 중    --(중단)-->  운영 중지
+         *  - 운영 중지  --(재개)-->  운영 중
+         */
+        (function () {
+            // 상태별 표시 색상
+            const colorByStatus = {
+                '운영 준비': 'blue',
+                '운영 중':   'green',
+                '운영 중지': 'red'
+            };
+
+            // 상태 -> 버튼 라벨
+            const labelByStatus = {
+                '운영 준비': '승인',
+                '운영 중':   '중단',
+                '운영 중지': '재개'
+            };
+
+            // 현재 상태에서 다음 상태 계산
+            function nextStatus(current) {
+                switch (current) {
+                    case '운영 준비': return '운영 중';
+                    case '운영 중':   return '운영 중지';
+                    case '운영 중지': return '운영 중';
+                    default:          return current;
+                }
+            }
+
+            // "● 운영 중" 같이 되어 있는 셀 텍스트에서 상태만 추출
+            function extractStatus(text) {
+                return (text || '')
+                    .replace(/^●\s*/, '')  // 앞의 동그라미/공백 제거
+                    .trim();
+            }
+
+            // 한 행에 상태/버튼 렌더링
+            function renderRow(tr, status) {
+                const manageCell = tr.querySelector('td:nth-child(8)'); // 운영
+                const ctrlCell   = tr.querySelector('td:nth-child(9)'); // 관리
+
+                // 운영 텍스트/색 갱신
+                manageCell.textContent = '● ' + status;
+                manageCell.style.color = colorByStatus[status] || '';
+
+                // 관리 버튼 갱신
+                ctrlCell.innerHTML = ''; // 기존 내용 제거
+                const btn = document.createElement('button');
+                btn.type = 'button';
+                btn.textContent = labelByStatus[status] || '변경';
+                btn.style.cssText = 'cursor:pointer;border:1px solid #333;background:#fff;padding:4px 10px;font-size:12px;';
+                btn.addEventListener('click', () => {
+                    const next = nextStatus(status);
+                    status = next;          // 로컬 상태 업데이트
+                    renderRow(tr, next);    // 다시 그리기
+                });
+                ctrlCell.appendChild(btn);
+            }
+
+            // 초기화: 테이블 내 모든 행 스캔
+            function init() {
+                // 현재 페이지의 목록 tbody 기준
+                document.querySelectorAll('table tbody tr').forEach(tr => {
+                    const manageCell = tr.querySelector('td:nth-child(8)'); // 운영
+                    const current = extractStatus(manageCell?.textContent || '');
+                    if (!current) return;
+                    renderRow(tr, current);
+                });
+            }
+
+            // DOM 준비 후 실행
+            if (document.readyState === 'loading') {
+                document.addEventListener('DOMContentLoaded', init);
+            } else {
+                init();
+            }
+            // (선택) 동적으로 행이 추가되는 경우에 대비 - MutationObserver
+            // 필요 없으면 아래 블록은 제거해도 됩니다.
+            const tbody = document.querySelector('table tbody');
+            if (tbody) {
+                const mo = new MutationObserver(muts => {
+                    muts.forEach(m => {
+                        m.addedNodes.forEach(node => {
+                            if (node.nodeType === 1 && node.matches('tr')) {
+                                const manageCell = node.querySelector('td:nth-child(8)');
+                                const current = extractStatus(manageCell?.textContent || '');
+                                if (current) renderRow(node, current);
+                            }
+                        });
+                    });
+                });
+                mo.observe(tbody, { childList: true });
+            }
+        })();
     </script>
+
 <div th:replace="~{admin/_footer.html}"></div>

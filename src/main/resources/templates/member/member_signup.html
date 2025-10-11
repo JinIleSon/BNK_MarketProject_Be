@@ -202,7 +202,7 @@
     </style>
 </head>
 <script>
-    fetch("../main/header.html") //각자 주소 수정!!!
+    fetch("/NICHIYA/main/header.html") //각자 주소 수정!!!
         .then(res => res.text())
         .then(data => {
             document.getElementById("header").innerHTML = data;
@@ -221,7 +221,7 @@
         });
 
 
-    fetch("../main/footer.html") //각자 주소 수정!!!
+    fetch("/NICHIYA/main/footer.html") //각자 주소 수정!!!
         .then(res => res.text())
         .then(data => {
             document.getElementById("footer").innerHTML = data;

@@ -3,6 +3,7 @@ package kr.co.bnk_marketproject_be.service;
 import kr.co.bnk_marketproject_be.dto.SessionDataDTO;
 import kr.co.bnk_marketproject_be.dto.UserDTO;
 import kr.co.bnk_marketproject_be.entity.User;
+import kr.co.bnk_marketproject_be.repository.UserMybatisRepository;
 import kr.co.bnk_marketproject_be.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
@@ -16,11 +17,15 @@ import java.util.Optional;
 @Service
 public class UserService {
 
-    private final UserRepository userRepository;
+    private final UserRepository userRepository;  // JPA
     private final ModelMapper modelMapper;
     private final PasswordEncoder passwordEncoder;
     private final EmailService emailService;
     private final SessionDataDTO sessionData;
+
+
+    //private final UserMybatisRepository mybatisRepository; // MyBatis
+
 
 
     public void save(UserDTO userDTO) {
@@ -60,17 +65,23 @@ public class UserService {
      */
     public void register(UserDTO userDTO) {
         // 1) 서버 세션에서 이메일/휴대폰 인증 확인
-        if (sessionData == null || !sessionData.isVerified() || !sessionData.isSmsVerified()) {
+        // 이메일 인증만 체크
+        if (sessionData == null || !sessionData.isVerified()) {
             throw new IllegalStateException("이메일 인증을 완료해주세요.");
         }
+        //추후 번호까지 될때 쓰는 거
+        //if (sessionData == null || !sessionData.isVerified() || !sessionData.isSmsVerified()) {
+        //    throw new IllegalStateException("이메일 인증을 완료해주세요.");
+        //}
 
         // 휴대폰 인증안되도 되게 하려고 추가한것
         // 2) 휴대폰은 선택사항 — 전화번호가 들어온 경우만 SMS 인증 체크
-        if (userDTO.getPhone() != null && !userDTO.getPhone().trim().isEmpty()) {
-            if (!Boolean.TRUE.equals(sessionData.isSmsVerified())) {
-                throw new IllegalStateException("휴대폰 인증을 완료해주세요.");
-            }
-        }
+        // 여기 아해 한줄은 살려도 되는데 일단 다 없애고 해봄
+        //if (userDTO.getPhone() != null && !userDTO.getPhone().trim().isEmpty()) {
+        //    if (!Boolean.TRUE.equals(sessionData.isSmsVerified())) {
+        //        throw new IllegalStateException("휴대폰 인증을 완료해주세요.");
+        //    }
+        //}
 
 
         // 3) 중복 검사 - Repository 메서드 이름에 맞춰 사용하세요
@@ -94,13 +105,33 @@ public class UserService {
         String encoded = passwordEncoder.encode(userDTO.getPassword());
         userDTO.setPassword(encoded);
 
+        // ✅ 5) role 값 보정
+        if (userDTO.getRole() == null || userDTO.getRole().isBlank()) {
+            // 프론트에서 role 미전달 시 기본값 설정
+            userDTO.setRole("user");
+        } else {
+            // 대소문자 통일 + 허용된 값만 필터
+            String roleLower = userDTO.getRole().toLowerCase();
+            if (!List.of("user", "seller", "admin").contains(roleLower)) {
+                userDTO.setRole("user");
+            } else {
+                userDTO.setRole(roleLower);
+            }
+        }
+
+        // 6) DTO -> Entity 변환
         User user = modelMapper.map(userDTO, User.class);
         // 필요하면 기본 role("MEMBER") 설정
-        user.setRole("ROLE_USER");
+        // user.setRole("ROLE_USER");// 5) DTO -> Entity 변환
+        // Oracle 제약조건 위반의 원인임.
 
+        // 이 형태가 위반이 안됨.
+        user.setRole(userDTO.getRole());
+
+        // 7) 저장
         userRepository.save(user);
 
-        // 4) 선택사항: 세션 인증 상태 초기화
+        // 8) 선택사항: 세션 인증 상태 초기화
         sessionData.setVerified(false);
         sessionData.setSmsVerified(false);
     }
@@ -136,7 +167,16 @@ public class UserService {
     }
 
 
+    public Optional<UserDTO> findUserId(String name, String method, String email, String phone) {
+        Optional<User> userOpt;
+        if ("email".equalsIgnoreCase(method)) {
+            userOpt = userRepository.findByNameAndEmail(name, email);
+        } else {
+            userOpt = userRepository.findByNameAndPhone(name, phone);
+        }
 
+        return userOpt.map(user -> modelMapper.map(user, UserDTO.class));
+    }
 
 
 }

@@ -2,68 +2,68 @@
 
     <main style="border-top:1px solid #e2e2e2; display: flex; justify-content: center; ">
         <div>
-        <aside class="euro-nav" aria-label="관리자 사이드 메뉴" style="">
-            <section class="euro-nav__group">
-            <h4 class="euro-nav__title" style="">환경설정</h4>
-            <ul class="euro-nav__list">
-                <li class="euro-nav__item"><a href="#">기본설정</a></li>
-                <li class="euro-nav__item"><a href="#">배너관리</a></li>
-                <li class="euro-nav__item"><a href="#">약관관리</a></li>
-                <li class="euro-nav__item"><a href="#">카테고리</a></li>
-                <li class="euro-nav__item"><a href="#">버전관리</a></li>
-            </ul>
-            </section>
+            <aside class="euro-nav" aria-label="관리자 사이드 메뉴" style="">
+                <section class="euro-nav__group">
+                    <h4 class="euro-nav__title" style="">환경설정</h4>
+                    <ul class="euro-nav__list">
+                        <li class="euro-nav__item"><a href="#">기본설정</a></li>
+                        <li class="euro-nav__item"><a href="#">배너관리</a></li>
+                        <li class="euro-nav__item"><a href="#">약관관리</a></li>
+                        <li class="euro-nav__item"><a href="#">카테고리</a></li>
+                        <li class="euro-nav__item"><a href="#">버전관리</a></li>
+                    </ul>
+                </section>
 
-            <section class="euro-nav__group">
-            <h4 class="euro-nav__title" style="">상점관리</h4>
-            <ul class="euro-nav__list">
-                <li class="euro-nav__item"><a href="#">상점목록</a></li>
-                <li class="euro-nav__item"><a href="#">매출현황</a></li>
-            </ul>
-            </section>
+                <section class="euro-nav__group">
+                    <h4 class="euro-nav__title" style="">상점관리</h4>
+                    <ul class="euro-nav__list">
+                        <li class="euro-nav__item"><a th:href="@{/admin/shop/list}">상점목록</a></li>
+                        <li class="euro-nav__item"><a th:href="@{/admin/sales/list}">매출현황</a></li>
+                    </ul>
+                </section>
 
-            <section class="euro-nav__group">
-            <h4 class="euro-nav__title" style="">회원관리</h4>
-            <ul class="euro-nav__list">
-                <li class="euro-nav__item"><a href="#">회원목록</a></li>
-                <li class="euro-nav__item"><a href="#">포인트관리</a></li>
-            </ul>
-            </section>
+                <section class="euro-nav__group">
+                    <h4 class="euro-nav__title" style="">회원관리</h4>
+                    <ul class="euro-nav__list">
+                        <li class="euro-nav__item"><a th:href="@{/admin/member/list}">회원목록</a></li>
+                        <li class="euro-nav__item"><a th:href="@{/admin/point/list}">포인트관리</a></li>
+                    </ul>
+                </section>
 
-            <section class="euro-nav__group">
-            <h4 class="euro-nav__title" style="">상품관리</h4>
-            <ul class="euro-nav__list">
-                <li class="euro-nav__item"><a href="#">상품목록</a></li>
-                <li class="euro-nav__item"><a href="#">상품등록</a></li>
-            </ul>
-            </section>
+                <section class="euro-nav__group">
+                    <h4 class="euro-nav__title" style="">상품관리</h4>
+                    <ul class="euro-nav__list">
+                        <li class="euro-nav__item"><a th:href="@{/admin/product/list}">상품목록</a></li>
+                        <li class="euro-nav__item"><a th:href="@{/admin/productReg/list}">상품등록</a></li>
+                    </ul>
+                </section>
 
-            <section class="euro-nav__group">
-            <h4 class="euro-nav__title" style="">주문관리</h4>
-            <ul class="euro-nav__list">
-                <li class="euro-nav__item"><a href="#">주문현황</a></li>
-                <li class="euro-nav__item"><a href="#">배송현황</a></li>
-            </ul>
-            </section>
+                <section class="euro-nav__group">
+                    <h4 class="euro-nav__title" style="">주문관리</h4>
+                    <ul class="euro-nav__list">
+                        <li class="euro-nav__item"><a th:href="@{/admin/order/list}">주문현황</a></li>
+                        <li class="euro-nav__item"><a th:href="@{/admin/delivery/list}">배송현황</a></li>
+                    </ul>
+                </section>
 
-            <section class="euro-nav__group">
-            <h4 class="euro-nav__title" style="">쿠폰관리</h4>
-            <ul class="euro-nav__list">
-                <li class="euro-nav__item"><a href="#">쿠폰목록</a></li>
-                <li class="euro-nav__item"><a href="#">쿠폰발급현황</a></li>
-            </ul>
-            </section>
+                <section class="euro-nav__group">
+                    <h4 class="euro-nav__title" style="">쿠폰관리</h4>
+                    <ul class="euro-nav__list">
+                        <li class="euro-nav__item"><a th:href="@{/admin/coupon/list}">쿠폰목록</a></li>
+                        <li class="euro-nav__item"><a th:href="@{/admin/couponsnow/list}">쿠폰발급현황</a></li>
+                    </ul>
+                </section>
 
-            <section class="euro-nav__group">
-            <h4 class="euro-nav__title" style="">고객센터</h4>
-            <ul class="euro-nav__list">
-                <li class="euro-nav__item"><a href="#">공지사항</a></li>
-                <li class="euro-nav__item"><a href="#">자주묻는질문</a></li>
-                <li class="euro-nav__item is-active"><a href="#">문의하기</a></li>
-                <li class="euro-nav__item"><a href="#">채용하기</a></li>
-            </ul>
-            </section>
-        </aside>
+                <section class="euro-nav__group">
+                    <h4 class="euro-nav__title" style="">고객센터</h4>
+                    <ul class="euro-nav__list">
+                        <li class="euro-nav__item"><a th:href="@{/admin/announcement/list}">공지사항</a></li>
+                        <li class="euro-nav__item"><a th:href="@{/admin/FAQ/list}">자주묻는질문</a></li>
+                        <li class="euro-nav__item is-active"><a th:href="@{/admin/inquiry/list}">문의하기</a></li>
+                        <li class="euro-nav__item"><a th:href="@{/admin/employ/list}">채용하기</a></li>
+                    </ul>
+                </section>
+            </aside>
         </div>
         <div style="width:940px; border-left:1px solid #e2e2e2;">
             <div style="margin-left:60px;">
@@ -74,80 +74,243 @@
                 <hr style="border:none; border-top:1px solid gray; margin-top:0px;">
                 <div style="padding-left:10px;">
                 <div style="display: flex; align-items: center; margin-top: 25px; margin-bottom:20px;">
-                    <form action="" method="post" style="display: flex; ">
-                        <select name="select" id="" style="width:82px; height:28px; padding-left:5px; margin-right:3px; border:1px solid #bfbfbf; font-size: 10px !important;">
-                            <option value="num">1차</option>
+                    <form th:action="@{/admin/inquiry/search}" method="get">
+                        <select name="board_type2" id="firSel"
+                                style="padding-left:5px; height: 30px; width:120px; font-size: 12px; border:1px solid #e2e2e2; outline: none;"
+                                required>
+                            <option value="" selected>1차분류 선택</option>
+                            <option value="member">회원</option>
+                            <option value="event">쿠폰 / 이벤트</option>
+                            <option value="pay">주문 / 결제</option>
+                            <option value="delivery">배송</option>
+                            <option value="cancel">취소 / 반품 / 교환</option>
+                            <option value="trip">여행 / 숙박 / 항공</option>
+                            <option value="safe">안전거래</option>
                         </select>
-                        <select name="select" id="" style="width:82px; height:28px; padding-left:5px; margin-right:3px; border:1px solid #bfbfbf; font-size: 10px !important;">
-                            <option value="num">2차</option>
+
+                        <select name="board_type3" id="secSel"
+                                style="padding-left:5px; height: 30px; width:180px; font-size: 12px; border:1px solid #e2e2e2; outline: none; margin-left:6px;"
+                                onchange="this.form.submit()"
+                                disabled required>
+                            <option value="">2차분류 선택</option>
                         </select>
                     </form>
                 </div>
+
+                    <script>
+                        document.addEventListener('DOMContentLoaded', () => {
+                            // 1차 -> 2차 매핑
+                            // key는 1차 셀렉트의 value와 동일해야 합니다.
+                            const subMap = {
+                                member: [
+                                    { value: 'signup',   text: '가입' },
+                                    { value: 'withdraw', text: '탈퇴' },
+                                    { value: 'account',  text: '회원정보' },
+                                    { value: 'login',    text: '로그인' },
+                                ],
+                                event: [
+                                    { value: 'couponissue',  text: '쿠폰발급' },
+                                    { value: 'couponuse',    text: '쿠폰사용' },
+                                    { value: 'eventjoin',    text: '이벤트참여' },
+                                    { value: 'winnercheck',  text: '당첨확인' },
+                                ],
+                                pay: [
+                                    { value: 'orderguide',     text: '주문방법' },
+                                    { value: 'paymentmethod',  text: '결제수단' },
+                                    { value: 'paymenterror',   text: '결제오류' },
+                                    { value: 'receipt',        text: '영수증/증빙' },
+                                ],
+                                delivery: [
+                                    { value: 'tracking',        text: '배송조회' },
+                                    { value: 'deliverytime',    text: '배송기간' },
+                                    { value: 'deliveryfee',     text: '배송비' },
+                                    { value: 'globalshipping',  text: '해외배송' },
+                                ],
+                                cancel: [
+                                    { value: 'ordercancel',   text: '주문취소' },
+                                    { value: 'refund',        text: '반품' },
+                                    { value: 'exchange',      text: '교환' },
+                                    { value: 'refundprocess', text: '환불처리' },
+                                ],
+                                trip: [
+                                    { value: 'reservation',  text: '예약' },
+                                    { value: 'payment',      text: '결제' },
+                                    { value: 'changecancel', text: '변경/취소' },
+                                    { value: 'guide',        text: '이용안내' },
+                                ],
+                                safe: [
+                                    { value: 'security',     text: '보안공지' },
+                                    { value: 'alert',        text: '사기주의' },
+                                    { value: 'safepayment',  text: '안전결제' },
+                                    { value: 'privacy',      text: '개인정보보호' },
+                                ],
+                            };
+
+                            const first  = document.getElementById('firSel'); // 1차
+                            const second = document.getElementById('secSel'); // 2차
+
+                            // 2차 초기화
+                            function resetSecond() {
+                                second.innerHTML = '<option value="">2차분류 선택</option>';
+                                second.disabled = true;
+                            }
+
+                            // 2차 옵션 채우기
+                            function fillSecond(list) {
+                                resetSecond();
+                                list.forEach(opt => {
+                                    const o = document.createElement('option');
+                                    o.value = opt.value;
+                                    o.textContent = opt.text;
+                                    second.appendChild(o);
+                                });
+                                second.disabled = false;
+                            }
+
+                            // 최초 상태
+                            resetSecond();
+
+                            // 1차 변경 시 2차 갱신
+                            first.addEventListener('change', () => {
+                                const key = first.value; // 예: 'member'
+                                if (subMap[key]) {
+                                    fillSecond(subMap[key]);
+                                    second.value = ''; // placeholder 유지
+                                } else {
+                                    resetSecond();
+                                }
+                            });
+
+                            // (선택) 폼 제출 시 필수값 검사 예시
+                            const form = first.closest('form');
+                            if (form) {
+                                form.addEventListener('submit', (e) => {
+                                    if (!first.value) {
+                                        alert('1차분류를 선택해주세요.');
+                                        first.focus();
+                                        e.preventDefault();
+                                        return;
+                                    }
+                                    if (second.disabled || !second.value) {
+                                        alert('2차분류를 선택해주세요.');
+                                        second.focus();
+                                        e.preventDefault();
+                                    }
+                                });
+                            }
+                        });
+                    </script>
                 <table style="border-collapse: collapse; width:100%; font-size:12px; text-align: center; ">
                     <tr style="border-top:1px solid gray; height:50px; border-bottom:1px solid #e2e2e2;">
-                        <th style="width:40px">
+                        <th style="padding:15px; width: 84px;">
                           <input type="checkbox" id="checkAll"/>
                         </th>
-                        <th style="">번호</th>
-                        <th style="">1차유형</th>
-                        <th style="">2차유형</th>
-                        <th style="">제목</th>
-                        <th style="">작성자</th>
-                        <th style="">작성일</th>
-                        <th style="">상태</th>
+                        <th style="width:30px;">번호</th>
+                        <th style="width:104px;">1차유형</th>
+                        <th style="width:73px;">2차유형</th>
+                        <th style="width:300px;">제목</th>
+                        <th style="width:62px;">작성자</th>
+                        <th style="width:62px;">작성일</th>
+                        <th style="width:62px;">상태</th>
                     </tr>
-                    <tr style="border-bottom:1px solid #e2e2e2; height:70px;vertical-align: middle;">
+                    <tr style="border-bottom:1px solid #e2e2e2; height:70px;vertical-align: middle;"
+                        th:each="admin, stat: ${pageResponseDTO.dtoList}">
                         <th style="width: 40px;">
                           <input type="checkbox" id="checkeach">
                         </th>
-                        <td><a href="#" style="font-weight: 800;">120</a></td>
-                        <td>회원</td>
-                        <td>가입</td>
-                        <td>개인회원과 법인회원의 차이가 있나요?</td>
-                        <td>chh**</td>
-                        <td>0000-00-00</td>
-                        <td>검토 중</td>
-                    </tr>
-                    <tr style="border-bottom:1px solid #e2e2e2; height:70px;vertical-align: middle;">
-                        <th style="width: 40px;">
-                          <input type="checkbox" id="checkeach">
-                        </th>
-                        <td><a href="#" style="font-weight: 800;">120</a></td>
-                        <td>회원</td>
-                        <td>가입</td>
-                        <td>개인회원과 법인회원의 차이가 있나요?</td>
-                        <td>chh**</td>
-                        <td>0000-00-00</td>
-                        <td style="color:#8bd8a7">답변완료</td>
-                    </tr>
-                    <tr style="border-bottom:1px solid #e2e2e2; height:70px;vertical-align: middle;">
-                        <th style="width: 40px;">
-                          <input type="checkbox" id="checkeach">
-                        </th>
-                        <td><a href="#" style="font-weight: 800;">120</a></td>
-                        <td>회원</td>
-                        <td>가입</td>
-                        <td>개인회원과 법인회원의 차이가 있나요?</td>
-                        <td>chh**</td>
-                        <td>0000-00-00</td>
-                        <td style="color:#8bd8a7">답변완료</td>
+                        <td th:text="${pageResponseDTO.startNo - stat.index}">120</td>
+                        <td th:text="${admin.board_type2 == 'member' ? '회원' :
+                    (admin.board_type2 == 'event' ? '쿠폰 / 이벤트' :
+                    (admin.board_type2 == 'pay' ? '주문 / 결제' :
+                    (admin.board_type2 == 'delivery' ? '배송' :
+                    (admin.board_type2 == 'cancel' ? '취소 / 반품 / 교환' :
+                    (admin.board_type2 == 'trip' ? '여행 / 숙박 / 항공' :
+                    (admin.board_type2 == 'safe' ? '안전거래' : ''))))))}">회원</td>
+                        <td th:text="${admin.board_type3 == 'signup' ? '가입' :
+                    (admin.board_type3 == 'withdraw' ? '탈퇴' :
+                    (admin.board_type3 == 'account' ? '회원정보' :
+                    (admin.board_type3 == 'login' ? '로그인' :
+                    (admin.board_type3 == 'couponissue' ? '쿠폰발급' :
+                    (admin.board_type3 == 'couponuse' ? '쿠폰사용' :
+                    (admin.board_type3 == 'eventjoin' ? '이벤트참여' :
+                    (admin.board_type3 == 'winnercheck' ? '당첨확인' :
+                    (admin.board_type3 == 'orderguide' ? '주문방법' :
+                    (admin.board_type3 == 'paymentmethod' ? '결제수단' :
+                    (admin.board_type3 == 'paymenterror' ? '결제오류' :
+                    (admin.board_type3 == 'receipt' ? '영수증/증빙' :
+                    (admin.board_type3 == 'tracking' ? '배송조회' :
+                    (admin.board_type3 == 'deliverytime' ? '배송기간' :
+                    (admin.board_type3 == 'deliveryfee' ? '배송비' :
+                    (admin.board_type3 == 'globalshipping' ? '해외배송' :
+                    (admin.board_type3 == 'ordercancel' ? '주문취소' :
+                    (admin.board_type3 == 'refund' ? '반품' :
+                    (admin.board_type3 == 'exchange' ? '교환' :
+                    (admin.board_type3 == 'refundprocess' ? '환불처리' :
+                    (admin.board_type3 == 'reservation' ? '예약' :
+                    (admin.board_type3 == 'payment' ? '결제' :
+                    (admin.board_type3 == 'changecancel' ? '변경/취소' :
+                    (admin.board_type3 == 'guide' ? '이용안내' :
+                    (admin.board_type3 == 'security' ? '보안공지' :
+                    (admin.board_type3 == 'alert' ? '사기주의' :
+                    (admin.board_type3 == 'safepayment' ? '안전결제' :
+                    (admin.board_type3 == 'privacy' ? '개인정보보호' : '')))))))))))))))))))))))))))}">가입</td>
+                        <td><a th:href="${admin.look == 0 ?
+                                        '/NICHIYA/admin/inquiry/answer?id=' + admin.id :
+                                        '/NICHIYA/admin/inquiry/view?id=' + admin.id}">[[${admin.title}]]</a></td>
+                        <td th:text="${(admin != null and admin.userId != null) ?
+                                            ((#strings.length(admin.userId) > 3) ?
+                                                #strings.substring(admin.userId, 0, #strings.length(admin.userId) - 3) + '***'
+                                                :
+                                                '***'
+                                            )
+                                            :
+                                            '***'
+                                    }">chh**</td>
+                        <td th:text="${#temporals.format(admin.createdAt, 'yyyy-MM-dd')}">0000-00-00</td>
+                        <td th:text="${admin.look == 0 ? '검토 중' : '답변완료'}"
+                        th:style="${admin.look == 0 ? 'color:black;' : 'color:#4f9cd3;'}">검토 중</td>
                     </tr>
                 </table>
                 <div style="display: flex; justify-content: space-between;">
                   <input type="button" value="선택삭제" style="width: 80px; height: 40px; background-color: #000; color: #ffffff; margin-top: 30px;">
                 </div>
 
-                <div style=" height: 100px; margin-top:40px; display: flex; justify-content: center;"> 
-                  <form> 
-                    <input type="button" class="prev-page" value="< 이전"> 
-                    <input type="button" value="1" style="border:1px solid #333; background-color: #333; color: white; height: 30px; width: 30px; margin-right:2px; line-height:1;"> 
-                    <input type="button" value="2" style="cursor: pointer; border:1px solid #ddd; color: #555; height: 30px; width: 30px; margin-right:2px; line-height:1;"> 
-                    <input type="button" value="3" style="cursor: pointer; border:1px solid #ddd; color: #555; height: 30px; width: 30px; line-height:1;"> 
-                    <input type="button" class="next-page" value="다음 >"> 
-                  </form> 
-                </div>
+                    <div style=" height: 100px; margin-top:40px; display: flex; justify-content: center;">
+                        <input th:if="${pageResponseDTO.prev}"
+                               th:onclick="|location.href='@{/admin/inquiry/list(pg=${pageResponseDTO.start - 1})}'|"
+                               type="button" class="prev-page" value="< 이전">
+
+                        <th:block th:each="num:${#numbers.sequence(pageResponseDTO.start, pageResponseDTO.end)}">
+                            <input th:onclick="|location.href='@{/admin/inquiry/list(pg=${num})}'|"
+                                   th:class="${num == pageResponseDTO.pg ? 'current' : 'num'}"
+                                   type="button"
+                                   th:value="${num}" />
+                        </th:block>
+
+                        <input th:if="${pageResponseDTO.next}"
+                               th:onclick="|location.href='@{/admin/inquiry/list(pg=${pageResponseDTO.end + 1})}'|"
+                               type="button" class="next-page" value="다음 >" style="">
+                    </div>
     </main>
     <style>
+        .current{
+            border:1px solid #333;
+            background-color: #333;
+            color: white;
+            height: 30px;
+            width: 30px;
+            margin-right:7px;
+            line-height:1;
+        }
+        .num {
+            cursor: pointer;
+            border:1px solid #ddd;
+            color: #555;
+            height: 30px;
+            width: 30px;
+            margin-right:7px;
+            line-height:1;
+        }
 .euro-nav__list {
     max-height: 0;                /* 기본은 접힘 */
     overflow: hidden;             /* 안 보이게 */
@@ -206,8 +369,4 @@ document.querySelectorAll('.euro-nav__title').forEach(title => {
   }, {capture:true});
 });
 </script>
-    <footer style="padding:20px; background-color: #808080; width:100%; height:62px; color:white;">
-        Copyright ©NICHIYA.co.kr All rights reserved. NICHIYA ADMINISTRATOR Version 5.4.1.2
-    </footer>
-</body>
-</html>
+<div th:replace="~{admin/_footer.html}"></div>
