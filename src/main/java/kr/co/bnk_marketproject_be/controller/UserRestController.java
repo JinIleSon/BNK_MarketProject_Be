@@ -55,7 +55,7 @@ public class UserRestController {
         return ResponseEntity.ok(Map.of("available", available));
     }
 
-
+    // 아이디 찾기
     @PostMapping("/find-id")
     public ResponseEntity<?> findUserId(@RequestBody Map<String, String> payload) {
         String name = payload.get("name");
@@ -82,6 +82,48 @@ public class UserRestController {
     }
 
 
+    // 비밀번호 찾기
+    // 인증용 (아이디 + 이메일 or 전화번호 확인)
+    @PostMapping("/find-password")
+    public ResponseEntity<?> findPassword(@RequestBody Map<String, String> req) {
+        String userId = req.get("userId");
+        String email = req.get("email");
+        String phone = req.get("phone");
+
+        log.info("비밀번호 찾기 요청: userId={}, email={}, phone={}", userId, email, phone);
+
+        boolean verified = userService.verifyUserForPasswordReset(userId, email, phone);
+
+        if (verified) {
+            return ResponseEntity.ok(Map.of("ok", true, "message", "사용자 인증 완료"));
+        } else {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                    .body(Map.of("ok", false, "message", "일치하는 회원 정보가 없습니다."));
+        }
+    }
+
+    // 2비밀번호 재설정
+    // userId, 비밀번호 누락 => 400에러
+    // DB 문제 발생 => 500에러
+    @PostMapping("/reset-password")
+    public ResponseEntity<?> resetPassword(@RequestBody Map<String, String> req) {
+        String userId = req.get("userId");
+        String newPassword = req.get("newPassword");
+
+        if (userId == null || userId.isBlank() || newPassword == null || newPassword.isBlank()) {
+            return ResponseEntity.badRequest()
+                    .body(Map.of("ok", false, "message", "잘못된 요청입니다. (userId 또는 비밀번호 누락)"));
+        }
+
+        try {
+            userService.resetPassword(userId, newPassword);
+            return ResponseEntity.ok(Map.of("ok", true, "message", "비밀번호가 변경되었습니다."));
+        } catch (Exception e) {
+            log.error("비밀번호 변경 실패: {}", e.getMessage(), e);
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(Map.of("ok", false, "message", "비밀번호 변경 중 오류가 발생했습니다."));
+        }
+    }
 
 
 }
