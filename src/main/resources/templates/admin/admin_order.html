@@ -2,68 +2,68 @@
 <body th:data-ctx="@{/}">
     <main style="border-top:1px solid #e2e2e2; display: flex; justify-content: center; ">
         <div>
-        <aside class="euro-nav" aria-label="관리자 사이드 메뉴" style="">
-            <section class="euro-nav__group">
-            <h4 class="euro-nav__title" style="">환경설정</h4>
-            <ul class="euro-nav__list">
-                <li class="euro-nav__item"><a href="#">기본설정</a></li>
-                <li class="euro-nav__item"><a href="#">배너관리</a></li>
-                <li class="euro-nav__item"><a href="#">약관관리</a></li>
-                <li class="euro-nav__item"><a href="#">카테고리</a></li>
-                <li class="euro-nav__item"><a href="#">버전관리</a></li>
-            </ul>
-            </section>
+            <aside class="euro-nav" aria-label="관리자 사이드 메뉴" style="">
+                <section class="euro-nav__group">
+                    <h4 class="euro-nav__title" style="">환경설정</h4>
+                    <ul class="euro-nav__list">
+                        <li class="euro-nav__item"><a href="#">기본설정</a></li>
+                        <li class="euro-nav__item"><a href="#">배너관리</a></li>
+                        <li class="euro-nav__item"><a href="#">약관관리</a></li>
+                        <li class="euro-nav__item"><a href="#">카테고리</a></li>
+                        <li class="euro-nav__item"><a href="#">버전관리</a></li>
+                    </ul>
+                </section>
 
-            <section class="euro-nav__group">
-            <h4 class="euro-nav__title" style="">상점관리</h4>
-            <ul class="euro-nav__list">
-                <li class="euro-nav__item"><a href="#">상점목록</a></li>
-                <li class="euro-nav__item"><a href="#">매출현황</a></li>
-            </ul>
-            </section>
+                <section class="euro-nav__group">
+                    <h4 class="euro-nav__title" style="">상점관리</h4>
+                    <ul class="euro-nav__list">
+                        <li class="euro-nav__item"><a th:href="@{/admin/shop/list}">상점목록</a></li>
+                        <li class="euro-nav__item"><a th:href="@{/admin/sales/list}">매출현황</a></li>
+                    </ul>
+                </section>
 
-            <section class="euro-nav__group">
-            <h4 class="euro-nav__title" style="">회원관리</h4>
-            <ul class="euro-nav__list">
-                <li class="euro-nav__item"><a href="#">회원목록</a></li>
-                <li class="euro-nav__item"><a href="#">포인트관리</a></li>
-            </ul>
-            </section>
+                <section class="euro-nav__group">
+                    <h4 class="euro-nav__title" style="">회원관리</h4>
+                    <ul class="euro-nav__list">
+                        <li class="euro-nav__item"><a th:href="@{/admin/member/list}">회원목록</a></li>
+                        <li class="euro-nav__item"><a th:href="@{/admin/point/list}">포인트관리</a></li>
+                    </ul>
+                </section>
 
-            <section class="euro-nav__group">
-            <h4 class="euro-nav__title" style="">상품관리</h4>
-            <ul class="euro-nav__list">
-                <li class="euro-nav__item"><a href="#">상품목록</a></li>
-                <li class="euro-nav__item"><a href="#">상품등록</a></li>
-            </ul>
-            </section>
+                <section class="euro-nav__group">
+                    <h4 class="euro-nav__title" style="">상품관리</h4>
+                    <ul class="euro-nav__list">
+                        <li class="euro-nav__item"><a th:href="@{/admin/product/list}">상품목록</a></li>
+                        <li class="euro-nav__item"><a th:href="@{/admin/productReg/list}">상품등록</a></li>
+                    </ul>
+                </section>
 
-            <section class="euro-nav__group">
-            <h4 class="euro-nav__title" style="">주문관리</h4>
-            <ul class="euro-nav__list">
-                <li class="euro-nav__item is-active"><a href="#">주문현황</a></li>
-                <li class="euro-nav__item"><a href="#">배송현황</a></li>
-            </ul>
-            </section>
+                <section class="euro-nav__group">
+                    <h4 class="euro-nav__title" style="">주문관리</h4>
+                    <ul class="euro-nav__list">
+                        <li class="euro-nav__item is-active"><a th:href="@{/admin/order/list}">주문현황</a></li>
+                        <li class="euro-nav__item"><a th:href="@{/admin/delivery/list}">배송현황</a></li>
+                    </ul>
+                </section>
 
-            <section class="euro-nav__group">
-            <h4 class="euro-nav__title" style="">쿠폰관리</h4>
-            <ul class="euro-nav__list">
-                <li class="euro-nav__item"><a href="#">쿠폰목록</a></li>
-                <li class="euro-nav__item"><a href="#">쿠폰발급현황</a></li>
-            </ul>
-            </section>
+                <section class="euro-nav__group">
+                    <h4 class="euro-nav__title" style="">쿠폰관리</h4>
+                    <ul class="euro-nav__list">
+                        <li class="euro-nav__item"><a th:href="@{/admin/coupon/list}">쿠폰목록</a></li>
+                        <li class="euro-nav__item"><a th:href="@{/admin/couponsnow/list}">쿠폰발급현황</a></li>
+                    </ul>
+                </section>
 
-            <section class="euro-nav__group">
-            <h4 class="euro-nav__title" style="">고객센터</h4>
-            <ul class="euro-nav__list">
-                <li class="euro-nav__item"><a href="#">공지사항</a></li>
-                <li class="euro-nav__item"><a href="#">자주묻는질문</a></li>
-                <li class="euro-nav__item"><a href="#">문의하기</a></li>
-                <li class="euro-nav__item"><a href="#">채용하기</a></li>
-            </ul>
-            </section>
-        </aside>
+                <section class="euro-nav__group">
+                    <h4 class="euro-nav__title" style="">고객센터</h4>
+                    <ul class="euro-nav__list">
+                        <li class="euro-nav__item"><a th:href="@{/admin/announcement/list}">공지사항</a></li>
+                        <li class="euro-nav__item"><a th:href="@{/admin/FAQ/list}">자주묻는질문</a></li>
+                        <li class="euro-nav__item"><a th:href="@{/admin/inquiry/list}">문의하기</a></li>
+                        <li class="euro-nav__item"><a th:href="@{/admin/employ/list}">채용하기</a></li>
+                    </ul>
+                </section>
+            </aside>
         </div>
         <div style="width:940px; border-left:1px solid #e2e2e2;">
             <div style="margin-left:60px;">

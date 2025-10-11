@@ -1,9 +1,6 @@
 package kr.co.bnk_marketproject_be.entity;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
-import jakarta.persistence.PrePersist;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -27,6 +24,8 @@ public class AdminFAQ {
     private String title;
     private String content;
     private int hits;
+    @Transient
+    private String look;
 
     private LocalDateTime created_at;
     @PrePersist

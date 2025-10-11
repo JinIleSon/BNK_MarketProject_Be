@@ -1,6 +1,7 @@
 package kr.co.bnk_marketproject_be.dto;
 
 import jakarta.persistence.PrePersist;
+import jakarta.persistence.Transient;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -20,6 +21,8 @@ public class AdminFAQDTO {
     private String title;
     private String content;
     private int hits;
+    @Transient
+    private String look;
 
     private LocalDateTime created_at;
     @PrePersist
