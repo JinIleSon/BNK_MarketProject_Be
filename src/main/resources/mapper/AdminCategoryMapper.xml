@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="kr.co.bnk_marketproject_be.mapper.AdminCategoryMapper">
+
+    <!-- 공통 매핑 -->
+    <resultMap id="CategoryMap" type="kr.co.bnk_marketproject_be.dto.AdminCategoryDTO">
+        <id     property="id"         column="id"/>
+        <result property="name"       column="name"/>
+        <result property="parentId"   column="parent_id"/>
+        <result property="categoryNo" column="category_no"/>
+    </resultMap>
+
+    <!-- 목록: 부모 먼저, 같은 부모 내에서는 category_no 순 -->
+    <select id="findAll" resultMap="CategoryMap">
+        SELECT id, name, parent_id, category_no
+        FROM CATEGORIES
+        ORDER BY
+            CASE WHEN parent_id IS NULL THEN id ELSE parent_id END,
+            CASE WHEN parent_id IS NULL THEN 0  ELSE category_no END,
+            id
+    </select>
+
+    <!-- 다음 정렬 번호: parentId가 null이면 IS NULL 분기 필수 -->
+    <select id="nextOrderForParent" parameterType="int" resultType="int">
+        SELECT COALESCE(MAX(category_no), 0) + 1
+        FROM CATEGORIES
+        <where>
+            <choose>
+                <when test="parentId == null">
+                    parent_id IS NULL
+                </when>
+                <otherwise>
+                    parent_id = #{parentId}
+                </otherwise>
+            </choose>
+        </where>
+    </select>
+
+    <!-- INSERT: Oracle 시퀀스에서 PK 선발급 -->
+    <insert id="insert" parameterType="kr.co.bnk_marketproject_be.dto.AdminCategoryDTO">
+        INSERT INTO CATEGORIES (
+            name, parent_id, category_no
+        ) VALUES (
+                     #{name},
+                     #{parentId, jdbcType=NUMERIC},
+                     #{categoryNo, jdbcType=NUMERIC}
+                 )
+    </insert>
+
+
+    <update id="update" parameterType="kr.co.bnk_marketproject_be.dto.AdminCategoryDTO">
+        UPDATE CATEGORIES
+        SET
+            name       = #{name},
+            parent_id  = #{parentId,   jdbcType=NUMERIC},
+            category_no= #{categoryNo, jdbcType=NUMERIC}
+        WHERE id = #{id}
+    </update>
+
+    <delete id="delete" parameterType="int">
+        DELETE FROM CATEGORIES
+        WHERE id = #{id}
+    </delete>
+
+    <delete id="deleteChildren" parameterType="int">
+        DELETE FROM CATEGORIES
+        WHERE parent_id = #{id}
+    </delete>
+
+</mapper>
