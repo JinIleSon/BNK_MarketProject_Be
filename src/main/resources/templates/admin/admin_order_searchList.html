@@ -489,7 +489,22 @@
     .ship-head__order{ margin-left:10px; font-weight:600; color:#111; letter-spacing:0.02em; }
 
     /* 주문상세에서 썼던 공통 헤더와 충돌 없도록 유지 */
-
+    /* 배송 컬럼 상태표시/비활성 버튼 */
+    .badge-cancel{
+        display:inline-block;
+        padding:6px 7px;
+        border:1px solid #f0b7b7;
+        background:#fdecec;
+        color:#c44;
+        font-size:12px;
+    }
+    .btn-disabled{
+        cursor:not-allowed !important;
+        opacity:.55;
+        background:#eee !important;
+        color:#999 !important;
+        border-color:#ddd !important;
+    }
 </style>
 <script>
     // 아코디언: 클릭 시 높이를 실제 내용 높이로 애니메이션
@@ -817,6 +832,16 @@
             const orderNo = btn.dataset.orderNo || (tds[0].textContent || '').trim();
             const status  = (tds[6].textContent || '').trim();
 
+            // 상태별 동작
+            if (status === '주문취소') {
+                // 버튼은 decorateShipColumnByStatus()에서 배지로 교체되지만, 혹시 남아있어도 클릭 무시
+                return;
+            }
+
+            if (status === '결제대기') {
+                alert('결제가 완료되어야 합니다.');
+                return;
+            }
             if (status !== '결제완료') return;
 
             // 기본은 data-* 값 사용
@@ -913,7 +938,45 @@
         // 모두 처리
         await Promise.allSettled(jobs);
     }
+    /** 각 행의 주문상태를 읽어 배송 컬럼 UI를 정리 */
+    function decorateShipColumnByStatus(){
+        document.querySelectorAll('table tr').forEach(tr=>{
+            const tds = tr.querySelectorAll('td');
+            if (tds.length < 9) return; // 데이터 행만
 
+            const statusText = (tds[6].textContent || '').trim();
+            const shipCell   = tds[8];
+            const btn        = shipCell.querySelector('button.ship-btn');
+
+            // 주문취소: 버튼 대신 "주문취소" 배지로 교체
+            if (statusText === '주문취소') {
+                if (btn) shipCell.removeChild(btn);
+                if (!shipCell.querySelector('.badge-cancel')) {
+                    const badge = document.createElement('span');
+                    badge.className = 'badge-cancel';
+                    badge.textContent = '주문취소';
+                    shipCell.appendChild(badge);
+                }
+                return;
+            }
+
+            // 결제대기: 버튼은 유지하되 비활성화 스타일 & 안내
+            if (statusText === '결제대기') {
+                if (btn) {
+                    btn.classList.add('btn-disabled');
+                    btn.title = '결제가 완료되어야 합니다.';
+                    // 키보드 접근성 위해 aria-disabled
+                    btn.setAttribute('aria-disabled', 'true');
+                }
+                return;
+            }
+
+            // 결제완료 외 기타 상태는 기본 유지
+        });
+    }
+
+    // DOM 준비 후 1회 적용 (페이지 진입 시)
+    document.addEventListener('DOMContentLoaded', decorateShipColumnByStatus);
     // DOM 준비되면 실행
     document.addEventListener('DOMContentLoaded', preloadOrderSums);
 </script>
