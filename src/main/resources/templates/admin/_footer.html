@@ -1,5 +1,48 @@
-    <footer style="padding:20px; background-color: #808080; width:100%; height:62px; color:white; margin-top:100px;">
+<footer id="siteFooter"
+            style="padding:20px; background-color: #808080; width:100%; height:62px; color:white;">
         Copyright ©NICHIYA.co.kr All rights reserved. [[${appInfo.appName}]] ADMINISTRATOR Version [[${appInfo.appVersion}]]
     </footer>
+<script>
+    /*
+      목표: 전역 CSS를 바꾸지 않고, 페이지를
+      min-height:100vh; display:flex; flex-direction:column; 구조로 감싸
+      footer를 항상 바닥에 두는 'sticky footer' 만들기.
+    */
+    (function () {
+        var footer = document.getElementById('siteFooter');
+        if (!footer) return;
+
+        // 이미 셸이 있으면 중복 생성 방지
+        if (document.getElementById('pageShell')) return;
+
+        // 1) 셸과 메인 생성 (인라인 스타일만 사용, 전역 클래스/스타일 건드리지 않음)
+        var shell = document.createElement('div');
+        shell.id = 'pageShell';
+        shell.style.minHeight = '100vh';
+        shell.style.display = 'flex';
+        shell.style.flexDirection = 'column';
+
+        var main = document.createElement('main');
+        main.id = 'pageMain';
+        // 남는 공간을 차지해 footer를 아래로 밀어냄
+        main.style.flex = '1 0 auto';
+
+        var body = document.body;
+
+        // 2) body의 모든 자식(footer 제외)을 main으로 이동
+        var kids = Array.prototype.slice.call(body.children);
+        kids.forEach(function (el) {
+            if (el !== footer) main.appendChild(el);
+        });
+
+        // 3) shell에 main과 footer를 붙이고 body에 삽입
+        shell.appendChild(main);
+        shell.appendChild(footer);
+        body.appendChild(shell);
+
+        // 4) 혹시 모를 기본 바깥 여백으로 인해 1px 떠 있는 경우 방지
+        if (getComputedStyle(body).margin !== '0px') body.style.margin = '0';
+    })();
+</script>
 </body>
 </html>
