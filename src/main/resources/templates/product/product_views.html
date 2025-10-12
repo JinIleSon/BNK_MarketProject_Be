@@ -1,0 +1,406 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>product_readMore</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Bodoni+Moda:opsz,wght@6..96,400;500&family=Noto+Serif+KR:wght@300;400&display=swap" rel="stylesheet">
+    <style>
+        html{ scrollbar-gutter: stable; }
+        .icon-btn { background:none; border:1px solid #000; cursor:pointer; width:40px; height:40px; display:grid; place-items:center; }
+        .overlay { position: fixed; inset: 0; background: rgba(255,255,255,0.28); backdrop-filter: blur(1px); -webkit-backdrop-filter: blur(1px); opacity: 0; pointer-events: none; transition: opacity .25s ease; z-index: 1000; }
+        .overlay.open { opacity: 1; pointer-events: auto; }
+        .overlay__panel { position: absolute; top:0; left:0; width: 50vw; max-width: 900px; height: 100%; background: white; transform: translateX(-100%); transition: transform .35s ease; will-change: transform; display: flex; flex-direction: column; }
+        .overlay.open .overlay__panel { transform: translateX(0); }
+        .overlay__top { display:flex; align-items:center; gap:24px; padding:20px; }
+        .overlay__close { background:none; border:1px solid; width:100px; height:50px; cursor:pointer; position:relative; border:none; margin-left:0.3%; }
+        .overlay__close::before, .overlay__close::after{ content:""; position:absolute; left:15px; right:10px; top:25px; height:2px; background:#000; }
+        .overlay__close::before{ transform:rotate(45deg); } .overlay__close::after { transform:rotate(-45deg); }
+        .overlay__menu { display:grid; grid-template-columns: 180px auto; gap:24px; padding:40px 20px; font-size:16px; }
+        .overlay__menu a { text-decoration:none; color:#000; display:block; padding:8px 0; }
+        .overlay__menu strong { font-weight:700; }
+        :root{ --glass-bg: rgba(255,255,255,.55); --glass-blur: 8px; }
+        *{ box-sizing: border-box; }
+        body{ margin:0; font-family:system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif; }
+        a{ color:inherit; text-decoration:none; }
+        ul{ margin:0; padding:0; list-style:none; }
+        .site-header{ position: sticky; top: 0; z-index: 900; }
+        .site-header::before{ content:""; position:absolute; inset:0; background: rgba(255,255,255,0); transition: background 0.4s ease; z-index: -1; pointer-events: none; }
+        .site-header:hover::before{ background: rgba(255,255,255,0.7); }
+        .site-header .inner{ position: relative; z-index: 1; display:flex; align-items:center; gap:24px; padding: 16px 24px; border-bottom: 1px solid #000; }
+        footer a { text-decoration: none; font-weight: 300; color:black; }
+        .prev-page{ background-color: white; border: none; margin-right: 15px; width: 50px; height: 30px; cursor: pointer; }
+        .next-page{ background-color: white; border: none; margin-left: 15px; width: 50px; height: 30px; margin-right:3px; cursor: pointer; }
+        .title-didone{ text-align:center; font-family: 'Bodoni Moda','Didot','Bodoni 72','Times New Roman',serif; margin-left:45px; font-weight:400; letter-spacing:.02em; -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale; }
+        .title-didone.ko{font-family: 'Noto Serif KR','Bodoni Moda',serif; font-weight:300;}
+    </style>
+</head>
+<body>
+<header class="site-header">
+    <div style=" margin-left:2%; width:98%; box-sizing: border-box; margin-top:2%; display:flex; height:230px;">
+        <button aria-controls="menuOverlay" aria-expanded="false" aria-label="메뉴 열기" class="icon-btn" id="menuBtn" style="border:none;">
+            <svg height="64" viewBox="0 0 64 64" width="64" xmlns="http://www.w3.org/2000/svg">
+                <rect fill="black" height="1" width="64" y="12"/><rect fill="black" height="1" width="64" y="30"/><rect fill="black" height="1" width="64" y="48"/>
+            </svg>
+        </button>
+        <a href="/main/main_main.html" style="margin-left:3%;">
+            <div><img alt="" th:src="@{/images/logo.png}" style="width:270px;"></div>
+        </a>
+        <div style="margin-top:27px; margin-left:auto; margin-right:3%; flex:1; max-width:30%;">
+            <ul style="list-style-type: none; padding: 0; margin:0; display:flex; gap:40px;">
+                <li style="flex:1; min-width: 100px;">
+                    <form action="" method="" style="width:100%;">
+                        <input onblur="this.style.outline='none';" onfocus="this.style.outline='none';"
+                               style="background: transparent;border:none; border-bottom:1px solid; padding-bottom:10px; width:80%;" type="text" value="검색">
+                    </form>
+                </li>
+                <li><a href="#" style="text-decoration: none; color:black; font-size:14px;">로그인</a></li>
+                <li><a href="#" style="text-decoration: none; color:black; font-size:14px;">도움말</a></li>
+                <li><a href="#" style="text-decoration: none; color:black; font-size:14px;">바스켓백 [0]</a></li>
+            </ul>
+        </div>
+    </div>
+</header>
+
+<!-- 전체 화면 오버레이 메뉴 -->
+<aside aria-hidden="true" class="overlay" id="menuOverlay">
+    <div class="overlay__panel">
+        <div class="overlay__top">
+            <button aria-label="메뉴 닫기" class="overlay__close" id="closeBtn"></button>
+            <div class="title-didone" style="font-size:72px; font-weight:800; letter-spacing:4px; letter-spacing: -10px;">NICHIYA</div>
+        </div>
+        <style>
+            .sub { opacity: 0; transform: translateY(6px); pointer-events: none; transition: opacity .28s ease, transform .28s ease; display: none; }
+            .sub.show { display: block; opacity: 1; transform: translateY(0); pointer-events: auto; }
+            #subcol { grid-row: span 2; height: 900px; position: relative; padding: 0; }
+            .overlay__menu a[data-cat].is-active { font-weight: 700; text-decoration: underline; }
+            #subcol .sub { padding: 0; margin: 0; }
+            #subcol .panel { position: absolute; inset: 0; padding: 20px; overflow: auto; opacity: 0; transform: translateY(6px); transition: opacity .35s ease, transform .35s ease; visibility: hidden; pointer-events: none; }
+            #subcol .panel.show { opacity: 1; transform: none; visibility: visible; pointer-events: auto; }
+            .menu-grid { display: grid; grid-template-columns: repeat(2, auto); column-gap: 50px; row-gap: 6px; padding: 0; margin: 0; justify-content: start; }
+            .menu-grid li { list-style: none; }
+        </style>
+
+        <div style="display: flex; margin-left:20%; margin-top:1%; width:100%;">
+            <nav class="overlay__menu" style="width:100%;">
+                <div>
+                    <a href="#">히트상품</a><a href="#">추천상품</a><a href="#">최신상품</a><a href="#">인기상품</a><a href="#">할인상품</a>
+                    <br><br>
+                    <a data-cat="fashion" href="#">패션 · 의류 · 뷰티</a>
+                    <a data-cat="digital" href="#">가전 · 디지털</a>
+                    <a data-cat="grocery" href="#">식품 · 생필품</a>
+                    <a data-cat="home" href="#">홈 · 문구 · 취미</a>
+                    <a data-cat="book" href="#">도서</a>
+                </div>
+                <div id="subcol">
+                    <section class="panel" data-key="fashion">
+                        <h3>패션 · 의류 · 뷰티</h3>
+                        <ul class="menu-grid"><li><a href="#">여성 의류</a></li><li><a href="#">스킨케어</a></li></ul>
+                    </section>
+                    <section class="panel" data-key="digital">
+                        <h3>가전 · 디지털</h3>
+                        <div class="menu-grid"><a href="#">생활가전</a><a href="#">모바일 · PC</a></div>
+                    </section>
+                    <section class="panel" data-key="grocery">
+                        <h3>식품 · 생필품</h3>
+                        <div class="menu-grid"><a href="#">신선식품</a><a href="#">생활용품</a></div>
+                    </section>
+                    <section class="panel" data-key="home">
+                        <h3>홈 · 문구 · 취미</h3>
+                        <div class="menu-grid"><a href="#">가구 · 인테리어</a><a href="#">문구 · 사무용품</a></div>
+                    </section>
+                    <section class="panel" data-key="book">
+                        <h3>도서</h3>
+                        <div class="menu-grid"><a href="#">소설 · 에세이</a><a href="#">아동 · 교육</a></div>
+                    </section>
+                </div>
+                <div></div>
+            </nav>
+        </div>
+    </div>
+</aside>
+
+<script>
+    const body = document.body;
+    const menuBtn = document.getElementById('menuBtn');
+    const closeBtn = document.getElementById('closeBtn');
+    const overlay = document.getElementById('menuOverlay');
+
+    function openMenu() { overlay.classList.add('open'); overlay.setAttribute('aria-hidden', 'false'); menuBtn.setAttribute('aria-expanded', 'true'); body.style.overflow = 'hidden'; }
+    function closeMenu() { overlay.classList.remove('open'); overlay.setAttribute('aria-hidden', 'true'); menuBtn.setAttribute('aria-expanded', 'false'); body.style.overflow = ''; }
+
+    menuBtn.addEventListener('click', openMenu);
+    closeBtn.addEventListener('click', closeMenu);
+    overlay.addEventListener('click', (e) => { if (e.target === overlay) closeMenu(); });
+    window.addEventListener('keydown', (e) => { if (e.key === 'Escape' && overlay.classList.contains('open')) closeMenu(); });
+
+    const catLinks = document.querySelectorAll('.overlay__menu a[data-cat]');
+    const panels = document.querySelectorAll('#subcol .panel');
+    function setActiveCat(target) { catLinks.forEach(a => a.classList.remove('is-active')); if (target) target.classList.add('is-active'); }
+    function showPanel(key) { panels.forEach(p => p.classList.toggle('show', p.dataset.key === key)); }
+    catLinks.forEach(link => { link.addEventListener('click', (e) => { e.preventDefault(); const key = link.getAttribute('data-cat'); setActiveCat(link); showPanel(key); }); });
+    setActiveCat(document.querySelector('.overlay__menu a[data-cat="fashion"]')); showPanel('fashion');
+</script>
+
+<!-- 본문 -->
+<div style="height:100%; display: flex; flex-direction: column; justify-content: center; align-items: center; margin: 0 auto;"
+     th:object="${product}"
+     th:with="
+        priceVal=*{price}?:0,
+        discountVal=*{discount}?:0,
+        sale=${priceVal - discountVal},
+        avg=*{rating_avg}?:0,
+        ratingCnt=*{rating_cnt}?:0
+     ">
+
+    <div style="display: flex;">
+        <div style="font-size:18px; margin-right:916px;"><b>상품목록</b></div>
+        <div style="margin-right:8px;">HOME > 패션 · 의류 · 뷰티 > <b>남성의류</b></div>
+    </div>
+    <hr style="border:none; border-top:1px solid black; margin-bottom:40px; width:100%;">
+
+    <div style="display: flex; gap:100px; width:1270px;">
+        <img id="mainImage" th:src="*{mainImage} ?: @{/images/placeholder.png}" alt="" style="width:700px;">
+        <div style=" width:463px; margin-top:100px;">
+            <div style="margin-top:10px;">
+                <span style="font-size:14px; font-weight:800; letter-spacing: -1px; color:gray;" th:text="|상품번호 : *{product_code}|">상품번호</span>
+                <span style="float:right; font-weight: 800;" th:text="*{brand_name} ?: '(주)상호명'">(주)상호명</span>
+            </div>
+
+            <hr style="border:none; border-top:1px solid #dddddd;">
+            <div>
+                <span style="font-weight:800;" th:text="*{product_name}">상품명</span>
+                <span style="float: right;">
+                    <span th:text="${#numbers.formatDecimal(avg,1,1)} + '점'">0.0점</span>
+                    <a href="#" style="text-decoration-line: underline; color:blue;" th:text="|상품평보기 (${ratingCnt})|">상품평보기 (0)</a>
+                </span>
+            </div>
+
+            <hr style="border:none; border-top:1px solid #dddddd;">
+            <div style="display: flex;">
+                <span style="color:gray;">
+                    <s th:text="|₩ ${#numbers.formatInteger(*{price} ?: 0,3,'COMMA')}|">₩ 150,000</s>
+                    <font color="red" th:if="*{discount_rate} > 0"
+                          th:text="|&nbsp;&nbsp;*{discount_rate}%↓|">&nbsp;&nbsp;10%↓</font>
+                </span>
+                <a href="#"><div style="border:1px red solid; box-sizing: border-box; color:red; margin-left:23px;margin-right:28px; font-size:12px;">쿠폰받기</div></a>
+                <span>💳무이자할부 💳카드추가혜택</span>
+            </div>
+
+            <!-- 판매가 레이블 (JS에서 단가 읽음) -->
+            <span id="priceLabel" style="font-size:18px;" th:text="|₩ ${#numbers.formatInteger(*{sale_price} ?: ${sale},3,'COMMA')}|">₩ 135,000</span>
+
+            <hr style="border:none; border-top:1px solid #dddddd;">
+            <div>
+                <span style="color:#84a9e2;" th:text="*{delichar} == 0 ? '무료배송' : '배송비 유료'">무료배송</span>
+                <span style="font-weight: 600;" th:text="|&nbsp; *{created_at} 등록|">&nbsp; 등록일</span>
+                <br>
+                <span style="display: block;padding-top:4px; font-size:14px; font-weight: 600; color:gray; letter-spacing: -1px;">본상품은 국내배송만 가능합니다.</span>
+            </div>
+
+            <hr style="border:none; border-top:1px solid #dddddd;">
+            <span style="letter-spacing: -1px;">원산지 - 상세설명 참고</span>
+            <hr style="border:none; border-top:1px solid #dddddd;">
+
+            <div class="select-box">
+                <form action="" method="" onsubmit="return false;">
+                    <div class="select-wrap">
+                        <select name="option" id="optionSelect" style="width:155px; height:27px; border:1px solid #dddddd;">
+                            <option value="">선택하기</option>
+                            <option th:each="op : *{options} ?: ${#lists.list()}"
+                                    th:value="${op.optionName}"
+                                    th:text="${op.optionName}">옵션표시</option>
+                        </select>
+                    </div>
+                    <hr style="border:none; border-top:1px solid #dddddd;">
+                    <span style="display: block; margin-bottom:5px; font-size:12px;" th:text="*{product_name}">선택한 상품명</span>
+
+                    <div style="display: flex;">
+                        <button onclick="decrease()" style="width:23px; height:25px;background-color: #f1f2f4; border: 1px solid #f1f2f4;">-</button>
+                        <div id="number" style="font-weight:800; font-size:10px; display:flex; width:30px; height:25px; border: 1px solid #f1f2f4; justify-content: center; align-items: center;">1</div>
+                        <button onclick="increase()" style="width:23px; height:25px;background-color: #f1f2f4; border: 1px solid #f1f2f4;">+</button>
+                        <div id="linePrice" style="display:flex; align-items:center; margin-left:auto; font-size:12px;"
+                             th:text="${#numbers.formatInteger(*{sale_price} ?: ${sale},3,'COMMA')}">135,000</div>
+                        <button style="border:none; background-color: white;">X</button>
+                    </div>
+
+                    <div id="totalPrice" style="float:right; font-size:14px; font-weight:600; margin-top:7px;"
+                         th:text="|총 상품금액 ₩ ${#numbers.formatInteger(*{sale_price} ?: ${sale},3,'COMMA')}|">총 상품금액 ₩ 135,000</div>
+
+                    <br>
+                    <div style="display: flex; width:100%; gap:10px; margin-top:10px;">
+                        <button style="color:white; height:35px; background-color: #bfbfbf; border:none; font-size: 13px; font-weight: 300; width:47%;">장바구니</button>
+                        <button style="margin-left:auto; color:white; background-color: #5e8fd7; border:none; font-size: 13px; font-weight: 300; width:47%;">구매하기</button>
+                    </div>
+                    <div style="width:100%; height:64px; background-color: gray; margin-top:5px;">배너 광고 이미지 필요</div>
+                </form>
+            </div>
+
+            <div style="display:flex; gap:8px; margin-top:12px;">
+                <img th:each="img : *{subImages} ?: ${#lists.list()}"
+                     th:src="${img} ?: @{/images/placeholder.png}" alt=""
+                     style="width:80px; height:80px; object-fit:cover; border:1px solid #ddd; cursor:pointer;"
+                     onclick="swapMain(this)">
+            </div>
+
+            <div>
+                <style>
+                    .select-box{ position: relative; display: block; width: 100%; }
+                    .select-wrap{ position: relative; display: inline-block; width:155px; height:27px; }
+                    .select-wrap select{ appearance: none; -webkit-appearance: none; -moz-appearance: none; padding: 0 25px 0 10px; width: 100%; height: 100%; box-sizing: border-box; }
+                    .select-wrap select::-ms-expand{ display:none; }
+                    .select-wrap::after{ content: "▼"; position: absolute; right: 8px; top: 50%; transform: translateY(-50%); font-size: 12px; color: #000; pointer-events: none; }
+                </style>
+                <script>
+                    // 단가 파싱(₩, 콤마 제거)
+                    const unitPrice = (() => {
+                        const el = document.getElementById('priceLabel');
+                        const num = el.textContent.replace(/[^\d]/g, '');
+                        return Number(num);
+                    })();
+                    let count = 1; const min = 1; const max = 100;
+                    function formatKRW(n){ return n.toLocaleString('ko-KR'); }
+                    function render(){
+                        const qtyEl=document.getElementById('number');
+                        const lineEl=document.getElementById('linePrice');
+                        const totalEl=document.getElementById('totalPrice');
+                        const subtotal=unitPrice*count;
+                        qtyEl.innerText=String(count);
+                        lineEl.textContent=formatKRW(subtotal);
+                        totalEl.textContent=`총 상품금액 ₩ ${formatKRW(subtotal)}`;
+                    }
+                    function increase(){ if(count<max){count++; render();} }
+                    function decrease(){ if(count>min){count--; render();} }
+                    window.increase=increase; window.decrease=decrease;
+                    function swapMain(th){ const main=document.getElementById('mainImage'); if(main && th && th.src){ main.src=th.src; } }
+                    window.swapMain=swapMain;
+                    render();
+                </script>
+            </div>
+
+            <div style=" width:1265px; margin-top:5px; margin-bottom:5px;">
+                <span style="font-size: 16px; font-weight:600; display: block;">상품정보</span>
+                <hr style="border:none; border-top:1px solid #dddddd;">
+                <div style="background-color: gray; color:black; height:300px; margin-top:5px;">
+                    <img src="#" alt="이미지 넣기" style="width:100%">
+                </div>
+                <div style="display: flex; margin-top:5px; margin-bottom:5px;">
+                    <div style="letter-spacing:-1px;font-size: 16px; font-weight:600;">상품정보 제공고시 </div>
+                    <div style="letter-spacing:-1px;font-size:14px; color:gray; margin-left:20px;padding-top:4px;">[전자상거래에 관한 상품정보 제공에 관한 고시] 항목에 의거 등록된 정보입니다.</div>
+                </div>
+                <hr style="border:none; border-top:1px solid #dddddd;">
+                <table style="border-collapse: collapse; border:1px solid; width:1252px; font-size:14px; margin-left:7px;">
+                    <tr style="border:1px solid; height:35px;">
+                        <td style="border-right:1px solid; width:250px; padding-left:11px;">상품번호</td>
+                        <td style="padding-left:11px;" th:text="*{product_code}">10010118412</td>
+                    </tr>
+                    <tr style="border:1px solid; height:35px;"><td style="border-right:1px solid; padding-left:11px;">상품상태</td><td style="padding-left:11px;">새상품</td></tr>
+                    <tr style="border:1px solid; height:35px;"><td style="border-right:1px solid; padding-left:11px;">부가세면세여부</td><td style="padding-left:11px;">과세상품</td></tr>
+                    <tr style="border:1px solid; height:35px;"><td style="border-right:1px solid; padding-left:11px;">영수증발행</td><td style="padding-left:11px;">발행가능신용카드전표, 온라인현금영수증</td></tr>
+                    <tr style="border:1px solid; height:35px;"><td style="border-right:1px solid; padding-left:11px;">사업자구분</td><td style="padding-left:11px;">통신판매업자</td></tr>
+                    <tr style="border:1px solid; height:35px;"><td style="border-right:1px solid; padding-left:11px;">브랜드</td><td style="padding-left:11px;" th:text="*{brand_name}">블루포스</td></tr>
+                    <tr style="border:1px solid; height:35px;"><td style="border-right:1px solid; padding-left:11px;">원산지</td><td style="padding-left:11px;">국내생산</td></tr>
+                </table>
+
+                <hr style="border:none; border-top:1px solid #dddddd; margin-top:2px;margin-bottom:2px;">
+                <table style="border-collapse: collapse; border:1px solid; width:1252px; font-size:14px; margin-left:7px;">
+                    <tr style="border:1px solid;"><td style="border-right:1px solid; width:250px; height:35px; padding-left:11px;">제조자 / 수입국</td><td style="padding-left:11px;">상세정보 직접입력</td></tr>
+                    <tr style="border:1px solid; height:35px;"><td style="border-right:1px solid; padding-left:11px;">제조국</td><td style="padding-left:11px;">상세정보 직접입력</td></tr>
+                    <tr style="border:1px solid; height:35px;"><td style="border-right:1px solid; padding-left:11px;">취급 시 주의사항</td><td style="padding-left:11px;">상세정보 직접입력</td></tr>
+                    <tr style="border:1px solid; height:35px;"><td style="border-right:1px solid; padding-left:11px;">제조연월</td><td style="padding-left:11px;">상세정보 직접입력</td></tr>
+                    <tr style="border:1px solid; height:35px;"><td style="border-right:1px solid; padding-left:11px;">품질보증기준</td><td style="padding-left:11px;">상세정보 직접입력</td></tr>
+                    <tr style="border:1px solid; height:35px;"><td style="border-right:1px solid; padding-left:11px;">A/S 책임자</td><td style="padding-left:11px;">상세정보 직접입력</td></tr>
+                    <tr style="border:1px solid; height:35px;"><td style="border-right:1px solid; padding-left:11px;">전화번호</td><td style="padding-left:11px;">상세정보 직접입력</td></tr>
+                </table>
+
+                <div style="background-color: white; width:100%; margin-top:10px; padding-top:20px; margin-bottom:10px; line-height:1.8;">
+                    소비자가 전자상거래등에서 소비자 보호에 관한 법률 제 17조 제 1항 또는 제 3항에 따라 청약철회를 하고
+                    동 법 제 18조 제 1항에 따라 청약철회한 물품을 판매자에게 반환하였음에도 불구하고 결제 대금의 현금이
+                    3영업일을 넘게 지연된 경우, 소비자는 전자상거래등에서 소비자 보호에 관한 법률 제 18조 제 2항
+                    및 동 법 시행령 제 21조 2에 따라 지연일수에 대하여 전상 법 시행령으로 정하는 이율을 곱하여
+                    산정한 지연이자 ("지연배상금")을 신청할 수 있습니다. 아울러, 교환 반품 보증 및 결제대금의
+                    환급신청은 [나의쇼핑정보]에서 하실 수 있으며, 자세한 문의는 개별 판매자에게 연락하여 주시기 바랍니다.
+                </div>
+
+                <div style="display: block;">
+                    <span style="font-size: 16px; font-weight:600; display: block;">상품리뷰</span>
+                    <hr style="border:none; border-top:1px solid #dddddd;">
+
+                    <div th:each="rv : *{reviews} ?: ${#lists.list()}" style="margin-left:7px; margin-right:7px;">
+                        <div th:with="r=${rv?.rating} ?: 0"
+                             th:text="${#strings.repeat('★', r)} + ${#strings.repeat('☆', 5 - r)}">★★★★☆
+                        </div>
+                        <div style="margin-top:10px;">
+                            <span th:text="*{product_name}">상품명</span>
+                            <span style="float:right;" th:text="|${rv?.userName} ${rv?.createdAt}|">seo******* 0000-07-10</span>
+                        </div>
+                        <div style="margin-top:10px;">
+                            <div style="display:flex; margin-top:5px;">
+                                <div style="width:135px; height:75px; background-color: gray;">
+                                    <img src="#" alt="이미지">
+                                </div>
+                                <div style="margin-left:15px; color:gray; letter-spacing: 0px;" th:text="${rv?.content}">리뷰 내용</div>
+                            </div>
+                        </div>
+                        <hr style="border:none; border-top:1px solid #dddddd; margin-top:13px;">
+                    </div>
+
+                    <!-- 데모용 하드코딩 예시 (원하면 삭제 가능) -->
+                    <hr style="border:none; border-top:1px solid #dddddd; margin-top:13px;">
+                    <div style="margin-left:7px; margin-right:7px;">
+                        <div>★★★★☆</div>
+                        <div style="margin-top:10px;">상품명 <span style="float:right;">seo******* 0000-07-10</span></div>
+                        <div style="margin-top:10px;">
+                            <div style="display:flex; margin-top:5px;">
+                                <div style="width:135px; height:75px; background-color: gray;">
+                                    <img src="#" alt="이미지">
+                                </div>
+                                <div style="margin-left:15px; color:gray; letter-spacing: 0px;">
+                                    가격 대비 정말 괜찮은 옷이라 생각되네요. 핏은 음... 제가 입기엔 어깨선이 맞고 루즈핏이라 하기도 좀 힘드네요.
+                                    아주 약간 루즈한 정도...? 그래도 이만한 옷은 없다고 봅니다. 깨끗하고 포장도 괜찮고 다음에도 여기서 판매하는
+                                    제품들을 구매하고 싶네요. 정말 만족하고 후기 남깁니다. 많이 파시길 바래요~
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <hr style="border:none; border-top:1px solid #dddddd; margin-top:13px;">
+                    <div style=" height: 100px; margin-top:40px; display: flex; justify-content: center;">
+                        <form action="" method="">
+                            <input type="button" class="prev-page" value="< 이전">
+                            <input type="button" value="1" style="border:1px solid #333; background-color: #333; color: white; height: 30px; width: 30px; margin-right:2px; line-height:1;">
+                            <input type="button" value="2" style="cursor: pointer; border:1px solid #ddd; color: #555; height: 30px; width: 30px; margin-right:2px; line-height:1;">
+                            <input type="button" value="3" style="cursor: pointer; border:1px solid #ddd; color: #555; height: 30px; width: 30px; line-height:1;">
+                            <input type="button" class="next-page" value="다음 >">
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <footer>
+            <div>
+                <ul style="display: flex; gap:20px; margin-left:40px; list-style-type: none;">
+                    <li><a href="#">YOUTUBE</a></li>
+                    <li><a href="/compInfo/compInfo_main.html">회사소개</a></li>
+                    <li><a href="/policy/policy_terms.html">서비스이용약관</a></li>
+                    <li><a href="/policy/policy_terms.html#privacy">개인정보처리방침</a></li>
+                    <li><a href="/customer_service/cs_main.html">고객센터</a></li>
+                </ul>
+            </div>
+            <div style="width:870px; margin-top:90px; margin-left:40px;">
+            <span>
+                NICHIYA 주식회사 &nbsp;|&nbsp; 사업자등록번호: 123-45-67890 &nbsp;|&nbsp; 대표자 : TANAKA HARUTO &nbsp;|&nbsp; 서울특별시 강남구 테헤란로 321 15층 1501호 (역삼동, 니치야타워)
+                &nbsp;|&nbsp; 대표번호: 080-123-4567 &nbsp;|&nbsp; 호스팅 서비스 사업자: NICHIYA SYSTEMS Co., Ltd.
+                &nbsp;|&nbsp; 통신판매업신고 : 제2025-서울강남-01234 (<a href="/main/main_nichiyaLicense.html" style="font-weight:800; text-decoration-line: underline;">사업자정보확인</a>)
+                &nbsp;|&nbsp; <a href="/policy/policy_terms.html#privacy" style="font-weight: 800; text-decoration-line: underline;">개인정보처리방침</a>
+                &nbsp;|&nbsp; <a href="/policy/policy_terms.html#location" style="font-weight: 800; text-decoration-line: underline;">위치기반서비스 이용약관</a>
+                &nbsp;|<a href="/policy/policy_terms.html" style="font-weight: 800; text-decoration-line: underline;">이용약관</a>
+            </span>
+            </div>
+        </footer>
+    </div>
+</body>
+</html>
