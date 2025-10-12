@@ -47,4 +47,9 @@ public class AdminEmployService {
     public void registerEmploy(AdminEmployDTO adminEmployDTO){
         adminEmployRepository.save(modelMapper.map(adminEmployDTO, AdminEmploy.class));
     }
+
+    // 선택삭제 2트
+    public void deleteEmploys(List<Integer> ids){
+        adminEmployRepository.deleteAllById(ids);
+    }
 }
