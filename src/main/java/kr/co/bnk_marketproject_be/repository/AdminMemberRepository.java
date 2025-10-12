@@ -13,4 +13,6 @@ import java.util.Optional;
 public interface AdminMemberRepository extends JpaRepository<AdminMember,Integer>, AdminMemberRepositoryCustom {
     List<AdminMember> findByBoardType(String boardType);
     Optional<User> findByUserId(String user_id);
+
+    Optional<AdminMember> findFirstByUserIdAndBoardType(String userId, String boardType);
 }
