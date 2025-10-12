@@ -10,6 +10,10 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.ResponseBody;
+
+import java.util.List;
 
 @Slf4j
 @RequiredArgsConstructor
@@ -90,4 +94,12 @@ public class AdminFAQController {
         return "admin/admin_questions_view";
     }
 
+    // 선택삭제
+    @PostMapping("/admin/FAQ/delete")
+    @ResponseBody
+    public String deleteFAQs(@RequestBody List<Integer> ids){
+        log.info("ids={}", ids);
+        adminFAQService.deleteFAQs(ids);
+        return "OK";
+    }
 }
