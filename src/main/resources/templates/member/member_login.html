@@ -353,59 +353,70 @@
     </div>
 
     <script>
-        const form = document.getElementById('loginForm');
-        const groups = [
-            document.querySelector('.form-field-id'),
-            document.querySelector('.form-field-pw')
-        ];
+        document.addEventListener("DOMContentLoaded", function() {
+            const form = document.getElementById('loginForm');
+            const groups = [
+                document.querySelector('.form-field-id'),
+                document.querySelector('.form-field-pw')
+            ];
 
-        function validateGroup(group) {
-            const input = group.querySelector('input');
-            const msg = group.querySelector('.error-msg');
-            const v = input.validity;
-            let text = "";
+            function validateGroup(group) {
+                const input = group.querySelector('input');
+                const msg = group.querySelector('.error-msg');
+                const v = input.validity;
+                let text = "";
 
-            if (v.valid) {
-                group.classList.remove('is-invalid');
-                group.classList.add('is-valid');
-                msg.textContent = "";
-                return;
-            }
-            group.classList.add('is-invalid');
-            group.classList.remove('is-valid');
-
-            if (input.id === "userid") {
-                if (v.valueMissing) text = "아이디를 입력하세요.";
-                else if (v.tooShort) text = "아이디는 최소 4자 이상 입력해야 합니다.";
-                else text = "";
-            } else if (input.type === "password") {
-                if (v.valueMissing) text = "비밀번호를 입력하세요.";
-                else if (v.tooShort) text = "비밀번호는 최소 4자 이상 입력해야 합니다.";
-                else text = "";
-            }
-            msg.textContent = text;
-        }
-
-        groups.forEach(group => {
-            const input = group.querySelector('input');
-            input.addEventListener('blur', () => validateGroup(group));
-            input.addEventListener('input', () => {
-                if (group.classList.contains('is-invalid') || group.classList.contains('is-valid')) {
-                    validateGroup(group);
+                if (v.valid) {
+                    group.classList.remove('is-invalid');
+                    group.classList.add('is-valid');
+                    msg.textContent = "";
+                    return;
                 }
-            });
-        });
+                group.classList.add('is-invalid');
+                group.classList.remove('is-valid');
 
-        form.addEventListener('submit', (e) => {
-            let allValid = true;
-            groups.forEach(g => {
-                validateGroup(g);
-                const input = g.querySelector('input');
-                if (!input.checkValidity()) allValid = false;
+                if (input.id === "userid") {
+                    if (v.valueMissing) text = "아이디를 입력하세요.";
+                    else if (v.tooShort) text = "아이디는 최소 4자 이상 입력해야 합니다.";
+                } else if (input.type === "password") {
+                    if (v.valueMissing) text = "비밀번호를 입력하세요.";
+                    else if (v.tooShort) text = "비밀번호는 최소 4자 이상 입력해야 합니다.";
+                }
+                msg.textContent = text;
+            }
+
+            groups.forEach(group => {
+                const input = group.querySelector('input');
+                input.addEventListener('blur', () => validateGroup(group));
+                input.addEventListener('input', () => {
+                    if (group.classList.contains('is-invalid') || group.classList.contains('is-valid')) {
+                        validateGroup(group);
+                    }
+                });
             });
-            if (!allValid) e.preventDefault();
+
+            form.addEventListener('submit', (e) => {
+                let allValid = true;
+                groups.forEach(g => {
+                    validateGroup(g);
+                    const input = g.querySelector('input');
+                    if (!input.checkValidity()) allValid = false;
+                });
+                if (!allValid) e.preventDefault();
+            });
+
+            // ✅ 회원가입 버튼 이동 (제대로 위치해야 함)
+            const btnReg = document.querySelector(".btn-reg");
+            if (btnReg) {
+                btnReg.addEventListener("click", () => {
+                    // 일반 회원가입을 위한 약관 동의 페이지로 이동
+                    location.href = "/NICHIYA/member/signup";
+
+                });
+            }
         });
     </script>
+
 </body>
 
 </html>

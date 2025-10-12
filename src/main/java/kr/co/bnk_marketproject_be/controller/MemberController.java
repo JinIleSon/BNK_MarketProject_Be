@@ -5,6 +5,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 
+// user seller 회원가입, 로그인 관련 기본 화면 컨트롤러
+
 @Slf4j
 @RequiredArgsConstructor
 @Controller
@@ -26,19 +28,9 @@ public class MemberController {
         return "member/member_register";
     }
 
-    @GetMapping("/member/registerSeller")
-    public String member_registerSeller(){
-        return "member/member_registerSeller";
-    }
-
     @GetMapping("/member/signup")
     public String member_signup(){
         return "member/member_signup";
-    }
-
-    @GetMapping("/member/signupseller")
-    public String member_signupSeller(){
-        return "member/member_signup_seller";
     }
 
     @GetMapping("/member/changepassword")
@@ -62,5 +54,15 @@ public class MemberController {
     }
 
 
+    // seller
+    @GetMapping("/member/registerSeller")
+    public String member_registerSeller(){
+        return "member/member_registerSeller";
+    }
+
+    @GetMapping("/member/signupseller")
+    public String member_signupSeller(){
+        return "member/member_signup_seller";
+    }
 
 }

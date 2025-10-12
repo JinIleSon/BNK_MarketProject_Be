@@ -147,6 +147,11 @@
             </div>
             <p id="idResult"></p>
 
+            <!-- 이메일 -->
+            <label for="email">이메일 *</label>
+            <input type="email" id="email" name="email" required>
+            <p id="emailResult"></p>
+
             <!-- 비밀번호 -->
             <label for="password">비밀번호 *</label>
             <input type="password" id="password" name="password" placeholder="영문/숫자/특수문자 2가지 이상, 10~16자" required>
@@ -324,7 +329,7 @@
         function validateInternet() {
             const v = elInternet.value.trim();
             if (!v) { internetResult.textContent = "통신판매업번호는 필수입니다."; internetResult.className = "error"; return false; }
-            const ok = /^[A-Za-z0-9-]{5,}$/.test(v);
+            const ok = /^[0-9]{4}-[가-힣A-Za-z]+-[0-9]{1,5}$/.test(v);
             if (!ok) { internetResult.textContent = "형식이 올바르지 않습니다. (예: 2023-서울강남-1234)"; internetResult.className = "error"; return false; }
             internetResult.textContent = "유효한 형식입니다."; internetResult.className = "success"; return true;
         }
@@ -373,12 +378,30 @@
             btnSubmit.disabled = !allValid;
         }
 
-        // ===== 이벤트 =====
-        document.getElementById("btnCheckId").addEventListener("click", () => {
-            if (validateUserId()) {
-                idResult.textContent = "사용 가능한 아이디입니다. (중복확인: 임시 통과)";
-                idResult.className = "success";
+        // ===== 아이디 중복 체크 검사 =====
+        document.getElementById("btnCheckId").addEventListener("click", async () => {
+            if (!validateUserId()) return;
+
+            const userId = elUserId.value.trim();
+
+            try {
+                // 서버에 아이디 중복 체크 요청
+                const res = await fetch(`/NICHIYA/seller/check-id?userId=${encodeURIComponent(userId)}`);
+                const data = await res.json();
+
+                if (data.exists) {
+                    idResult.textContent = "이미 사용 중인 아이디입니다.";
+                    idResult.className = "error";
+                } else {
+                    idResult.textContent = "사용 가능한 아이디입니다 ✅";
+                    idResult.className = "success";
+                }
+            } catch (err) {
+                console.error(err);
+                idResult.textContent = "서버 오류로 확인 실패";
+                idResult.className = "error";
             }
+
             updateSubmitState();
         });
 
@@ -404,8 +427,10 @@
         }
         window.execDaumPostcode = execDaumPostcode;
 
-        // 제출
-        form.addEventListener("submit", (e) => {
+        // 판매자 가입 제출
+        form.addEventListener("submit", async (e) => {
+            e.preventDefault();
+
             const okNow =
                 validateUserId() &&
                 validatePassword() &&
@@ -418,15 +443,50 @@
                 validateAddress();
 
             if (!okNow) {
-                e.preventDefault();
                 alert("필수 입력 항목을 완료해주세요.");
                 updateSubmitState();
                 return;
             }
 
-            e.preventDefault();
-            alert("회원가입 데이터가 전송됩니다 (DB 연동 예정).");
-            location.href = "/welcome";
+            const payload = {
+                sellerId: elUserId.value.trim(),
+                password: elPw.value,
+                brand_name: elCompany.value.trim(),
+                biz_registration_number: elBiz.value.trim(),
+                mail_order_number: elInternet.value.trim(),
+                email: document.getElementById("email").value.trim(),
+                phone: elHp.value.trim(),
+                fax: elFax.value.trim(),
+                postcode: elPost.value.trim(),
+                address: elAddr.value.trim(),
+                detailAddress: document.getElementById("detailAddress").value.trim()
+
+            };
+
+            try {
+                const res = await fetch("/NICHIYA/seller/register", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify(payload)
+                });
+
+                const result = await res.json();
+
+                if (res.ok && result.ok) {
+                    alert("판매자 회원가입이 완료되었습니다!");
+
+                    if (confirm("로그인 페이지로 이동하시겠습니까?")) {
+                        location.href = "/NICHIYA/member/login";
+                    } else {
+                        location.href = "/NICHIYA/member/join";
+                    }
+                } else {
+                    alert("회원가입 실패: " + (result.error || "알 수 없는 오류"));
+                }
+            } catch (err) {
+                console.error(err);
+                alert("서버 오류로 가입 실패");
+            }
         });
     </script>
 </body>

@@ -402,6 +402,17 @@
             </li>
         </ul>
 
+        <!-- 회원유형 선택 -->
+        <div class="user-type" style="margin-top: 40px; border-top: 1px solid #eee; padding-top: 20px;">
+            <p style="font-weight:600; margin-bottom:8px;">가입 유형 선택</p>
+            <label style="margin-right: 20px;">
+                <input type="radio" name="userType" value="user" checked> 일반회원
+            </label>
+            <label>
+                <input type="radio" name="userType" value="seller"> 판매자회원
+            </label>
+        </div>
+
         <div class="actions">
             <button type="button" class="btn outline" id="btnCancel">취소</button>
             <button type="submit" class="btn solid" id="btnNext" disabled>다음</button>
@@ -511,10 +522,19 @@
             // 취소 버튼 (원하면 변경)
             cancelBtn?.addEventListener('click', () => history.back());
 
+            // 여기서 일반회원 판매자회원 구분될 수 있게 처리
             nextBtn.addEventListener('click', () => {
-                if (!nextBtn.disabled) {
-                    // 필수 동의 모두 완료된 상태에서만 이동
+                if (nextBtn.disabled) return;
+
+                // 약관 필수 동의 모두 체크됐을 때만 실행
+                const userType = document.querySelector('input[name="userType"]:checked').value;
+
+                if (userType === 'user') {
+                    // 일반회원 가입 페이지로 이동
                     window.location.href = '/NICHIYA/member/register';
+                } else if (userType === 'seller') {
+                    // 판매자 회원가입 페이지로 이동
+                    window.location.href = '/NICHIYA/member/signupseller';
                 }
             });
 
