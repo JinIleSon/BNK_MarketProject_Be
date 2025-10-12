@@ -1,5 +1,5 @@
 <div th:replace="~{admin/_noneStickyHeader.html}"></div>
-
+<script th:src="@{/js/select-all-table.js}" defer></script>
     <main style="border-top:1px solid #e2e2e2; display: flex; justify-content: center; ">
         <div>
             <aside class="euro-nav" aria-label="관리자 사이드 메뉴" style="">
@@ -201,79 +201,83 @@
                         });
                     </script>
                 <table style="border-collapse: collapse; width:100%; font-size:12px; text-align: center; ">
-                    <tr style="border-top:1px solid gray; height:50px; border-bottom:1px solid #e2e2e2;">
-                        <th style="padding:15px; width: 84px;">
-                          <input type="checkbox" id="checkAll"/>
-                        </th>
-                        <th style="width:30px;">번호</th>
-                        <th style="width:104px;">1차유형</th>
-                        <th style="width:73px;">2차유형</th>
-                        <th style="width:300px;">제목</th>
-                        <th style="width:62px;">작성자</th>
-                        <th style="width:62px;">작성일</th>
-                        <th style="width:62px;">상태</th>
-                    </tr>
-                    <tr style="border-bottom:1px solid #e2e2e2; height:70px;vertical-align: middle;"
-                        th:each="admin, stat: ${pageResponseDTO.dtoList}">
-                        <th style="width: 40px;">
-                          <input type="checkbox" id="checkeach" class="chk" th:value="${admin.id}">
-                        </th>
-                        <td th:text="${pageResponseDTO.startNo - stat.index}">120</td>
-                        <td th:text="${admin.board_type2 == 'member' ? '회원' :
-                    (admin.board_type2 == 'event' ? '쿠폰 / 이벤트' :
-                    (admin.board_type2 == 'pay' ? '주문 / 결제' :
-                    (admin.board_type2 == 'delivery' ? '배송' :
-                    (admin.board_type2 == 'cancel' ? '취소 / 반품 / 교환' :
-                    (admin.board_type2 == 'trip' ? '여행 / 숙박 / 항공' :
-                    (admin.board_type2 == 'safe' ? '안전거래' : ''))))))}">회원</td>
-                        <td th:text="${admin.board_type3 == 'signup' ? '가입' :
-                    (admin.board_type3 == 'withdraw' ? '탈퇴' :
-                    (admin.board_type3 == 'account' ? '회원정보' :
-                    (admin.board_type3 == 'login' ? '로그인' :
-                    (admin.board_type3 == 'couponissue' ? '쿠폰발급' :
-                    (admin.board_type3 == 'couponuse' ? '쿠폰사용' :
-                    (admin.board_type3 == 'eventjoin' ? '이벤트참여' :
-                    (admin.board_type3 == 'winnercheck' ? '당첨확인' :
-                    (admin.board_type3 == 'orderguide' ? '주문방법' :
-                    (admin.board_type3 == 'paymentmethod' ? '결제수단' :
-                    (admin.board_type3 == 'paymenterror' ? '결제오류' :
-                    (admin.board_type3 == 'receipt' ? '영수증/증빙' :
-                    (admin.board_type3 == 'tracking' ? '배송조회' :
-                    (admin.board_type3 == 'deliverytime' ? '배송기간' :
-                    (admin.board_type3 == 'deliveryfee' ? '배송비' :
-                    (admin.board_type3 == 'globalshipping' ? '해외배송' :
-                    (admin.board_type3 == 'ordercancel' ? '주문취소' :
-                    (admin.board_type3 == 'refund' ? '반품' :
-                    (admin.board_type3 == 'exchange' ? '교환' :
-                    (admin.board_type3 == 'refundprocess' ? '환불처리' :
-                    (admin.board_type3 == 'reservation' ? '예약' :
-                    (admin.board_type3 == 'payment' ? '결제' :
-                    (admin.board_type3 == 'changecancel' ? '변경/취소' :
-                    (admin.board_type3 == 'guide' ? '이용안내' :
-                    (admin.board_type3 == 'security' ? '보안공지' :
-                    (admin.board_type3 == 'alert' ? '사기주의' :
-                    (admin.board_type3 == 'safepayment' ? '안전결제' :
-                    (admin.board_type3 == 'privacy' ? '개인정보보호' : '')))))))))))))))))))))))))))}">가입</td>
-                        <td><a th:href="${admin.look == 0 ?
-                                        '/NICHIYA/admin/inquiry/answer?id=' + admin.id :
-                                        '/NICHIYA/admin/inquiry/view?id=' + admin.id}">[[${admin.title}]]</a></td>
-                        <td th:text="${(admin != null and admin.userId != null) ?
-                                            ((#strings.length(admin.userId) > 3) ?
-                                                #strings.substring(admin.userId, 0, #strings.length(admin.userId) - 3) + '***'
+                    <thead>
+                        <tr style="border-top:1px solid gray; height:50px; border-bottom:1px solid #e2e2e2;">
+                            <th style="padding:15px; width: 84px;">
+                              <input type="checkbox" id="checkAll" data-select-all-target=".chk"/>
+                            </th>
+                            <th style="width:30px;">번호</th>
+                            <th style="width:104px;">1차유형</th>
+                            <th style="width:73px;">2차유형</th>
+                            <th style="width:300px;">제목</th>
+                            <th style="width:62px;">작성자</th>
+                            <th style="width:62px;">작성일</th>
+                            <th style="width:62px;">상태</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr style="border-bottom:1px solid #e2e2e2; height:70px;vertical-align: middle;"
+                            th:each="admin, stat: ${pageResponseDTO.dtoList}">
+                            <th style="width: 40px;">
+                              <input type="checkbox" id="checkeach" class="chk" th:value="${admin.id}">
+                            </th>
+                            <td th:text="${pageResponseDTO.startNo - stat.index}">120</td>
+                            <td th:text="${admin.board_type2 == 'member' ? '회원' :
+                        (admin.board_type2 == 'event' ? '쿠폰 / 이벤트' :
+                        (admin.board_type2 == 'pay' ? '주문 / 결제' :
+                        (admin.board_type2 == 'delivery' ? '배송' :
+                        (admin.board_type2 == 'cancel' ? '취소 / 반품 / 교환' :
+                        (admin.board_type2 == 'trip' ? '여행 / 숙박 / 항공' :
+                        (admin.board_type2 == 'safe' ? '안전거래' : ''))))))}">회원</td>
+                            <td th:text="${admin.board_type3 == 'signup' ? '가입' :
+                        (admin.board_type3 == 'withdraw' ? '탈퇴' :
+                        (admin.board_type3 == 'account' ? '회원정보' :
+                        (admin.board_type3 == 'login' ? '로그인' :
+                        (admin.board_type3 == 'couponissue' ? '쿠폰발급' :
+                        (admin.board_type3 == 'couponuse' ? '쿠폰사용' :
+                        (admin.board_type3 == 'eventjoin' ? '이벤트참여' :
+                        (admin.board_type3 == 'winnercheck' ? '당첨확인' :
+                        (admin.board_type3 == 'orderguide' ? '주문방법' :
+                        (admin.board_type3 == 'paymentmethod' ? '결제수단' :
+                        (admin.board_type3 == 'paymenterror' ? '결제오류' :
+                        (admin.board_type3 == 'receipt' ? '영수증/증빙' :
+                        (admin.board_type3 == 'tracking' ? '배송조회' :
+                        (admin.board_type3 == 'deliverytime' ? '배송기간' :
+                        (admin.board_type3 == 'deliveryfee' ? '배송비' :
+                        (admin.board_type3 == 'globalshipping' ? '해외배송' :
+                        (admin.board_type3 == 'ordercancel' ? '주문취소' :
+                        (admin.board_type3 == 'refund' ? '반품' :
+                        (admin.board_type3 == 'exchange' ? '교환' :
+                        (admin.board_type3 == 'refundprocess' ? '환불처리' :
+                        (admin.board_type3 == 'reservation' ? '예약' :
+                        (admin.board_type3 == 'payment' ? '결제' :
+                        (admin.board_type3 == 'changecancel' ? '변경/취소' :
+                        (admin.board_type3 == 'guide' ? '이용안내' :
+                        (admin.board_type3 == 'security' ? '보안공지' :
+                        (admin.board_type3 == 'alert' ? '사기주의' :
+                        (admin.board_type3 == 'safepayment' ? '안전결제' :
+                        (admin.board_type3 == 'privacy' ? '개인정보보호' : '')))))))))))))))))))))))))))}">가입</td>
+                            <td><a th:href="${admin.look == 0 ?
+                                            '/NICHIYA/admin/inquiry/answer?id=' + admin.id :
+                                            '/NICHIYA/admin/inquiry/view?id=' + admin.id}">[[${admin.title}]]</a></td>
+                            <td th:text="${(admin != null and admin.userId != null) ?
+                                                ((#strings.length(admin.userId) > 3) ?
+                                                    #strings.substring(admin.userId, 0, #strings.length(admin.userId) - 3) + '***'
+                                                    :
+                                                    '***'
+                                                )
                                                 :
                                                 '***'
-                                            )
-                                            :
-                                            '***'
-                                    }">chh**</td>
-                        <td th:text="${#temporals.format(admin.createdAt, 'yyyy-MM-dd')}">0000-00-00</td>
-                        <td th:text="${admin.look == 0 ? '검토 중' : '답변완료'}"
-                        th:style="${admin.look == 0 ? 'color:black;' : 'color:#4f9cd3;'}">검토 중</td>
-                    </tr>
+                                        }">chh**</td>
+                            <td th:text="${#temporals.format(admin.createdAt, 'yyyy-MM-dd')}">0000-00-00</td>
+                            <td th:text="${admin.look == 0 ? '검토 중' : '답변완료'}"
+                            th:style="${admin.look == 0 ? 'color:black;' : 'color:#4f9cd3;'}">검토 중</td>
+                        </tr>
+                    </tbody>
                 </table>
                 <div style="display: flex; justify-content: space-between;">
                   <input id="deleteSelectedBtn"
-                          type="button" value="선택삭제" style="cursor:pointer;width: 80px; height: 40px; background-color: #000; color: #ffffff; margin-top: 30px;">
+                          type="button" value="선택삭제" style="cursor:pointer;width: 80px; height: 40px; background-color: #000; color: #ffffff; margin-top: 30px; border:none;">
                 </div>
 
                     <div style=" height: 100px; margin-top:40px; display: flex; justify-content: center;">

@@ -1,5 +1,5 @@
 <div th:replace="~{admin/_header.html}"></div>
-
+<script th:src="@{/js/select-all-table.js}" defer></script>
     <main style="display: flex; justify-content: center; border-top:1px solid #e2e2e2;">
         <div>
             <aside class="euro-nav" aria-label="관리자 사이드 메뉴" style="">
@@ -98,7 +98,7 @@
             <table style="width:100%; border-collapse:collapse; text-align:center; font-size:14px;">
               <thead>
                 <tr style="border-top:2px solid #000; border-bottom:1px solid #ccc; background:#fff;">
-                  <th style="padding:15px;"><input type="checkbox"></th>
+                  <th style="padding:15px;"><input type="checkbox" data-select-all-target=".chk"></th>
                   <th>번호</th>
                   <th>유형</th>
                   <th>제목</th>

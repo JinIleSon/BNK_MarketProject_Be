@@ -1,6 +1,6 @@
 <div th:replace="~{admin/_header.html}"></div>
 <script src="//t1.daumcdn.net/mapjsapi/bundle/postcode/prod/postcode.v2.js"></script>
-
+<script th:src="@{/js/select-all-table.js}" defer></script>
     <main style="display: flex; justify-content: center; border-top:1px solid #e2e2e2;">
         <div>
             <aside class="euro-nav" aria-label="관리자 사이드 메뉴" style="">
@@ -92,7 +92,7 @@
             <table style="width:100%; border-collapse:collapse; text-align:center; font-size:14px;">
               <thead>
                 <tr style="border-top:2px solid #000; border-bottom:1px solid #ccc; background:#fafafa; height:50px;">
-                  <th style="padding:8px;"><input type="checkbox"></th>
+                  <th style="padding:8px;"><input type="checkbox" data-select-all-target=".chk"></th>
                   <th>번호</th>
                   <th>상호명</th>
                   <th>대표</th>
@@ -183,6 +183,7 @@
             });
     });
 </script>
+
     <style>
         .current{
             border:1px solid #333;

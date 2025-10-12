@@ -1,5 +1,6 @@
 <div th:replace="~{admin/_header.html}"></div>
 <script src="//t1.daumcdn.net/mapjsapi/bundle/postcode/prod/postcode.v2.js"></script>
+<script th:src="@{/js/select-all-table.js}" defer></script>
     <main style="display: flex; justify-content: center; border-top:1px solid #e2e2e2;">
         <div>
             <aside class="euro-nav" aria-label="관리자 사이드 메뉴" style="">
@@ -93,7 +94,7 @@
             <table style="width:100%; border-collapse:collapse; text-align:center; font-size:14px;">
               <thead>
                 <tr style="border-top:2px solid #000; border-bottom:1px solid #ccc; background:#fafafa; height:60px;">
-                  <th style="width:41px; padding:8px;"><input type="checkbox"></th>
+                  <th style="width:41px; padding:8px;"><input type="checkbox" data-select-all-target=".chk"></th>
                   <th style="width:32px;">번호</th>
                   <th style="width:85px;">아이디</th>
                   <th style="width:47px;">이름</th>
@@ -121,7 +122,7 @@
                               data-created-at=${admin.created_at},
                               data-look=${admin.look}
                             ">
-                  <td><input type="checkbox"></td>
+                  <td><input type="checkbox" class="chk"></td>
                   <td>[[${pageResponseDTO.startNo - stat.index}]]</td>
                   <td th:text="${admin.userId}">xxx...</td>
                   <td th:text="${admin.rep}">정우성</td>

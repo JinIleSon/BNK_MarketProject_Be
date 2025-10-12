@@ -1,5 +1,5 @@
 <div th:replace="~{admin/_noneStickyHeader.html}"></div>
-
+<script th:src="@{/js/select-all-table.js}" defer></script>
 <main style="border-top:1px solid #e2e2e2; display: flex; justify-content: center; ">
     <div>
         <aside class="euro-nav" aria-label="관리자 사이드 메뉴" style="">
@@ -86,47 +86,50 @@
                     </form>
                 </div>
                 <table style="border-collapse: collapse; width:100%; font-size:12px; text-align: center; ">
-                    <tr style="border-top:1px solid gray; height:50px; border-bottom:1px solid #e2e2e2;">
-                        <th style="width:40px">
-                            <input type="checkbox" id="checkAll"/>
-                        </th>
-                        <th style="width:50px !important;">번호</th>
-                        <th style="width:90px !important;">채용부서</th>
-                        <th style="width:120px;">경력사항</th>
-                        <th style="width:66px;">채용형태</th>
-                        <th style="width:180px;">제목</th>
-                        <th style="width:82px;">작성자</th>
-                        <th style="width:50px;">상태</th>
-                        <th style="width:103px;">모집기간</th>
-                        <th style="">작성일</th>
-                    </tr>
-                    <tr style="border-bottom:1px solid #e2e2e2; height:70px;vertical-align: middle;"
-                        th:each="admin, stat:${pageResponseDTO.dtoList}">
-                        <th style="width: 40px;">
-                            <input type="checkbox" class="chk" th:value="${admin.id}" id="checkeach">
-                        </th>
-                        <td><a href="#" style="font-weight: 800;"
-                               >[[${pageResponseDTO.startNo - stat.index}]]</a></td>
-                        <td th:text="${admin.department}">IT</td>
-                        <td th:text="${admin.career}">신입</td>
-                        <td th:text="${admin.form}">정규직</td>
-                        <td th:text="${admin.title}">프론트앤드 신입 채용</td>
-                        <td th:text="${admin.user_name}">관리자</td>
-                        <td style="color:#8bd8a7"
-                            th:text="${admin.status}"
-                            th:style="${admin.status == '모집중' ? 'color:#70d29c;' : 'color:gray;'}">모집중</td>
-                        <td>
-                            <span th:text="${#temporals.format(admin.recruit_from, 'yyyy-MM-dd')}"></span> <br>~
-                            <span th:text="${#temporals.format(admin.recruit_to, 'yyyy-MM-dd')}"></span>
-                        </td>
-                        <td th:utext="${#temporals.format(admin.created_at, 'yyyy-MM-dd')} + '<br>' + ${#temporals.format(admin.created_at, 'HH:mm:ss')}"></td>
-                    </tr>
-
+                    <thead>
+                        <tr style="border-top:1px solid gray; height:50px; border-bottom:1px solid #e2e2e2;">
+                            <th style="width:40px">
+                                <input type="checkbox" id="checkAll" data-select-all-target=".chk"/>
+                            </th>
+                            <th style="width:50px !important;">번호</th>
+                            <th style="width:90px !important;">채용부서</th>
+                            <th style="width:120px;">경력사항</th>
+                            <th style="width:66px;">채용형태</th>
+                            <th style="width:180px;">제목</th>
+                            <th style="width:82px;">작성자</th>
+                            <th style="width:50px;">상태</th>
+                            <th style="width:103px;">모집기간</th>
+                            <th style="">작성일</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr style="border-bottom:1px solid #e2e2e2; height:70px;vertical-align: middle;"
+                            th:each="admin, stat:${pageResponseDTO.dtoList}">
+                            <th style="width: 40px;">
+                                <input type="checkbox" class="chk" th:value="${admin.id}" id="checkeach">
+                            </th>
+                            <td><a href="#" style="font-weight: 800;"
+                                   >[[${pageResponseDTO.startNo - stat.index}]]</a></td>
+                            <td th:text="${admin.department}">IT</td>
+                            <td th:text="${admin.career}">신입</td>
+                            <td th:text="${admin.form}">정규직</td>
+                            <td th:text="${admin.title}">프론트앤드 신입 채용</td>
+                            <td th:text="${admin.user_name}">관리자</td>
+                            <td style="color:#8bd8a7"
+                                th:text="${admin.status}"
+                                th:style="${admin.status == '모집중' ? 'color:#70d29c;' : 'color:gray;'}">모집중</td>
+                            <td>
+                                <span th:text="${#temporals.format(admin.recruit_from, 'yyyy-MM-dd')}"></span> <br>~
+                                <span th:text="${#temporals.format(admin.recruit_to, 'yyyy-MM-dd')}"></span>
+                            </td>
+                            <td th:utext="${#temporals.format(admin.created_at, 'yyyy-MM-dd')} + '<br>' + ${#temporals.format(admin.created_at, 'HH:mm:ss')}"></td>
+                        </tr>
+                    </tbody>
                 </table>
                 <div style="display: flex; justify-content: space-between;">
                     <input type="button" id="deleteSelectedBtn"
-                           value="선택삭제" style="cursor:pointer; width: 80px; height: 40px; background-color: #000; color: #ffffff; margin-top: 30px;">
-                    <input type="button" id="openModalBtn" class="review-btn" value="채용등록" style="cursor:pointer; width: 80px; height: 40px; background-color: #000; color: #ffffff; margin-top: 30px;">
+                           value="선택삭제" style="border:none;cursor:pointer; width: 80px; height: 40px; background-color: #000; color: #ffffff; margin-top: 30px;">
+                    <input type="button" id="openModalBtn" class="review-btn" value="채용등록" style="border:none;cursor:pointer; width: 80px; height: 40px; background-color: #000; color: #ffffff; margin-top: 30px;">
 
                     <!-- ===== 상품평 모달 복붙 : 채용등록 모달 (내용만 교체) ===== -->
                     <div class="modal-backdrop" id="reviewModalBackdrop" aria-hidden="true"></div>

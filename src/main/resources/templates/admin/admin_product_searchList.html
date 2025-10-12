@@ -1,5 +1,5 @@
 <div th:replace="~{admin/_noneStickyHeader.html}"></div>
-
+<script th:src="@{/js/select-all-table.js}" defer></script>
 <main style="border-top:1px solid #e2e2e2; display: flex; justify-content: center; ">
     <div>
         <aside class="euro-nav" aria-label="관리자 사이드 메뉴" style="">
@@ -85,58 +85,62 @@
                     </form>
                 </div>
                 <table style="border-collapse: collapse; width:100%; font-size:12px; text-align: center; ">
-                    <tr style="border-top:1px solid gray; height:50px; border-bottom:1px solid #e2e2e2;">
-                        <th style="width:37px;"><input type="checkbox"></th>
-                        <th style="width:72px;">사진</th>
-                        <th style="width:105px;">상품코드</th>
-                        <th style="width:96px;">상품명</th>
-                        <th style="width:85px;">판매가격</th>
-                        <th style="width:65px;">할인가</th>
-                        <th style="width:65px;">포인트</th>
-                        <th style="width:53px;">재고</th>
-                        <th style="width:98px;">판매자</th>
-                        <th style="width:45px;">조회</th>
-                        <th style="width:119px;">관리</th>
-                    </tr>
-                    <tr style="border-bottom:1px solid #e2e2e2; height:70px;vertical-align: middle;"
-                        th:each="admin, stat:${pageResponseDTO.dtoList}">
-                        <td><input class="chk" th:value="${admin.id}" type="checkbox"></td>
-                        <td style="padding-left:9px;">
-                            <div style="width: 60px;         /* 고정 너비 */
-                                          height: 60px;        /* 고정 높이 */
-                                          overflow: hidden;    /* 영역 밖은 잘라냄 */
-                                          display: flex;
-                                          justify-content: center;
-                                          align-items: center;">
-                                <img th:src="@{/{p}(p=${
-                                                #strings.isEmpty(#strings.trim(admin.url))
-                                                  ? 'images/no-image.png'
-                                                  : (#strings.startsWith(#strings.trim(admin.url), '/')
-                                                        ? #strings.substring(#strings.trim(admin.url), 1)
-                                                        : #strings.trim(admin.url))
-                                            })}" alt=""
-                                     style="width: 100%;
-                                                  height: 100%;
-                                                  object-fit: cover;   /* 공간을 꽉 채우되 넘치면 잘림 */
-                                                  vertical-align: middle;">
-                            </div>
-                        </td>
-                        <td th:text="${admin.product_code}"></td>
-                        <td th:text="${admin.product_name}">상품명 #1</td>
-                        <td th:text="${admin.price}">32,000</td>
-                        <td th:text="${admin.discount}">10%</td>
-                        <td th:text="${admin.point}">320</td>
-                        <td th:text="${admin.stock}">1,000</td>
-                        <td th:text="${admin.user_name}">(주)다파라</td>
-                        <td th:text="${admin.hits}">120</td>
-                        <td>
-                            <form th:action="@{/admin/productReg/delete}" method="post"
-                                  onsubmit="return confirm('정말로 삭제하시겠습니까?');">
-                                <input type="hidden" name="product_code" th:value="${admin.product_code}">
-                                <button type="submit" style="cursor:pointer;border:none; background: white;">[삭제]</button>
-                            </form>
-                        </td>
-                    </tr>
+                    <thead>
+                        <tr style="border-top:1px solid gray; height:50px; border-bottom:1px solid #e2e2e2;">
+                            <th style="width:37px;"><input type="checkbox" data-select-all-target=".chk"></th>
+                            <th style="width:72px;">사진</th>
+                            <th style="width:105px;">상품코드</th>
+                            <th style="width:96px;">상품명</th>
+                            <th style="width:85px;">판매가격</th>
+                            <th style="width:65px;">할인가</th>
+                            <th style="width:65px;">포인트</th>
+                            <th style="width:53px;">재고</th>
+                            <th style="width:98px;">판매자</th>
+                            <th style="width:45px;">조회</th>
+                            <th style="width:119px;">관리</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr style="border-bottom:1px solid #e2e2e2; height:70px;vertical-align: middle;"
+                            th:each="admin, stat:${pageResponseDTO.dtoList}">
+                            <td><input class="chk" th:value="${admin.id}" type="checkbox"></td>
+                            <td style="padding-left:9px;">
+                                <div style="width: 60px;         /* 고정 너비 */
+                                              height: 60px;        /* 고정 높이 */
+                                              overflow: hidden;    /* 영역 밖은 잘라냄 */
+                                              display: flex;
+                                              justify-content: center;
+                                              align-items: center;">
+                                    <img th:src="@{/{p}(p=${
+                                                    #strings.isEmpty(#strings.trim(admin.url))
+                                                      ? 'images/no-image.png'
+                                                      : (#strings.startsWith(#strings.trim(admin.url), '/')
+                                                            ? #strings.substring(#strings.trim(admin.url), 1)
+                                                            : #strings.trim(admin.url))
+                                                })}" alt=""
+                                         style="width: 100%;
+                                                      height: 100%;
+                                                      object-fit: cover;   /* 공간을 꽉 채우되 넘치면 잘림 */
+                                                      vertical-align: middle;">
+                                </div>
+                            </td>
+                            <td th:text="${admin.product_code}"></td>
+                            <td th:text="${admin.product_name}">상품명 #1</td>
+                            <td th:text="${admin.price}">32,000</td>
+                            <td th:text="${admin.discount}">10%</td>
+                            <td th:text="${admin.point}">320</td>
+                            <td th:text="${admin.stock}">1,000</td>
+                            <td th:text="${admin.user_name}">(주)다파라</td>
+                            <td th:text="${admin.hits}">120</td>
+                            <td>
+                                <form th:action="@{/admin/productReg/delete}" method="post"
+                                      onsubmit="return confirm('정말로 삭제하시겠습니까?');">
+                                    <input type="hidden" name="product_code" th:value="${admin.product_code}">
+                                    <button type="submit" style="cursor:pointer;border:none; background: white;">[삭제]</button>
+                                </form>
+                            </td>
+                        </tr>
+                    </tbody>
                 </table>
                 <div style="display: flex; margin-top:25px;">
                     <button id="deleteSelectedBtn" type="button"
