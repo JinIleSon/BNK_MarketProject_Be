@@ -95,7 +95,7 @@ public class AdminFAQController {
     }
 
     // 선택삭제
-    @PostMapping("/admin/FAQ/delete")
+    @PostMapping("/admin/FAQ/multi-delete")
     @ResponseBody
     public String deleteFAQs(@RequestBody List<Integer> ids){
         log.info("ids={}", ids);

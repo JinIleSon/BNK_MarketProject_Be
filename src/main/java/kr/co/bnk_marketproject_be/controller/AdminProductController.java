@@ -45,7 +45,7 @@ public class AdminProductController {
         return "admin/admin_product_searchList";
     }
 
-    @PostMapping("/admin/product/delete")
+    @PostMapping("/admin/product/multi-delete")
     @ResponseBody
     public String deleteProducts(@RequestBody List<Integer> ids) {
         log.info("ids:{}",ids);

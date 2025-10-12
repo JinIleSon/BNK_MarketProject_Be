@@ -216,7 +216,7 @@
                     <tr style="border-bottom:1px solid #e2e2e2; height:70px;vertical-align: middle;"
                         th:each="admin, stat: ${pageResponseDTO.dtoList}">
                         <th style="width: 40px;">
-                          <input type="checkbox" id="checkeach">
+                          <input type="checkbox" id="checkeach" class="chk" th:value="${admin.id}">
                         </th>
                         <td th:text="${pageResponseDTO.startNo - stat.index}">120</td>
                         <td th:text="${admin.board_type2 == 'member' ? '회원' :
@@ -272,7 +272,8 @@
                     </tr>
                 </table>
                 <div style="display: flex; justify-content: space-between;">
-                  <input type="button" value="선택삭제" style="width: 80px; height: 40px; background-color: #000; color: #ffffff; margin-top: 30px;">
+                  <input id="deleteSelectedBtn"
+                          type="button" value="선택삭제" style="cursor:pointer;width: 80px; height: 40px; background-color: #000; color: #ffffff; margin-top: 30px;">
                 </div>
 
                     <div style=" height: 100px; margin-top:40px; display: flex; justify-content: center;">
@@ -293,6 +294,38 @@
                                type="button" class="next-page" value="다음 >" style="">
                     </div>
     </main>
+<script th:inline="javascript">
+    // 서버가 알아서 컨텍스트 경로를 붙여 완전한 URL로 바꿔줍니다.
+    const DELETE_URL = /*[[@{/admin/inquiry/multi-delete}]]*/ "/admin/inquiry/multi-delete";
+
+    document.getElementById("deleteSelectedBtn").addEventListener("click", function () {
+        const checked = Array.from(document.querySelectorAll(".chk:checked")).map(chk => Number(chk.value));
+        if (checked.length === 0) { alert("삭제할 문의를 선택하세요."); return; }
+        if (!confirm(`${checked.length}개의 문의를 삭제하시겠습니까?`)) return;
+
+        const csrfToken  = document.querySelector('meta[name="_csrf"]')?.content;
+        const csrfHeader = document.querySelector('meta[name="_csrf_header"]')?.content || 'X-CSRF-TOKEN';
+
+        const headers = { "Content-Type": "application/json" };
+        if (csrfToken) headers[csrfHeader] = csrfToken;
+
+        fetch(DELETE_URL, {   // ← 하드코딩 대신 DELETE_URL 사용
+            method: "POST",
+            headers,
+            body: JSON.stringify(checked)
+        })
+            .then(async res => {
+                const body = await res.text();
+                if (!res.ok) throw new Error(`status=${res.status}, body=${body}`);
+                alert("삭제가 완료되었습니다.");
+                location.reload();
+            })
+            .catch(err => {
+                console.error("[DELETE ERROR]", err);
+                alert("삭제 중 오류가 발생했습니다.\n" + String(err));
+            });
+    });
+</script>
     <style>
         .current{
             border:1px solid #333;
