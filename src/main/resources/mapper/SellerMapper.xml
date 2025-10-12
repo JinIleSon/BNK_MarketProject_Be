@@ -1,0 +1,159 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="kr.co.bnk_marketproject_be.repository.SellerMybatisRepository">
+
+    <!-- ============================== -->
+    <!-- 판매자 등록 -->
+    <!-- ============================== -->
+    <insert id="insertSeller" parameterType="kr.co.bnk_marketproject_be.dto.SellerDTO">
+        INSERT INTO NICHIYA.SELLERS (
+            USERS_ID,
+            SELLER_ID,
+            BRAND_NAME,
+            BIZ_REGISTRATION_NUMBER,
+            MAIL_ORDER_NUMBER,
+            CREATED_AT
+        ) VALUES (
+                     #{userId},
+                     #{sellerId},
+                     #{brand_name},
+                     #{biz_registration_number},
+                     #{mail_order_number},
+                     (CURRENT_TIMESTAMP AT TIME ZONE 'Asia/Seoul')
+                 )
+    </insert>
+
+    <!-- ============================== -->
+    <!-- 아이디 중복 확인 -->
+    <!-- ============================== -->
+    <select id="countBySellerId" parameterType="string" resultType="int">
+        SELECT COUNT(*)
+        FROM NICHIYA.SELLERS
+        WHERE SELLER_ID = #{sellerId}
+    </select>
+
+    <!-- ============================== -->
+    <!-- 이메일 중복 확인 (JOIN USERS) -->
+    <!-- ============================== -->
+    <select id="countByEmail" parameterType="string" resultType="int">
+        SELECT COUNT(*)
+        FROM NICHIYA.SELLERS s
+                 JOIN NICHIYA.USERS u ON s.USERS_ID = u.ID
+        WHERE u.EMAIL = #{email}
+    </select>
+
+    <!-- ============================== -->
+    <!-- 전화번호 중복 확인 (JOIN USERS) -->
+    <!-- ============================== -->
+    <select id="countByPhone" parameterType="string" resultType="int">
+        SELECT COUNT(*)
+        FROM NICHIYA.SELLERS s
+                 JOIN NICHIYA.USERS u ON s.USERS_ID = u.ID
+        WHERE u.PHONE = #{phone}
+    </select>
+
+    <!-- ============================== -->
+    <!-- 이름 + 이메일로 판매자 찾기 -->
+    <!-- ============================== -->
+    <select id="findByNameAndEmail" parameterType="map"
+            resultType="kr.co.bnk_marketproject_be.dto.SellerDTO">
+        SELECT
+            s.ID,
+            s.USERS_ID AS userId,
+            s.SELLER_ID AS sellerId,
+            s.BRAND_NAME,
+            s.BIZ_REGISTRATION_NUMBER,
+            s.MAIL_ORDER_NUMBER,
+            s.CREATED_AT,
+            s.UPDATED_AT,
+            u.NAME,
+            u.EMAIL,
+            u.PHONE
+        FROM NICHIYA.SELLERS s
+                 JOIN NICHIYA.USERS u ON s.USERS_ID = u.ID
+        WHERE u.NAME = #{name}
+          AND u.EMAIL = #{email}
+    </select>
+
+    <!-- ============================== -->
+    <!-- 이름 + 전화번호로 판매자 찾기 -->
+    <!-- ============================== -->
+    <select id="findByNameAndPhone" parameterType="map"
+            resultType="kr.co.bnk_marketproject_be.dto.SellerDTO">
+        SELECT
+            s.ID,
+            s.USERS_ID AS userId,
+            s.SELLER_ID AS sellerId,
+            s.BRAND_NAME,
+            s.BIZ_REGISTRATION_NUMBER,
+            s.MAIL_ORDER_NUMBER,
+            s.CREATED_AT,
+            s.UPDATED_AT,
+            u.NAME,
+            u.EMAIL,
+            u.PHONE
+        FROM NICHIYA.SELLERS s
+                 JOIN NICHIYA.USERS u ON s.USERS_ID = u.ID
+        WHERE u.NAME = #{name}
+          AND u.PHONE = #{phone}
+    </select>
+
+    <!-- ============================== -->
+    <!-- sellerId + email로 비밀번호 인증용 조회 -->
+    <!-- ============================== -->
+    <select id="findBySellerIdAndEmail" parameterType="map"
+            resultType="kr.co.bnk_marketproject_be.dto.SellerDTO">
+        SELECT
+            s.ID,
+            s.USERS_ID AS userId,
+            s.SELLER_ID AS sellerId,
+            s.BRAND_NAME,
+            s.BIZ_REGISTRATION_NUMBER,
+            s.MAIL_ORDER_NUMBER,
+            s.CREATED_AT,
+            s.UPDATED_AT,
+            u.NAME,
+            u.EMAIL,
+            u.PHONE
+        FROM NICHIYA.SELLERS s
+                 JOIN NICHIYA.USERS u ON s.USERS_ID = u.ID
+        WHERE s.SELLER_ID = #{sellerId}
+          AND u.EMAIL = #{email}
+    </select>
+
+    <!-- ============================== -->
+    <!-- sellerId + phone로 비밀번호 인증용 조회 -->
+    <!-- ============================== -->
+    <select id="findBySellerIdAndPhone" parameterType="map"
+            resultType="kr.co.bnk_marketproject_be.dto.SellerDTO">
+        SELECT
+            s.ID,
+            s.USERS_ID AS userId,
+            s.SELLER_ID AS sellerId,
+            s.BRAND_NAME,
+            s.BIZ_REGISTRATION_NUMBER,
+            s.MAIL_ORDER_NUMBER,
+            s.CREATED_AT,
+            s.UPDATED_AT,
+            u.NAME,
+            u.EMAIL,
+            u.PHONE
+        FROM NICHIYA.SELLERS s
+                 JOIN NICHIYA.USERS u ON s.USERS_ID = u.ID
+        WHERE s.SELLER_ID = #{sellerId}
+          AND u.PHONE = #{phone}
+    </select>
+
+    <!-- ============================== -->
+    <!-- 비밀번호 변경 -->
+    <!-- ============================== -->
+    <update id="updatePassword" parameterType="map">
+        UPDATE NICHIYA.SELLERS
+        SET PASSWORD = #{password}
+        WHERE SELLER_ID = #{sellerId}
+    </update>
+
+</mapper>
