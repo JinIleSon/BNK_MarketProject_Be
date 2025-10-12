@@ -96,7 +96,7 @@ public class AdminAnnouncementController {
     }
 
     // 선택삭제
-    @PostMapping("/admin/announcement/delete")
+    @PostMapping("/admin/announcement/multi-delete")
     @ResponseBody
     public String deleteAnnouncements(@RequestBody List<Integer> ids) {
         log.info("ids={}", ids);
