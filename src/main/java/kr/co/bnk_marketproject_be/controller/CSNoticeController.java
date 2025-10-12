@@ -21,7 +21,7 @@ public class CSNoticeController {
     private final CSNoticeService csNoticeService;
 
     /* 공지사항 목록 */
-    @GetMapping("/notice/list")
+    @GetMapping("cs/notice/list")
     public String noticeList(@RequestParam(required = false) String boardType,
                              @RequestParam(defaultValue = "0") int page,
                              Model model) {
@@ -45,7 +45,7 @@ public class CSNoticeController {
 
 
     /* 공지사항 상세 보기(view) */
-    @GetMapping("/notice/view/{id}")
+    @GetMapping("cs/notice/view/{id}")
     public String noticeView(
             @PathVariable Long id,
             @RequestParam(required = false) String boardType,

@@ -1,13 +1,399 @@
 <!DOCTYPE html>
-<html lang="ko">
+<html xmlns:th="http://www.thymeleaf.org" lang="ko">
 <head>
   <meta charset="UTF-8" />
   <title>자주하는 질문 (FAQ)</title>
-  <link rel="stylesheet" href="../css/common.css" />
-  <link rel="stylesheet" href="../css/faq2.css" />
+<!--  <link rel="stylesheet" href="../css/common.css" />-->
+<!--  <link rel="stylesheet" href="../css/faq2.css" />-->
 </head>
+
+<style>
+    body {
+        font-family: 'Malgun Gothic', '맑은 고딕', sans-serif;
+        font-size: 14px;
+        color: #333;
+        line-height: 1.5;
+        background-color: #f8f8f8;
+    }
+
+    #wrap {
+        width: 1200px;
+        margin: 0 auto;
+        background-color: #fff;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    }
+
+    #content {
+        padding: 30px;
+        min-height: 600px;
+    }
+
+    h1 {
+        font-size: 24px;
+        font-weight: bold;
+        color: #000;
+        margin-bottom: 20px;
+    }
+
+    table {
+        width: 100%;
+        border-collapse: collapse;
+    }
+
+    table th, table td {
+        padding: 15px;
+        text-align: center;
+        border-bottom: 1px solid #ddd;
+    }
+
+    table th {
+        background-color: #f4f4f4;
+        font-weight: bold;
+    }
+
+    .btn_area {
+        text-align: right;
+        margin-top: 20px;
+    }
+
+    .btn_area .btn_write, .btn_area .btn_cancel, .btn_area .btn_submit, .btn_area .btn_list, .btn_area .btn_more {
+        display: inline-block;
+        padding: 10px 20px;
+        font-size: 14px;
+        text-decoration: none;
+        border: 1px solid #ccc;
+        background-color: #eee;
+        color: #333;
+        cursor: pointer;
+    }
+
+    .btn_area .btn_write {
+        background-color: #555;
+        color: #fff;
+        border-color: #555;
+    }
+
+    .btn_area .btn_submit {
+        background-color: #007bff;
+        color: #fff;
+        border-color: #007bff;
+    }
+
+    .red {
+        color: #ff0000;
+    }
+
+    /* Sub Navigation (사이드 메뉴) */
+    .cs_sub_nav {
+        float: left;
+        width: 180px;
+    }
+
+    .cs_sub_nav ul {
+        list-style: none;
+        padding: 0;
+        margin: 0;
+    }
+
+    .cs_sub_nav li a {
+        display: block;
+        padding: 15px 10px;
+        border-bottom: 1px solid #ddd;
+        text-decoration: none;
+        color: #555;
+    }
+
+    .cs_sub_nav li.on a,
+    .cs_sub_nav li a:hover {
+        background-color: gray !important;
+        color: white !important;
+    }
+
+    /* notice sub nav 색깔 수정전
+     .cs_sub_nav li.on a, .cs_sub_nav li a:hover {
+        background-color: #f0f0f0;
+        color: #000;
+        font-weight: bold;
+    } */
+
+    /* Pagination */
+    .pagination {
+        text-align: center;
+        margin-top: 20px;
+    }
+
+    .pagination a {
+        display: inline-block;
+        width: 30px;
+        height: 30px;
+        line-height: 30px;
+        border: 1px solid #ddd;
+        color: #555;
+        text-decoration: none;
+        margin: 0 2px;
+    }
+
+    .pagination a.on {
+        background-color: #333;
+        color: #fff;
+        border-color: #333;
+    }
+
+    /* cs/index.jsp 스타일 */
+    .cs_main_wrap {
+        text-align: center;
+    }
+
+    .cs_main_wrap h1 {
+        font-size: 32px;
+        font-weight: bold;
+        margin-bottom: 50px;
+        color: #444;
+    }
+
+    .cs_main_wrap .cs_section {
+        max-width: 900px;
+        margin: 0 auto 40px;
+    }
+
+    .cs_main_wrap .section_title {
+        font-size: 20px;
+        font-weight: bold;
+        border-bottom: 2px solid #555;
+        padding-bottom: 10px;
+        margin-bottom: 20px;
+        position: relative;
+        text-align: left;
+    }
+
+    .cs_main_wrap .section_title .more_link {
+        font-size: 16px;
+        position: absolute;
+        right: 0;
+        top: 0;
+        text-decoration: none;
+        color: #0f71d3;
+        font-weight: bold;
+    }
+
+    .cs_main_wrap .section_list ul {
+        list-style: none;
+        padding: 0;
+        margin: 0;
+    }
+
+    .cs_main_wrap .section_list li {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 12px 0;
+        border-bottom: 1px dotted #ccc;
+    }
+
+    .cs_main_wrap .section_list a {
+        text-decoration: none;
+        color: #333;
+        flex-grow: 1;
+        text-align: left;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+
+    .cs_main_wrap .section_list .date,
+    .cs_main_wrap .section_list .writer {
+        font-size: 13px;
+        color: #999;
+        flex-shrink: 0;
+        margin-left: 15px;
+    }
+
+    /* 자주하는 질문 아이콘 섹션 */
+    .cs_main_wrap .faq_category {
+        display: flex;
+        justify-content: space-between;
+        gap: 15px;
+    }
+
+    .cs_main_wrap .faq_category a {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        text-align: center;
+        text-decoration: none;
+        color: #555;
+        flex: 1;
+        padding: 20px 10px;
+        /* index의 faq border 제거
+        border: 1px solid #ddd;*/
+        border-radius: 5px;
+        transition: background-color 0.2s;
+    }
+
+    .cs_main_wrap .faq_category a:hover {
+        background-color: #f5f5f5;
+    }
+
+    .cs_main_wrap .faq_category img {
+        width: 50px;
+        height: 50px;
+        margin-bottom: 8px;
+    }
+
+    .cs_main_wrap .faq_category span {
+        font-size: 13px;
+        line-height: 1.2;
+    }
+
+    .cs_main_wrap .qna_section .btn_area {
+        text-align: right;
+        margin-top: 15px;
+    }
+
+    .cs_main_wrap .qna_section .btn_write {
+        display: inline-block;
+        padding: 10px 20px;
+        background-color: #555;
+        color: #fff;
+        text-decoration: none;
+        border-radius: 5px;
+        font-weight: bold;
+    }
+
+    .cs_sub_nav {
+        width: 100%;
+        background-color: #f1f1f1;
+        border: 1px solid #ccc;
+        margin-bottom: 20px;
+    }
+
+    .cs_sub_nav ul {
+        display: flex;
+        padding: 0;
+        margin: 0;
+        list-style: none;
+        width: 100%;
+    }
+
+    .cs_sub_nav ul li {
+        flex: 1; /* ← 화면 가로를 각 항목이 1/n 로 균등 분할 */
+        text-align: center;
+        border-right: 1px solid #ddd;
+    }
+
+    .cs_sub_nav ul li:last-child {
+        border-right: none;
+    }
+
+    .cs_sub_nav ul li a {
+        display: block;
+        padding: 15px 0;
+        text-decoration: none;
+        color: #333;
+        font-weight: bold;
+        background-color: #fff;
+        transition: background-color 0.2s, color 0.2s;
+    }
+
+    .cs_sub_nav ul li.on a,
+    .cs_sub_nav ul li a:hover {
+        background-color: gray;
+        color: white;
+    }
+
+    .cs_faq_list_wrap {
+        overflow: hidden;
+        padding: 0 20px;
+        box-sizing: border-box;
+        max-width: 1200px;
+        margin: 0 auto;
+    }
+
+    .cs_faq_list_wrap .faq_list_area {
+        width: 100%;
+        float: none;
+        box-sizing: border-box;
+    }
+
+    .cs_faq_list_wrap .faq_section {
+        margin-bottom: 30px;
+    }
+
+    .cs_faq_list_wrap .faq_section h2 {
+        font-size: 20px;
+        font-weight: bold;
+        color: #555;
+        margin-bottom: 15px;
+    }
+
+    .cs_faq_list_wrap .faq_item {
+        border-bottom: 1px solid #ccc;
+        padding: 10px 0;
+    }
+
+    .cs_faq_list_wrap .faq_item .faq_q {
+        width: 100%;
+        text-align: left;
+        padding: 15px;
+        background-color: #fff;
+        border: none;
+        font-size: 15px;
+        font-weight: bold;
+        color: #333;
+        cursor: pointer;
+        position: relative;
+    }
+
+    .cs_faq_list_wrap .faq_item .faq_q:before {
+        content: 'Q.';
+        color: #007bff;
+        font-weight: bold;
+        margin-right: 5px;
+    }
+
+    .cs_faq_list_wrap .faq_item .faq_q:after {
+        content: '+';
+        position: absolute;
+        right: 15px;
+        font-size: 20px;
+        font-weight: normal;
+    }
+
+    .cs_faq_list_wrap .faq_item.open .faq_q:after {
+        content: '-';
+    }
+
+    .cs_faq_list_wrap .faq_item .faq_a {
+        display: none;
+        padding: 20px 15px;
+        background-color: #f9f9f9;
+        font-size: 13px;
+        line-height: 1.6;
+        color: #555;
+    }
+
+    .cs_faq_list_wrap .faq_item.open .faq_a {
+        display: block;
+    }
+
+    .btn_area {
+        margin-top: 20px;
+        text-align: center;
+    }
+
+    .btn_more {
+        padding: 10px 20px;
+        background-color: #007BFF; /* 파란색 */
+        color: white;
+        border: none;
+        cursor: pointer;
+        border-radius: 4px;
+    }
+
+</style>
 <body>
 <!-- 헤더/푸터 영역 -->
+<!--
     <script>
         fetch("../../main/header.html")
           .then(res => res.text())
@@ -30,6 +416,36 @@
             document.getElementById("footer").innerHTML = data;
           });
     </script>
+-->
+
+    <header th:replace="~{main/header :: header}">
+        <div style="margin-left:2%; width:98%; box-sizing: border-box; margin-top:2%; display:flex; height:230px;">
+            <button style="border:none;" id="menuBtn" class="icon-btn" aria-controls="menuOverlay" aria-expanded="false" aria-label="메뉴 열기">
+                <svg width="64" height="64" viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg">
+                    <rect y="12" width="64" height="1" fill="black"/>
+                    <rect y="30" width="64" height="1" fill="black"/>
+                    <rect y="48" width="64" height="1" fill="black"/>
+                </svg>
+            </button>
+            <div style="margin-left:3%;">
+                <img src="/images/logo.png" alt="" style="width:270px;">
+            </div>
+            <div style="margin-top:27px; margin-left:auto; margin-right:3%; flex:1; max-width:30%;">
+                <ul style="list-style-type: none; padding: 0; margin:0; display:flex; gap:40px;">
+                    <li style="flex:1; min-width: 100px;">
+                        <form action="" method="" style="width:100%;">
+                            <input type="text" style="background: transparent;border:none; border-bottom:1px solid; padding-bottom:10px; width:80%;" value="검색"
+                                   onfocus="this.style.outline='none';"
+                                   onblur="this.style.outline='none';">
+                        </form>
+                    </li>
+                    <li><a href="#" style="text-decoration: none; color:black; font-size:14px;">로그인</a></li>
+                    <li><a href="#" style="text-decoration: none; color:black; font-size:14px;">도움말</a></li>
+                    <li><a href="#" style="text-decoration: none; color:black; font-size:14px;">바스켓백 [0]</a></li>
+                </ul>
+            </div>
+        </div>
+    </header>
 
     <div id="header"></div>
 
@@ -38,36 +454,83 @@
     <h1>FAQ</h1>
 
     <!-- 카테고리 네비 -->
-    <div class="cs_sub_nav">
-      <ul id="category-nav">
-        <li><a href="#" data-category="회원">회원</a></li>
-        <li><a href="#" data-category="쿠폰/이벤트">쿠폰/이벤트</a></li>
-        <li><a href="#" data-category="주문/결제">주문/결제</a></li>
-        <li><a href="#" data-category="배송">배송</a></li>
-        <li><a href="#" data-category="취소/반품/교환">취소/반품/교환</a></li>
-        <li><a href="#" data-category="여행/숙박/항공">여행/숙박/항공</a></li>
-        <li><a href="#" data-category="안전거래">안전거래</a></li>
-      </ul>
-    </div>
+      <div class="cs_sub_nav">
+          <ul>
+              <li th:classappend="${boardType == null or boardType == '' or boardType == '회원'} ? 'on'">
+                  <a th:href="@{/cs/faq/list(boardType='회원')}">회원</a>
+              </li>
+              <li th:classappend="${boardType == '쿠폰' or boardType == '이벤트'} ? 'on'">
+                  <a th:href="@{/cs/faq/list(boardType='쿠폰/이벤트')}">쿠폰/이벤트</a>
+              </li>
+              <li th:classappend="${boardType == '주문' or boardType == '결제'} ? 'on'">
+                  <a th:href="@{/cs/faq/list(boardType='주문/결제')}">주문/결제</a>
+              </li>
+              <li th:classappend="${boardType == '배송'} ? 'on'">
+                  <a th:href="@{/cs/faq/list(boardType='배송')}">배송</a>
+              </li>
+              <li th:classappend="${boardType == '취소' or boardType == '반품' or boardType == '교환'} ? 'on'">
+                  <a th:href="@{/cs/faq/list(boardType='취소/반품/교환')}">취소/반품/교환</a>
+              </li>
+              <li th:classappend="${boardType == '여행' or boardType == '숙박' or boardType == '항공'} ? 'on'">
+                  <a th:href="@{/cs/faq/list(boardType='여행/숙박/항공')}">여행/숙박/항공</a>
+              </li>
+              <li th:classappend="${boardType == '안전'} ? 'on'">
+                  <a th:href="@{/cs/faq/list(boardType='안전거래')}">안전거래</a>
+              </li>
+          </ul>
+      </div>
 
-    <h2 id="category-title">회원 FAQ</h2>
+
+      <!--    <h2 id="category-title">회원 FAQ</h2>-->
 
     <!-- FAQ 목록 -->
     <div class="faq_list_area" id="faq-container"></div>
 
-    <!-- 더보기 버튼 -->
+    <!-- 더보기 버튼
     <div class="btn_area">
       <button class="btn_more" id="btn-more" style="border-radius: 0 !important; height:45px;">더보기</button>
       <button class="btn_less" id="btn-less" style="display:none; height:45px; border-radius: 0; padding:10px 20px; font-size: 14px; border:1px solid #ccc; background-color: #eee; color:#333; cursor:pointer;">간단히보기</button>
     </div>
+    -->
   </div>
 
-  
+
 
   <div id="footer" style="margin-top:150px;"></div>
 
+<!-- 작업중 구분선 -->
+
+
+<div class="faq-container">
+<!--    <h2>FAQ</h2>-->
+
+    <div th:each="faq : ${faqList}" class="faq-item">
+        <button class="faq-title" type="button" onclick="toggleContent(this)">
+            <span th:text="${faq.title}">제목</span>
+        </button>
+        <div class="faq-content">
+            <p th:text="${faq.content}">내용</p>
+        </div>
+    </div>
+</div>
+
+<!-- 더보기 버튼 -->
+<div class="btn_area">
+    <button class="btn_more" id="btn-more" style="border-radius: 0 !important; height:45px;">더보기</button>
+    <button class="btn_less" id="btn-less" style="display:none; height:45px; border-radius: 0; padding:10px 20px; font-size: 14px; border:1px solid #ccc; background-color: #eee; color:#333; cursor:pointer;">간단히보기</button>
+</div>
+
+<script>
+    function toggleContent(btn) {
+        const content = btn.nextElementSibling;
+        content.style.display = content.style.display === "block" ? "none" : "block";
+    }
+</script>
+
+<!-- 구분선 -->
 
 <!-- view 기능을 list에서 같이 구현 -->
+<!--
   <script>
     // FAQ 데이터
     const faqData = {
@@ -276,5 +739,11 @@
   renderFAQs(true);
   document.querySelector(`[data-category="${currentCategory}"]`).parentElement.classList.add("on");
   </script>
+
+  -->
+
+
 </body>
+
+<div th:replace="~{main/footer :: footer}"></div>
 </html>

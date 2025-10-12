@@ -25,3 +25,5 @@ public class CSFaqService {
         faqMapper.insertFaq(faq);
     }
 }
+
+
