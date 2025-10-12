@@ -73,4 +73,9 @@ public class AdminAnnouncementService {
             adminAnnouncementRepository.save(modelMapper.map(adminAnnouncementDTO, AdminAnnouncement.class));
         }
     }
+
+    @Transactional
+    public void deleteAnnouncements(List<Integer> ids){
+        adminAnnouncementRepository.deleteAllById(ids);
+    }
 }

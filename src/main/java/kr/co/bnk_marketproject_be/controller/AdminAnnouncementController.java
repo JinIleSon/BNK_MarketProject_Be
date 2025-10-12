@@ -11,6 +11,10 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.ResponseBody;
+
+import java.util.List;
 
 @Slf4j
 @RequiredArgsConstructor
@@ -89,6 +93,15 @@ public class AdminAnnouncementController {
         adminAnnouncementService.modifyAdminAnnouncement(adminAnnouncementDTO);
         model.addAttribute("adminAnnouncementDTO", adminAnnouncementDTO);
         return "admin/admin_announce_view";
+    }
+
+    // 선택삭제
+    @PostMapping("/admin/announcement/delete")
+    @ResponseBody
+    public String deleteAnnouncements(@RequestBody List<Integer> ids) {
+        log.info("ids={}", ids);
+        adminAnnouncementService.deleteAnnouncements(ids);
+        return "OK";
     }
 
 }
