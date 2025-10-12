@@ -92,4 +92,10 @@ public class AdminInquiryNoticeService {
                 .map(c -> modelMapper.map(c, AdminCommentDTO.class))
                 .orElse(null);
     }
+
+    // 선택삭제
+    @Transactional
+    public void deleteInquirys(List<Long> ids){
+        adminInquiryRepository.deleteAllById(ids);
+    }
 }

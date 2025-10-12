@@ -7,10 +7,9 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @Slf4j
 @RequiredArgsConstructor
@@ -81,5 +80,13 @@ public class AdminInquiryController {
         model.addAttribute("adminCommentDTO", adminCommentDTO);
         return "admin/admin_asking_detail";
     }
-    
+
+    // 선택삭제
+    @PostMapping("/admin/inquiry/multi-delete")
+    @ResponseBody
+    public String deleteMulti(@RequestBody List<Long> ids) {
+        log.info("ids={}", ids);
+        adminInquiryService.deleteInquirys(ids);
+        return "OK";
+    }
 }
