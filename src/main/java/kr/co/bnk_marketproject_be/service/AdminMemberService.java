@@ -111,4 +111,14 @@ public class AdminMemberService {
     public void updateOneMember(String userId){
         adminMapper.updateMember(userId);
     }
+
+    @Transactional
+    public void bulkUpdateGrades(List<MemberGradeUpdateDTO> updates) {
+        for (MemberGradeUpdateDTO u : updates) {
+            adminMemberRepository.findFirstByUserIdAndBoardType(u.getUserId(), "memberlist")
+                    .ifPresent(am -> {
+                        am.setGrade(u.getGrade());
+                    });
+        }
+    }
 }

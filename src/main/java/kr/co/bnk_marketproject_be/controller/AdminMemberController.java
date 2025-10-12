@@ -1,6 +1,7 @@
 package kr.co.bnk_marketproject_be.controller;
 
 import kr.co.bnk_marketproject_be.dto.AdminMemberDTO;
+import kr.co.bnk_marketproject_be.dto.MemberGradeUpdateDTO;
 import kr.co.bnk_marketproject_be.dto.PageRequestDTO;
 import kr.co.bnk_marketproject_be.dto.PageResponseAdminMemberDTO;
 import kr.co.bnk_marketproject_be.service.AdminMemberService;
@@ -10,10 +11,9 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @Controller
 @RequiredArgsConstructor
@@ -73,5 +73,15 @@ public class AdminMemberController {
     public String updateMember(@RequestParam("userId") String userId) {
         adminMemberService.updateOneMember(userId);
         return "redirect:/admin/member/list";
+    }
+
+    @PostMapping(value = "/admin/member/bulk-grade", consumes = MediaType.APPLICATION_JSON_VALUE)
+    @ResponseBody
+    public ResponseEntity<Void> bulkGrade(@RequestBody List<MemberGradeUpdateDTO> updates){
+        if(updates==null || updates.isEmpty()){
+            return ResponseEntity.badRequest().build();
+        }
+        adminMemberService.bulkUpdateGrades(updates);
+        return  ResponseEntity.ok().build();
     }
 }
