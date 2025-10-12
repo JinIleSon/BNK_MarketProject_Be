@@ -74,4 +74,9 @@ public class AdminFAQService {
             adminFAQRepository.save(modelMapper.map(adminFAQDTO, AdminFAQ.class));
         }
     }
+
+    // 선택삭제
+    public void deleteFAQs(List<Integer> ids){
+        adminFAQRepository.deleteAllById(ids);
+    }
 }
