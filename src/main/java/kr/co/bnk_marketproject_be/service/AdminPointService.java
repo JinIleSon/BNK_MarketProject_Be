@@ -1,6 +1,7 @@
 package kr.co.bnk_marketproject_be.service;
 
 import com.querydsl.core.Tuple;
+import jakarta.transaction.Transactional;
 import kr.co.bnk_marketproject_be.dto.AdminPointDTO;
 import kr.co.bnk_marketproject_be.dto.PageRequestDTO;
 import kr.co.bnk_marketproject_be.dto.PageResponseAdminPointDTO;
@@ -68,5 +69,10 @@ public class AdminPointService {
                 .dtoList(dtoList)
                 .total(total)
                 .build();
+    }
+
+    @Transactional
+    public void deleteStores(List<Integer> ids){
+        adminPointRepository.deleteAllById(ids);
     }
 }

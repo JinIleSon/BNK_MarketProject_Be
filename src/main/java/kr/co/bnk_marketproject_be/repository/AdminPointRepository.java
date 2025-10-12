@@ -8,6 +8,6 @@ import org.springframework.stereotype.Repository;
 import java.util.List;
 
 @Repository
-public interface AdminPointRepository extends JpaRepository<AdminPoint,String>, AdminPointRepositoryCustom {
+public interface AdminPointRepository extends JpaRepository<AdminPoint,Integer>, AdminPointRepositoryCustom {
     List<AdminPoint> findByBoardType(String boardType);
 }
