@@ -91,4 +91,9 @@ public class AdminStoreService {
         userRepository.save(modelMapper.map(userDTO, User.class));
     }
 
+    @Transactional
+    public void deleteStores(List<Integer> ids){
+        adminStoreRepository.deleteAllById(ids);
+    }
+
 }
