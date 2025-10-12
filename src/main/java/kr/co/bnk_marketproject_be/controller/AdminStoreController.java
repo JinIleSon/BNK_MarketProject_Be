@@ -10,6 +10,10 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.ResponseBody;
+
+import java.util.List;
 
 @Controller
 @Slf4j
@@ -50,4 +54,13 @@ public class AdminStoreController {
         adminStoreService.registerStore(adminStoreDTO);
         return "redirect:/admin/shop/list";
     }
+
+    @PostMapping("/admin/shop/delete")
+    @ResponseBody
+    public String deleteShops(@RequestBody List<Integer> ids) {
+        log.info("ids:{}",ids);
+        adminStoreService.deleteStores(ids);
+        return "OK";
+    }
+
 }
