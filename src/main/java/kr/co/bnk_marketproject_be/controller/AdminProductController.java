@@ -8,6 +8,11 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.ResponseBody;
+
+import java.util.List;
 
 @Controller
 @RequiredArgsConstructor
@@ -38,5 +43,14 @@ public class AdminProductController {
         model.addAttribute("pageResponseDTO", pageResponseDTO);
 
         return "admin/admin_product_searchList";
+    }
+
+    @PostMapping("/admin/product/delete")
+    @ResponseBody
+    public String deleteProducts(@RequestBody List<Integer> ids) {
+        log.info("ids:{}",ids);
+
+        adminMemberService.deleteProducts(ids);
+        return "OK";
     }
 }
