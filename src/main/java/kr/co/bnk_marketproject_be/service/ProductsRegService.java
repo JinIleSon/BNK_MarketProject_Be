@@ -68,6 +68,10 @@ public class ProductsRegService {
         productRegDTO.setCategories_id(categories_id);
         productRegDTO.setProduct_code(new_product_code);
 
+        // 엔티티 변환 및 저장
+        ProductReg entity = modelMapper.map(productRegDTO, ProductReg.class);
+        ProductReg saved = productRegRepository.save(entity);
+
         // 추가) product_options 테이블에 option_name, product_code 매핑
         String option_name = productRegDTO.getOption_name();
 
@@ -75,10 +79,6 @@ public class ProductsRegService {
         productOptionsDTO.setOption_name(option_name);
         productOptionsDTO.setProduct_code(productRegDTO.getProduct_code());
         productOptionsRepository.save(modelMapper.map(productOptionsDTO, ProductOptions.class));
-
-        // 5) 엔티티 변환 및 저장
-        ProductReg entity = modelMapper.map(productRegDTO, ProductReg.class);
-        ProductReg saved = productRegRepository.save(entity);
 
         // 추가) product_images 테이블에 products_id(products_id 중 최대값으로 매핑), url 매핑
         String url = productRegDTO.getUrl();

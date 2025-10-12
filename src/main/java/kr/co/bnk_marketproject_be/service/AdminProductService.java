@@ -1,6 +1,7 @@
 package kr.co.bnk_marketproject_be.service;
 
 import com.querydsl.core.Tuple;
+import jakarta.transaction.Transactional;
 import kr.co.bnk_marketproject_be.dto.ProductsDTO;
 import kr.co.bnk_marketproject_be.dto.PageRequestDTO;
 import kr.co.bnk_marketproject_be.dto.PageResponseAdminProductDTO;
@@ -14,6 +15,7 @@ import org.modelmapper.ModelMapper;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.web.bind.annotation.RequestBody;
 
 import java.util.List;
 
@@ -63,5 +65,11 @@ public class AdminProductService {
                 .dtoList(dtoList)
                 .total(total)
                 .build();
+    }
+
+    @Transactional
+    public void deleteProducts(List<Integer> ids) {
+        log.info("ids:{}",ids);
+        adminProductRepository.deleteAllById(ids);
     }
 }
