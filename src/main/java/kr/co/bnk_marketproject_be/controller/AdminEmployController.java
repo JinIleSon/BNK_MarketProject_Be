@@ -10,6 +10,10 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.ResponseBody;
+
+import java.util.List;
 
 @Slf4j
 @RequiredArgsConstructor
@@ -52,5 +56,13 @@ public class AdminEmployController {
         adminEmployDTO.setUser_name("최고관리자");
         adminEmployService.registerEmploy(adminEmployDTO);
         return "redirect:/admin/employ/list";
+    }
+
+    @PostMapping("/admin/employ/multi-delete")
+    @ResponseBody
+    public String deleteMulti(@RequestBody List<Integer> ids) {
+        log.info("ids={}", ids);
+        adminEmployService.deleteEmploys(ids);
+        return "OK";
     }
 }
