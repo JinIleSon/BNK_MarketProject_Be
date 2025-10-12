@@ -147,31 +147,53 @@
         }
 
         /* 상단 탭 */
+        /* ✅ notice_list.html과 동일하게 맞춤 */
+        .cs_sub_nav {
+            width: 100%;
+            background-color: #f1f1f1;
+            border: 1px solid #ccc;
+            margin-bottom: 20px;
+        }
+
         .cs_sub_nav ul {
             display: flex;
-            border-bottom: 1px solid #ddd;
             padding: 0;
-            margin: 0 0 30px 0;
-        }
-        .cs_sub_nav li {
+            margin: 0;
             list-style: none;
+            width: 100%;
         }
-        .cs_sub_nav a {
+
+        .cs_sub_nav ul li {
+            flex: 1; /* 각 항목을 동일한 너비로 배분 */
+            text-align: center;
+            border-right: 1px solid #ddd;
+        }
+
+        .cs_sub_nav ul li:last-child {
+            border-right: none;
+        }
+
+        .cs_sub_nav ul li a {
             display: block;
-            padding: 10px 25px;
+            padding: 15px 0;
             text-decoration: none;
             color: #333;
-            font-weight: 500;
+            font-weight: bold;
+            background-color: #fff;
+            transition: background-color 0.2s, color 0.2s;
         }
-        .cs_sub_nav li.on a,
-        .cs_sub_nav a:hover {
+
+        /* 활성 탭 / hover 시 스타일 */
+        .cs_sub_nav ul li.on a,
+        .cs_sub_nav ul li a:hover {
             background-color: gray;
-            color: #fff;
+            color: white;
         }
+
 
         /* 본문 */
         .title_area {
-            border-top: 2px solid #000;
+            border-top: 3px solid #ddd;
             border-bottom: 1px solid #ddd;
             padding: 20px 10px;
             margin-bottom: 30px;
@@ -207,6 +229,10 @@
         }
         .btn_list:hover {
             background-color: #333;
+        }
+
+        #content.cs_notice_view_wrap {
+            padding: 30px;
         }
     </style>
 
@@ -313,57 +339,60 @@
         <div style="display: flex; margin-left:20%; margin-top:1%; width:100%;">
             <nav class="overlay__menu" style="width:100%;">
                 <div style="">
-                    <a href="#"><b>공지사항</b></a>
+<!--                    <a href="#"><b>공지사항</b></a>-->
+                    <b>공지사항</b>
                     <br><br>
-                    <a href="#" data-cat="fashion">전체</a>
-                    <a href="#" data-cat="digital">고객서비스</a>
-                    <a href="#" data-cat="grocery">안전거래</a>
-                    <a href="#" data-cat="home">위해상품</a>
-                    <a href="#" data-cat="book">이벤트당첨</a>
+                    <a th:href="@{/cs/notice/list}">전체</a>
+                    <a th:href="@{/cs/notice/list(boardType='서비스')}">고객서비스</a>
+                    <a th:href="@{/cs/notice/list(boardType='안전거래')}">안전거래</a>
+                    <a th:href="@{/cs/notice/list(boardType='판매중지')}">위해상품</a>
+                    <a th:href="@{/cs/notice/list(boardType='당첨자')}">이벤트당첨</a>
                 </div>
-                <div id="subcol">
-                    <!-- 전체 -->
-                    <section class="panel" data-key="fashion">
-                        <h3>전체</h3>
-                        <!-- 이 안은 자유롭게: 그리드/이미지/텍스트 무엇이든 -->
-                        <ul class="menu-grid" style="">
-                        <li><a href="#">#</a></li>
-                        <!-- … -->
-                        </ul>
-                    </section>
 
-                    <!-- 고객서비스 -->
-                    <section class="panel" data-key="digital">
-                        <h3>고객서비스</h3>
-                        <div class="menu-grid">
-                        <a href="#">#</a>
-                        </div>
-                    </section>
+<!--                <div id="subcol">-->
+<!--                    &lt;!&ndash; 전체 &ndash;&gt;-->
+<!--                    <section class="panel" data-key="fashion">-->
+<!--                        <h3>전체</h3>-->
+<!--                        &lt;!&ndash; 이 안은 자유롭게: 그리드/이미지/텍스트 무엇이든 &ndash;&gt;-->
+<!--                        <ul class="menu-grid" style="">-->
+<!--                        <li><a href="#">#</a></li>-->
+<!--                        &lt;!&ndash; … &ndash;&gt;-->
+<!--                        </ul>-->
+<!--                    </section>-->
 
-                    <!-- 안전거래 -->
-                    <section class="panel" data-key="grocery">
-                        <h3>안전거래</h3>
-                        <div class="menu-grid">
-                            <a href="#">#</a>
-                        </div>
-                    </section>
+<!--                    &lt;!&ndash; 고객서비스 &ndash;&gt;-->
+<!--                    <section class="panel" data-key="digital">-->
+<!--                        <h3>고객서비스</h3>-->
+<!--                        <div class="menu-grid">-->
+<!--                        <a href="#">#</a>-->
+<!--                        </div>-->
+<!--                    </section>-->
 
-                    <!-- 위해상품 -->
-                    <section class="panel" data-key="home">
-                        <h3>위해상품</h3>
-                        <div class="menu-grid">
-                            <a href="#">#</a>
-                        </div>
-                    </section>
+<!--                    &lt;!&ndash; 안전거래 &ndash;&gt;-->
+<!--                    <section class="panel" data-key="grocery">-->
+<!--                        <h3>안전거래</h3>-->
+<!--                        <div class="menu-grid">-->
+<!--                            <a href="#">#</a>-->
+<!--                        </div>-->
+<!--                    </section>-->
 
-                    <!-- 이벤트당첨 -->
-                    <section class="panel" data-key="book">
-                        <h3>이벤트당첨</h3>
-                        <div class="menu-grid">
-                            <a href="#">#</a>
-                        </div>
-                    </section>
-                </div>
+<!--                    &lt;!&ndash; 위해상품 &ndash;&gt;-->
+<!--                    <section class="panel" data-key="home">-->
+<!--                        <h3>위해상품</h3>-->
+<!--                        <div class="menu-grid">-->
+<!--                            <a href="#">#</a>-->
+<!--                        </div>-->
+<!--                    </section>-->
+
+<!--                    &lt;!&ndash; 이벤트당첨 &ndash;&gt;-->
+<!--                    <section class="panel" data-key="book">-->
+<!--                        <h3>이벤트당첨</h3>-->
+<!--                        <div class="menu-grid">-->
+<!--                            <a href="#">#</a>-->
+<!--                        </div>-->
+<!--                    </section>-->
+<!--                </div>-->
+
                 <div style=""></div>
             </nav>
         </div>
@@ -430,28 +459,28 @@
 
     </script>
 
-    <div class="breadcrumb">
-        홈 &gt; 고객센터 &gt; 공지사항
-    </div>
+<!--    <div class="breadcrumb">-->
+<!--        홈 &gt; 고객센터 &gt; 공지사항-->
+<!--    </div>-->
 
     <div id="content" class="cs_notice_view_wrap">
-        <h1>공지사항</h1>
+        <h1>NOTICE View</h1>
         <div class="cs_sub_nav">
             <ul>
                 <li th:classappend="${boardType == null or boardType == '' or boardType == '전체'} ? 'on'">
-                    <a th:href="@{/notice/list}">전체</a>
+                    <a th:href="@{/cs/notice/list}">전체</a>
                 </li>
                 <li th:classappend="${boardType == '서비스'} ? 'on'">
-                    <a th:href="@{/notice/list(boardType='서비스')}">고객서비스</a>
+                    <a th:href="@{/cs/notice/list(boardType='서비스')}">고객서비스</a>
                 </li>
                 <li th:classappend="${boardType == '안전거래'} ? 'on'">
-                    <a th:href="@{/notice/list(boardType='안전거래')}">안전거래</a>
+                    <a th:href="@{/cs/notice/list(boardType='안전거래')}">안전거래</a>
                 </li>
                 <li th:classappend="${boardType == '판매중지'} ? 'on'">
-                    <a th:href="@{/notice/list(boardType='판매중지')}">위해상품</a>
+                    <a th:href="@{/cs/notice/list(boardType='판매중지')}">위해상품</a>
                 </li>
                 <li th:classappend="${boardType == '당첨자'} ? 'on'">
-                    <a th:href="@{/notice/list(boardType='당첨자')}">이벤트당첨</a>
+                    <a th:href="@{/cs/notice/list(boardType='당첨자')}">이벤트당첨</a>
                 </li>
             </ul>
         </div>
@@ -462,11 +491,11 @@
                 <p class="date" th:text="${#temporals.format(notice.createdAt, 'yyyy.MM.dd')}">2025.10.10</p>
             </div>
 
-            <div class="view_area" th:utext="${notice.content}"></div>
+            <div class="view_area" th:utext="${notice.content}" style="border-bottom: 1px solid #ddd"></div>
         </div>
 
         <div class="btn_area">
-            <a th:href="@{/notice/list(boardType=${boardType})}" class="btn_list">목록</a>
+            <a th:href="@{/cs/notice/list(boardType=${boardType})}" class="btn_list">목록</a>
         </div>
     </div>
 

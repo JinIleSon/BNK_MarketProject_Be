@@ -7,23 +7,34 @@
 
     <!-- FAQ 목록 -->
     <select id="selectFaqList" resultType="kr.co.bnk_marketproject_be.dto.CSNoticeDTO">
-        SELECT *
+        SELECT
+            id,
+            board_type AS boardType,
+            title
         FROM BOARD
-        WHERE BOARD_TYPE = 'FAQ'
-        ORDER BY CREATED_AT DESC
+        WHERE board_type = 'faq'
+        ORDER BY id DESC
+        OFFSET 0 ROWS FETCH NEXT 3 ROWS ONLY
     </select>
 
     <!-- FAQ 상세 -->
-    <select id="selectFaqDetail" resultType="kr.co.bnk_marketproject_be.dto.CSNoticeDTO">
-        SELECT *
-        FROM BOARD
-        WHERE BOARD_TYPE = 'FAQ' AND ID = #{id}
+    <select id="selectFaqDetail" parameterType="long" resultType="kr.co.bnk_marketproject_be.dto.CSNoticeDTO">
+        SELECT
+            id,
+            board_type AS boardType,
+            title,
+            content,
+            created_at AS createdAt
+        FROM board
+        WHERE id = #{id}
     </select>
 
-    <!-- FAQ 등록 (관리자용) -->
+
+    <!-- FAQ 등록 주석처리
     <insert id="insertFaq" parameterType="kr.co.bnk_marketproject_be.dto.CSNoticeDTO">
-        INSERT INTO BOARD (BOARD_TYPE, TITLE, CONTENT, CREATED_AT)
-        VALUES ('FAQ', #{title}, #{content}, SYSDATE)
+        INSERT INTO cs_notice (board_type, title, content, created_at)
+        VALUES (#{boardType}, #{title}, #{content}, NOW())
     </insert>
+    -->
 
 </mapper>

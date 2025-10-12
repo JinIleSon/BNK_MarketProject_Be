@@ -11,12 +11,12 @@ import java.util.List;
 
 @Controller
 @RequiredArgsConstructor
-@RequestMapping("/faq")
+@RequestMapping("/cs/faq")
 public class CSFaqController {
 
     private final CSFaqService faqService;
 
-    /** FAQ 목록 */
+    /* FAQ 목록 */
     @GetMapping("/list")
     public String list(Model model) {
         List<CSNoticeDTO> faqList = faqService.getFaqList();
@@ -24,7 +24,7 @@ public class CSFaqController {
         return "customer_service/faq/faq_list";
     }
 
-    /** FAQ 상세 */
+    /* FAQ 상세 미구현 */
     @GetMapping("/detail/{id}")
     public String detail(@PathVariable Long id, Model model) {
         CSNoticeDTO faq = faqService.getFaqDetail(id);
@@ -32,7 +32,7 @@ public class CSFaqController {
         return "customer_service/faq/faq_view";
     }
 
-    /** 관리자 FAQ 등록 */
+    /* 관리자 FAQ 등록 미구현 */
     @PostMapping("/write")
     public String write(@ModelAttribute CSNoticeDTO faq) {
         faqService.insertFaq(faq);
