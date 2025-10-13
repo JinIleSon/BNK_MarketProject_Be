@@ -1,0 +1,564 @@
+<div th:replace="~{admin/_header.html}"></div>
+<style>
+    .title-line {
+        width: 880px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-left: 20px;
+    }
+    table {
+        border-collapse: collapse;
+        width: 880px;
+        margin-left: 20px;
+    }
+    tr{
+        border-top: 1px solid #ddd;
+        border-bottom: 1px solid #ddd;
+    }
+    th {
+        font-weight: normal;
+    }
+    .th-blue {
+        border-top: 1px solid #ddd;
+        border-bottom: 1px solid #ddd;
+        width: 100px;
+        height: 150px;
+        background-color: #dde6f3;
+    }
+    .th-gray {
+        padding: 10px;
+        background-color: #f2f2f2;
+        text-align: left;
+    }
+    .btn {
+        padding: 8px 12px;
+        background-color: #6FADCF;
+        color: #fff;
+        border: none;
+        cursor: pointer;
+        float: right;
+    }
+    .status-gap {
+        height: 10px;
+        border: none;
+    }
+    .terms-box {
+        padding: 5px;
+    }
+
+    .terms-content {
+        border: 1px solid #ddd;
+        padding: 12px;
+        line-height: 1.6;
+        font-size: 14px;
+        color: #333;
+    }
+    html{ scrollbar-gutter: stable; }
+    .icon-btn {
+        background:none; border:1px solid #000; cursor:pointer;
+        width:40px; height:40px; display:grid; place-items:center;
+    }
+</style>
+    <main style="display: flex; justify-content: center; border-top:1px solid #e2e2e2;">
+        <div>
+            <aside class="euro-nav" aria-label="관리자 사이드 메뉴" style="">
+                <section class="euro-nav__group">
+                    <h4 class="euro-nav__title" style="">환경설정</h4>
+                    <ul class="euro-nav__list">
+                        <li class="euro-nav__item"><a th:href="@{/admin/admin_basic}">기본설정</a></li>
+                        <li class="euro-nav__item"><a th:href="@{/admin/admin_banner}">배너관리</a></li>
+                        <li class="euro-nav__item is-active"><a th:href="@{/admin/admin_policy}">약관관리</a></li>
+                        <li class="euro-nav__item"><a th:href="@{/admin/admin_category}">카테고리</a></li>
+                        <li class="euro-nav__item"><a th:href="@{/admin/admin_version}">버전관리</a></li>
+                    </ul>
+                </section>
+
+                <section class="euro-nav__group">
+                    <h4 class="euro-nav__title" style="">상점관리</h4>
+                    <ul class="euro-nav__list">
+                        <li class="euro-nav__item"><a th:href="@{/admin/shop/list}">상점목록</a></li>
+                        <li class="euro-nav__item"><a th:href="@{/admin/sales/list}">매출현황</a></li>
+                    </ul>
+                </section>
+
+                <section class="euro-nav__group">
+                    <h4 class="euro-nav__title" style="">회원관리</h4>
+                    <ul class="euro-nav__list">
+                        <li class="euro-nav__item"><a th:href="@{/admin/member/list}">회원목록</a></li>
+                        <li class="euro-nav__item"><a th:href="@{/admin/point/list}">포인트관리</a></li>
+                    </ul>
+                </section>
+
+                <section class="euro-nav__group">
+                    <h4 class="euro-nav__title" style="">상품관리</h4>
+                    <ul class="euro-nav__list">
+                        <li class="euro-nav__item"><a th:href="@{/admin/product/list}">상품목록</a></li>
+                        <li class="euro-nav__item"><a th:href="@{/admin/productReg/list}">상품등록</a></li>
+                    </ul>
+                </section>
+
+                <section class="euro-nav__group">
+                    <h4 class="euro-nav__title" style="">주문관리</h4>
+                    <ul class="euro-nav__list">
+                        <li class="euro-nav__item"><a th:href="@{/admin/order/list}">주문현황</a></li>
+                        <li class="euro-nav__item"><a th:href="@{/admin/delivery/list}">배송현황</a></li>
+                    </ul>
+                </section>
+
+                <section class="euro-nav__group">
+                    <h4 class="euro-nav__title" style="">쿠폰관리</h4>
+                    <ul class="euro-nav__list">
+                        <li class="euro-nav__item"><a th:href="@{/admin/coupon/list}">쿠폰목록</a></li>
+                        <li class="euro-nav__item"><a th:href="@{/admin/couponsnow/list}">쿠폰발급현황</a></li>
+                    </ul>
+                </section>
+
+                <section class="euro-nav__group">
+                    <h4 class="euro-nav__title" style="">고객센터</h4>
+                    <ul class="euro-nav__list">
+                        <li class="euro-nav__item"><a th:href="@{/admin/announcement/list}">공지사항</a></li>
+                        <li class="euro-nav__item"><a th:href="@{/admin/FAQ/list}">자주묻는질문</a></li>
+                        <li class="euro-nav__item"><a th:href="@{/admin/inquiry/list}">문의하기</a></li>
+                        <li class="euro-nav__item"><a th:href="@{/admin/employ/list}">채용하기</a></li>
+                    </ul>
+                </section>
+            </aside>
+        </div>
+        <div style="border-left:1px solid #e2e2e2; "></div>
+        <div style="margin-left:40px; width:900px; height:1500px; ">
+
+            <form>
+                <!-- 약관관리 타이틀 -->
+                <div class="title-line" style="border-bottom: 3px solid #ccc;">
+                    <div style="padding-top: 10px; padding-bottom: 5px; font-size: 22px;">
+                    <b>약관관리</b>
+                    </div>
+                    <div>HOME > 환경설정 > <b>약관관리</b></div>
+                </div>
+
+                <!-- 구매회원 약관 -->
+                <div class="title-line">
+                    <div style="padding-top: 15px; font-size: 20px; padding-bottom: 5px;"><b>구매회원 약관</b></div>
+                </div>
+                <table>
+                    <tr>
+                    <th class="th-gray" colspan="2">회원가입 및 정책 페이지 노출 약관 입니다.</th>
+                    </tr>
+                    <tr class="status-gap"></tr>
+                    <tr>
+                    <th class="th-blue">약관내용</th>
+                    <td class="terms-box">
+                        <div class="terms-content" th:text="${Config.termsBuyer}">약관 내용이 여기에 표시됩니다.</div>
+                    </td>
+                    </tr>
+                </table>
+                <div style="width:880px; margin-left:20px; text-align:right; margin-top: 5px;">
+                    <button type="submit" class="btn">수정하기</button>
+                </div>
+
+                <!-- 판매회원 약관 -->
+                <div class="title-line">
+                    <div style="font-size: 20px;"><b>판매회원 약관</b></div>
+                </div>
+                <table>
+                    <tr>
+                    <th class="th-gray" colspan="2">판매회원 및 정책 페이지 노출 약관 입니다.</th>
+                    </tr>
+                    <tr class="status-gap"></tr>
+                    <tr>
+                    <th class="th-blue">약관내용</th>
+                    <td class="terms-box">
+                        <div class="terms-content" th:text="${Config.termsSeller}">약관 내용이 여기에 표시됩니다.</div>
+                    </td>
+                    </tr>
+                </table>
+                <div style="width:880px; margin-left:20px; text-align:right; margin-top: 5px;">
+                    <button type="submit" class="btn">수정하기</button>
+                </div>
+
+                <!-- 전자금융거래 약관 -->
+                <div class="title-line">
+                    <div style="font-size: 20px;"><b>전자금융거래 약관</b></div>
+                </div>
+                <table>
+                    <tr>
+                    <th class="th-gray" colspan="2">전자금융거래 및 정책 페이지 노출 약관 입니다.</th>
+                    </tr>
+                    <tr class="status-gap"></tr>
+                    <tr>
+                    <th class="th-blue">약관내용</th>
+                    <td class="terms-box">
+                        <div class="terms-content" th:text="${Config.termsFinance}">약관 내용이 여기에 표시됩니다.</div>
+                    </td>
+                    </tr>
+                </table>
+                <div style="width:880px; margin-left:20px; text-align:right; margin-top: 5px;">
+                    <button type="submit" class="btn">수정하기</button>
+                </div>
+
+                <!-- 위치정보 이용약관 -->
+                <div class="title-line">
+                    <div style="font-size: 20px;"><b>위치정보 이용약관</b></div>
+                </div>
+                <table>
+                    <tr>
+                    <th class="th-gray" colspan="2">위치정보 및 정책 페이지 노출 약관 입니다.</th>
+                    </tr>
+                    <tr class="status-gap"></tr>
+                    <tr>
+                    <th class="th-blue">약관내용</th>
+                    <td class="terms-box">
+                        <div class="terms-content" th:text="${Config.termsLocation}">약관 내용이 여기에 표시됩니다.</div>
+                    </td>
+                    </tr>
+                </table>
+                <div style="width:880px; margin-left:20px; text-align:right; margin-top: 5px;">
+                    <button type="submit" class="btn">수정하기</button>
+                </div>
+
+                <!-- 개인정보처리방침 약관 -->
+                <div class="title-line">
+                    <div style="font-size: 20px;"><b>개인정보처리방침 약관</b></div>
+                </div>
+                <table>
+                    <tr>
+                    <th class="th-gray" colspan="2">개인정보처리방침 및 정책 페이지 노출 약관 입니다.</th>
+                    </tr>
+                    <tr class="status-gap"></tr>
+                    <tr>
+                    <th class="th-blue">약관내용</th>
+                    <td class="terms-box">
+                        <div class="terms-content" th:text="${Config.termsPrivacy}">약관 내용이 여기에 표시됩니다.</div>
+                    </td>
+                    </tr>
+                </table>
+                <div style="width:880px; margin-left:20px; text-align:right; margin-top: 5px;">
+                    <button type="submit" class="btn">수정하기</button>
+                </div>
+            </form>
+
+            <!-- ===== 약관 수정 모달 ===== -->
+            <div class="modal-backdrop" id="termsModalBackdrop" aria-hidden="true"></div>
+            <div class="modal" id="termsModal" role="dialog" aria-modal="true"
+                 aria-labelledby="termsModalTitle" aria-hidden="true">
+                <div class="modal-dialog" tabindex="-1" style="border-radius:0 !important; width:720px; max-width:calc(100% - 40px);">
+                    <div class="modal-header" style="border-radius:0 !important;">
+                        <div>
+                            <span id="termsModalTitle">약관 수정</span>
+                            <span class="date" id="termsModalSubTitle" style="margin-left:10px; opacity:.85;"></span>
+                        </div>
+                        <button class="modal-close" type="button" aria-label="닫기" id="termsClose">✕</button>
+                    </div>
+
+                    <form id="termsForm" class="modal-body review-form" method="post" action="/NICHIYA/admin/terms">
+                        <!-- CSRF 토큰(프로젝트에 맞게 바인딩) -->
+                        <!--<input type="hidden" name="_csrf" th:value="${_csrf.token}">-->
+                        <!-- 어떤 섹션인지(BUYER/SELLER/FINANCE/LOCATION/PRIVACY) -->
+                        <input type="hidden" name="type" id="termsType">
+
+                        <table class="review-grid" style="border-top:1px solid #eee;">
+                            <tr>
+                                <td>약관 내용</td>
+                                <td>
+            <textarea id="termsTextarea" name="content" maxlength="500"
+                      placeholder="수정할 약관 내용을 입력하세요 (최대 500자)"
+                      style="width:100%; min-height:160px;"></textarea>
+                                    <div class="char-count"><span id="termsCount">0</span>/500</div>
+                                </td>
+                            </tr>
+                        </table>
+
+                        <div class="review-actions" style="display:flex; gap:10px; justify-content:center; margin-top:16px;">
+                            <button type="button" id="termsCancel"
+                                    style="min-width:120px; height:38px; border:0; background:#ccc; color:#fff;">취소</button>
+                            <button type="submit"
+                                    style="min-width:120px; height:38px; border:0; background:black; color:#fff; font-weight:500;">저장</button>
+                        </div>
+
+                        <button class="sr-only" id="termsSentinel">끝</button>
+                    </form>
+                </div>
+            </div>
+
+        </div>
+    </main>
+
+<!-- 모달 전용 스타일 -->
+<style>
+    /* 전체 오버레이 */
+    .modal-backdrop {
+        position: fixed; inset: 0;
+        background: rgba(0,0,0,.45);
+        display: none;
+        z-index: 9998;
+    }
+    .modal-backdrop.is-open { display: block; }
+
+    /* 모달 박스 */
+    .modal {
+        position: fixed; inset: 0;
+        display: none;
+        place-items: center;
+        z-index: 9999;
+    }
+    .modal.is-open { display: grid; }
+
+    .modal-dialog {
+        width: 860px; max-width: calc(100% - 40px);
+        background: #fff; border-radius: 10px;
+        box-shadow: 0 20px 60px rgba(0,0,0,.25);
+        overflow: hidden;
+        font-family: sans-serif;
+    }
+    /* 상단 바 */
+    .modal-header {
+        background: black; color:#fff;
+        padding: 4px 16px; font-weight: 700;
+        display: flex; align-items: center; justify-content: space-between;
+    }
+    .modal-header .date { font-weight: 400; opacity:.9; margin-left: 12px; }
+    .modal-close {
+        appearance: none; border: 0; background: transparent;
+        color:#fff; font-size: 20px; cursor: pointer; padding: 4px 8px;
+    }
+    /* 본문 */
+    .modal-body { padding: 0; }
+    .section {
+        padding: 14px 18px;
+    }
+    .section-title {
+        font-weight: 700; margin-bottom: 8px;
+    }
+    table.order-info {
+        width: 100%; border-collapse: collapse; font-size: 14px;
+    }
+    .order-info th, .order-info td {
+        border-bottom: 1px solid #eee; padding: 10px; vertical-align: middle;
+    }
+    .order-info thead th {
+        background: #dedede; color:#fff; font-size: 12px; height: 38px;
+    }
+    .thumb { width: 120px; }
+    .price {
+        font-size: 18px; font-weight: 800; margin-top: 8px;
+    }
+    .right { text-align: right; white-space: nowrap; }
+    /* 배송정보 표 */
+    .kv { width: 100%; border-collapse: collapse; font-size: 14px; }
+    .kv td { border-bottom: 1px solid #eee; padding: 10px; padding-left: 13px; }
+    .kv td:first-child {height: 45px; background-color: #f2f2f2; text-align: center; width: 130px; }
+    /* 접근성 포커스 트랩용 */
+    .sr-only { position:absolute; width:1px; height:1px; padding:0; margin:-1px; overflow:hidden; clip:rect(0,0,0,0); border:0; }
+
+    /* ===== 리뷰 모달 보강 ===== */
+    .review-form { padding: 18px; }
+    .review-grid { width:100%; border-collapse: collapse; font-size:14px; }
+    .review-grid td { border-bottom:1px solid #eee; padding:10px; }
+    .review-grid td:first-child { width:120px; text-align:center; background:#f2f2f2; }
+    .review-title {
+        border:none; border-bottom:1px solid gray; width:270px; outline:none;
+        height:34px; padding:6px 8px; box-sizing:border-box;
+    }
+    .review-textarea {
+        width:100%; resize:none; outline:none; padding:8px; box-sizing:border-box; height:160px;
+    }
+    .review-actions { display:flex; justify-content:center; gap:10px; margin-top:16px; }
+    .char-count { font-size:12px; color:#666; text-align:right; margin-top:6px; }
+
+    /* 별점: 기본은 빈 별(☆), 선택/호버 시 채움(★) */
+    .rating { display:inline-flex; flex-direction: row-reverse; gap:4px; }
+    .rating input { position:absolute; opacity:0; }
+    .rating label { cursor:pointer; font-size:22px; line-height:1; }
+
+    /* 기본은 빈 별 */
+    .rating label::before { content: '☆'; }
+
+    /* 선택된 값과 그 왼쪽(시각적 기준)까지 채움 */
+    .rating input:checked ~ label::before { content: '★'; }
+
+    /* 마우스 올렸을 때 미리보기(호버 구간까지 채움) */
+    .rating label:hover::before,
+    .rating label:hover ~ label::before { content: '★'; }
+</style>
+
+
+<script>
+    (function(){
+        // 섹션 제목 → 서버 type 매핑
+        const TYPE_MAP = {
+            '구매회원 약관': 'BUYER',
+            '판매회원 약관': 'SELLER',
+            '전자금융거래 약관': 'FINANCE',
+            '위치정보 이용약관': 'LOCATION',
+            '개인정보처리방침 약관': 'PRIVACY'
+        };
+
+        // 모달 요소
+        const $backdrop  = document.getElementById('termsModalBackdrop');
+        const $modal     = document.getElementById('termsModal');
+        const $dialog    = $modal.querySelector('.modal-dialog');
+        const $close     = document.getElementById('termsClose');
+        const $cancel    = document.getElementById('termsCancel');
+        const $form      = document.getElementById('termsForm');
+        const $textarea  = document.getElementById('termsTextarea');
+        const $type      = document.getElementById('termsType');
+        const $title     = document.getElementById('termsModalTitle');
+        const $subTitle  = document.getElementById('termsModalSubTitle');
+        const $count     = document.getElementById('termsCount');
+        const $sentinel  = document.getElementById('termsSentinel');
+
+        let lastFocusedBtn = null; // 포커스 복귀용
+
+        // 글자 수 카운트
+        function updateCount(){
+            $count.textContent = ($textarea.value || '').length;
+        }
+        $textarea.addEventListener('input', updateCount);
+
+        // 모달 열기
+        function openTermsModal(sectionTitle, initialText){
+            $title.textContent = '약관 수정';
+            $subTitle.textContent = `- ${sectionTitle}`;
+            $textarea.value = (initialText || '').trim();
+            updateCount();
+            $type.value = TYPE_MAP[sectionTitle] || 'UNKNOWN';
+
+            $backdrop.classList.add('is-open');
+            $modal.classList.add('is-open');
+
+            // 포커스 트랩 시작
+            setTimeout(() => $dialog.focus(), 0);
+        }
+
+        // 모달 닫기
+        function closeTermsModal(){
+            $backdrop.classList.remove('is-open');
+            $modal.classList.remove('is-open');
+            // 포커스 복귀
+            if (lastFocusedBtn) lastFocusedBtn.focus();
+        }
+
+        // ESC/배경 클릭 닫기
+        document.addEventListener('keydown', (e) => {
+            if (!$modal.classList.contains('is-open')) return;
+            if (e.key === 'Escape') closeTermsModal();
+        });
+        $backdrop.addEventListener('click', closeTermsModal);
+        $close.addEventListener('click', closeTermsModal);
+        $cancel.addEventListener('click', closeTermsModal);
+
+        // 접근성: 포커스 트랩 (sentinel로 순환)
+        $sentinel.addEventListener('focus', () => $close.focus());
+
+        // ===== “수정하기” 버튼들에 연결 =====
+        // 기준: 각 섹션 하단의 버튼들 중 텍스트가 '수정하기' 인 버튼
+        const editButtons = Array.from(document.querySelectorAll('form .btn'))
+            .filter(b => b.textContent.trim() === '수정하기');
+
+        editButtons.forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                e.preventDefault();
+
+                lastFocusedBtn = btn;
+
+                // 섹션 제목과 본문 텍스트 추출
+                // table 이전에 있는 .title-line 안의 텍스트를 제목으로 사용
+                const rightBar = btn.closest('div[style*="text-align:right"]');
+                const table = rightBar?.previousElementSibling;
+                const titleLine = table?.previousElementSibling; // .title-line
+                const sectionTitle = (titleLine?.innerText || '').trim(); // 예: "구매회원 약관"
+                const readDiv = table?.querySelector('.terms-content');
+                const initialText = (readDiv?.innerText || '').trim();
+
+                openTermsModal(sectionTitle, initialText);
+            });
+        });
+
+        // ===== 기본 submit으로 서버 전송 (/NICHIYA/admin/terms) =====
+        // 필요 시 클라이언트 검증 추가
+        $form.addEventListener('submit', (e) => {
+            if (!$type.value || $type.value === 'UNKNOWN') {
+                e.preventDefault();
+                alert('알 수 없는 섹션입니다. 페이지를 새로고침 후 다시 시도해 주세요.');
+                return;
+            }
+            if (!$textarea.value.trim()) {
+                e.preventDefault();
+                alert('약관 내용을 입력해 주세요.');
+                return;
+            }
+            if ($textarea.value.length > 500) {
+                e.preventDefault();
+                alert('약관 내용은 500자 이내여야 합니다.');
+                return;
+            }
+            // 정상 submit → 닫기는 서버 응답 후 페이지 리로드로 처리
+        });
+
+    })();
+</script>
+
+
+<style>
+        .euro-nav__list {
+            max-height: 0;                /* 기본은 접힘 */
+            overflow: hidden;             /* 안 보이게 */
+            transition: max-height 0.15s ease;
+        }
+
+            .euro-nav__group.open .euro-nav__list {
+            max-height: 500px;            /* 펼쳐졌을 때 (충분히 크게 설정) */
+        }
+    </style>
+    <script>
+        // 아코디언: 클릭 시 높이를 실제 내용 높이로 애니메이션
+  document.querySelectorAll('.euro-nav__title').forEach(title => {
+    title.style.cursor = 'pointer'; // 클릭 가능 시각화(선택)
+    title.addEventListener('click', () => {
+      const group = title.parentElement;
+      const list  = group.querySelector('.euro-nav__list');
+
+      const isOpen = group.classList.contains('open');
+
+      if (isOpen) {
+        // 닫기: 현재 높이를 고정 -> 0으로
+        list.style.maxHeight = list.scrollHeight + 'px';
+        // 강제 리플로우로 트랜지션 시작점 확정
+        list.offsetHeight; 
+        list.style.maxHeight = '0px';
+        group.classList.remove('open');
+      } else {
+        // 열기: 0 -> 내용 높이
+        group.classList.add('open');
+        list.style.maxHeight = list.scrollHeight + 'px';
+
+        // 애니메이션 끝나면 inline max-height 제거(자연스런 레이아웃)
+        const onEnd = (e) => {
+          if (e.propertyName === 'max-height') {
+            list.style.maxHeight = 'none';
+            list.removeEventListener('transitionend', onEnd);
+          }
+        };
+        list.addEventListener('transitionend', onEnd);
+      }
+    });
+  });
+
+  const groups = document.querySelectorAll('.euro-nav__group');
+  document.querySelectorAll('.euro-nav__title').forEach(title => {
+    title.addEventListener('click', () => {
+      groups.forEach(g => {
+        if (g !== title.parentElement && g.classList.contains('open')) {
+          const l = g.querySelector('.euro-nav__list');
+          l.style.maxHeight = l.scrollHeight + 'px';
+          l.offsetHeight;
+          l.style.maxHeight = '0px';
+          g.classList.remove('open');
+        }
+      });
+    }, {capture:true});
+  });
+  
+    </script>
+<div th:replace="~{admin/_footer.html}"></div>

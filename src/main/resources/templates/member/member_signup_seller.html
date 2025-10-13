@@ -1,0 +1,511 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>signup_seller</title>
+    <style>
+        /* 접근성용 숨김 제목 */
+
+        /* 메인 컨테이너 중앙 정렬 */
+        #content {
+            max-width: 760px;
+            margin: 0 auto;
+            padding: 0 16px
+        }
+
+        .terms-title {
+            width: auto;
+            text-align: center;
+            margin-bottom: 20px;
+            font-weight: 700;
+            font-size: 24px;
+            line-height: 32px;
+            color: #3f3f3f;
+            text-transform: uppercase;
+        }
+
+        .join-terms {
+            max-width: 720px;
+            width: 100%;
+            margin: 24px auto 120px;
+        }
+
+        .join-terms input[type="checkbox"] {
+            width: 18px;
+            height: 18px;
+            vertical-align: middle;
+            accent-color: #111;
+        }
+
+        .join-terms .muted {
+            color: #777;
+            font-weight: 400;
+        }
+
+        .join-terms .sub {
+            color: #888;
+            font-weight: 400;
+        }
+
+        .agree-all {
+            display: flex;
+            gap: 12px;
+            align-items: flex-start;
+            padding: 18px 16px;
+            border: 1px solid #e5e5e5;
+            background: #fafafa;
+            margin-bottom: 12px;
+        }
+
+        .agreements {
+            border-top: 1px solid #eee;
+            list-style-type: none;
+        }
+
+        .agreements .item {
+            border-bottom: 1px solid #eee;
+            padding: 14px 4px;
+        }
+
+        .agreements .row {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 20px;
+        }
+
+        .agreements .left {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        /* 펼치기 토글(오른쪽 화살표) */
+        .join-terms .toggle {
+            width: 36px;
+            height: 36px;
+            border: none;
+            background: transparent;
+            cursor: pointer;
+            position: relative;
+            flex: 0 0 auto;
+        }
+
+        .join-terms .toggle::after {
+            content: "";
+            position: absolute;
+            inset: 0;
+            margin: auto;
+            width: 8px;
+            height: 8px;
+            border-right: 2px solid #111;
+            border-bottom: 2px solid #111;
+            transform: rotate(45deg);
+            transition: transform .2s ease;
+        }
+
+        .join-terms .toggle[aria-expanded="true"]::after {
+            transform: rotate(225deg);
+        }
+
+        /* 펼쳐지는 패널 */
+        .join-terms .panel {
+            padding: 12px 2px 6px;
+        }
+
+        .join-terms .panel[hidden] {
+            display: none;
+        }
+
+        .join-terms .panel .scroll {
+            border: 1px solid #eee;
+            padding: 12px 14px;
+            background: #fcfcfc;
+            max-height: 220px;
+            overflow: auto;
+            font-size: 14px;
+            line-height: 1.6;
+            color: #333;
+        }
+
+        /* 마케팅 하위 체크 */
+        .join-terms .subchecks {
+            display: grid;
+            grid-template-columns: repeat(2, minmax(180px, 1fr));
+            gap: 6px 16px;
+        }
+
+        /* 버튼 */
+        .join-terms .actions {
+            display: flex;
+            gap: 10px;
+            justify-content: flex-end;
+            margin-top: 22px;
+        }
+
+        .join-terms .btn {
+            min-width: 140px;
+            height: 44px;
+            padding: 0 18px;
+            cursor: pointer;
+            font-size: 15px;
+            letter-spacing: .01em;
+        }
+
+        .join-terms .btn.outline {
+            background: #fff;
+            border: 1px solid #111;
+        }
+
+        .join-terms .btn.solid {
+            background: #111;
+            color: #fff;
+            border: 1px solid #111;
+        }
+
+        .join-terms .btn:disabled {
+            opacity: .4;
+            cursor: not-allowed;
+        }
+
+        /* 마케팅 전용 간격/배치 */
+        .item--marketing .subchecks.always {
+            margin: 8px 0 0 28px;
+            /* 왼쪽 체크박스 폭(18px)+간격(10px) */
+        }
+
+        .item--marketing .panel {
+            /* 본문(설명) 박스 위 여백 */
+            margin-top: 10px;
+        }
+
+        /* 본문(설명) 박스 스타일 */
+        .join-terms .note {
+            border: 1px solid #eee;
+            padding: 12px 14px;
+            background: #fcfcfc;
+            font-size: 14px;
+            line-height: 1.6;
+            color: #333;
+        }
+
+        /* 마케팅 미동의 시 하위 체크 비활성화(시각 표시) */
+        .join-terms .subchecks input:disabled+label {
+            color: #bbb;
+        }
+
+        /* 처음엔 본문을 펼쳐둔다면 아래 줄은 제거하세요 */
+        #panel-marketing[hidden] {
+            display: none;
+        }
+    </style>
+</head>
+<script>
+    fetch("/NICHIYA/main/header.html") //각자 주소 수정!!!
+        .then(res => res.text())
+        .then(data => {
+            document.getElementById("header").innerHTML = data;
+
+            // header.html 안의 스크립트 실행 강제
+            const scripts = document.getElementById("header").querySelectorAll("script");
+            scripts.forEach(oldScript => {
+                const newScript = document.createElement("script");
+                if (oldScript.src) {
+                    newScript.src = oldScript.src;
+                } else {
+                    newScript.textContent = oldScript.textContent;
+                }
+                document.body.appendChild(newScript);
+            });
+        });
+
+
+    fetch("/NICHIYA/main/footer.html") //각자 주소 수정!!!
+        .then(res => res.text())
+        .then(data => {
+            document.getElementById("footer").innerHTML = data;
+        });
+</script>
+
+<body>
+    <div id="header"></div>
+    <section class="join-terms" aria-labelledby="joinTermsTitle">
+        <div class="terms-title">
+            <span id="joinTermsTitle">판매자 약관동의</span>
+        </div>
+        <!-- 전체 동의 -->
+        <div class="agree-all">
+            <input type="checkbox" id="agreeAll" />
+            <label for="agreeAll">
+                <strong>모든 약관을 확인하고 전체 동의합니다.</strong>
+                <span class="sub"> (전체 동의는 필수 및 선택 정보에 대한 동의가 포함되어 있습니다.)</span>
+            </label>
+        </div>
+
+        <ul class="agreements" role="list">
+            <!-- (필수) 이용약관 -->
+            <li class="item">
+                <div class="row">
+                    <div class="left">
+                        <input type="checkbox" id="agreeTerms" class="js-agree js-required" />
+                        <label for="agreeTerms">니치야 서비스 이용약관 - 사업자용<b>(필수)</b></label>
+                    </div>
+                    <button type="button" class="toggle" aria-expanded="false" aria-controls="panel-terms"
+                        title="약관 보기"></button>
+                </div>
+                <div id="panel-terms" class="panel" hidden>
+                    <div class="scroll">
+                        <h4>제1조 목적</h4>
+                        <div style="font-weight: 300;">
+                        본 약관은 NICHIYA(이하 “회사”)의 온라인 플랫폼을 통해 상품을 판매하고자 하는 판매자 회원(이하 “판매자”)의 권리·의무 및 책임사항, 거래 조건 등을 규정함을 목적으로 합니다.
+                        </div>
+
+                        <h4>제2조 정의</h4>
+                        <div style="font-weight: 300;">"판매자 회원"은 회사와 판매계약을 체결하고 본 약관에 따라 상품을 등록·판매하는 자를 말합니다.</div>
+                        <div style="font-weight: 300;">"소비자"는 판매자로부터 상품을 구매하는 일반 회원을 의미합니다.</div>
+
+                        <h4>제3조 약관의 적용</h4>
+                        <div style="font-weight: 300;">판매자는 본 약관에 동의해야만 회사 플랫폼에 상품을 등록할 수 있습니다.</div>
+                        <div style="font-weight: 300;">본 약관에 명시되지 않은 사항은 관련 법령 및 일반 상관례에 따릅니다.</div>
+
+                        <h4>제4조 판매자의 의무</h4>
+                        <div style="font-weight: 300;">판매자는 관련 법령(전자상거래법, 소비자보호법, 세법 등)을 준수해야 합니다.</div>
+                        <div style="font-weight: 300;">판매자는 회사의 정책에 따라 상품을 등록·관리해야 하며, 허위 또는 과장된 정보를 제공해서는 안 됩니다.</div>
+                        <div style="font-weight: 300;">판매자는 소비자의 문의 및 클레임에 성실히 응대해야 합니다.</div>
+                        <div style="font-weight: 300;">판매자는 세금(부가가치세, 원천징수세 등) 신고 및 납부 의무를 직접 부담합니다.</div>
+
+                        <h4>제5조 수수료 및 정산</h4>
+                        <div style="font-weight: 300;">회사는 판매 대금에서 플랫폼 이용 수수료를 공제한 금액을 판매자에게 정산합니다.</div>
+                        <div style="font-weight: 300;">수수료율 및 정산 방식은 회사 정책에 따르며, 회사는 이를 사전에 고지합니다.</div>
+                        <div style="font-weight: 300;">정산 주기 및 조건은 회사와 판매자 간의 개별 계약에 따릅니다.</div>
+
+                        <h4>제6조 판매 제한 및 제재</h4>
+                        <div style="font-weight: 300;">판매자가 다음 행위를 하는 경우, 회사는 판매 중지, 계정 정지, 계약 해지 등의 조치를 취할 수 있습니다.</div>
+                        <div style="font-weight: 300;">- 법령 위반 또는 불법 상품 판매</div>
+                        <div style="font-weight: 300;">- 지식재산권 침해 상품 등록</div>
+                        <div style="font-weight: 300;">- 허위 정보 또는 허위 리뷰 조작</div>
+                        <div style="font-weight: 300;">- 회사 또는 소비자의 신뢰를 저해하는 행위</div>
+                        <div style="font-weight: 300;">판매자가 관련 세법을 위반한 경우, 그 책임은 전적으로 판매자에게 있습니다.</div>
+
+                        <h4>제7조 면책 조항</h4>
+                        <div style="font-weight: 300;">회사는 판매자와 소비자 간의 거래에서 발생하는 분쟁에 직접적인 책임을 지지 않으며, 다만 분쟁 해결을 위한 중재 서비스를 제공할 수 있습니다.</div>
+                        <div style="font-weight: 300;">판매자가 법령을 위반하여 발생하는 모든 책임은 판매자 본인에게 있습니다.</div>
+
+                        <h4>제8조 준거법 및 재판관할</h4>
+                        <div style="font-weight: 300;">본 약관은 대한민국 법령을 준거법으로 합니다.</div>
+                        <div style="font-weight: 300;">판매자와 회사 간 분쟁은 민사소송법에 따른 관할 법원에 제소합니다.</div>
+
+                    </div>
+                </div>
+            </li>
+
+            <!-- (필수) 전자금융 이용약관 -->
+            <li class="item">
+                <div class="row">
+                    <div class="left">
+                        <input type="checkbox" id="agreeEfinance" class="js-agree js-required" />
+                        <label for="agreeEfinance">전자금융 이용약관 <b>(필수)</b></label>
+                    </div>
+                    <button type="button" class="toggle" aria-expanded="false" aria-controls="panel-efinance"
+                        title="약관 보기"></button>
+                </div>
+                <div id="panel-efinance" class="panel" hidden>
+                    <div class="scroll">
+                        <p><b>[전자금융 이용약관 안내]</b></p>
+                        <p>전자금융거래의 정의, 이용시간, 거래지시의 철회, 오류정정, 책임과 면책,
+                            고객정보보호, 분쟁처리 및 관할 등 전자금융 서비스 이용에 관한 기본 사항을 규정합니다.</p>
+                        <p>자세한 내용은 회사의 전자금융거래 이용약관 원문을 참고하세요.</p>
+                    </div>
+                </div>
+            </li>
+
+            <!-- (필수) 개인정보 수집·이용 동의 -->
+            <li class="item">
+                <div class="row">
+                    <div class="left">
+                        <input type="checkbox" id="agreePrivacy" class="js-agree js-required" />
+                        <label for="agreePrivacy">개인정보 수집·이용 동의 <b>(필수)</b></label>
+                    </div>
+                    <button type="button" class="toggle" aria-expanded="false" aria-controls="panel-privacy"
+                        title="약관 보기"></button>
+                </div>
+                <div id="panel-privacy" class="panel" hidden>
+                    <div class="scroll">
+                        <p><b>[개인정보 수집·이용 안내]</b></p>
+                        <p>수집항목: 성명, 아이디, 비밀번호, 연락처, 이메일 등 회원가입 및 서비스 제공에 필요한 최소한의 정보</p>
+                        <p>이용목적: 회원관리, 서비스 제공 및 고지사항 전달, 민원처리, 부정이용 방지 등</p>
+                        <p>보유기간: 회원 탈퇴 시까지 또는 관련 법령에서 정한 기간</p>
+                        <p>이용자는 동의를 거부할 권리가 있으나, 필수 항목 미동의 시 서비스 이용이 제한될 수 있습니다.</p>
+                    </div>
+                </div>
+            </li>
+
+            <!-- (선택) 쇼핑정보 수신 동의 + 하위 SMS/이메일 -->
+            <!-- (선택) 쇼핑정보 수신 동의 -->
+            <li class="item item--marketing">
+                <div class="row">
+                    <div class="left">
+                        <input type="checkbox" id="agreeMarketing" class="js-agree js-optional" />
+                        <label for="agreeMarketing">쇼핑정보 수신동의 <span class="muted">(선택)</span></label>
+                    </div>
+                    <button type="button" class="toggle" aria-expanded="true" aria-controls="panel-marketing"
+                        title="내용 접기/펼치기"></button>
+                </div>
+
+                <!-- ✅ 접어도 항상 보이는 하위 체크들 -->
+                <div class="subchecks always">
+                    <div>
+                        <input type="checkbox" id="agreeSms" class="js-agree js-optional"
+                            data-parent="agreeMarketing" />
+                        <label for="agreeSms">SMS 수신 동의 <span class="muted">(선택)</span></label>
+                    </div>
+                    <div>
+                        <input type="checkbox" id="agreeEmail" class="js-agree js-optional"
+                            data-parent="agreeMarketing" />
+                        <label for="agreeEmail">이메일 수신 동의 <span class="muted">(선택)</span></label>
+                    </div>
+                </div>
+
+                <!-- ✅ 접히는 본문 영역(설명문) -->
+                <div id="panel-marketing" class="panel">
+                    <div class="note">
+                        할인쿠폰 및 혜택, 이벤트, 신상품 소식 등 쇼핑몰에서 제공하는 유익한 쇼핑정보를
+                        SMS나 이메일로 받아보실 수 있습니다. 단, 주문/거래 정보 및 주요 정책과 관련된 내용은
+                        수신동의 여부와 관계없이 발송됩니다.<br><br>
+                        선택 약관에 동의하지 않으셔도 회원가입은 가능하며, 회원가입 후
+                        회원정보수정 페이지에서 언제든지 수신여부를 변경하실 수 있습니다.
+                    </div>
+                </div>
+            </li>
+        </ul>
+
+        <div class="actions">
+            <button type="button" class="btn outline" id="btnCancel">취소</button>
+            <button type="submit" class="btn solid" id="btnNext">다음</button>
+        </div>
+    </section>
+
+    <script>
+        (() => {
+            const $ = (sel, ctx = document) => ctx.querySelector(sel);
+            const $$ = (sel, ctx = document) => Array.from(ctx.querySelectorAll(sel));
+
+            const agreeAll = $('#agreeAll');
+
+            const nextBtn = $('#btnNext');
+
+            const cancelBtn = $('#btnCancel');
+
+            // 모든 동의 체크박스들(상위+하위 포함)
+            const allChecks = $$('.join-terms .js-agree');
+            const required = $$('.join-terms .js-required');
+
+            // 마케팅(상위) + 하위(SMS/이메일)
+            const marketing = $('#agreeMarketing');
+            const subOfMkt = $$('.join-terms [data-parent="agreeMarketing"]');
+
+            // 본문 토글(패널만 열고 닫음, 하위 체크는 항상 보임)
+            const toggles = $$('.join-terms .toggle');
+
+            // 패널 열고 닫기
+            toggles.forEach(btn => {
+                btn.addEventListener('click', () => {
+                    const id = btn.getAttribute('aria-controls');
+                    const panel = id && document.getElementById(id);
+                    if (!panel) return;
+                    const expanded = btn.getAttribute('aria-expanded') === 'true';
+                    btn.setAttribute('aria-expanded', String(!expanded));
+                    panel.hidden = expanded;
+                });
+            });
+
+            // 상위(마케팅) 상태를 하위로 반영
+            function applyMarketingToChildren() {
+                const checked = marketing.checked;
+                subOfMkt.forEach(s => { s.checked = checked; });
+            }
+
+            // 하위 상태로 상위(마케팅) 삼상 상태를 계산
+            function applyChildrenToMarketing() {
+                const total = subOfMkt.length;
+                const checked = subOfMkt.filter(s => s.checked).length;
+
+                if (checked === 0) {
+                    marketing.checked = false;
+                    marketing.indeterminate = false;
+                } else if (checked === total) {
+                    marketing.checked = true;
+                    marketing.indeterminate = false;
+                } else {
+                    marketing.checked = false;      // 부분 체크에서는 상위 체크는 꺼두고
+                    marketing.indeterminate = true; // 시각적으로 '부분 체크' 표시
+                }
+            }
+
+            // '다음' 버튼 & 전체동의(indeterminate) 갱신
+            function refreshMasterAndNext() {
+                const requiredOK = required.every(c => c.checked);
+                if (nextBtn) nextBtn.disabled = !requiredOK;
+
+                const totalChecked = allChecks.filter(c => c.checked).length;
+                agreeAll.checked = (totalChecked === allChecks.length);
+                agreeAll.indeterminate = (totalChecked > 0 && totalChecked < allChecks.length);
+            }
+
+            // 전체 동의 → 모두 체크/해제
+            agreeAll.addEventListener('change', () => {
+                const checked = agreeAll.checked;
+                allChecks.forEach(c => c.checked = checked);
+                // 삼상 상태 초기화
+                marketing.indeterminate = false;
+                refreshMasterAndNext();
+            });
+
+            // 상위(마케팅) 직접 조작 시 → 하위 동기화
+            marketing.addEventListener('change', () => {
+                applyMarketingToChildren();
+                marketing.indeterminate = false;
+                refreshMasterAndNext();
+            });
+
+            // 개별 체크 변경 처리
+            allChecks.forEach(c => {
+                // 이미 상위 마케팅은 별도로 리스너가 있으니, 하위 중심으로 처리
+                if (subOfMkt.includes(c)) {
+                    c.addEventListener('change', () => {
+                        // 하위 둘 중 하나라도 클릭되면, 상위 삼상/체크 갱신
+                        applyChildrenToMarketing();
+                        refreshMasterAndNext();
+                    });
+                } else if (c !== marketing) {
+                    // 다른 약관(필수 등)
+                    c.addEventListener('change', refreshMasterAndNext);
+                }
+            });
+
+            // 초기 상태 반영
+            applyChildrenToMarketing();
+            refreshMasterAndNext();
+
+            // 취소 버튼 (원하면 변경)
+            cancelBtn?.addEventListener('click', () => history.back());
+
+            nextBtn.addEventListener('click', () => {
+                if (!nextBtn.disabled) {
+                    // 필수 동의 모두 완료된 상태에서만 이동
+                    window.location.href = '/NICHIYA/member/registerSeller';
+                }
+            });
+
+        })();
+    </script>
+
+
+    </main>
+    <div id="footer"></div>
+
+</body>
+
+</html>

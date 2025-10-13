@@ -2,17 +2,26 @@
 spring:
   application:
     name: NICHIYA
-    version: ${version}
+    version: ${version:unknown}
   profiles:
     active: prod
 
 mybatis:
   mapper-locations: classpath:/mapper/**/*.xml
+  type-aliases-package: kr.co.bnk_marketproject_be.dto
+
   configuration:
     map-underscore-to-camel-case: true
 
 server:
   port: 8080
+  servlet:
+    context-path: /NICHIYA
+
+# 어드민 로고 업로드 경로 (배포용 세현 수정)
+app:
+  upload:
+    dir: upload
 
 # ===== local =====
 ---
@@ -50,3 +59,31 @@ spring:
     open-in-view: false
     properties:
       hibernate.format_sql: true
+
+
+  mail:
+    host: smtp.gmail.com
+    port: 587
+    username: machinemayou@gmail.com
+    password: xpdgopkyeyxqotpz
+    properties:
+      mail:
+        smtp:
+          auth: true
+          timeout: 5000
+          starttls:
+            required: true
+            enable: ture
+          ssl:
+            trust: smtp.gmail.com
+
+# 어드민 로고 업로드 경로 (배포용 세현 수정)
+app:
+  upload:
+    dir: upload
+  #base-url: http://43.200.69.114:8080/NICHIYA
+
+mybatis:
+  configuration:
+    map-underscore-to-camel-case: false
+

@@ -1,0 +1,236 @@
+    <div th:replace="~{admin/_header.html}"></div>
+
+    <main style="display: flex; justify-content: center; border-top:1px solid #e2e2e2;">
+        <div>
+            <aside class="euro-nav" aria-label="관리자 사이드 메뉴" style="">
+                <section class="euro-nav__group">
+                    <h4 class="euro-nav__title" style="">환경설정</h4>
+                    <ul class="euro-nav__list">
+                        <li class="euro-nav__item"><a th:href="@{/admin/admin_basic}">기본설정</a></li>
+                        <li class="euro-nav__item"><a th:href="@{/admin/admin_banner}">배너관리</a></li>
+                        <li class="euro-nav__item"><a th:href="@{/admin/admin_policy}">약관관리</a></li>
+                        <li class="euro-nav__item"><a th:href="@{/admin/admin_category}">카테고리</a></li>
+                        <li class="euro-nav__item"><a th:href="@{/admin/admin_version}">버전관리</a></li>
+                    </ul>
+                </section>
+
+                <section class="euro-nav__group">
+                    <h4 class="euro-nav__title" style="">상점관리</h4>
+                    <ul class="euro-nav__list">
+                        <li class="euro-nav__item"><a th:href="@{/admin/shop/list}">상점목록</a></li>
+                        <li class="euro-nav__item"><a th:href="@{/admin/sales/list}">매출현황</a></li>
+                    </ul>
+                </section>
+
+                <section class="euro-nav__group">
+                    <h4 class="euro-nav__title" style="">회원관리</h4>
+                    <ul class="euro-nav__list">
+                        <li class="euro-nav__item"><a th:href="@{/admin/member/list}">회원목록</a></li>
+                        <li class="euro-nav__item"><a th:href="@{/admin/point/list}">포인트관리</a></li>
+                    </ul>
+                </section>
+
+                <section class="euro-nav__group">
+                    <h4 class="euro-nav__title" style="">상품관리</h4>
+                    <ul class="euro-nav__list">
+                        <li class="euro-nav__item"><a th:href="@{/admin/product/list}">상품목록</a></li>
+                        <li class="euro-nav__item"><a th:href="@{/admin/productReg/list}">상품등록</a></li>
+                    </ul>
+                </section>
+
+                <section class="euro-nav__group">
+                    <h4 class="euro-nav__title" style="">주문관리</h4>
+                    <ul class="euro-nav__list">
+                        <li class="euro-nav__item"><a th:href="@{/admin/order/list}">주문현황</a></li>
+                        <li class="euro-nav__item"><a th:href="@{/admin/delivery/list}">배송현황</a></li>
+                    </ul>
+                </section>
+
+                <section class="euro-nav__group">
+                    <h4 class="euro-nav__title" style="">쿠폰관리</h4>
+                    <ul class="euro-nav__list">
+                        <li class="euro-nav__item"><a th:href="@{/admin/coupon/list}">쿠폰목록</a></li>
+                        <li class="euro-nav__item"><a th:href="@{/admin/couponsnow/list}">쿠폰발급현황</a></li>
+                    </ul>
+                </section>
+
+                <section class="euro-nav__group">
+                    <h4 class="euro-nav__title" style="">고객센터</h4>
+                    <ul class="euro-nav__list">
+                        <li class="euro-nav__item"><a th:href="@{/admin/announcement/list}">공지사항</a></li>
+                        <li class="euro-nav__item is-active"><a th:href="@{/admin/FAQ/list}">자주묻는질문</a></li>
+                        <li class="euro-nav__item"><a th:href="@{/admin/inquiry/list}">문의하기</a></li>
+                        <li class="euro-nav__item"><a th:href="@{/admin/employ/list}">채용하기</a></li>
+                    </ul>
+                </section>
+            </aside>
+        </div>
+        <div style="border-left:1px solid #e2e2e2;"></div>
+        <!-- 오른쪽 콘텐츠 영역 -->
+          <div style="margin-left:40px; width:900px; height:1000px; border:none; padding:20px; box-sizing:border-box; font-family:'Noto Sans KR', sans-serif;">
+
+            <!-- 제목 + 경로 -->
+            <div style="display: flex;">
+                    <div style="font-size: 20px; font-weight: 800; margin-top:16px; margin-bottom:5px;">자주묻는질문 보기</div>
+                    <div style="margin-left: auto; margin-top:auto; margin-bottom:4px;font-size: 12px;">HOME > 고객센터 > <span style="font-weight: 800;">자주묻는질문</span></div>
+                </div>
+                <hr style="border:none; border-top:1px solid gray; margin-top:0px;">
+                <div style="padding-left:10px;">
+                <div style="display: flex; align-items: center; margin-top: 25px; margin-bottom:20px;">
+                    <form action="" method="post" style="display: flex; ">
+                    </form>
+                </div>
+              
+            </div>
+
+            <!-- 2. 테이블 -->
+            <table style="width:100%;
+             border-collapse:collapse; 
+             margin:30px auto; 
+             font-family:'맑은 고딕', sans-serif; 
+             font-size:14px; 
+             color:#333;
+             ">
+            <tr style="height:60px;"> <!-- 기본 약 40px → 10% 증가 -->
+              <th style="width:100px; text-align:left; padding:8px; 
+                        border-top:2px solid #999; /* 맨 위 굵게 */ 
+                        border-bottom:1px solid #eee; /* 중간 연한 선 */
+                        background:#fff; font-weight:bold; ">유형</th>
+              <td style="padding:8px; 
+                        border-top:2px solid #999; 
+                        border-bottom:1px solid #eee;">
+                  <span th:text="${adminFAQDTO.board_type2 == 'member' ? '회원' :
+                    (adminFAQDTO.board_type2 == 'event' ? '쿠폰 / 이벤트' :
+                    (adminFAQDTO.board_type2 == 'pay' ? '주문 / 결제' :
+                    (adminFAQDTO.board_type2 == 'delivery' ? '배송' :
+                    (adminFAQDTO.board_type2 == 'cancel' ? '취소 / 반품 / 교환' :
+                    (adminFAQDTO.board_type2 == 'trip' ? '여행 / 숙박 / 항공' :
+                    (adminFAQDTO.board_type2 == 'safe' ? '안전거래' : ''))))))}"></span><span> - </span>
+                  <span th:text="${adminFAQDTO.board_type3 == 'signup' ? '가입' :
+                    (adminFAQDTO.board_type3 == 'withdraw' ? '탈퇴' :
+                    (adminFAQDTO.board_type3 == 'account' ? '회원정보' :
+                    (adminFAQDTO.board_type3 == 'login' ? '로그인' :
+                    (adminFAQDTO.board_type3 == 'couponissue' ? '쿠폰발급' :
+                    (adminFAQDTO.board_type3 == 'couponuse' ? '쿠폰사용' :
+                    (adminFAQDTO.board_type3 == 'eventjoin' ? '이벤트참여' :
+                    (adminFAQDTO.board_type3 == 'winnercheck' ? '당첨확인' :
+                    (adminFAQDTO.board_type3 == 'orderguide' ? '주문방법' :
+                    (adminFAQDTO.board_type3 == 'paymentmethod' ? '결제수단' :
+                    (adminFAQDTO.board_type3 == 'paymenterror' ? '결제오류' :
+                    (adminFAQDTO.board_type3 == 'receipt' ? '영수증/증빙' :
+                    (adminFAQDTO.board_type3 == 'tracking' ? '배송조회' :
+                    (adminFAQDTO.board_type3 == 'deliverytime' ? '배송기간' :
+                    (adminFAQDTO.board_type3 == 'deliveryfee' ? '배송비' :
+                    (adminFAQDTO.board_type3 == 'globalshipping' ? '해외배송' :
+                    (adminFAQDTO.board_type3 == 'ordercancel' ? '주문취소' :
+                    (adminFAQDTO.board_type3 == 'refund' ? '반품' :
+                    (adminFAQDTO.board_type3 == 'exchange' ? '교환' :
+                    (adminFAQDTO.board_type3 == 'refundprocess' ? '환불처리' :
+                    (adminFAQDTO.board_type3 == 'reservation' ? '예약' :
+                    (adminFAQDTO.board_type3 == 'payment' ? '결제' :
+                    (adminFAQDTO.board_type3 == 'changecancel' ? '변경/취소' :
+                    (adminFAQDTO.board_type3 == 'guide' ? '이용안내' :
+                    (adminFAQDTO.board_type3 == 'security' ? '보안공지' :
+                    (adminFAQDTO.board_type3 == 'alert' ? '사기주의' :
+                    (adminFAQDTO.board_type3 == 'safepayment' ? '안전결제' :
+                    (adminFAQDTO.board_type3 == 'privacy' ? '개인정보보호' : '')))))))))))))))))))))))))))}"></span>
+                  
+              </td>
+            </tr>
+            <tr style="height:44px;">
+              <th style="text-align:left; padding:8px; 
+                        border-bottom:1px solid #eee; /* 중간 연한 선 */ 
+                        background: #fff; font-weight:bold;">제목</th>
+              <td style="padding:8px; border-bottom:1px solid #eee;"
+              th:text="${adminFAQDTO.title}">개인회원과 법인회원에 차이가 있나요?</td>
+            </tr>
+            <tr style="height:66px;"> <!-- 내용 부분은 기본보다 커서 약간 더 늘려줌 -->
+              <th style="text-align:left; padding:8px; 
+                        border-bottom:1px solid #ccc; /* 맨 아래 조금 얇게 */ 
+                        background:#fff; font-weight:bold;">내용</th>
+              <td style="padding:20px; line-height:1.6; border-bottom:1px solid #ccc; padding-left: 7px;">
+                <span th:utext="${#strings.replace(
+                      #strings.replace(
+                        #strings.replace(
+                          #strings.replace(adminFAQDTO.content, '.', '.<br/>'),
+                        '!', '!<br/>'),
+                      '?', '?<br/>'),
+                    '✔', '<br/>✔')}"></span>
+              </td>
+            </tr>
+          </table>
+
+            <div style="text-align:end;">
+            <button style="cursor: pointer;border:none; background-color: #760c0c; color:white; font-size: 10px; font-weight: 300; height:25px; width:62px;"
+                    th:onclick="|if(confirm('정말로 삭제하시겠습니까?')) location.href='@{/admin/FAQ/delete(id=${adminFAQDTO.id})}';|">삭제</button>
+            <button style="cursor: pointer;border:none; background-color: #760c0c; color:white; font-size: 10px; font-weight: 300; height:25px; width:62px;"
+                    th:onclick="|location.href='@{/admin/FAQ/modify/list(id=${adminFAQDTO.id})}'|">수정</button>
+            <button style="cursor: pointer; margin-left:auto; border:none; background-color: black; color:white; font-size: 10px; font-weight: 300; height:25px; width:62px;"
+                    th:onclick="|location.href='@{/admin/FAQ/list}'|">목록</button>
+
+            </div>
+          </div>
+    </main>
+
+    <style>
+        .euro-nav__list {
+            max-height: 0;                /* 기본은 접힘 */
+            overflow: hidden;             /* 안 보이게 */
+            transition: max-height 0.15s ease;
+        }
+
+            .euro-nav__group.open .euro-nav__list {
+            max-height: 500px;            /* 펼쳐졌을 때 (충분히 크게 설정) */
+        }
+    </style>
+    <script>
+        // 아코디언: 클릭 시 높이를 실제 내용 높이로 애니메이션
+  document.querySelectorAll('.euro-nav__title').forEach(title => {
+    title.style.cursor = 'pointer'; // 클릭 가능 시각화(선택)
+    title.addEventListener('click', () => {
+      const group = title.parentElement;
+      const list  = group.querySelector('.euro-nav__list');
+
+      const isOpen = group.classList.contains('open');
+
+      if (isOpen) {
+        // 닫기: 현재 높이를 고정 -> 0으로
+        list.style.maxHeight = list.scrollHeight + 'px';
+        // 강제 리플로우로 트랜지션 시작점 확정
+        list.offsetHeight; 
+        list.style.maxHeight = '0px';
+        group.classList.remove('open');
+      } else {
+        // 열기: 0 -> 내용 높이
+        group.classList.add('open');
+        list.style.maxHeight = list.scrollHeight + 'px';
+
+        // 애니메이션 끝나면 inline max-height 제거(자연스런 레이아웃)
+        const onEnd = (e) => {
+          if (e.propertyName === 'max-height') {
+            list.style.maxHeight = 'none';
+            list.removeEventListener('transitionend', onEnd);
+          }
+        };
+        list.addEventListener('transitionend', onEnd);
+      }
+    });
+  });
+
+  const groups = document.querySelectorAll('.euro-nav__group');
+  document.querySelectorAll('.euro-nav__title').forEach(title => {
+    title.addEventListener('click', () => {
+      groups.forEach(g => {
+        if (g !== title.parentElement && g.classList.contains('open')) {
+          const l = g.querySelector('.euro-nav__list');
+          l.style.maxHeight = l.scrollHeight + 'px';
+          l.offsetHeight;
+          l.style.maxHeight = '0px';
+          g.classList.remove('open');
+        }
+      });
+    }, {capture:true});
+  });
+  
+    </script>
+<div th:replace="~{admin/_footer.html}"></div>

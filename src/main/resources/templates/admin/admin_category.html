@@ -1,0 +1,542 @@
+<div th:replace="~{admin/_header.html}"></div>
+<meta name="_csrf" th:content="${_csrf.token}">
+<meta name="_csrf_header" th:content="${_csrf.headerName}">
+<style>
+  /* 카드 */
+  .tree-card{
+    width: 540px;
+    border: 1px solid #d9d9d9;
+    background: #fff;
+    padding: 10px 10px 6px;
+  }
+
+  /* 안내 배너 */
+  .helper{
+    margin-top: 10px;
+    background: #fff7cc;
+    color:#444;
+    font-size:12px;
+    padding:10px;
+    border:1px solid #f0e2a6;
+  }
+
+  /* 트리 공통 */
+  .level-1,.level-2{list-style:none;margin:0;padding:0}
+  .level-2{padding-left:22px}
+  .node>.row,.leaf>.row{
+    display:flex;align-items:center;gap:8px;
+    padding:6px 8px;background:#fff;
+    border:1px solid #d9d9d9;border-top:none;
+  }
+  .node:first-child>.row{border-top:1px solid #d9d9d9}
+  .node>.row:hover,.leaf>.row:hover{background:#f7f9fc}
+
+  /* 토글(▶/▼) */
+  .toggle{
+    width:22px;height:22px;line-height:20px;text-align:center;
+    border:1px solid #cfcfcf;background:#fff;cursor:pointer;
+    font-size:12px;flex-shrink:0;
+  }
+
+  /* 이름 */
+  .name[contenteditable="true"]{
+    flex:1;min-width:0;padding:2px 4px;outline:1px dashed transparent
+  }
+  .name[contenteditable="true"]:focus{outline-color:#c7d2fe;background:#fff}
+
+  /* 버튼 */
+  .btn-add{border:1px solid #cbd5e1;background:#fff;color:#555;font-size:12px;cursor:pointer;padding:4px 8px}
+  .btn-red{border:1px solid #ff6b6b;color:#ff4d4f;background:#fff;font-size:12px;padding:2px 6px;flex-shrink:0}
+
+  /* 접힘 처리 */
+  .level-2.collapsed{display:none}
+
+  /* 하단(1차추가/저장) */
+  .card-footer{
+    margin-top:8px;display:flex;justify-content:space-between;align-items:center;
+  }
+  .save-btn{padding:8px 14px;background:#7d8fb3;color:#fff;border:none;cursor:pointer}
+
+  /* 1차 추가 줄 */
+  .add-l1-row .row{
+    display:flex;align-items:center;gap:8px;
+    padding:6px 8px;border:1px dashed #cbd5e1;background:#fafcff
+  }
+
+</style>
+
+<main style="display:flex;justify-content:center;border-top:1px solid #e2e2e2;">
+  <div>
+
+      <aside class="euro-nav" aria-label="관리자 사이드 메뉴" style="">
+          <section class="euro-nav__group">
+              <h4 class="euro-nav__title" style="">환경설정</h4>
+              <ul class="euro-nav__list">
+                  <li class="euro-nav__item"><a th:href="@{/admin/admin_basic}">기본설정</a></li>
+                  <li class="euro-nav__item"><a th:href="@{/admin/admin_banner}">배너관리</a></li>
+                  <li class="euro-nav__item"><a th:href="@{/admin/admin_policy}">약관관리</a></li>
+                  <li class="euro-nav__item is-active"><a th:href="@{/admin/admin_category}">카테고리</a></li>
+                  <li class="euro-nav__item"><a th:href="@{/admin/admin_version}">버전관리</a></li>
+              </ul>
+          </section>
+
+          <section class="euro-nav__group">
+              <h4 class="euro-nav__title" style="">상점관리</h4>
+              <ul class="euro-nav__list">
+                  <li class="euro-nav__item"><a th:href="@{/admin/shop/list}">상점목록</a></li>
+                  <li class="euro-nav__item"><a th:href="@{/admin/sales/list}">매출현황</a></li>
+              </ul>
+          </section>
+
+          <section class="euro-nav__group">
+              <h4 class="euro-nav__title" style="">회원관리</h4>
+              <ul class="euro-nav__list">
+                  <li class="euro-nav__item"><a th:href="@{/admin/member/list}">회원목록</a></li>
+                  <li class="euro-nav__item"><a th:href="@{/admin/point/list}">포인트관리</a></li>
+              </ul>
+          </section>
+
+          <section class="euro-nav__group">
+              <h4 class="euro-nav__title" style="">상품관리</h4>
+              <ul class="euro-nav__list">
+                  <li class="euro-nav__item"><a th:href="@{/admin/product/list}">상품목록</a></li>
+                  <li class="euro-nav__item"><a th:href="@{/admin/productReg/list}">상품등록</a></li>
+              </ul>
+          </section>
+
+          <section class="euro-nav__group">
+              <h4 class="euro-nav__title" style="">주문관리</h4>
+              <ul class="euro-nav__list">
+                  <li class="euro-nav__item"><a th:href="@{/admin/order/list}">주문현황</a></li>
+                  <li class="euro-nav__item"><a th:href="@{/admin/delivery/list}">배송현황</a></li>
+              </ul>
+          </section>
+
+          <section class="euro-nav__group">
+              <h4 class="euro-nav__title" style="">쿠폰관리</h4>
+              <ul class="euro-nav__list">
+                  <li class="euro-nav__item"><a th:href="@{/admin/coupon/list}">쿠폰목록</a></li>
+                  <li class="euro-nav__item"><a th:href="@{/admin/couponsnow/list}">쿠폰발급현황</a></li>
+              </ul>
+          </section>
+
+          <section class="euro-nav__group">
+              <h4 class="euro-nav__title" style="">고객센터</h4>
+              <ul class="euro-nav__list">
+                  <li class="euro-nav__item"><a th:href="@{/admin/announcement/list}">공지사항</a></li>
+                  <li class="euro-nav__item"><a th:href="@{/admin/FAQ/list}">자주묻는질문</a></li>
+                  <li class="euro-nav__item"><a th:href="@{/admin/inquiry/list}">문의하기</a></li>
+                  <li class="euro-nav__item"><a th:href="@{/admin/employ/list}">채용하기</a></li>
+              </ul>
+          </section>
+      </aside>
+  </div>
+
+  <div style="border-left:1px solid #e2e2e2;"></div>
+
+  <div style="margin-left:40px; width:900px; height:1000px;">
+    <section class="category-admin">
+      <div class="page-head" style="border-bottom: 3px solid #cfcfcf;">
+        <div class="title"><b>카테고리</b></div>
+        <div class="breadcrumbs">HOME &gt; 환경설정 &gt; <b>카테고리</b></div>
+      </div>
+
+      <div class="div-gray" style="margin-bottom: 10px;">
+        쇼핑몰 메인, 상품 페이지 사이드 카테고리 메뉴 입니다
+      </div>
+
+      <div class="panel">
+        <div class="panel-head"></div>
+
+        <div class="tree-card">
+          <div class="tree-wrap" aria-label="카테고리 편집">
+            <ul class="level-1" id="level1"><!-- JS 렌더 --></ul>
+
+            <div class="card-footer">
+              <li class="node add-l1-row" style="list-style:none;width:auto;">
+                <div class="row">
+                  <button class="btn-add add-l1" type="button">+</button>
+                  <span class="name" style="pointer-events:none;">1차 카테고리 추가</span>
+                </div>
+              </li>
+              <button id="saveBtn" class="save-btn" type="button">수정하기</button>
+            </div>
+          </div>
+
+          <div class="helper">
+            카테고리 메뉴 순서를 변경할 때 드래그 앤 드롭으로 이동 후 <b>수정하기</b>를 클릭하세요.
+          </div>
+          <span class="save-hint" id="saveHint" aria-live="polite"></span>
+        </div>
+
+      </div>
+    </section>
+  </div>
+</main>
+
+<script th:inline="javascript">
+  // ===== 공통 =====
+  const CSRF_TOKEN  = document.querySelector('meta[name="_csrf"]')?.content;
+  const CSRF_HEADER = document.querySelector('meta[name="_csrf_header"]')?.content;
+  const API_BASE = /*[[@{/}]]*/ '';
+
+  // 삭제 추적 / 스냅샷
+  let initialIdSet = new Set();   // 서버에서 처음 받아온 id 집합(신규 생성 제외)
+  const deletedIds = new Set();   // 개별 삭제 클릭시 기록(보조 수단) — 최종은 스냅샷으로 계산
+
+  // ===== 템플릿 =====
+  function nodeTemplate(id, text){
+    return `
+      <li class="node" data-id="${id}" draggable="true">
+        <div class="row" style="border:1px solid #cfcfcf;">
+          <button class="drag-handle" type="button">▶</button>
+          <span class="name" contenteditable="true">${text}</span>
+          <button class="btn-red btn-del" data-scope="l1" type="button">삭제</button>
+        </div>
+        <ul class="level-2 droppable"></ul>
+      </li>`;
+  }
+
+  function leafTemplate(id, text){
+    return `
+      <li class="leaf" data-id="${id}" draggable="true">
+        <div class="row">
+          <span class="name" contenteditable="true">${text}</span>
+          <button class="btn-red btn-del" data-scope="l2" type="button">삭제</button>
+        </div>
+      </li>`;
+  }
+
+  function renderNodeHtml(id, name) {
+    return `
+    <li class="node" data-id="${id}" draggable="true">
+      <div class="row" style="border: 1px solid #cfcfcf;">
+        <button class="drag-handle" type="button">▶</button>
+        <span class="name" contenteditable="true">${name}</span>
+        <button class="btn-red btn-del" data-scope="l1" type="button">삭제</button>
+      </div>
+      <ul class="level-2 droppable"></ul>
+    </li>`;
+  }
+
+  function renderLeafHtml(id, name) {
+    return `
+    <li class="leaf" data-id="${id}" draggable="true">
+      <div class="row">
+        <span class="name" contenteditable="true">${name}</span>
+        <button class="btn-red btn-del" data-scope="l2" type="button">삭제</button>
+      </div>
+    </li>`;
+  }
+
+  function groupByParent(list){
+    const map = {};
+    list.forEach(cat=>{
+      const pid = cat.parentId || 0;
+      if (!map[pid]) map[pid] = [];
+      map[pid].push(cat);
+    });
+    return map;
+  }
+
+  // ===== Drag & Drop =====
+  let dragEl = null;
+
+  function onDragStart(e){
+    dragEl = e.currentTarget;
+    e.dataTransfer.effectAllowed = 'move';
+    e.dataTransfer.setData('text/plain', dragEl.dataset.id || '');
+    requestAnimationFrame(()=> dragEl.classList.add('ghost'));
+  }
+  function onDragEnd(){
+    dragEl?.classList.remove('ghost');
+    document.querySelectorAll('.drag-over').forEach(el=>el.classList.remove('drag-over'));
+    dragEl = null;
+  }
+  function onDragOverRow(e){
+    e.preventDefault();
+    e.dataTransfer.dropEffect = 'move';
+    e.currentTarget.classList.add('drag-over');
+  }
+  function onDragLeaveRow(e){
+    e.currentTarget.classList.remove('drag-over');
+  }
+  function onDropRow(e){
+    e.preventDefault();
+    const targetLi = e.currentTarget.closest('li');
+    if (!dragEl || !targetLi || dragEl === targetLi) return;
+
+    if (dragEl.classList.contains('node') && targetLi.classList.contains('node')) {
+      targetLi.parentNode.insertBefore(dragEl, targetLi);
+    } else if (dragEl.classList.contains('leaf') && targetLi.classList.contains('leaf')) {
+      targetLi.parentNode.insertBefore(dragEl, targetLi);
+    }
+    onDragLeaveRow(e);
+  }
+  function onDragOverList(e){
+    e.preventDefault();
+    e.currentTarget.classList.add('drag-over');
+  }
+  function onDragLeaveList(e){
+    e.currentTarget.classList.remove('drag-over');
+  }
+  function onDropList(e){
+    e.preventDefault();
+    const list = e.currentTarget;
+    if (!dragEl) return;
+
+    if (dragEl.classList.contains('leaf') && list.classList.contains('level-2')) {
+      const addRow = list.querySelector('.add-l2-row');
+      if (addRow) list.insertBefore(dragEl, addRow);
+      else list.appendChild(dragEl);
+    }
+    onDragLeaveList(e);
+  }
+
+  // ===== 바인딩 =====
+  function wireNode(li){
+    li.addEventListener('dragstart', onDragStart);
+    li.addEventListener('dragend', onDragEnd);
+
+    const row = li.querySelector('.row');
+    if (row){
+      row.addEventListener('dragover', onDragOverRow);
+      row.addEventListener('dragleave', onDragLeaveRow);
+      row.addEventListener('drop', onDropRow);
+    }
+
+    const del = li.querySelector('.btn-del');
+    if (del){
+      del.addEventListener('click', ()=>{
+        const label = li.querySelector('.name')?.textContent.trim() || '';
+        const id = li.dataset.id;
+        if (confirm(`‘${label}’를 삭제할까요?`)) {
+          if (id && !String(id).startsWith('n')) deletedIds.add(Number(id));
+          li.remove();
+        }
+      });
+    }
+
+    const l2 = li.querySelector('.level-2');
+    if (l2){
+      l2.addEventListener('dragover', onDragOverList);
+      l2.addEventListener('dragleave', onDragLeaveList);
+      l2.addEventListener('drop', onDropList);
+    }
+  }
+
+  function wireLeaf(li){
+    li.addEventListener('dragstart', onDragStart);
+    li.addEventListener('dragend', onDragEnd);
+
+    const row = li.querySelector('.row');
+    if (row){
+      row.addEventListener('dragover', onDragOverRow);
+      row.addEventListener('dragleave', onDragLeaveRow);
+      row.addEventListener('drop', onDropRow);
+    }
+
+    const del = li.querySelector('.btn-del');
+    if (del){
+      del.addEventListener('click', ()=>{
+        const label = li.querySelector('.name')?.textContent.trim() || '';
+        const id = li.dataset.id;
+        if (confirm(`‘${label}’를 삭제할까요?`)) {
+          if (id && !String(id).startsWith('n')) deletedIds.add(Number(id));
+          li.remove();
+        }
+      });
+    }
+  }
+
+  // ===== API =====
+  async function fetchCategories(){
+    const res = await fetch(`${API_BASE}api/admin/categories`, {
+      headers: CSRF_TOKEN && CSRF_HEADER ? { [CSRF_HEADER]: CSRF_TOKEN } : {}
+    });
+    if (!res.ok) throw new Error(`HTTP ${res.status}`);
+    return res.json();
+  }
+
+  async function postJson(url, payload, method='POST'){
+    const headers = { 'Content-Type': 'application/json' };
+    if (CSRF_TOKEN && CSRF_HEADER) headers[CSRF_HEADER] = CSRF_TOKEN;
+    const res = await fetch(url, { method, headers, body: JSON.stringify(payload), credentials:'same-origin' });
+    if (!res.ok){
+      const t = await res.text();
+      throw new Error(`HTTP ${res.status}. body=${t.slice(0,200)}`);
+    }
+    const ct = res.headers.get('content-type') || '';
+    if (!ct.includes('application/json')){
+      const t = await res.text();
+      throw new Error(`Not JSON. content-type=${ct}, body=${t.slice(0,200)}`);
+    }
+    return res.json();
+  }
+
+  // ===== 직렬화 =====
+  function toNumId(id) {
+    return (id && !String(id).startsWith('n')) ? Number(id) : null;
+  }
+
+  function serialize(){
+    const result = [];
+    const l1Nodes = Array.from(document.querySelectorAll('#level1 > .node:not(.add-l1-row)'));
+    l1Nodes.forEach((node, idx1) => {
+      const idRaw = node.dataset.id;
+      const name  = node.querySelector('.name')?.textContent.trim() || '';
+      result.push({ id: toNumId(idRaw), name, parentId: null, categoryNo: idx1 + 1 });
+      const l2Leaves = Array.from(node.querySelectorAll('.level-2 > .leaf:not(.add-l2-row)'));
+      l2Leaves.forEach((leaf, idx2) => {
+        const cidRaw = leaf.dataset.id;
+        const cname  = leaf.querySelector('.name')?.textContent.trim() || '';
+        result.push({ id: toNumId(cidRaw), name: cname, parentId: toNumId(idRaw), categoryNo: idx2 + 1 });
+      });
+    });
+    return result;
+  }
+
+  // ===== 렌더링 =====
+  async function renderCategories(){
+    const level1 = document.getElementById('level1');
+    level1.querySelectorAll('.node:not(.add-l1-row)').forEach(n => n.remove());
+
+    const data = await fetchCategories();
+    const grouped = groupByParent(data);
+
+    (grouped[0] || []).forEach(cat => {
+      level1.insertAdjacentHTML('beforeend', renderNodeHtml(cat.id, cat.name));
+    });
+
+    (grouped[0] || []).forEach(cat => {
+      const ul = level1.querySelector(`[data-id="${cat.id}"] .level-2`);
+      (grouped[cat.id] || []).forEach(child => {
+        ul.insertAdjacentHTML('beforeend', renderLeafHtml(child.id, child.name));
+      });
+      ul.insertAdjacentHTML('beforeend', `
+        <li class="leaf add-l2-row">
+          <div class="row">
+            <button class="btn-add add-l2" type="button">+</button>
+            <span class="name">2차 카테고리 추가</span>
+          </div>
+        </li>`);
+    });
+
+    // 스냅샷(서버에 존재하는 id만)
+    initialIdSet = new Set(data.filter(c => c.id != null).map(c => Number(c.id)));
+
+    // 바인딩
+    document.querySelectorAll('#level1 > .node:not(.add-l1-row)').forEach(wireNode);
+    document.querySelectorAll('.leaf').forEach(wireLeaf);
+
+    // add-l2 버튼 바인딩
+    level1.querySelectorAll('.add-l2').forEach(btn => {
+      if (!btn.__wired){
+        btn.__wired = true;
+        btn.addEventListener('click', () => {
+          const addRow = btn.closest('li.add-l2-row');
+          if (!addRow) return;
+          const ul = addRow.parentElement;
+          const cid = 'n' + Date.now();
+          addRow.insertAdjacentHTML('beforebegin', leafTemplate(cid, '새 2차 카테고리'));
+          wireLeaf(addRow.previousElementSibling);
+        });
+      }
+    });
+  }
+
+  // ===== 시작 =====
+  document.addEventListener('DOMContentLoaded', async () => {
+    let idSeq = 1000;
+
+    // 초기 바인딩 (기존 렌더 영역에 항목이 있을 경우)
+    document.querySelectorAll('#level1 > .node:not(.add-l1-row)').forEach(wireNode);
+    document.querySelectorAll('.leaf').forEach(wireLeaf);
+
+    // 1차 추가
+    const addL1Btn = document.querySelector('.add-l1');
+    if (addL1Btn){
+      addL1Btn.addEventListener('click', ()=>{
+        const ul = document.getElementById('level1');
+        const nid = 'n' + (++idSeq);
+        ul.insertAdjacentHTML('beforeend', nodeTemplate(nid, '1차 카테고리'));
+        wireNode(ul.lastElementChild);
+        // 2차 추가 버튼 행도 추가
+        const l2 = ul.lastElementChild.querySelector('.level-2');
+        l2.insertAdjacentHTML('beforeend', `
+          <li class="leaf add-l2-row">
+            <div class="row">
+              <button class="btn-add add-l2" type="button">+</button>
+              <span class="name">2차 카테고리 추가</span>
+            </div>
+          </li>`);
+        l2.querySelector('.add-l2').addEventListener('click', () => {
+          const addRow = l2.querySelector('.add-l2-row');
+          const cid = 'n' + (++idSeq);
+          addRow.insertAdjacentHTML('beforebegin', leafTemplate(cid, '새 2차 카테고리'));
+          wireLeaf(addRow.previousElementSibling);
+        });
+      });
+    }
+
+    // 최초 렌더 (서버 데이터 기준)
+    await renderCategories();
+
+    // 저장(커밋)
+    const saveBtn = document.getElementById('saveBtn');
+    if (saveBtn) {
+      saveBtn.addEventListener('click', async () => {
+        const categories = serialize();
+
+        // 현재 화면에 남아 있는 DB id (신규 n*** 제외)
+        const currentIdSet = new Set(categories.map(x => x.id).filter(id => id != null));
+
+        // 스냅샷 기반 삭제 계산(가장 신뢰도 높음)
+        const deletedBySnapshot = [...initialIdSet].filter(id => !currentIdSet.has(id));
+
+        // 버튼 누적 기록과 합집합(혹시 모를 누락 대비)
+        const deleted = Array.from(new Set([...deletedBySnapshot, ...deletedIds]));
+
+        const payload = { deletedIds: deleted, categories };
+        console.log('📤 payload 전송:', payload);
+
+        try {
+          const result = await postJson(`${API_BASE}api/admin/categories/commit`, payload, 'PUT');
+          console.log('✅ 저장 성공:', result);
+          deletedIds.clear();
+          await renderCategories(); // DB 기준 재랜더
+        } catch (err) {
+          console.error('저장 실패:', err);
+          alert('저장 중 오류가 발생했습니다.\n' + err.message);
+        }
+      });
+    }
+
+    // 사이드 아코디언(기존 코드가 있다면 그대로 두셔도 됩니다)
+    document.querySelectorAll('.euro-nav__title').forEach((title) => {
+      title.style.cursor = 'pointer';
+      title.addEventListener('click', () => {
+        const group = title.parentElement;
+        const list  = group.querySelector('.euro-nav__list');
+        const isOpen = group.classList.contains('open');
+        if (isOpen) {
+          list.style.maxHeight = list.scrollHeight + 'px'; list.offsetHeight;
+          list.style.maxHeight = '0px'; group.classList.remove('open');
+        } else {
+          group.classList.add('open');
+          list.style.maxHeight = list.scrollHeight + 'px';
+          const onEnd = (e) => {
+            if (e.propertyName === 'max-height') {
+              list.style.maxHeight = 'none';
+              list.removeEventListener('transitionend', onEnd);
+            }
+          };
+          list.addEventListener('transitionend', onEnd);
+        }
+      }, { capture: true });
+    });
+  });
+</script>
+
+
+<div th:replace="~{admin/_footer.html}"></div>

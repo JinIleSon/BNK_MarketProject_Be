@@ -1,0 +1,824 @@
+<div th:replace="~{admin/_header.html}"></div>
+<script src="//t1.daumcdn.net/mapjsapi/bundle/postcode/prod/postcode.v2.js"></script>
+<script th:src="@{/js/select-all-table.js}" defer></script>
+    <main style="display: flex; justify-content: center; border-top:1px solid #e2e2e2;">
+        <div>
+            <aside class="euro-nav" aria-label="관리자 사이드 메뉴" style="">
+                <section class="euro-nav__group">
+                    <h4 class="euro-nav__title" style="">환경설정</h4>
+                    <ul class="euro-nav__list">
+                        <li class="euro-nav__item"><a th:href="@{/admin/admin_basic}">기본설정</a></li>
+                        <li class="euro-nav__item"><a th:href="@{/admin/admin_banner}">배너관리</a></li>
+                        <li class="euro-nav__item"><a th:href="@{/admin/admin_policy}">약관관리</a></li>
+                        <li class="euro-nav__item"><a th:href="@{/admin/admin_category}">카테고리</a></li>
+                        <li class="euro-nav__item"><a th:href="@{/admin/admin_version}">버전관리</a></li>
+                    </ul>
+                </section>
+
+                <section class="euro-nav__group">
+                    <h4 class="euro-nav__title" style="">상점관리</h4>
+                    <ul class="euro-nav__list">
+                        <li class="euro-nav__item"><a th:href="@{/admin/shop/list}">상점목록</a></li>
+                        <li class="euro-nav__item"><a th:href="@{/admin/sales/list}">매출현황</a></li>
+                    </ul>
+                </section>
+
+                <section class="euro-nav__group">
+                    <h4 class="euro-nav__title" style="">회원관리</h4>
+                    <ul class="euro-nav__list">
+                        <li class="euro-nav__item is-active"><a th:href="@{/admin/member/list}">회원목록</a></li>
+                        <li class="euro-nav__item"><a th:href="@{/admin/point/list}">포인트관리</a></li>
+                    </ul>
+                </section>
+
+                <section class="euro-nav__group">
+                    <h4 class="euro-nav__title" style="">상품관리</h4>
+                    <ul class="euro-nav__list">
+                        <li class="euro-nav__item"><a th:href="@{/admin/product/list}">상품목록</a></li>
+                        <li class="euro-nav__item"><a th:href="@{/admin/productReg/list}">상품등록</a></li>
+                    </ul>
+                </section>
+
+                <section class="euro-nav__group">
+                    <h4 class="euro-nav__title" style="">주문관리</h4>
+                    <ul class="euro-nav__list">
+                        <li class="euro-nav__item"><a th:href="@{/admin/order/list}">주문현황</a></li>
+                        <li class="euro-nav__item"><a th:href="@{/admin/delivery/list}">배송현황</a></li>
+                    </ul>
+                </section>
+
+                <section class="euro-nav__group">
+                    <h4 class="euro-nav__title" style="">쿠폰관리</h4>
+                    <ul class="euro-nav__list">
+                        <li class="euro-nav__item"><a th:href="@{/admin/coupon/list}">쿠폰목록</a></li>
+                        <li class="euro-nav__item"><a th:href="@{/admin/couponsnow/list}">쿠폰발급현황</a></li>
+                    </ul>
+                </section>
+
+                <section class="euro-nav__group">
+                    <h4 class="euro-nav__title" style="">고객센터</h4>
+                    <ul class="euro-nav__list">
+                        <li class="euro-nav__item"><a th:href="@{/admin/announcement/list}">공지사항</a></li>
+                        <li class="euro-nav__item"><a th:href="@{/admin/FAQ/list}">자주묻는질문</a></li>
+                        <li class="euro-nav__item"><a th:href="@{/admin/inquiry/list}">문의하기</a></li>
+                        <li class="euro-nav__item"><a th:href="@{/admin/employ/list}">채용하기</a></li>
+                    </ul>
+                </section>
+            </aside>
+                </div>
+                <div style="border-left:1px solid #e2e2e2;"></div>
+                <!-- 오른쪽 콘텐츠 영역 -->
+          <div style="margin-left:40px; width:900px; height:1100px; border:none; padding:20px; box-sizing:border-box; font-family:'Noto Sans KR', sans-serif;">
+
+            <!-- 제목 + 경로 -->
+            <div style="display: flex;">
+                    <div style="font-size: 20px; font-weight: 800; margin-top:16px; margin-bottom:5px;">회원목록</div>
+                    <div style="margin-left: auto; margin-top:auto; margin-bottom:4px;font-size: 12px;">HOME > 회원관리 > <span style="font-weight: 800;">회원목록</span></div>
+                </div>
+                <hr style="border:none; border-top:1px solid gray; margin-top:0px;">
+                <div style="padding-left:10px;">
+                <div style="display: flex; align-items: center; margin-top: 25px; margin-bottom:20px;">
+                    <form th:action="@{/admin/member/search}" method="get" style="display: flex; ">
+                        <select name="searchType" id="" style="width:82px; height:28px; padding-left:5px; margin-right:3px; border:1px solid #bfbfbf; font-size: 10px !important;">
+                            <option value="userId">아이디</option>
+                            <option value="name">이름</option>
+                            <option value="email">이메일</option>
+                            <option value="phone">휴대폰</option>
+                        </select>
+                        <input type="text" name="keyword" placeholder="키워드입력" style="width:140px; height:28px; padding-left:10px; margin-right:3px; border:1px solid #bfbfbf; font-size: 10px !important;">
+                        <input type="submit" value="검색" style="width:50px; height:28px; color:white; background-color: black; border:none; font-size: 12px !important;">
+                    </form>
+                </div>
+
+            <!-- 2. 테이블 -->
+            <table style="width:100%; border-collapse:collapse; text-align:center; font-size:14px;">
+              <thead>
+                <tr style="border-top:2px solid #000; border-bottom:1px solid #ccc; background:#fafafa; height:60px;">
+                  <th style="width:41px; padding:8px;"><input type="checkbox" data-select-all-target=".chk"></th>
+                  <th style="width:32px;">번호</th>
+                  <th style="width:85px;">아이디</th>
+                  <th style="width:47px;">이름</th>
+                  <th style="width:32px;">성별</th>
+                  <th style="width:89px;">등급</th>
+                  <th style="width:51px;">포인트</th>
+                  <th style="width:165px;">이메일</th>
+                  <th style="width:112px;">휴대폰</th>
+                  <th style="width:85px;">가입일</th>
+                  <th style="width:32px;">상태</th>
+                  <th style="width:79px;">관리</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr style="border-bottom:1px solid #e2e2e2; height:70px;vertical-align: middle;"
+                th:each="admin, stat:${pageResponseDTO.dtoList}"
+                    th:attr="
+                              data-id=${admin.id},
+                              data-user-id=${admin.userId},
+                              data-name=${admin.rep},
+                              data-gender=${admin.gender},
+                              data-grade=${admin.grade},
+                              data-email=${admin.email},
+                              data-tel=${admin.phone},
+                              data-created-at=${admin.created_at},
+                              data-look=${admin.look}
+                            ">
+                  <td><input type="checkbox" class="chk"></td>
+                  <td>[[${pageResponseDTO.startNo - stat.index}]]</td>
+                  <td th:text="${admin.userId}">xxx...</td>
+                  <td th:text="${admin.rep}">정우성</td>
+                  <td th:text="${admin.gender}">M</td>
+                  <td >
+                    <select style="height: 30px; border: 1px solid #e2e2e2;">
+                      <option th:selected="${admin.grade} == 'VVIP'">VVIP</option>
+                      <option th:selected="${admin.grade} == 'VIP'">VIP</option>
+                      <option th:selected="${admin.grade} == 'GOLD'">GOLD</option>
+                      <option th:selected="${admin.grade} == 'SILVER'">SILVER</option>
+                      <option th:selected="${admin.grade} == 'FAMILY'">FAMILY</option>
+                    </select>
+                  </td>
+                  <td th:text="${admin.point}">15,000</td>
+                  <td th:text="${admin.email}">xxxxx@...</td>
+                  <td th:text="${admin.phone}">010-1234-1001</td>
+                  <td th:utext="${#strings.replace(admin.created_at, ' ', '<br>')}">0000-00-00 00:00:00</td>
+                  <td><span class="status" th:text="${admin.look}"
+                            th:style="${admin.look == '정상' ? 'color:green;' :
+                  (admin.look == '중지' ? 'color:red;' :
+                  (admin.look == '탈퇴' ? 'color:#777;' : 'color:#555;'))}">정상</span></td>
+                  <td>
+                    <a th:href="@{/admin/onemember/detail(user_id=${admin.userId})}" class="openModalLink">수정</a> <br>
+                    <a href="#" class="memberCtrl">중지</a>
+
+                      <div id="shopModal" class="modal">
+                          <div class="modal-content" style="text-align: left">
+                              <div class="modal-header">
+                                  <h2>회원수정</h2>
+                                  <span class="close">&times;</span>
+                              </div>
+                              <div class="modal-body">
+                                  <form th:action="@{/admin/onemember/detail}" method="post">
+                                      <input type="hidden" name="id">
+                                      <table class="edit-table">
+                                          <tbody>
+                                          <tr>
+                                              <th>아이디</th>
+                                              <td><input type="text" name="userId" readonly></td>
+                                          </tr>
+                                          <tr>
+                                              <th>이름</th>
+                                              <td><input type="text" name="name"></td>
+                                          </tr>
+                                          <tr>
+                                              <th>성별</th>
+                                              <td>
+                                                  <label class="radio-label">
+                                                      <input type="radio" name="gender" value="M" checked>
+                                                      <span class="radio-custom"></span> 남
+                                                  </label>
+                                                  <label class="radio-label" style="margin-left:20px;">
+                                                      <input type="radio" name="gender" value="F">
+                                                      <span class="radio-custom"></span> 여
+                                                  </label>
+                                              </td>
+                                          </tr>
+                                          <tr>
+                                              <th>등급</th>
+                                              <td>
+                                                  <input type="text" name="grade" readonly>
+                                                  <span style="color:#666; font-size:13px;">등급 수정은 회원 목록에서 선택수정 가능</span>
+                                              </td>
+                                          </tr>
+                                          <tr>
+                                              <th>상태</th>
+                                              <td><input type="text" name="look" readonly></td>
+                                          </tr>
+                                          <tr>
+                                              <th>EMAIL</th>
+                                              <td><input type="email" name="email"></td>
+                                          </tr>
+                                          <tr>
+                                              <th>휴대폰</th>
+                                              <td><input type="text" name="tel"></td>
+                                          </tr>
+                                          <tr>
+                                              <th>우편번호</th>
+                                              <td>
+                                                  <input type="text" name="zipcode" style="width:150px; display:inline-block;">
+                                                  <button type="button" id="btnPostcode" style="margin-left:6px; border:none; background: white; cursor: pointer;">검색</button>
+                                              </td>
+                                          </tr>
+                                          <tr>
+                                              <th>기본주소</th>
+                                              <td><input type="text" name="address1"></td>
+                                          </tr>
+                                          <tr>
+                                              <th>상세주소</th>
+                                              <td><input type="text" name="address2"></td>
+                                          </tr>
+                                          <tr>
+                                              <th>가입일</th>
+                                              <td><input type="text" name="createdAt" readonly></td>
+                                          </tr>
+                                          <tr>
+                                              <th>최근로그인날짜</th>
+                                              <td><input type="text" name="updatedAt" readonly></td>
+                                          </tr>
+                                          <tr>
+                                              <th>기타</th>
+                                              <td><textarea name="content" placeholder="회원에 대한 기타 정보 입력"></textarea></td>
+                                          </tr>
+                                          </tbody>
+                                      </table>
+                                      <div style="text-align:center; margin-top:20px;">
+                                          <button type="submit" class="btn-submit" style="cursor:pointer;">수정하기</button>
+                                      </div>
+                                  </form>
+                              </div>
+                          </div>
+                      </div>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+
+            <!-- 3. 하단 버튼 영역 -->
+            <div style="display: flex; margin-top:25px;">
+              <button id="openModalBtn" 
+                style="cursor:pointer;border:none; background-color: black; color:white; font-size: 10px; font-weight: 300; height:25px; width:62px;">
+                선택수정
+              </button>
+                </div>
+                    <div style=" height: 100px; margin-top:40px; display: flex; justify-content: center;">
+                        <input th:if="${pageResponseDTO.prev}"
+                               th:onclick="|location.href='@{/admin/member/list(pg=${pageResponseDTO.start - 1})}'|"
+                               type="button" class="prev-page" value="< 이전">
+
+                        <th:block th:each="num:${#numbers.sequence(pageResponseDTO.start, pageResponseDTO.end)}">
+                            <input th:onclick="|location.href='@{/admin/member/list(pg=${num})}'|"
+                                   th:class="${num == pageResponseDTO.pg ? 'current' : 'num'}"
+                                   type="button"
+                                   th:value="${num}" />
+                        </th:block>
+
+                        <input th:if="${pageResponseDTO.next}"
+                               th:onclick="|location.href='@{/admin/member/list(pg=${pageResponseDTO.end + 1})}'|"
+                               type="button" class="next-page" value="다음 >" style="">
+                    </div>
+            </div>
+        </div>
+        </div>
+        <style>
+            .current{
+                border:1px solid #333;
+                background-color: #333;
+                color: white;
+                height: 30px;
+                width: 30px;
+                margin-right:7px;
+                line-height:1;
+            }
+            .num {
+                cursor: pointer;
+                border:1px solid #ddd;
+                color: #555;
+                height: 30px;
+                width: 30px;
+                margin-right:7px;
+                line-height:1;
+            }
+        </style>
+    </main>
+
+
+
+      <style>
+        .modal { display:none; position:fixed; z-index:2000; left:0; top:0; width:100%; height:100%; background:rgba(0,0,0,0.5); justify-content:center; align-items:center; }
+        .modal-content { background:#fff; width:650px; padding:20px; border-radius:0px; box-shadow:0 4px 12px rgba(0,0,0,0.2); }
+        .modal-header { display:flex; justify-content:space-between; align-items:center; border-bottom:1px solid #ddd; margin-bottom:15px; }
+        .modal-header .close { font-size:22px; font-weight:bold; cursor:pointer; }
+        .edit-table { width:100%; border-collapse:collapse; }
+        .edit-table th { width:120px; text-align:left; padding:8px; background:#f9f9f9; font-weight:500; }
+        .edit-table td { padding:8px; }
+        .edit-table input, .edit-table textarea, .edit-table select {
+          width:100%; padding:6px 8px; border:1px solid #aaa; border-radius:0px; font-size:14px;
+        }
+        .edit-table textarea { height:60px; resize:none; }
+        .btn-submit {
+          background:black; color:#fff; border:none; padding:10px 20px; font-size:15px; border-radius:0px; cursor:pointer;
+        }
+
+        /* === 라디오 버튼 커스텀 === */
+        .radio-label input[type="radio"] { display: none; }
+        .radio-custom {
+          width: 18px; height: 18px;
+          border: 2px solid #777;
+          border-radius: 50%;
+          display: inline-block;
+          vertical-align: middle;
+          margin-right: 6px;
+          position: relative;
+          cursor: pointer;
+        }
+        .radio-label input[type="radio"]:checked + .radio-custom {
+          border-color: #444;
+          background-color: #32527B;   /* 파란색 원 */
+          box-shadow: inset 0 0 0 4px #fff; /* 안쪽 흰 원 효과 */
+        }
+      </style>
+
+
+    <style>
+        .euro-nav__list {
+            max-height: 0;                /* 기본은 접힘 */
+            overflow: hidden;             /* 안 보이게 */
+            transition: max-height 0.15s ease;
+        }
+
+            .euro-nav__group.open .euro-nav__list {
+            max-height: 500px;            /* 펼쳐졌을 때 (충분히 크게 설정) */
+        }
+    </style>
+<!-- 컨텍스트패스/URL 조립 유틸 -->
+<script th:inline="javascript">
+    // 예: "/" 또는 "/bnk"
+    const CTX = /*[[@{/}]]*/ '/';
+    const cp = (p) => (CTX.endsWith('/') ? CTX.slice(0, -1) : CTX) + p;
+</script>
+    <script>
+        // 유틸: 모달 input/textarea 셀렉터
+        const $ = (sel, root=document) => root.querySelector(sel);
+
+        document.addEventListener('click', async (e) => {
+            const a = e.target.closest('.openModalLink');
+            if (!a) return;
+            e.preventDefault();
+
+            // 1) 행의 기본 데이터(admin) 읽기
+            const tr = a.closest('tr');
+            const admin = {
+                id:         tr.dataset.id || '',
+                userId:     tr.dataset.userId || '',
+                name:       tr.dataset.name || '',
+                gender:     tr.dataset.gender || '',
+                grade:      tr.dataset.grade || '',
+                email:      tr.dataset.email || '',
+                tel:        tr.dataset.tel || '',
+                createdAt:  tr.dataset.createdAt || '',
+                look:       tr.dataset.look || ''
+            };
+
+            if (!admin.userId) return;
+
+            // 2) Ajax로 상세 DTO(detail) 받아오기
+            let detail = {};
+            try {
+                const url = cp('/admin/onemember/detail') + `?user_id=${encodeURIComponent(admin.userId)}`;
+                const res = await fetch(url);
+                if (res.ok) detail = await res.json();
+            } catch (err) {
+                console.error(err);
+            }
+
+            // 3) 모달 열기
+            const modal = document.getElementById('shopModal');
+            modal.style.display = 'flex';
+
+            // 4) 모달에 데이터 주입 (admin 우선, detail이 있으면 덮어쓰기)
+            //    createdAt/updatedAt은 문자열이면 그대로, LocalDateTime이면 포맷해서 넣기
+            const setVal = (sel, val) => { const el = $(sel, modal); if (el) el.value = (val ?? ''); };
+
+            // 기본(리스트) 데이터
+            setVal('input[name="id"]', admin.id);
+            setVal('input[name="userId"]', admin.userId);
+            setVal('input[name="name"]',   admin.name);
+            setVal('input[name="email"]',  admin.email);
+            setVal('input[name="tel"]',    admin.tel);
+            setVal('input[name="grade"]',  admin.grade);
+            setVal('input[name="createdAt"]', admin.createdAt);
+            setVal('input[name="look"]',   admin.look);
+
+            // 성별 라디오
+            const sex = admin.gender || detail.gender || '';
+            const sexInput = modal.querySelector(`input[name="gender"][value="${sex}"]`);
+            if (sexInput) sexInput.checked = true;
+
+            // 상세(DTO) 데이터 덮어쓰기
+            setVal('input[name="zipcode"]',  detail.zipcode);
+            setVal('input[name="address1"]', detail.address1);
+            setVal('input[name="address2"]', detail.address2);
+            setVal('textarea[name="content"]', detail.content);
+
+            // 날짜(상세에 더 신뢰되는 값이 있으면 덮어쓰자)
+            setVal('input[name="updatedAt"]', detail.updated_at || detail.updatedAt);
+            // === 추가: 모달 상태 판정 ===
+            (function updateModalLook() {
+                const modal   = document.getElementById('shopModal');
+                const lookInp = modal.querySelector('input[name="look"]');
+                if (!lookInp) return;
+
+                const current = (lookInp.value || '').trim();
+
+                // === 색상 기본값 ===
+                lookInp.style.color = '#000'; // 기본 검정
+                lookInp.style.fontWeight = '400';
+
+                // === '중지'나 '탈퇴'는 그대로 표시 (색상만 지정) ===
+                if (current === '중지') {
+                    lookInp.style.color = 'red';
+                    lookInp.style.fontWeight = '600';
+                    return;
+                }
+                if (current === '탈퇴') {
+                    lookInp.style.color = '#777';
+                    lookInp.style.fontWeight = '500';
+                    return;
+                }
+
+                // === 나머지는 updated_at 기준 판정 ===
+                const raw     = detail.updated_at || detail.updatedAt;
+                const parsed  = parseLocalDateTime(raw);
+                if (!parsed) return;
+
+                const threshold = threeMonthsAgoLocal();
+
+                if (parsed.getTime() < threshold.getTime()) {
+                    // 3개월 이전 → 휴면
+                    lookInp.value = '휴면';
+                    lookInp.style.color = '#555';
+                    lookInp.style.fontWeight = '500';
+                } else {
+                    // 3개월 이내 → 정상
+                    lookInp.value = '정상';
+                    lookInp.style.color = 'green';
+                    lookInp.style.fontWeight = '600';
+                }
+            })();
+            // 닫기 버튼 & 배경 닫기
+            const closeBtn = modal.querySelector('.close');
+            closeBtn.onclick = () => modal.style.display = 'none';
+            window.addEventListener('click', (evt) => {
+                if (evt.target === modal) modal.style.display = 'none';
+            }, { once:true });
+        });
+      // ===== 선택수정 모달 =====
+      // const modal = document.getElementById("shopModal");
+      // const openModalBtn = document.getElementById("openModalBtn");
+      // const closeModalBtn = document.querySelector(".modal .close");
+      //
+      // // 열기
+      // openModalBtn.addEventListener("click", () => {
+      //   modal.style.display = "flex";
+      // });
+
+        // (기존) 닫기(X) - 에러 원인: closeModalBtn 미정의
+        // closeModalBtn.addEventListener("click", () => {
+        //   modal.style.display = "none";
+        // });
+
+        // ▼ 안전 가드 적용
+        (() => {
+            const _close = document.querySelector(".modal .close");
+            const _modal = document.getElementById("shopModal");
+            if (_close && _modal) {
+                _close.addEventListener("click", () => { _modal.style.display = "none"; });
+            }
+        })();
+
+        // (기존) 배경 클릭 시 닫기 - 에러 원인: modal 미정의
+        // window.addEventListener("click", (e) => {
+        //   if (e.target === modal) {
+        //     modal.style.display = "none";
+        //   }
+        // });
+
+        // ▼ 안전 가드 적용
+        window.addEventListener("click", (e) => {
+            const _modal = document.getElementById("shopModal");
+            if (_modal && e.target === _modal) {
+                _modal.style.display = "none";
+            }
+        });
+    </script>
+    <style>
+        .euro-nav__list {
+            max-height: 0;                /* 기본은 접힘 */
+            overflow: hidden;             /* 안 보이게 */
+            transition: max-height 0.15s ease;
+        }
+
+            .euro-nav__group.open .euro-nav__list {
+            max-height: 500px;            /* 펼쳐졌을 때 (충분히 크게 설정) */
+        }
+    </style>
+    <script>
+        // 아코디언: 클릭 시 높이를 실제 내용 높이로 애니메이션
+  document.querySelectorAll('.euro-nav__title').forEach(title => {
+    title.style.cursor = 'pointer'; // 클릭 가능 시각화(선택)
+    title.addEventListener('click', () => {
+      const group = title.parentElement;
+      const list  = group.querySelector('.euro-nav__list');
+
+      const isOpen = group.classList.contains('open');
+
+      if (isOpen) {
+        // 닫기: 현재 높이를 고정 -> 0으로
+        list.style.maxHeight = list.scrollHeight + 'px';
+        // 강제 리플로우로 트랜지션 시작점 확정
+        list.offsetHeight; 
+        list.style.maxHeight = '0px';
+        group.classList.remove('open');
+      } else {
+        // 열기: 0 -> 내용 높이
+        group.classList.add('open');
+        list.style.maxHeight = list.scrollHeight + 'px';
+
+        // 애니메이션 끝나면 inline max-height 제거(자연스런 레이아웃)
+        const onEnd = (e) => {
+          if (e.propertyName === 'max-height') {
+            list.style.maxHeight = 'none';
+            list.removeEventListener('transitionend', onEnd);
+          }
+        };
+        list.addEventListener('transitionend', onEnd);
+      }
+    });
+  });
+
+  const groups = document.querySelectorAll('.euro-nav__group');
+  document.querySelectorAll('.euro-nav__title').forEach(title => {
+    title.addEventListener('click', () => {
+      groups.forEach(g => {
+        if (g !== title.parentElement && g.classList.contains('open')) {
+          const l = g.querySelector('.euro-nav__list');
+          l.style.maxHeight = l.scrollHeight + 'px';
+          l.offsetHeight;
+          l.style.maxHeight = '0px';
+          g.classList.remove('open');
+        }
+      });
+    }, {capture:true});
+  });
+        // 우편번호 팝업 열기
+        document.addEventListener('click', function(e) {
+            const btn = e.target.closest('#btnPostcode');
+            if (!btn) return;
+
+            const modal = document.getElementById('shopModal');
+            const $in  = (sel) => modal.querySelector(sel);
+
+            const zipcodeInput  = $in('input[name="zipcode"]');
+            const address1Input = $in('input[name="address1"]');
+            const address2Input = $in('input[name="address2"]');
+
+            new daum.Postcode({
+                oncomplete: function(data) {
+                    // 기본 주소(도로명 우선, 없으면 지번)
+                    let addr = data.roadAddress || data.jibunAddress || '';
+
+                    // 추가 정보(법정동/건물명 등) 깔끔하게 조합
+                    const extras = [];
+                    if (data.bname) extras.push(data.bname);
+                    if (data.buildingName) extras.push(data.buildingName);
+                    if (extras.length) addr += ' ' + extras.join(' ');
+
+                    // 값 주입
+                    zipcodeInput.value  = data.zonecode; // 예: 06236
+                    address1Input.value = addr;
+
+                    // 상세주소로 포커스 이동
+                    if (address2Input) address2Input.focus();
+                }
+            }).open(); // 새 창(팝업)으로 오픈
+        });
+        /** "yyyy-MM-dd HH:mm:ss.SSSSS" → 로컬 Date 로 안전 파싱 */
+        function parseLocalDateTime(s) {
+            if (!s) return null;
+            const [datePart, timePartRaw] = String(s).trim().replace('T', ' ').split(' ');
+            if (!datePart || !timePartRaw) return null;
+
+            const [y, m, d] = datePart.split('-').map(n => parseInt(n, 10));
+            const [hh, mm, ssFrac] = timePartRaw.split(':');
+            let [ss = '0', frac = '0'] = (ssFrac || '').split('.');
+            frac = (frac + '000').slice(0, 3); // 밀리초 3자리
+
+            const date = new Date(
+                y, (m || 1) - 1, d || 1,
+                parseInt(hh || '0', 10),
+                parseInt(mm || '0', 10),
+                parseInt(ss || '0', 10),
+                parseInt(frac || '0', 10)
+            );
+            return isNaN(date) ? null : date;
+        }
+
+        /** 오늘 기준 3개월 전(로컬), 00:00:00으로 정규화 */
+        function threeMonthsAgoLocal() {
+            const now = new Date();
+            const t = new Date(now.getFullYear(), now.getMonth() - 3, now.getDate());
+            t.setHours(0, 0, 0, 0);
+            return t;
+        }
+
+        document.addEventListener('DOMContentLoaded', async () => {
+            const threshold = threeMonthsAgoLocal();
+            const rows = document.querySelectorAll('tbody tr[data-user-id]');
+
+            for (const tr of rows) {
+                const userId = tr.dataset.userId;
+                if (!userId) continue;
+
+                try {
+                    // cp('/admin/onemember/detail') 유틸을 쓰고 있다면 그걸로 바꿔도 됩니다.
+                    const res = await fetch(`${location.origin}/NICHIYA/admin/onemember/detail?user_id=${encodeURIComponent(userId)}`);
+                    if (!res.ok) continue;
+
+                    const detail = await res.json();
+                    const raw = detail.updated_at || detail.updatedAt;
+                    const parsed = parseLocalDateTime(raw);
+                    if (!parsed) continue;
+
+                    const statusEl = tr.querySelector('.status');
+                    if (!statusEl) continue;
+
+                    const current = statusEl.textContent.trim(); // '중지' 유지용
+
+                    if (current === '중지') {
+                        statusEl.style.color = 'red';
+                        statusEl.style.fontWeight = '600';
+                        updateControlForRow(tr);
+                        continue;
+                    }
+                    // ✅ '탈퇴'도 회색 유지 + 절대 덮어쓰지 않음
+                    if (current === '탈퇴') {
+                        statusEl.style.color = '#777';
+                        statusEl.style.fontWeight = '500';
+                        updateControlForRow(tr);
+                        continue;
+                    }
+
+                    if (parsed.getTime() < threshold.getTime()) {
+                        // 3개월 이전: 휴면 (단, '중지'면 그대로 둠)
+                        if (current !== '중지') {
+                            statusEl.textContent = '휴면';
+                            statusEl.style.color = '#555';
+                        }
+                    } else {
+                        // 3개월 이내: 정상(초록)으로 명시
+                        if (current !== '중지') {
+                            statusEl.textContent = '정상';
+                            statusEl.style.color = 'green';
+                            statusEl.style.fontWeight = '500';
+                        }
+                    }
+                    updateControlForRow(tr);
+                } catch (e) {
+                    console.error('상태 갱신 실패:', e);
+                }
+            }
+        });
+        /** 각 행의 상태(status span)를 읽어서 관리 링크 텍스트를 조정 */
+        function updateControlForRow(tr) {
+            const statusEl = tr.querySelector('.status');
+            const ctrl = tr.querySelector('.memberCtrl');
+            if (!statusEl || !ctrl) return;
+
+            const state = statusEl.textContent.trim();
+
+            // 기본 스타일/상태 초기화(선택)
+            ctrl.classList.remove('disabled');
+            ctrl.style.color = '';
+            ctrl.style.pointerEvents = '';
+
+            if (state === '중지' || state === '휴면') {
+                // 중지/휴면 → '재개' 보이기
+                ctrl.textContent = '재개';
+            } else if (state === '탈퇴') {
+                // 탈퇴 → '비활성'
+                ctrl.textContent = '비활성';
+                ctrl.style.color = '#76C0C0';
+            } else {
+                // 정상 및 기타 → '중지'
+                ctrl.textContent = '중지';
+            }
+        }
+        // 관리 링크(중지/재개/비활성) 클릭 처리
+        document.addEventListener('click', function (e) {
+            const a = e.target.closest('.memberCtrl');
+            if (!a) return;
+            e.preventDefault();
+
+            // 비활성은 클릭 무시
+            if (a.classList.contains('disabled')) return;
+
+            const tr = a.closest('tr');
+            const statusEl = tr.querySelector('.status');
+            if (!statusEl) return;
+
+            const currentText = a.textContent.trim();
+            const state = statusEl.textContent.trim();
+            const userId = tr.dataset.userId;
+
+            // === 비활성 처리 ===
+            if (currentText === '비활성') {
+                if (!userId) return;
+                if (!confirm('해당 회원의 데이터를 비활성(소각) 처리하시겠습니까?\n이 작업은 되돌릴 수 없습니다.')) return;
+
+                // POST 제출 (userId만 전송)
+                const form = document.createElement('form');
+                form.method = 'POST';
+                form.action = cp('/admin/onemember/update');   // 서버 매핑
+
+                const input = document.createElement('input');
+                input.type = 'hidden';
+                input.name = 'userId';                          // AdminMemberDTO의 필드명과 동일
+                input.value = userId;
+
+                form.appendChild(input);
+
+                // (Spring Security에서 CSRF를 사용한다면 토큰 hidden 추가)
+                // const token = document.querySelector('meta[name="_csrf"]').getAttribute('content');
+                // const header = document.querySelector('meta[name="_csrf_header"]').getAttribute('content');
+                // const csrfInput = document.createElement('input');
+                // csrfInput.type = 'hidden';
+                // csrfInput.name = header;
+                // csrfInput.value = token;
+                // form.appendChild(csrfInput);
+
+                document.body.appendChild(form);
+                form.submit();
+                return;
+            }
+
+            if (a.textContent.trim() === '중지') {
+                // 정상/휴면 상태에서 '중지' 클릭 → '중지'(빨강)로 변경, 링크는 '재개'
+                statusEl.textContent = '중지';
+                statusEl.style.color = 'red';
+                statusEl.style.fontWeight = '600';
+
+                a.textContent = '재개';
+            } else if (a.textContent.trim() === '재개') {
+                // 중지/휴면 상태에서 '재개' 클릭 → '정상'(초록)으로 변경, 링크는 '중지'
+                statusEl.textContent = '정상';
+                statusEl.style.color = 'green';
+                statusEl.style.fontWeight = '500';
+
+                a.textContent = '중지';
+            }
+            // '비활성'은 위에서 return 처리로 이미 방지됨
+        });
+        // 선택수정(등급 일괄 변경)
+        const openBtn = document.getElementById('openModalBtn');
+        openBtn?.addEventListener('click', async () => {
+            // 1) 체크된 행 수집
+            const rows = [...document.querySelectorAll('tbody tr')]
+                .filter(tr => tr.querySelector('.chk')?.checked);
+
+            if (rows.length === 0) {
+                alert('수정할 회원을 선택하세요.');
+                return;
+            }
+
+            // 2) userId + 등급 추출
+            const payload = rows.map(tr => {
+                const userId = tr.dataset.userId;
+                const grade  = tr.querySelector('select')?.value;
+                return { userId, grade };
+            }).filter(v => v.userId && v.grade);
+
+            if (payload.length === 0) {
+                alert('선택된 회원의 등급 정보를 찾지 못했습니다.');
+                return;
+            }
+
+            // 3) 확인
+            if (!confirm('정말로 수정하시겠습니까?')) return;
+
+            // 4) CSRF 헤더
+            const csrfToken  = document.querySelector('meta[name="_csrf"]')?.content;
+            const csrfHeader = document.querySelector('meta[name="_csrf_header"]')?.content;
+            const headers = { 'Content-Type': 'application/json' };
+            if (csrfToken && csrfHeader) headers[csrfHeader] = csrfToken;
+
+            // 5) 전송
+            try {
+                const res = await fetch(cp('/admin/member/bulk-grade'), {
+                    method: 'POST',
+                    headers,
+                    body: JSON.stringify(payload)
+                });
+
+                if (!res.ok) {
+                    console.error('status:', res.status, 'text:', await res.text().catch(()=>''));
+                    alert('수정 중 오류가 발생했습니다.');
+                    return;
+                }
+
+                alert('선택한 회원의 등급이 수정되었습니다.');
+                location.reload();
+            } catch (e) {
+                console.error(e);
+                alert('수정 중 오류가 발생했습니다.');
+            }
+        });
+
+    </script>
+<div th:replace="~{admin/_footer.html}"></div>

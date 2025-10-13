@@ -1,0 +1,669 @@
+<div th:replace="~{admin/_header.html}"></div>
+<style>
+    .title-line {
+        width: 880px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-left: 20px;
+    }
+
+    /* 탭바 (설계서 스타일) */
+    .tabbar{
+        display:flex; flex-wrap:wrap; gap:4px;
+        margin-left:20px; margin-top:20px;
+        padding:6px 6px 0;
+        border:1px solid #bbb; border-bottom:none;
+        background:#f1f3f5;
+    }
+    .tabbar a{
+        display:inline-block;
+        padding:8px 14px;
+        font-size:14px; color:#333; text-decoration:none;
+        background:#e0e0e0;
+        border:1px solid #bbb;
+        border-bottom:none;
+        border-top-left-radius:4px;
+        border-top-right-radius:4px;
+        margin:0;
+        line-height:1.2;
+    }
+    .tabbar a:hover{ background:#d7d7d7; }
+    .tabbar a.active{
+        background:#fff;
+        font-weight:600;
+        position:relative; top:1px;
+    }
+
+    /* 탭 컨텐츠 박스 */
+    .tab-panel{
+        border-top:none;
+        margin-left:20px;
+        padding:0;
+    }
+
+    /* 버튼 줄 */
+    .btnrow{
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin: 20px 0;
+        padding: 0 20px;
+    }
+
+    /* 버튼 공통 */
+    .btn {
+        min-width: 100px;
+        padding: 8px 16px;
+        font-size: 14px;
+        border: none;
+        cursor: pointer;
+    }
+    .btn-gray { background-color: #ccc; color: #333; }
+    .btn-gray:disabled { opacity: 0.6; cursor: not-allowed; }
+    .btn-blue { background-color: #6FADCF; color: #fff; }
+    .btn-blue:hover { filter: brightness(0.95); }
+
+    /* 테이블 */
+    .bnr-table{ width:100%; border-collapse:collapse; }
+    .bnr-table th, .bnr-table td{
+        padding:10px 8px; vertical-align:top; text-align:left;
+        border-bottom:1px solid #e5e5e5;
+        font-size:14px; color:#111;
+    }
+    .bnr-table thead th{ font-weight:700; background:#fff; }
+    .bnr-table .thumb img{
+        width:100px; height:40px; object-fit:cover; background:#ddd;
+    }
+
+
+    /* 유로 사이드 아코디언 */
+    .euro-nav__list {
+        max-height: 0;
+        overflow: hidden;
+        transition: max-height 0.15s ease;
+    }
+    .euro-nav__group.open .euro-nav__list { max-height: 500px; }
+
+    /* =====================
+   관리자 모달 통일형 디자인 (버전등록 모달 스타일)
+   ===================== */
+
+    /* 오버레이 */
+    .km-overlay {
+        position: fixed;
+        inset: 0;
+        background: rgba(0,0,0,0.35);
+        display: none;
+        align-items: center;
+        justify-content: center;
+        z-index: 999;
+    }
+    .km-overlay.open { display: flex; }
+
+    /* 모달 */
+    .km-modal {
+        background: #fff;
+        width: 700px;
+        border-radius: 2px;
+        box-shadow: 0 8px 24px rgba(0,0,0,0.25);
+        overflow: hidden;
+        display: none;
+        flex-direction: column;
+        z-index: 1000;
+        animation: fadeInModal .25s ease;
+    }
+    .km-modal.open { display: flex; }
+
+    @keyframes fadeInModal {
+        from { opacity: 0; transform: translateY(-10px); }
+        to { opacity: 1; transform: translateY(0); }
+    }
+
+    /* 헤더 */
+    .km-head {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 18px 22px;
+        border-bottom: 1px solid #e2e2e2;
+    }
+    .km-head h2 {
+        margin: 0;
+        font-size: 20px;
+        font-weight: 700;
+        color: #000;
+    }
+    .km-close {
+        width: 32px;
+        height: 32px;
+        border: none;
+        background: transparent;
+        position: relative;
+        cursor: pointer;
+    }
+    .km-close::before,
+    .km-close::after {
+        content: "";
+        position: absolute;
+        top: 15px;
+        left: 8px;
+        right: 8px;
+        height: 2px;
+        background: #000;
+    }
+    .km-close::before { transform: rotate(45deg); }
+    .km-close::after { transform: rotate(-45deg); }
+
+    /* 본문 */
+    .km-body {
+        display: block;
+        padding: 24px;
+    }
+    .km-body table {
+        width: 100%;
+        border-collapse: collapse;
+        border: 1px solid #eee;
+    }
+    .km-body th,
+    .km-body td {
+        border: 1px solid #eee;
+        padding: 14px 12px;
+        text-align: left;
+        vertical-align: top;
+        font-size: 14px;
+    }
+    .km-body th {
+        width: 120px;
+        background: #f9f9f9;
+        font-weight: 600;
+        color: #333;
+    }
+
+    /* 입력 요소 */
+    .km-body input[type="text"],
+    .km-body input[type="url"],
+    .km-body input[type="date"],
+    .km-body input[type="time"],
+    .km-body select,
+    .km-body textarea {
+        width: 100%;
+        padding: 8px 10px;
+        font-size: 14px;
+        border: 1px solid #ccc;
+        border-radius: 2px;
+        box-sizing: border-box;
+    }
+    .km-body input:focus,
+    .km-body select:focus,
+    .km-body textarea:focus {
+        border-color: #111;
+        outline: none;
+    }
+    .km-body textarea {
+        min-height: 120px;
+        resize: vertical;
+    }
+
+    /* 하단 버튼 */
+    .km-actions {
+        display: flex;
+        justify-content: center;
+        border-top: 1px solid #e2e2e2;
+        padding: 18px;
+    }
+    .km-primary {
+        background: #000;
+        color: #fff;
+        border: none;
+        font-size: 14px;
+        padding: 10px 20px;
+        cursor: pointer;
+        border-radius: 2px;
+        transition: background .2s;
+    }
+    .km-primary:hover {
+        background: #333;
+    }
+
+</style>
+
+<main style="display: flex; justify-content: center; border-top:1px solid #e2e2e2;">
+    <div>
+        <aside class="euro-nav" aria-label="관리자 사이드 메뉴" style="">
+            <section class="euro-nav__group">
+                <h4 class="euro-nav__title" style="">환경설정</h4>
+                <ul class="euro-nav__list">
+                    <li class="euro-nav__item"><a th:href="@{/admin/admin_basic}">기본설정</a></li>
+                    <li class="euro-nav__item is-active"><a th:href="@{/admin/admin_banner}">배너관리</a></li>
+                    <li class="euro-nav__item"><a th:href="@{/admin/admin_policy}">약관관리</a></li>
+                    <li class="euro-nav__item"><a th:href="@{/admin/admin_category}">카테고리</a></li>
+                    <li class="euro-nav__item"><a th:href="@{/admin/admin_version}">버전관리</a></li>
+                </ul>
+            </section>
+
+            <section class="euro-nav__group">
+                <h4 class="euro-nav__title" style="">상점관리</h4>
+                <ul class="euro-nav__list">
+                    <li class="euro-nav__item"><a th:href="@{/admin/shop/list}">상점목록</a></li>
+                    <li class="euro-nav__item"><a th:href="@{/admin/sales/list}">매출현황</a></li>
+                </ul>
+            </section>
+
+            <section class="euro-nav__group">
+                <h4 class="euro-nav__title" style="">회원관리</h4>
+                <ul class="euro-nav__list">
+                    <li class="euro-nav__item"><a th:href="@{/admin/member/list}">회원목록</a></li>
+                    <li class="euro-nav__item"><a th:href="@{/admin/point/list}">포인트관리</a></li>
+                </ul>
+            </section>
+
+            <section class="euro-nav__group">
+                <h4 class="euro-nav__title" style="">상품관리</h4>
+                <ul class="euro-nav__list">
+                    <li class="euro-nav__item"><a th:href="@{/admin/product/list}">상품목록</a></li>
+                    <li class="euro-nav__item"><a th:href="@{/admin/productReg/list}">상품등록</a></li>
+                </ul>
+            </section>
+
+            <section class="euro-nav__group">
+                <h4 class="euro-nav__title" style="">주문관리</h4>
+                <ul class="euro-nav__list">
+                    <li class="euro-nav__item"><a th:href="@{/admin/order/list}">주문현황</a></li>
+                    <li class="euro-nav__item"><a th:href="@{/admin/delivery/list}">배송현황</a></li>
+                </ul>
+            </section>
+
+            <section class="euro-nav__group">
+                <h4 class="euro-nav__title" style="">쿠폰관리</h4>
+                <ul class="euro-nav__list">
+                    <li class="euro-nav__item"><a th:href="@{/admin/coupon/list}">쿠폰목록</a></li>
+                    <li class="euro-nav__item"><a th:href="@{/admin/couponsnow/list}">쿠폰발급현황</a></li>
+                </ul>
+            </section>
+
+            <section class="euro-nav__group">
+                <h4 class="euro-nav__title" style="">고객센터</h4>
+                <ul class="euro-nav__list">
+                    <li class="euro-nav__item"><a th:href="@{/admin/announcement/list}">공지사항</a></li>
+                    <li class="euro-nav__item"><a th:href="@{/admin/FAQ/list}">자주묻는질문</a></li>
+                    <li class="euro-nav__item"><a th:href="@{/admin/inquiry/list}">문의하기</a></li>
+                    <li class="euro-nav__item"><a th:href="@{/admin/employ/list}">채용하기</a></li>
+                </ul>
+            </section>
+        </aside>
+    </div>
+
+    <div style="border-left:1px solid #e2e2e2;"></div>
+
+    <div style="margin-left:40px; width:900px; height:1000px; ">
+        <!-- 헤더 -->
+        <div class="title-line" style="border-bottom: 3px solid #ccc;">
+            <div style="padding-top: 10px; padding-bottom: 5px; font-size: 22px;"><b>배너관리</b></div>
+            <div>HOME > 환경설정 > <b>배너관리</b></div>
+        </div>
+
+        <!-- 탭 -->
+        <div class="tabbar" id="bnrTabs">
+            <a href="#" class="active" data-tab="MAIN1">메인상단 배너</a>
+            <a href="#" data-tab="MAIN2">메인슬라이더 배너</a>
+            <a href="#" data-tab="PRODUCT1">상품 상세보기 배너</a>
+            <a href="#" data-tab="MEMBER1">회원로그인 배너</a>
+            <a href="#" data-tab="MYPAGE1">마이페이지 배너</a>
+        </div>
+
+        <!-- 소제목 -->
+        <div class="title-line" style="border-bottom: 3px solid #bbb">
+            <div style="padding-top: 10px; font-size: 20px;"><b id="bnrTitle">메인 상단배너</b></div>
+        </div>
+
+        <!-- 테이블 -->
+        <div class="tab-panel">
+            <table class="bnr-table">
+                <thead>
+                <tr>
+                    <th><input type="checkbox" id="checkAll"></th>
+                    <th>번호</th>
+                    <th>이미지</th>
+                    <th>배너정보</th>
+                    <th>배너위치</th>
+                    <th>시작일</th>
+                    <th>종료일</th>
+                    <th>시작시간</th>
+                    <th>종료시간</th>
+                    <th>관리</th>
+                </tr>
+                </thead>
+                <tbody id="bnrTbody"></tbody>
+            </table>
+        </div>
+
+        <!-- 버튼 -->
+        <div class="btnrow">
+            <button id="bnrDeleteBtn" class="btn btn-gray">선택삭제</button>
+            <button id="bnrOpenModalBtn" class="btn btn-blue">배너등록</button>
+        </div>
+    </div>
+</main>
+
+<div id="kmOverlay" class="km-overlay">
+
+<div id="kmModal" class="km-modal" role="dialog" aria-modal="true" aria-labelledby="kmTitle">
+    <div class="km-head">
+        <h2 id="kmTitle">배너등록</h2>
+        <button type="button" id="kmClose" class="km-close" aria-label="닫기"></button>
+    </div>
+
+    <form id="bnrForm" class="km-body" method="post" enctype="multipart/form-data">
+        <table>
+            <tr>
+                <th>배너이름</th>
+                <td><input type="text" name="name" placeholder="배너명입력" required></td>
+            </tr>
+            <tr>
+                <th>배너크기</th>
+                <td><input type="text" name="size" placeholder="예) 1200×80" required></td>
+            </tr>
+            <tr>
+                <th>배경색</th>
+                <td><input type="text" name="bgColor" placeholder="#ffffff" required></td>
+            </tr>
+            <tr>
+                <th>배너링크</th>
+                <td><input type="url" name="linkUrl" placeholder="https://..."></td>
+            </tr>
+            <tr>
+                <th>배너위치</th>
+                <td>
+                    <select name="position" required>
+                        <option value="">선택</option>
+                        <option value="MAIN1">MAIN1 : 메인 최상단</option>
+                        <option value="MAIN2">MAIN2 : 메인 슬라이더</option>
+                        <option value="PRODUCT1">PRODUCT1 : 상품보기</option>
+                        <option value="MEMBER1">MEMBER1 : 로그인</option>
+                        <option value="MYPAGE1">MYPAGE1 : 마이페이지</option>
+                    </select>
+                </td>
+            </tr>
+            <tr>
+                <th>노출일자</th>
+                <td>
+                    <input type="date" name="dateFrom" required> ~
+                    <input type="date" name="dateTo" required>
+                </td>
+            </tr>
+            <tr>
+                <th>노출시간</th>
+                <td>
+                    <input type="time" name="timeFrom" required> ~
+                    <input type="time" name="timeTo" required>
+                </td>
+            </tr>
+            <tr>
+                <th>배너파일</th>
+                <td><input type="file" name="file" accept="image/*"></td>
+            </tr>
+        </table>
+
+        <div class="km-actions">
+            <button type="submit" class="km-primary">등록하기</button>
+        </div>
+    </form>
+</div>
+</div>
+
+<script>
+    /* ====== 사이드 아코디언 ====== */
+    document.querySelectorAll('.euro-nav__title').forEach(title => {
+        title.style.cursor = 'pointer';
+        title.addEventListener('click', () => {
+            const group = title.parentElement;
+            const list  = group.querySelector('.euro-nav__list');
+            const isOpen = group.classList.contains('open');
+
+            if (isOpen) {
+                list.style.maxHeight = list.scrollHeight + 'px';
+                list.offsetHeight;
+                list.style.maxHeight = '0px';
+                group.classList.remove('open');
+            } else {
+                group.classList.add('open');
+                list.style.maxHeight = list.scrollHeight + 'px';
+                const onEnd = (e) => {
+                    if (e.propertyName === 'max-height') {
+                        list.style.maxHeight = 'none';
+                        list.removeEventListener('transitionend', onEnd);
+                    }
+                };
+                list.addEventListener('transitionend', onEnd);
+            }
+        });
+    });
+    const groups = document.querySelectorAll('.euro-nav__group');
+    document.querySelectorAll('.euro-nav__title').forEach(title => {
+        title.addEventListener('click', () => {
+            groups.forEach(g => {
+                if (g !== title.parentElement && g.classList.contains('open')) {
+                    const l = g.querySelector('.euro-nav__list');
+                    l.style.maxHeight = l.scrollHeight + 'px';
+                    l.offsetHeight;
+                    l.style.maxHeight = '0px';
+                    g.classList.remove('open');
+                }
+            });
+        }, {capture:true});
+    });
+</script>
+
+<script th:inline="javascript">
+    const CTX = /*[[@{/}]]*/ '/';  // 예: '/NICHIYA/'
+
+    const titleEl = document.getElementById('bnrTitle');
+    let currentTab = 'MAIN1';
+    const TAB_LABEL = {
+        MAIN1: '메인 상단배너',
+        MAIN2: '메인슬라이더 배너',
+        PRODUCT1: '상품 상세보기 배너',
+        MEMBER1: '회원로그인 배너',
+        MYPAGE1: '마이페이지 배너'
+    };
+
+    // ✅ 탭 전환 기능
+    document.querySelectorAll('#bnrTabs a').forEach(tab => {
+        tab.addEventListener('click', e => {
+            e.preventDefault();
+
+            // 모든 탭 비활성화 → 클릭된 탭 활성화
+            document.querySelectorAll('#bnrTabs a').forEach(t => t.classList.remove('active'));
+            tab.classList.add('active');
+
+            // 현재 탭 변경 후 목록 새로 로드
+            currentTab = tab.dataset.tab;
+            console.log('✅ currentTab:', currentTab);
+            loadList();
+        });
+    });
+
+    // 목록 로딩
+    async function loadList() {
+        const res  = await fetch(`${CTX}api/admin/banners?position=${currentTab}`);
+        if (!res.ok) {
+            console.error('list error', await res.text());
+            return;
+        }
+        const data = await res.json();
+        renderRows(data);
+        if (titleEl) titleEl.textContent = TAB_LABEL[currentTab];
+    }
+
+    // 표 렌더러
+    function renderRows(list){
+        const tbody = document.getElementById('bnrTbody');
+        if (!tbody) return;
+
+        if (!list || list.length === 0){
+            tbody.innerHTML = `
+        <tr><td colspan="10" style="text-align:center; padding:20px; color:#888;">
+          등록된 배너가 없습니다.
+        </td></tr>`;
+            return;
+        }
+
+        tbody.innerHTML = list.map((b, idx)=> `
+      <tr data-id="${b.id}">
+        <td><input type="checkbox" class="row-check"></td>
+        <td>${idx + 1}</td>
+        <td>
+          <div class="thumb">
+            <img src="${b.imagePath.startsWith('/upload') ? '/NICHIYA' + b.imagePath : b.imagePath}"
+               alt="사진"
+               style="width:100px;height:40px;object-fit:cover;">
+          </div>
+        </td>
+        <td class="banner-info">
+          ${b.name}<br>
+          크기 : ${b.size || '-'}<br>
+          배경색 : ${b.bgColor || '-'}<br>
+          배너링크
+        </td>
+        <td>${b.bnrPosition}</td>
+        <td>${b.dateFrom || '-'}</td>
+        <td>${b.dateTo || '-'}</td>
+        <td>${b.timeFrom || '-'}</td>
+        <td>${b.timeTo || '-'}</td>
+        <td>
+           ${b.status === 'ACTIVE'
+                      ? `<button class="btn" data-action="disable" data-id="${b.id}">[비활성]</button>`
+                      : `<button class="btn" data-action="enable"  data-id="${b.id}">[활성]</button>`
+           }
+        </td>
+      </tr>
+    `).join('');
+
+        // 전체선택
+        const checkAll = document.getElementById('checkAll');
+        if (checkAll) {
+            checkAll.checked = false;
+            checkAll.onchange = () => {
+                document.querySelectorAll('#bnrTbody .row-check').forEach(ch => ch.checked = checkAll.checked);
+            };
+        }
+    }
+
+    // 탭 전환
+    (function initTabsBar(){
+        const tabs = document.querySelectorAll('#bnrTabs a');
+        tabs.forEach(tab=>{
+            tab.addEventListener('click', (e)=>{
+                e.preventDefault();
+                const key = tab.getAttribute('data-tab');
+                if (!key || key === currentTab) return;
+                tabs.forEach(t=>t.classList.remove('active'));
+                tab.classList.add('active');
+                currentTab = key;
+                loadList();
+            });
+        });
+        loadList(); // 초기 로딩
+    })();
+
+    // 상태 토글
+    document.addEventListener('click', async (e)=>{
+        const btn = e.target.closest('button[data-action]');
+        if (!btn) return;
+        const id = btn.dataset.id;
+        const enable = btn.dataset.action === 'enable';
+        const res = await fetch(`${CTX}api/admin/banners/${id}/status?enable=${enable}`, { method: 'PATCH' });
+        if (!res.ok) {
+            alert('상태 변경 실패\n' + await res.text());
+            return;
+        }
+        loadList();
+    });
+
+    // 선택삭제
+    document.getElementById('bnrDeleteBtn')?.addEventListener('click', async ()=>{
+        const ids = [...document.querySelectorAll('#bnrTbody .row-check:checked')]
+            .map(ch => Number(ch.closest('tr')?.dataset.id))
+            .filter(Boolean);
+        if (!ids.length) return alert('삭제할 항목을 선택하세요.');
+        if (!confirm(`${ids.length}개를 삭제할까요?`)) return;
+
+        const res = await fetch(`${CTX}api/admin/banners`, {
+            method:'DELETE',
+            headers:{ 'Content-Type':'application/json' },
+            body: JSON.stringify(ids)
+        });
+        if (!res.ok) {
+            alert('삭제 실패\n' + await res.text());
+            return;
+        }
+        loadList();
+    });
+
+    // ===== 모달(등록) =====
+    document.addEventListener('DOMContentLoaded', () => {
+        const pageBody  = document.body;
+        const openBtn   = document.getElementById('bnrOpenModalBtn');
+        const overlay   = document.getElementById('kmOverlay');
+        const modal     = document.getElementById('kmModal');
+        const closeBtn  = document.getElementById('kmClose');
+        const form      = document.getElementById('bnrForm');
+
+        const open = () => {
+            overlay.classList.add('open');
+            modal.classList.add('open');
+            modal.setAttribute('aria-hidden','false');
+            pageBody.style.overflow = 'hidden';
+            modal.querySelector('input,select,button')?.focus();
+        };
+        const close = () => {
+            overlay.classList.remove('open');
+            modal.classList.remove('open');
+            modal.setAttribute('aria-hidden','true');
+            pageBody.style.overflow = '';
+        };
+
+        openBtn?.addEventListener('click', open);
+        closeBtn?.addEventListener('click', close);
+
+        // 모달 내부 클릭 시 overlay로 이벤트 전파 막기
+        modal.addEventListener('click', e => e.stopPropagation());
+
+        overlay?.addEventListener('click', close);
+        window.addEventListener('keydown', (e)=> {
+            if (e.key === 'Escape' && modal.classList.contains('open')) close();
+        });
+
+        // 등록(모달 submit) — FormData를 "그대로" 전송
+        form.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            if (!form.reportValidity()) return;   // required 검사 강제
+
+
+            const fd = new FormData(form);        // 키 재매핑 금지!
+            fd.append('bnrPosition', currentTab);
+
+            // ★ 디버그: 전송할 키/값 모두 출력
+            for (const [k, v] of fd.entries()) {
+                console.log('FD:', k, v);
+            }
+
+            const res = await fetch(`${CTX}api/admin/banners`, {
+                method: 'POST',
+                body: fd
+            });
+
+            if (!res.ok) {
+                const msg = await res.text();
+                alert('등록 실패\n' + msg);
+                return;
+            }
+
+            close();
+            form.reset();
+            loadList();
+        });
+    });
+</script>
+<div th:replace="~{admin/_footer.html}"></div>

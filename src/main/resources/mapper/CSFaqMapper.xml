@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="kr.co.bnk_marketproject_be.mapper.CSFaqMapper">
+
+    <!-- FAQ 목록 -->
+    <select id="selectFaqList" resultType="kr.co.bnk_marketproject_be.dto.CSNoticeDTO">
+        SELECT
+            id,
+            board_type AS boardType,
+            title
+        FROM BOARD
+        WHERE board_type = 'faq'
+        ORDER BY id DESC
+        OFFSET 0 ROWS FETCH NEXT 3 ROWS ONLY
+    </select>
+
+    <!-- FAQ 상세 -->
+    <select id="selectFaqDetail" parameterType="long" resultType="kr.co.bnk_marketproject_be.dto.CSNoticeDTO">
+        SELECT
+            id,
+            board_type AS boardType,
+            title,
+            content,
+            created_at AS createdAt
+        FROM board
+        WHERE id = #{id}
+    </select>
+
+
+    <!-- FAQ 등록 주석처리
+    <insert id="insertFaq" parameterType="kr.co.bnk_marketproject_be.dto.CSNoticeDTO">
+        INSERT INTO cs_notice (board_type, title, content, created_at)
+        VALUES (#{boardType}, #{title}, #{content}, NOW())
+    </insert>
+    -->
+
+</mapper>

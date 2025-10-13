@@ -1,0 +1,494 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>registerSeller</title>
+    <style>
+        body {
+            font-family: "Noto Sans KR", sans-serif;
+            background: #fff;
+            color: #333;
+            margin: 0;
+            padding: 0;
+        }
+
+        .container {
+            max-width: 760px;
+            margin: 50px auto;
+            padding: 0 16px;
+        }
+
+        h2 {
+            text-align: center;
+            font-size: 28px;
+            margin-bottom: 30px;
+        }
+
+        form label {
+            display: block;
+            margin: 15px 0 8px;
+            font-weight: bold;
+        }
+
+        form input[type="text"],
+        form input[type="password"],
+        form input[type="email"],
+        form input[type="date"],
+        form select {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #ddd;
+            font-size: 14px;
+        }
+
+        .radio-group {
+            margin: 10px 0;
+        }
+
+        .radio-group label {
+            margin-right: 20px;
+            font-weight: normal;
+        }
+
+        .address-box {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 10px;
+        }
+
+        .address-box input {
+            flex: 1;
+        }
+
+        .address-box button {
+            padding: 12px 20px;
+            background: #333;
+            color: #fff;
+            border: none;
+            cursor: pointer;
+        }
+
+        .btn-area {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 20px;
+        }
+
+        .btn-area button {
+            width: 49%;
+            padding: 8px;
+            font-size: 16px;
+            cursor: pointer;
+        }
+
+        .btn-verify {
+            background: #333;
+            margin-top: 8px;
+            color: #fff;
+            outline: none;
+            border: none;
+            box-shadow: none;
+            padding: 4px 12px;
+            cursor: pointer;
+        }
+
+        .btn-cancel {
+            background: #fff;
+            border: 1px solid #333;
+        }
+
+        .btn-submit {
+            background: #333;
+            color: #fff;
+            border: none;
+        }
+
+        .btn-submit:disabled {
+            background: #bbb;
+            color: #fff;
+            cursor: not-allowed;
+            opacity: .9;
+        }
+
+        .success {
+            color: green;
+            font-size: 13px;
+            margin-top: 4px;
+        }
+
+        .error {
+            color: red;
+            font-size: 13px;
+            margin-top: 4px;
+        }
+    </style>
+</head>
+
+<body>
+    <div id="header"></div>
+
+    <div class="container">
+        <h2>회원가입 (판매자)</h2>
+
+        <form id="signupForm" novalidate>
+            <!-- 회원구분 -->
+            <label>회원구분 *</label>
+            <div class="radio-group">
+                <label><input type="radio" name="memberType" value="user" checked> 판매자회원</label>
+            </div>
+
+            <!-- 아이디 -->
+            <label for="userid">아이디 *</label>
+            <input type="text" id="userid" name="userid" placeholder="영문/숫자 4~16자" required>
+            <div class="btn-verify-area">
+                <button type="button" id="btnCheckId" class="btn-verify">중복확인</button>
+            </div>
+            <p id="idResult"></p>
+
+            <!-- 이메일 -->
+            <label for="email">이메일 *</label>
+            <input type="email" id="email" name="email" required>
+            <p id="emailResult"></p>
+
+            <!-- 비밀번호 -->
+            <label for="password">비밀번호 *</label>
+            <input type="password" id="password" name="password" placeholder="영문/숫자/특수문자 2가지 이상, 10~16자" required>
+
+            <label for="confirmPassword">비밀번호 확인 *</label>
+            <input type="password" id="confirmPassword" name="confirmPassword" required>
+            <p id="pwResult"></p>
+
+            <!-- 회사명 -->
+            <label for="companyName">회사명 입력 *</label>
+            <input type="text" id="companyName" name="companyName" placeholder="회사명 입력" required>
+            <p id="companyResult"></p>
+
+            <!-- 대표 -->
+            <label for="ceoName">대표 *</label>
+            <input type="text" id="ceoName" name="ceoName" required>
+            <p id="ceoResult"></p>
+
+            <!-- 사업자등록번호 -->
+            <label for="sellerNum">사업자등록번호 *</label>
+            <input type="text" id="sellerNum" name="sellerNum" placeholder="예: 123-45-67890" required>
+            <p id="bizResult"></p>
+
+            <!-- 통신판매업번호 -->
+            <label for="internet-seller-num">통신판매업번호 *</label>
+            <input type="text" id="internet-seller-num" name="internet-seller-num" placeholder="예: 2023-서울강남-1234"
+                required>
+            <p id="internetResult"></p>
+
+            <!-- 연락처 -->
+            <label for="hp">연락처 *</label>
+            <input type="text" id="hp" name="hp" placeholder="예: 010-1234-5678" required>
+            <p id="hpResult"></p>
+
+            <!-- 팩스 -->
+            <label for="fax">팩스 *</label>
+            <input type="text" id="fax" name="fax" placeholder="예: 02-1234-5678" required>
+            <p id="faxResult"></p>
+
+            <!-- 주소 -->
+            <label>주소 *</label>
+            <div class="address-box">
+                <input type="text" id="postcode" placeholder="우편번호" readonly required>
+                <button type="button" onclick="execDaumPostcode()">주소찾기</button>
+            </div>
+            <input type="text" id="address" placeholder="기본주소" readonly required>
+            <input type="text" id="detailAddress" placeholder="상세주소">
+            <p id="addrResult"></p>
+
+            <!-- 버튼 -->
+            <div class="btn-area">
+                <button type="button" class="btn-cancel" onclick="location.href='/'">취소</button>
+                <button type="submit" id="btnSubmit" class="btn-submit" disabled>가입하기</button>
+            </div>
+        </form>
+    </div>
+
+    <div id="footer"></div>
+
+    <!-- Daum 주소 API -->
+    <script src="//t1.daumcdn.net/mapjsapi/bundle/postcode/prod/postcode.v2.js"></script>
+
+    <script>
+        // ===== 헤더/푸터 로드 =====
+        window.addEventListener('DOMContentLoaded', () => {
+            fetch("/NICHIYA/main/header.html")
+                .then(res => res.text())
+                .then(data => {
+                    const header = document.getElementById("header");
+                    if (!header) return;
+                    header.innerHTML = data;
+                    header.querySelectorAll("script").forEach(oldScript => {
+                        const s = document.createElement("script");
+                        if (oldScript.src) s.src = oldScript.src; else s.textContent = oldScript.textContent;
+                        document.body.appendChild(s);
+                    });
+                });
+
+            fetch("/NICHIYA/main/footer.html")
+                .then(res => res.text())
+                .then(data => {
+                    const footer = document.getElementById("footer");
+                    if (!footer) return;
+                    footer.innerHTML = data;
+                });
+        });
+
+        // ===== DOM 참조 =====
+        const form = document.getElementById("signupForm");
+        const btnSubmit = document.getElementById("btnSubmit");
+
+        const elUserId = document.getElementById("userid");
+        const elPw = document.getElementById("password");
+        const elPw2 = document.getElementById("confirmPassword");
+        const elCompany = document.getElementById("companyName");
+        const elCEO = document.getElementById("ceoName");
+        const elBiz = document.getElementById("sellerNum");
+        const elInternet = document.getElementById("internet-seller-num");
+        const elHp = document.getElementById("hp");
+        const elFax = document.getElementById("fax");
+        const elPost = document.getElementById("postcode");
+        const elAddr = document.getElementById("address");
+
+        const idResult = document.getElementById("idResult");
+        const pwResult = document.getElementById("pwResult");
+        const companyResult = document.getElementById("companyResult");
+        const ceoResult = document.getElementById("ceoResult");
+        const bizResult = document.getElementById("bizResult");
+        const internetResult = document.getElementById("internetResult");
+        const hpResult = document.getElementById("hpResult");
+        const faxResult = document.getElementById("faxResult");
+        const addrResult = document.getElementById("addrResult");
+
+        // ===== 유효성 검사 =====
+        function validateUserId() {
+            const v = elUserId.value.trim();
+            const ok = /^[A-Za-z0-9]{4,16}$/.test(v);
+            if (!v) { idResult.textContent = "아이디는 필수입니다."; idResult.className = "error"; return false; }
+            if (!ok) { idResult.textContent = "아이디는 영문/숫자 4~16자여야 합니다."; idResult.className = "error"; return false; }
+            idResult.textContent = "사용 가능한 형식입니다."; idResult.className = "success"; return true;
+        }
+
+        function validatePassword() {
+            const p1 = elPw.value;
+            const p2 = elPw2.value;
+            const lenOK = /^.{10,16}$/.test(p1);
+            const types = [/[A-Za-z]/.test(p1), /[0-9]/.test(p1), /[^A-Za-z0-9]/.test(p1)];
+            const typeOK = (types.filter(Boolean).length >= 2);
+
+            if (!p1) { pwResult.textContent = "비밀번호는 필수입니다."; pwResult.className = "error"; return false; }
+            if (!(lenOK && typeOK)) {
+                pwResult.textContent = "영문/숫자/특수문자 중 2가지 이상 포함, 10~16자";
+                pwResult.className = "error"; return false;
+            }
+            if (!p2) {
+                pwResult.textContent = "비밀번호 확인을 입력하세요.";
+                pwResult.className = "error"; return false;
+            }
+            if (p1 !== p2) {
+                pwResult.textContent = "비밀번호가 일치하지 않습니다.";
+                pwResult.className = "error"; return false;
+            }
+            pwResult.textContent = "비밀번호가 일치합니다 ✅"; pwResult.className = "success"; return true;
+        }
+
+        function validateCompany() {
+            const v = elCompany.value.trim();
+            if (!v) { companyResult.textContent = "회사명은 필수입니다."; companyResult.className = "error"; return false; }
+            companyResult.textContent = ""; companyResult.className = ""; return true;
+        }
+
+        function validateCEO() {
+            const v = elCEO.value.trim();
+            if (!v) { ceoResult.textContent = "대표 성명은 필수입니다."; ceoResult.className = "error"; return false; }
+            ceoResult.textContent = ""; ceoResult.className = ""; return true;
+        }
+
+        function normalizeBiz(v) {
+            const digits = v.replace(/\D/g, '').slice(0, 10);
+            if (digits.length <= 3) return digits;
+            if (digits.length <= 5) return digits.slice(0, 3) + '-' + digits.slice(3);
+            return digits.slice(0, 3) + '-' + digits.slice(3, 5) + '-' + digits.slice(5);
+        }
+
+        function validateBiz() {
+            const raw = elBiz.value.trim();
+            const dashed = normalizeBiz(raw);
+            elBiz.value = dashed;
+            const ok = /^\d{3}-\d{2}-\d{5}$/.test(dashed);
+            if (!raw) { bizResult.textContent = "사업자등록번호는 필수입니다."; bizResult.className = "error"; return false; }
+            if (!ok) { bizResult.textContent = "형식이 올바르지 않습니다. 예: 123-45-67890"; bizResult.className = "error"; return false; }
+            bizResult.textContent = "유효한 형식입니다."; bizResult.className = "success"; return true;
+        }
+
+        function validateInternet() {
+            const v = elInternet.value.trim();
+            if (!v) { internetResult.textContent = "통신판매업번호는 필수입니다."; internetResult.className = "error"; return false; }
+            const ok = /^[0-9]{4}-[가-힣A-Za-z]+-[0-9]{1,5}$/.test(v);
+            if (!ok) { internetResult.textContent = "형식이 올바르지 않습니다. (예: 2023-서울강남-1234)"; internetResult.className = "error"; return false; }
+            internetResult.textContent = "유효한 형식입니다."; internetResult.className = "success"; return true;
+        }
+
+        function normalizePhone(v) {
+            const d = v.replace(/\D/g, '').slice(0, 11);
+            if (d.length < 4) return d;
+            if (d.length < 8) return d.slice(0, 3) + '-' + d.slice(3);
+            return d.slice(0, 3) + '-' + d.slice(3, 7) + '-' + d.slice(7);
+        }
+
+        function validatePhone() {
+            elHp.value = normalizePhone(elHp.value);
+            const ok = /^01[016789]-\d{3,4}-\d{4}$/.test(elHp.value);
+            if (!elHp.value) { hpResult.textContent = "연락처는 필수입니다."; hpResult.className = "error"; return false; }
+            if (!ok) { hpResult.textContent = "형식이 올바르지 않습니다. 예: 010-1234-5678"; hpResult.className = "error"; return false; }
+            hpResult.textContent = ""; hpResult.className = ""; return true;
+        }
+
+        function validateFax() {
+            const v = elFax.value.trim();
+            if (!v) { faxResult.textContent = "팩스번호는 필수입니다."; faxResult.className = "error"; return false; }
+            const ok = /^\d{2,3}-\d{3,4}-\d{4}$/.test(v);
+            if (!ok) { faxResult.textContent = "형식이 올바르지 않습니다. (예: 02-1234-5678)"; faxResult.className = "error"; return false; }
+            faxResult.textContent = "유효한 형식입니다."; faxResult.className = "success"; return true;
+        }
+
+        function validateAddress() {
+            const ok = !!(elPost.value && elAddr.value);
+            if (!ok) { addrResult.textContent = "우편번호와 기본주소를 입력하세요."; addrResult.className = "error"; return false; }
+            addrResult.textContent = ""; addrResult.className = ""; return true;
+        }
+
+        function updateSubmitState() {
+            const allValid =
+                validateUserId() &&
+                validatePassword() &&
+                validateCompany() &&
+                validateCEO() &&
+                validateBiz() &&
+                validateInternet() &&
+                validatePhone() &&
+                validateFax() &&
+                validateAddress();
+
+            btnSubmit.disabled = !allValid;
+        }
+
+        // ===== 아이디 중복 체크 검사 =====
+        document.getElementById("btnCheckId").addEventListener("click", async () => {
+            if (!validateUserId()) return;
+
+            const userId = elUserId.value.trim();
+
+            try {
+                // 서버에 아이디 중복 체크 요청
+                const res = await fetch(`/NICHIYA/seller/check-id?userId=${encodeURIComponent(userId)}`);
+                const data = await res.json();
+
+                if (data.exists) {
+                    idResult.textContent = "이미 사용 중인 아이디입니다.";
+                    idResult.className = "error";
+                } else {
+                    idResult.textContent = "사용 가능한 아이디입니다 ✅";
+                    idResult.className = "success";
+                }
+            } catch (err) {
+                console.error(err);
+                idResult.textContent = "서버 오류로 확인 실패";
+                idResult.className = "error";
+            }
+
+            updateSubmitState();
+        });
+
+        elUserId.addEventListener("input", updateSubmitState);
+        elPw.addEventListener("input", updateSubmitState);
+        elPw2.addEventListener("input", updateSubmitState);
+        elCompany.addEventListener("input", updateSubmitState);
+        elCEO.addEventListener("input", updateSubmitState);
+        elBiz.addEventListener("input", updateSubmitState);
+        elInternet.addEventListener("input", updateSubmitState);
+        elHp.addEventListener("input", updateSubmitState);
+        elFax.addEventListener("input", updateSubmitState);
+
+        // 주소 API
+        function execDaumPostcode() {
+            new daum.Postcode({
+                oncomplete: function (data) {
+                    elPost.value = data.zonecode;
+                    elAddr.value = data.address;
+                    updateSubmitState();
+                }
+            }).open();
+        }
+        window.execDaumPostcode = execDaumPostcode;
+
+        // 판매자 가입 제출
+        form.addEventListener("submit", async (e) => {
+            e.preventDefault();
+
+            const okNow =
+                validateUserId() &&
+                validatePassword() &&
+                validateCompany() &&
+                validateCEO() &&
+                validateBiz() &&
+                validateInternet() &&
+                validatePhone() &&
+                validateFax() &&
+                validateAddress();
+
+            if (!okNow) {
+                alert("필수 입력 항목을 완료해주세요.");
+                updateSubmitState();
+                return;
+            }
+
+            const payload = {
+                sellerId: elUserId.value.trim(),
+                password: elPw.value,
+                brand_name: elCompany.value.trim(),
+                biz_registration_number: elBiz.value.trim(),
+                mail_order_number: elInternet.value.trim(),
+                email: document.getElementById("email").value.trim(),
+                phone: elHp.value.trim(),
+                fax: elFax.value.trim(),
+                postcode: elPost.value.trim(),
+                address: elAddr.value.trim(),
+                detailAddress: document.getElementById("detailAddress").value.trim()
+
+            };
+
+            try {
+                const res = await fetch("/NICHIYA/seller/register", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify(payload)
+                });
+
+                const result = await res.json();
+
+                if (res.ok && result.ok) {
+                    alert("판매자 회원가입이 완료되었습니다!");
+
+                    if (confirm("로그인 페이지로 이동하시겠습니까?")) {
+                        location.href = "/NICHIYA/member/login";
+                    } else {
+                        location.href = "/NICHIYA/member/join";
+                    }
+                } else {
+                    alert("회원가입 실패: " + (result.error || "알 수 없는 오류"));
+                }
+            } catch (err) {
+                console.error(err);
+                alert("서버 오류로 가입 실패");
+            }
+        });
+    </script>
+</body>
+
+</html>

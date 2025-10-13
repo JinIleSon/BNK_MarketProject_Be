@@ -22,18 +22,18 @@ public class MyUserDetails implements UserDetails {
     public Collection<? extends GrantedAuthority> getAuthorities() {
         // 계정 목록 리스트 생성, 인가 처리에 사용
         List<GrantedAuthority> authorities = new ArrayList<>();
-        authorities.add(new SimpleGrantedAuthority("ROLE_" + user.getUs_role())); // 계정 권한 앞에 접두에 ROLE_ 작성!!!
+        authorities.add(new SimpleGrantedAuthority("ROLE_" + user.getRole())); // 계정 권한 앞에 접두에 ROLE_ 작성!!!
         return authorities;
     }
 
     @Override
     public String getPassword() {
-        return user.getPass();
+        return user.getPassword();
     }
 
     @Override
     public String getUsername() {
-        return user.getUsid();
+        return user.getName();
     }
 
     @Override

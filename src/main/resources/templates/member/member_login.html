@@ -1,0 +1,422 @@
+<!DOCTYPE html>
+<html lang="ko">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>login</title>
+    <style>
+        html,
+        body {
+            margin: 0
+        }
+
+        a {
+            text-decoration: none;
+            color: #000
+        }
+
+        body {
+            font-family: system-ui, sans-serif;
+            font-size: clamp(14px, 1.2vw, 16px);
+            color: #000
+        }
+
+        /* 1) 전체 레이아웃 */
+        .main-layout {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            min-height: 100dvh;
+        }
+
+        .site-max {
+            max-width: none;
+            width: 100%;
+            margin-inline: auto
+        }
+
+        /* 2) 왼쪽(로그인) 영역 */
+        .login-side {
+            display: grid;
+            place-items: center;
+            padding: 24px;
+            background: #fff;
+        }
+
+        .login-panel {
+            width: min(620px, 90%)
+        }
+
+        .header-logo {
+            margin-bottom: 20px;
+            width: 300px
+        }
+
+        .header-logo-img {
+            width: min(190px, 100%)
+        }
+
+        .login-text {
+            font-size: 22px;
+            font-weight: 600;
+            margin: 8px 0 4px
+        }
+
+        .form-field {
+            margin-top: 16px
+        }
+
+        .form-field-id input,
+        .form-field-pw input {
+            box-sizing: border-box;
+            width: 100%;
+            padding-top: 26px;
+            padding-bottom: 7px;
+            border: none;
+            border-bottom: 1px solid #000;
+            transition: border-color .2s;
+        }
+
+        .form-field-id input:focus,
+        .form-field-pw input:focus {
+            outline: none
+        }
+
+        .error-msg {
+            display: none;
+            margin-top: 8px;
+            font-size: 13px;
+            color: #e53935;
+            line-height: 1.3
+        }
+
+        .error-msg::before {
+            content: "ⓘ";
+            margin-right: 6px;
+            font-weight: 600
+        }
+
+        .form-field-id.is-invalid input,
+        .form-field-pw.is-invalid input {
+            border-bottom-color: #e53935
+        }
+
+        .form-field-id.is-invalid .error-msg,
+        .form-field-pw.is-invalid .error-msg {
+            display: block
+        }
+
+        .login-assist {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 8px;
+            font-size: 13px;
+        }
+
+        .find-pw a {
+            margin-right: 4px
+        }
+
+        .find-pw a:last-child {
+            margin-right: 0
+        }
+
+        input[type="checkbox"] {
+            width: 16px;
+            height: 16px;
+            margin: 0;
+            padding: 0;
+            cursor: pointer;
+            accent-color: #000;
+            vertical-align: middle;
+        }
+
+        .btn-log {
+            display: block;
+            width: 100%;
+            margin-top: 40px;
+            padding: 8px;
+            background: #000;
+            color: #fff;
+            border: 0;
+            cursor: pointer;
+        }
+
+        .btn-reg {
+            display: block;
+            width: 100%;
+            margin-top: 16px;
+            padding: 7px;
+            background: #fff;
+            color: #000;
+            border: 1px solid #000;
+            cursor: pointer;
+        }
+
+        /* 3) 소셜 로그인 */
+        .form-field-social {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 28px;
+            margin-top: 28px;
+        }
+
+        .social-btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 64px;
+            height: 64px;
+            border-radius: 0;
+            background: #fff;
+            border: 1px solid #eaeaea;
+            transition: transform .12s ease, box-shadow .12s ease;
+        }
+
+        .social-btn:hover,
+        .social-btn:focus-visible {
+            transform: translateY(-1px);
+            box-shadow: 0 2px 6px rgba(0, 0, 0, .08);
+            outline: none;
+        }
+
+        .social-btn img {
+            width: 82%;
+            height: 82%;
+            object-fit: contain;
+        }
+
+        .help-link {
+            font-size: 13px;
+            margin-top: 64px
+        }
+
+        /* 4) 오른쪽(이미지) 영역 - 변경 없음 */
+        .image-side {
+            background: url("https://images.unsplash.com/photo-1752729200157-18e70946c35c?q=80&w=687&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D") center/cover no-repeat;
+        }
+
+        @media (max-width:960px) {
+            .main-layout {
+                grid-template-columns: 1fr
+            }
+
+            .image-side {
+                display: none
+            }
+        }
+
+        .sr-only {
+            position: absolute;
+            width: 1px;
+            height: 1px;
+            padding: 0;
+            margin: -1px;
+            overflow: hidden;
+            clip: rect(0, 0, 1, 1);
+            white-space: nowrap;
+            border: 0;
+        }
+
+        /* === 로그인 패널 내부 하단: 로고 3칸 + 우측 배너 (고정폭, 패널 폭 620px에 맞춤) === */
+        .panel-promo {
+            display: flex;
+            gap: 50px;
+            align-items: flex-end;
+            margin-top: 40px;
+            /* 좌측(로고그리드) 444px + gap 16px + 우측(배너) 120px = 총 580px → 패널 620px 내에 여유 */
+        }
+
+        .panel-logos {
+            display: grid;
+            grid-template-columns: repeat(3, 90px);
+            gap: 1px;
+            /* 140*3 + 12*2 = 444px */
+            flex: 0 0 auto;
+        }
+
+        .logo-card {
+            width: 90px;
+            height: 50px;
+            /* 사각형 고정 */
+            /* border: 1px solid #e0e0e/ */
+            /* background: #fff; */
+            display: grid;
+            /* place-items: l; */
+        }
+
+        .logo-card img {
+            max-width: 100%;
+            max-height: 100%;
+            object-fit: contain;
+            padding: 10px;
+        }
+
+        .panel-banner {
+            margin-left: 150px;
+            flex: 0 0 120px;
+            width: 120px;
+            height: 120px;
+            display: grid;
+            place-items: center;
+            text-align: center;
+            border-radius: 50%;
+            border: 2px solid #bdbdbd;
+            background-image: url(../images/logo_musinsa.png);
+            background-position: center;
+            background-size: cover;
+            color: #333;
+            font-weight: 700;
+            transition: transform .15s ease, box-shadow .15s ease, background .15s ease;
+        }
+
+        .panel-banner:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(0, 0, 0, .12);
+        }
+    </style>
+</head>
+
+<body>
+    <div class="main-layout site-max">
+        <!-- 좌측 로그인 -->
+        <section class="login-side">
+            <div class="login-panel">
+                <div class="header-logo">
+                    <img class="header-logo-img" src="../images/logo.png" alt="logo">
+                </div>
+                <div class="login-text">로그인</div>
+
+                <form id="loginForm" class="login-form" method="post" novalidate>
+                    <div class="form-field form-field-id">
+                        <input id="userid" name="userId" type="text" placeholder="아이디" minlength="4" required />
+                        <p class="error-msg"></p>
+                    </div>
+
+                    <div class="form-field form-field-pw">
+                        <input id="password" name="password" type="password" placeholder="비밀번호" minlength="4"
+                            required />
+                        <p class="error-msg"></p>
+                    </div>
+
+                    <div class="login-assist">
+                        <div class="find-pw">
+                            <a href="/NICHIYA/member/finduserId">아이디 찾기 |</a>
+                            <a href="/NICHIYA/member/findpassword">비밀번호 찾기</a>
+                        </div>
+                        <div class="auto-login">
+                            <input type="checkbox" id="remember">
+                            <label for="remember">자동 로그인</label>
+                        </div>
+                    </div>
+
+                    <button class="btn-log" type="submit">로그인</button>
+                    <button class="btn-reg" type="button">회원가입</button>
+
+                    <div class="form-field-social" role="group" aria-label="간편 로그인">
+                        <a href="#" class="social-btn" aria-label="카카오 로그인">
+                            <img src="../images/icon_sns_kakao.png" alt="">
+                            <span class="sr-only">카카오로 로그인</span>
+                        </a>
+                        <a href="#" class="social-btn" aria-label="네이버 로그인">
+                            <img src="../images/icon_sns_naver.png" alt="">
+                            <span class="sr-only">네이버로 로그인</span>
+                        </a>
+                        <a href="#" class="social-btn" aria-label="구글 로그인">
+                            <img src="../images/icon_sns_google.png" alt="">
+                            <span class="sr-only">구글로 로그인</span>
+                        </a>
+                    </div>
+
+                    <div class="help-link"><a href="#">도움말</a></div>
+                </form>
+
+                <!-- ▼ 로그인 패널 내부 전용: 로고 3칸 + 우측 배너 -->
+                <div class="panel-promo">
+                    <div class="panel-logos">
+                        <div class="logo-card"><img src="../images/award_logo.jpg" alt="어워드 로고 1"></div>
+                        <div class="logo-card"><img src="../images/award_logo.jpg" alt="어워드 로고 2"></div>
+                        <div class="logo-card"><img src="../images/award_logo.jpg" alt="어워드 로고 3"></div>
+                    </div>
+
+                    <!-- 원하는 링크로 변경 -->
+                    <a class="panel-banner" href="https://www.musinsa.com/main/musinsa/recommend" target="_blank" rel="noopener"></a>
+                </div>
+                <!-- ▲ 패널 내부 전용 영역 끝 -->
+            </div>
+        </section>
+
+        <!-- 우측 이미지: 그대로 유지 -->
+        <aside class="image-side"></aside>
+    </div>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            const form = document.getElementById('loginForm');
+            const groups = [
+                document.querySelector('.form-field-id'),
+                document.querySelector('.form-field-pw')
+            ];
+
+            function validateGroup(group) {
+                const input = group.querySelector('input');
+                const msg = group.querySelector('.error-msg');
+                const v = input.validity;
+                let text = "";
+
+                if (v.valid) {
+                    group.classList.remove('is-invalid');
+                    group.classList.add('is-valid');
+                    msg.textContent = "";
+                    return;
+                }
+                group.classList.add('is-invalid');
+                group.classList.remove('is-valid');
+
+                if (input.id === "userid") {
+                    if (v.valueMissing) text = "아이디를 입력하세요.";
+                    else if (v.tooShort) text = "아이디는 최소 4자 이상 입력해야 합니다.";
+                } else if (input.type === "password") {
+                    if (v.valueMissing) text = "비밀번호를 입력하세요.";
+                    else if (v.tooShort) text = "비밀번호는 최소 4자 이상 입력해야 합니다.";
+                }
+                msg.textContent = text;
+            }
+
+            groups.forEach(group => {
+                const input = group.querySelector('input');
+                input.addEventListener('blur', () => validateGroup(group));
+                input.addEventListener('input', () => {
+                    if (group.classList.contains('is-invalid') || group.classList.contains('is-valid')) {
+                        validateGroup(group);
+                    }
+                });
+            });
+
+            form.addEventListener('submit', (e) => {
+                let allValid = true;
+                groups.forEach(g => {
+                    validateGroup(g);
+                    const input = g.querySelector('input');
+                    if (!input.checkValidity()) allValid = false;
+                });
+                if (!allValid) e.preventDefault();
+            });
+
+            // ✅ 회원가입 버튼 이동 (제대로 위치해야 함)
+            const btnReg = document.querySelector(".btn-reg");
+            if (btnReg) {
+                btnReg.addEventListener("click", () => {
+                    // 일반 회원가입을 위한 약관 동의 페이지로 이동
+                    location.href = "/NICHIYA/member/signup";
+
+                });
+            }
+        });
+    </script>
+
+</body>
+
+</html>

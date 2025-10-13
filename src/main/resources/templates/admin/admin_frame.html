@@ -1,0 +1,132 @@
+<div th:replace="~{admin/_header.html}"></div>
+
+    <main style="display: flex; justify-content: center; border-top:1px solid #e2e2e2;">
+        <div>
+        <aside class="euro-nav" aria-label="관리자 사이드 메뉴" style="">
+            <section class="euro-nav__group">
+            <h4 class="euro-nav__title" style="">환경설정</h4>
+            <ul class="euro-nav__list">
+                <li class="euro-nav__item"><a th:href="@{/admin/admin_basic}">기본설정</a></li>
+                <li class="euro-nav__item"><a th:href="@{/admin/admin_banner}">배너관리</a></li>
+                <li class="euro-nav__item"><a th:href="@{/admin/admin_policy}">약관관리</a></li>
+                <li class="euro-nav__item"><a th:href="@{/admin/admin_category}">카테고리</a></li>
+                <li class="euro-nav__item"><a th:href="@{/admin/admin_version}">버전관리</a></li>
+            </ul>
+            </section>
+
+            <section class="euro-nav__group">
+            <h4 class="euro-nav__title" style="">상점관리</h4>
+            <ul class="euro-nav__list">
+                <li class="euro-nav__item"><a th:href="@{/admin/announcement/list}">상점목록</a></li>
+                <li class="euro-nav__item"><a th:href="@{/admin/sales/list}">매출현황</a></li>
+            </ul>
+            </section>
+
+            <section class="euro-nav__group">
+            <h4 class="euro-nav__title" style="">회원관리</h4>
+            <ul class="euro-nav__list">
+                <li class="euro-nav__item"><a th:href="@{/admin/member/list}">회원목록</a></li>
+                <li class="euro-nav__item"><a th:href="@{/admin/point/list}">포인트관리</a></li>
+            </ul>
+            </section>
+
+            <section class="euro-nav__group">
+            <h4 class="euro-nav__title" style="">상품관리</h4>
+            <ul class="euro-nav__list">
+                <li class="euro-nav__item"><a th:href="@{/admin/product/list}">상품목록</a></li>
+                <li class="euro-nav__item"><a th:href="@{/admin/productReg/list}">상품등록</a></li>
+            </ul>
+            </section>
+
+            <section class="euro-nav__group">
+            <h4 class="euro-nav__title" style="">주문관리</h4>
+            <ul class="euro-nav__list">
+                <li class="euro-nav__item"><a th:href="@{/admin/order/list}">주문현황</a></li>
+                <li class="euro-nav__item"><a th:href="@{/admin/delivery/list}">배송현황</a></li>
+            </ul>
+            </section>
+
+            <section class="euro-nav__group">
+            <h4 class="euro-nav__title" style="">쿠폰관리</h4>
+            <ul class="euro-nav__list">
+                <li class="euro-nav__item"><a th:href="@{/admin/coupon/list}">쿠폰목록</a></li>
+                <li class="euro-nav__item"><a th:href="@{/admin/couponsnow/list}">쿠폰발급현황</a></li>
+            </ul>
+            </section>
+
+            <section class="euro-nav__group">
+            <h4 class="euro-nav__title" style="">고객센터</h4>
+            <ul class="euro-nav__list">
+                <li class="euro-nav__item"><a th:href="@{/admin/announcement/list}">공지사항</a></li>
+                <li class="euro-nav__item"><a th:href="@{/admin/FAQ/list}">자주묻는질문</a></li>
+                <li class="euro-nav__item"><a th:href="@{/admin/inquiry/list}">문의하기</a></li>
+                <li class="euro-nav__item"><a th:href="@{/admin/employ/list}">채용하기</a></li>
+            </ul>
+            </section>
+        </aside>
+        </div>
+        <div style="width:900px; height:1000px; border-left:1px solid #e2e2e2; "></div>
+    </main>
+
+    <style>
+        .euro-nav__list {
+            max-height: 0;                /* 기본은 접힘 */
+            overflow: hidden;             /* 안 보이게 */
+            transition: max-height 0.15s ease;
+        }
+
+            .euro-nav__group.open .euro-nav__list {
+            max-height: 500px;            /* 펼쳐졌을 때 (충분히 크게 설정) */
+        }
+    </style>
+    <script>
+        // 아코디언: 클릭 시 높이를 실제 내용 높이로 애니메이션
+  document.querySelectorAll('.euro-nav__title').forEach(title => {
+    title.style.cursor = 'pointer'; // 클릭 가능 시각화(선택)
+    title.addEventListener('click', () => {
+      const group = title.parentElement;
+      const list  = group.querySelector('.euro-nav__list');
+
+      const isOpen = group.classList.contains('open');
+
+      if (isOpen) {
+        // 닫기: 현재 높이를 고정 -> 0으로
+        list.style.maxHeight = list.scrollHeight + 'px';
+        // 강제 리플로우로 트랜지션 시작점 확정
+        list.offsetHeight; 
+        list.style.maxHeight = '0px';
+        group.classList.remove('open');
+      } else {
+        // 열기: 0 -> 내용 높이
+        group.classList.add('open');
+        list.style.maxHeight = list.scrollHeight + 'px';
+
+        // 애니메이션 끝나면 inline max-height 제거(자연스런 레이아웃)
+        const onEnd = (e) => {
+          if (e.propertyName === 'max-height') {
+            list.style.maxHeight = 'none';
+            list.removeEventListener('transitionend', onEnd);
+          }
+        };
+        list.addEventListener('transitionend', onEnd);
+      }
+    });
+  });
+
+  const groups = document.querySelectorAll('.euro-nav__group');
+  document.querySelectorAll('.euro-nav__title').forEach(title => {
+    title.addEventListener('click', () => {
+      groups.forEach(g => {
+        if (g !== title.parentElement && g.classList.contains('open')) {
+          const l = g.querySelector('.euro-nav__list');
+          l.style.maxHeight = l.scrollHeight + 'px';
+          l.offsetHeight;
+          l.style.maxHeight = '0px';
+          g.classList.remove('open');
+        }
+      });
+    }, {capture:true});
+  });
+  
+    </script>
+<div th:replace="~{admin/_footer.html}"></div>

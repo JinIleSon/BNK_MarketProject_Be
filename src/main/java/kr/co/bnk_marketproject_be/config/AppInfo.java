@@ -15,6 +15,6 @@ public class AppInfo {
     @Value("${spring.application.name}")
     private String appName;
 
-    @Value("${spring.application.version}")
+    @Value("${spring.application.version:unknown}")
     private String appVersion;
 }

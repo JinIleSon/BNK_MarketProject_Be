@@ -1,0 +1,276 @@
+<div th:replace="~{admin/_header.html}"></div>
+<script th:src="@{/js/select-all-table.js}" defer></script>
+    <main style="display: flex; justify-content: center; border-top:1px solid #e2e2e2;">
+        <div>
+            <aside class="euro-nav" aria-label="관리자 사이드 메뉴" style="">
+                <section class="euro-nav__group">
+                    <h4 class="euro-nav__title" style="">환경설정</h4>
+                    <ul class="euro-nav__list">
+                        <li class="euro-nav__item"><a th:href="@{/admin/admin_basic}">기본설정</a></li>
+                        <li class="euro-nav__item"><a th:href="@{/admin/admin_banner}">배너관리</a></li>
+                        <li class="euro-nav__item"><a th:href="@{/admin/admin_policy}">약관관리</a></li>
+                        <li class="euro-nav__item"><a th:href="@{/admin/admin_category}">카테고리</a></li>
+                        <li class="euro-nav__item"><a th:href="@{/admin/admin_version}">버전관리</a></li>
+                    </ul>
+                </section>
+
+                <section class="euro-nav__group">
+                    <h4 class="euro-nav__title" style="">상점관리</h4>
+                    <ul class="euro-nav__list">
+                        <li class="euro-nav__item"><a th:href="@{/admin/shop/list}">상점목록</a></li>
+                        <li class="euro-nav__item"><a th:href="@{/admin/sales/list}">매출현황</a></li>
+                    </ul>
+                </section>
+
+                <section class="euro-nav__group">
+                    <h4 class="euro-nav__title" style="">회원관리</h4>
+                    <ul class="euro-nav__list">
+                        <li class="euro-nav__item"><a th:href="@{/admin/member/list}">회원목록</a></li>
+                        <li class="euro-nav__item"><a th:href="@{/admin/point/list}">포인트관리</a></li>
+                    </ul>
+                </section>
+
+                <section class="euro-nav__group">
+                    <h4 class="euro-nav__title" style="">상품관리</h4>
+                    <ul class="euro-nav__list">
+                        <li class="euro-nav__item"><a th:href="@{/admin/product/list}">상품목록</a></li>
+                        <li class="euro-nav__item"><a th:href="@{/admin/productReg/list}">상품등록</a></li>
+                    </ul>
+                </section>
+
+                <section class="euro-nav__group">
+                    <h4 class="euro-nav__title" style="">주문관리</h4>
+                    <ul class="euro-nav__list">
+                        <li class="euro-nav__item"><a th:href="@{/admin/order/list}">주문현황</a></li>
+                        <li class="euro-nav__item"><a th:href="@{/admin/delivery/list}">배송현황</a></li>
+                    </ul>
+                </section>
+
+                <section class="euro-nav__group">
+                    <h4 class="euro-nav__title" style="">쿠폰관리</h4>
+                    <ul class="euro-nav__list">
+                        <li class="euro-nav__item"><a th:href="@{/admin/coupon/list}">쿠폰목록</a></li>
+                        <li class="euro-nav__item"><a th:href="@{/admin/couponsnow/list}">쿠폰발급현황</a></li>
+                    </ul>
+                </section>
+
+                <section class="euro-nav__group">
+                    <h4 class="euro-nav__title" style="">고객센터</h4>
+                    <ul class="euro-nav__list">
+                        <li class="euro-nav__item is-active"><a th:href="@{/admin/announcement/list}">공지사항</a></li>
+                        <li class="euro-nav__item"><a th:href="@{/admin/FAQ/list}">자주묻는질문</a></li>
+                        <li class="euro-nav__item"><a th:href="@{/admin/inquiry/list}">문의하기</a></li>
+                        <li class="euro-nav__item"><a th:href="@{/admin/employ/list}">채용하기</a></li>
+                    </ul>
+                </section>
+            </aside>
+        </div>
+        <div style="border:1px solid #e2e2e2;"></div>
+        <!-- 오른쪽 콘텐츠 영역 -->
+          <div style="margin-left:40px; width:900px; height:1100px; padding:20px; box-sizing:border-box; font-family:'Noto Sans KR', sans-serif;">
+
+            <!-- 제목 + 경로 -->
+            <div class="title-line" style="border-bottom: 2px solid #ccc; width: 857px !important;">
+            <div style="font-size: 20px; font-weight: 800; margin-top:16px; margin-bottom:5px;">공지사항 목록</div>
+                    <div style="margin-left: auto; margin-top:auto; margin-bottom:4px;font-size: 12px;">HOME > 고객센터 > <span style="font-weight: 800;">공지사항</span></div>
+             </div>
+            <!-- 1. 검색 -->
+            <div style="margin-bottom:20px;">
+              <!-- 1. 검색 -->
+                <form th:action="@{/admin/announcement/search}" method="get">
+                    <select name="board_type2" id=""
+                            style="width:82px; height:28px; padding-left:5px; margin-right:3px; margin-top: 20px; border:1px solid #bfbfbf; font-size: 10px !important;"
+                            onchange="this.form.submit()">
+                      <option value="">유형선택</option>
+                      <option value="all">전체</option>
+                      <option value="memberservice">고객서비스</option>
+                      <option value="safe">안전거래</option>
+                      <option value="danger">위해상품</option>
+                      <option value="event">이벤트당첨</option>
+                    </select>
+                </form>
+
+            
+              
+            </div>
+
+            <!-- 2. 테이블 -->
+            <table style="width:100%; border-collapse:collapse; text-align:center; font-size:14px;">
+              <thead>
+                <tr style="border-top:2px solid #000; border-bottom:1px solid #ccc; background:#fff;">
+                  <th style="padding:15px;"><input type="checkbox" data-select-all-target=".chk"></th>
+                  <th>번호</th>
+                  <th>유형</th>
+                  <th>제목</th>
+                  <th>조회</th>
+                  <th>날짜</th>
+                  <th>관리</th>
+                  
+                </tr>
+              </thead>
+              <tbody>
+                <tr th:each="admin, stat:${pageResponseDTO.dtoList}"
+                        style="border-bottom:1px solid #e2e2e2; height:70px;vertical-align: middle;">
+                  <td><input class="chk" th:value="${admin.id}" type="checkbox"></td>
+                    <td th:text="${pageResponseDTO.startNo - stat.index}"
+                        style="width:60px;">100</td>
+                    <td th:text="${admin.board_type2 == 'all' ? '전체' :
+                    (admin.board_type2 == 'memberservice' ? '고객서비스' :
+                    (admin.board_type2 == 'safe' ? '안전거래' :
+                    (admin.board_type2 == 'danger' ? '위해상품' :
+                    (admin.board_type2 == 'event' ? '이벤트당첨' : ''))))}"
+                        style="width:90px;">고객서비스</td>
+                    <td style="width:350px;"><a th:href="@{/admin/announcement/view(id=${admin.id})}">[[${admin.title}]]</a></td>
+                    <td th:text="${admin.hits}"
+                    style="width:55px;">120</td>
+                    <td th:text="${#temporals.format(admin.created_at, 'yyyy-MM-dd')}">00.00.00</td>
+                    <td style="width:60px;">
+                        <div style="margin-left: 8px;"><a th:href="@{/admin/announcement/modify/list(id=${admin.id})}"
+                                            style="text-decoration:none; margin-right:8px;">[ 수정 ]</a></div>
+                        <div><a th:href="@{/admin/announcement/list(id=${admin.id})}"
+                                th:onclick="|return confirm('정말로 삭제하시겠습니까?')|"
+                                style="text-decoration:none;">[ 삭제 ]</a></div>
+                    </td>
+                </tr>
+              </tbody>
+            </table>
+
+            <div style="display: flex; margin-top:25px;">
+                    <button id="deleteSelectedBtn" type="button"
+                            style="cursor:pointer;border:none; background-color: #760c0c; color:white; font-size: 10px; font-weight: 300; height:25px; width:62px;">선택삭제</button>
+                    <button style="cursor:pointer;margin-left:auto; border:none; background-color: black; color:white; font-size: 10px; font-weight: 300; height:25px; width:62px;"
+                            th:onclick="|location.href='@{/admin/announcement/write}'|">작성하기</button>
+                </div>
+              <div style=" height: 100px; margin-top:40px; display: flex; justify-content: center;">
+                  <input th:if="${pageResponseDTO.prev}"
+                         th:onclick="|location.href='@{/admin/announcement/search(pg=${pageResponseDTO.start - 1}, board_type2=${pageResponseDTO.board_type2})}'|"
+                         type="button" class="prev-page" value="< 이전">
+
+                  <th:block th:if="${pageResponseDTO.end >= pageResponseDTO.start}"
+                            th:each="num:${#numbers.sequence(pageResponseDTO.start, pageResponseDTO.end)}">
+                      <input th:onclick="|location.href='@{/admin/announcement/search(pg=${num}, board_type2=${pageResponseDTO.board_type2})}'|"
+                             th:class="${num == pageResponseDTO.pg ? 'current' : 'num'}"
+                             type="button"
+                             th:value="${num}" />
+                  </th:block>
+
+                  <input th:if="${pageResponseDTO.next}"
+                         th:onclick="|location.href='@{/admin/announcement/search(pg=${pageResponseDTO.end + 1}, board_type2=${pageResponseDTO.board_type2})}'|"
+                         type="button" class="next-page" value="다음 >" style="">
+              </div>
+            </div>
+        </div>
+        </div>
+    </main>
+<script th:inline="javascript">
+    // 서버가 알아서 컨텍스트 경로를 붙여 완전한 URL로 바꿔줍니다.
+    const DELETE_URL = /*[[@{/admin/announcement/multi-delete}]]*/ "/admin/announcement/multi-delete";
+
+    document.getElementById("deleteSelectedBtn").addEventListener("click", function () {
+        const checked = Array.from(document.querySelectorAll(".chk:checked")).map(chk => Number(chk.value));
+        if (checked.length === 0) { alert("삭제할 공지사항을 선택하세요."); return; }
+        if (!confirm(`${checked.length}개의 공지사항을 삭제하시겠습니까?`)) return;
+
+        const csrfToken  = document.querySelector('meta[name="_csrf"]')?.content;
+        const csrfHeader = document.querySelector('meta[name="_csrf_header"]')?.content || 'X-CSRF-TOKEN';
+
+        const headers = { "Content-Type": "application/json" };
+        if (csrfToken) headers[csrfHeader] = csrfToken;
+
+        fetch(DELETE_URL, {   // ← 하드코딩 대신 DELETE_URL 사용
+            method: "POST",
+            headers,
+            body: JSON.stringify(checked)
+        })
+            .then(async res => {
+                const body = await res.text();
+                if (!res.ok) throw new Error(`status=${res.status}, body=${body}`);
+                alert("삭제가 완료되었습니다.");
+                location.reload();
+            })
+            .catch(err => {
+                console.error("[DELETE ERROR]", err);
+                alert("삭제 중 오류가 발생했습니다.\n" + String(err));
+            });
+    });
+</script>
+    <style>
+        .current{
+            border:1px solid #333;
+            background-color: #333;
+            color: white;
+            height: 30px;
+            width: 30px;
+            margin-right:7px;
+            line-height:1;
+        }
+        .num {
+            cursor: pointer;
+            border:1px solid #ddd;
+            color: #555;
+            height: 30px;
+            width: 30px;
+            margin-right:7px;
+            line-height:1;
+        }
+        .euro-nav__list {
+            max-height: 0;                /* 기본은 접힘 */
+            overflow: hidden;             /* 안 보이게 */
+            transition: max-height 0.15s ease;
+        }
+
+            .euro-nav__group.open .euro-nav__list {
+            max-height: 500px;            /* 펼쳐졌을 때 (충분히 크게 설정) */
+        }
+    </style>
+    <script>
+        // 아코디언: 클릭 시 높이를 실제 내용 높이로 애니메이션
+  document.querySelectorAll('.euro-nav__title').forEach(title => {
+    title.style.cursor = 'pointer'; // 클릭 가능 시각화(선택)
+    title.addEventListener('click', () => {
+      const group = title.parentElement;
+      const list  = group.querySelector('.euro-nav__list');
+
+      const isOpen = group.classList.contains('open');
+
+      if (isOpen) {
+        // 닫기: 현재 높이를 고정 -> 0으로
+        list.style.maxHeight = list.scrollHeight + 'px';
+        // 강제 리플로우로 트랜지션 시작점 확정
+        list.offsetHeight; 
+        list.style.maxHeight = '0px';
+        group.classList.remove('open');
+      } else {
+        // 열기: 0 -> 내용 높이
+        group.classList.add('open');
+        list.style.maxHeight = list.scrollHeight + 'px';
+
+        // 애니메이션 끝나면 inline max-height 제거(자연스런 레이아웃)
+        const onEnd = (e) => {
+          if (e.propertyName === 'max-height') {
+            list.style.maxHeight = 'none';
+            list.removeEventListener('transitionend', onEnd);
+          }
+        };
+        list.addEventListener('transitionend', onEnd);
+      }
+    });
+  });
+
+  const groups = document.querySelectorAll('.euro-nav__group');
+  document.querySelectorAll('.euro-nav__title').forEach(title => {
+    title.addEventListener('click', () => {
+      groups.forEach(g => {
+        if (g !== title.parentElement && g.classList.contains('open')) {
+          const l = g.querySelector('.euro-nav__list');
+          l.style.maxHeight = l.scrollHeight + 'px';
+          l.offsetHeight;
+          l.style.maxHeight = '0px';
+          g.classList.remove('open');
+        }
+      });
+    }, {capture:true});
+  });
+  
+    </script>
+<div th:replace="~{admin/_footer.html}"></div>

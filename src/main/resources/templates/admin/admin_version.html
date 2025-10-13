@@ -1,0 +1,424 @@
+<div th:replace="~{admin/_noneStickyHeader.html}"></div>
+
+    <main style="border-top:1px solid #e2e2e2; display: flex; justify-content: center; ">
+        <div>
+            <aside class="euro-nav" aria-label="관리자 사이드 메뉴" style="">
+                <section class="euro-nav__group">
+                    <h4 class="euro-nav__title" style="">환경설정</h4>
+                    <ul class="euro-nav__list">
+                        <li class="euro-nav__item"><a th:href="@{/admin/admin_basic}">기본설정</a></li>
+                        <li class="euro-nav__item"><a th:href="@{/admin/admin_banner}">배너관리</a></li>
+                        <li class="euro-nav__item"><a th:href="@{/admin/admin_policy}">약관관리</a></li>
+                        <li class="euro-nav__item"><a th:href="@{/admin/admin_category}">카테고리</a></li>
+                        <li class="euro-nav__item is-active"><a th:href="@{/admin/admin_version}">버전관리</a></li>
+                    </ul>
+                </section>
+
+                <section class="euro-nav__group">
+                    <h4 class="euro-nav__title" style="">상점관리</h4>
+                    <ul class="euro-nav__list">
+                        <li class="euro-nav__item"><a th:href="@{/admin/shop/list}">상점목록</a></li>
+                        <li class="euro-nav__item"><a th:href="@{/admin/sales/list}">매출현황</a></li>
+                    </ul>
+                </section>
+
+                <section class="euro-nav__group">
+                    <h4 class="euro-nav__title" style="">회원관리</h4>
+                    <ul class="euro-nav__list">
+                        <li class="euro-nav__item"><a th:href="@{/admin/member/list}">회원목록</a></li>
+                        <li class="euro-nav__item"><a th:href="@{/admin/point/list}">포인트관리</a></li>
+                    </ul>
+                </section>
+
+                <section class="euro-nav__group">
+                    <h4 class="euro-nav__title" style="">상품관리</h4>
+                    <ul class="euro-nav__list">
+                        <li class="euro-nav__item"><a th:href="@{/admin/product/list}">상품목록</a></li>
+                        <li class="euro-nav__item"><a th:href="@{/admin/productReg/list}">상품등록</a></li>
+                    </ul>
+                </section>
+
+                <section class="euro-nav__group">
+                    <h4 class="euro-nav__title" style="">주문관리</h4>
+                    <ul class="euro-nav__list">
+                        <li class="euro-nav__item"><a th:href="@{/admin/order/list}">주문현황</a></li>
+                        <li class="euro-nav__item"><a th:href="@{/admin/delivery/list}">배송현황</a></li>
+                    </ul>
+                </section>
+
+                <section class="euro-nav__group">
+                    <h4 class="euro-nav__title" style="">쿠폰관리</h4>
+                    <ul class="euro-nav__list">
+                        <li class="euro-nav__item"><a th:href="@{/admin/coupon/list}">쿠폰목록</a></li>
+                        <li class="euro-nav__item"><a th:href="@{/admin/couponsnow/list}">쿠폰발급현황</a></li>
+                    </ul>
+                </section>
+
+                <section class="euro-nav__group">
+                    <h4 class="euro-nav__title" style="">고객센터</h4>
+                    <ul class="euro-nav__list">
+                        <li class="euro-nav__item"><a th:href="@{/admin/announcement/list}">공지사항</a></li>
+                        <li class="euro-nav__item"><a th:href="@{/admin/FAQ/list}">자주묻는질문</a></li>
+                        <li class="euro-nav__item"><a th:href="@{/admin/inquiry/list}">문의하기</a></li>
+                        <li class="euro-nav__item"><a th:href="@{/admin/employ/list}">채용하기</a></li>
+                    </ul>
+                </section>
+            </aside>
+        </div>
+        <div style="width:940px; border-left:1px solid #e2e2e2; ">
+            <div style="margin-left:60px;">
+            <div style="display: flex;">
+                <div style="font-size: 20px; font-weight: 800; margin-top:16px; margin-bottom:5px;">버전관리</div>
+                <div style="margin-left: auto; margin-top:auto; margin-bottom:4px;font-size: 12px;">HOME > 환경설정 > <span style="font-weight: 800;">버전관리</span></div>
+            </div>
+            <hr style="border:none; border-top:1px solid gray; margin-top:0px;">
+            <div style="padding-left:10px; margin-top:20px;">
+                <div style="font-weight: 800; margin-bottom:5px;">버전목록</div>
+                <div style="font-size: 13px;">
+                    <div style="padding:10px; background-color: #f3f3f3; height:40px; margin-top:15px;">사이트 버전 목록입니다.</div>
+                    <table style="margin-top:12px; border-collapse: collapse; width:100%; font-size:12px; text-align: center; ">
+                    <tr style="border-top:1px solid gray; height:50px; border-bottom:1px solid #e2e2e2;">
+                        <th style="width:37px;"><input type="checkbox" id="selAll"></th>
+                        <th style="width:130px;">번호</th>
+                        <th>버전</th>
+                        <th>작성자</th>
+                        <th>등록일시</th>
+                        <th>변경내역</th>
+                    </tr>
+
+                        <tbody id="versionTbody"></tbody>
+
+                    
+                </table>
+                <div style="display: flex; margin-top:25px;">
+                    <button id="btnDelete" style="border:none; background:#760c0c; color:#fff; font-size:10px; height:25px; width:62px;">선택삭제</button>
+                    <button id="openRegBtn" style="margin-left:auto; border:none; background:#000; color:#fff; font-size:10px; height:25px; width:62px;">수정</button>
+                </div>
+            <div style="margin-top:300px;"></div>
+        </div>
+    </main>
+<!-- ▼ 버전확인 모달 -->
+<div id="shipModal" class="order-modal__overlay ship-modal" aria-hidden="true">
+  <div class="order-modal" role="dialog" aria-modal="true" aria-labelledby="shipModalTitle">
+    <!-- 세번째 이미지 스타일의 머리 -->
+    <div class="ship-modal__head">
+      <div class="ship-head__title">
+        <span id="shipModalTitle" style="font-size: 20px">버전등록</span>
+        <span id="shipModalOrderNo" class="ship-head__order"></span>
+      </div>
+      <button type="button" class="order-modal__close" id="shipModalClose" aria-label="닫기"></button>
+    </div>
+    <div class="order-modal__body" id="shipModalBody"></div>
+  </div>
+</div>
+
+<!-- ▼ 버전확인 폼 템플릿 -->
+<template id="shipFormTemplate">
+  <div class="ship-form__wrap">
+    <form id="couponRegForm">
+      <table class="ship-form__table">
+        <colgroup>
+          <col style="width:120px;"><col><col style="width:120px;"><col>
+        </colgroup>
+        <tbody>
+          <tr style="border-top:1px solid #e2e2e2; border-bottom:1px solid #e2e2e2;">
+            <th style="text-align: center; font-weight: 300; border-bottom:none !important;">버전</th>
+            <td class="js-version-cell" style="border-bottom:none !important;"></td>
+          </tr>
+          <tr style="height:300px; border-bottom:1px solid #e2e2e2 !important;">
+            <th style="text-align: center; vertical-align: middle; font-weight: 300; border-bottom:none !important;">변경내역</th>
+            <td style="border-bottom:none !important; padding-left:16px;">
+              <div style="margin-bottom: 7px;display: flex;">
+                <div>-</div> <div style="margin-left:20px;">프로젝트 생성 및 전체 구조 설계</div>
+              </div>
+              <div style="margin-bottom: 7px;display: flex;">
+                <div>-</div> <div style="margin-left:20px;">회원가입 아이디 중복체크 완료</div>
+              </div>
+              <div style="margin-bottom: 7px;display: flex;">
+                <div>-</div> <div style="margin-left:20px;">관리자 상품 등록 완료</div>
+              </div>
+              <div style="margin-bottom: 7px;display: flex;">
+                <div>-</div> <div style="margin-left:20px;">쇼핑몰 메인 및 개별 페이지 링크 작업</div>
+              </div>
+              <div style="display: flex;">
+                <div>-</div> <div style="margin-left:20px;">개발을 위한 제반 사항 처리</div>
+              </div>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+      <div class="ship-form__actions" style="justify-content:center; gap:8px;">
+        <button type="button" id="modalCloseBtn" class="btn-primary" style="font-weight: 300; width: 110px;">닫기</button>
+      </div>
+    </form>
+  </div>
+</template>
+
+<!-- ▼ 버전등록 모달 (신규) -->
+<div id="regModal" class="order-modal__overlay ship-modal" aria-hidden="true">
+  <div class="order-modal" role="dialog" aria-modal="true" aria-labelledby="regModalTitle">
+    <div class="ship-modal__head">
+      <div class="ship-head__title">
+        <span id="regModalTitle" style="font-size:20px">버전등록</span>
+      </div>
+      <button type="button" class="order-modal__close" id="regModalClose" aria-label="닫기"></button>
+    </div>
+    <div class="order-modal__body" id="regModalBody"></div>
+  </div>
+</div>
+
+<!-- ▼ 버전등록 폼 템플릿 (신규) -->
+<template id="regFormTemplate">
+  <div class="ship-form__wrap">
+    <form id="regForm">
+      <table class="ship-form__table">
+        <colgroup>
+          <col style="width:120px;"><col>
+        </colgroup>
+        <tbody>
+          <tr style="border-top:1px solid #e2e2e2; border-bottom:1px solid #e2e2e2;">
+            <th style="text-align:center; font-weight:300; border-bottom:none !important; vertical-align: middle;">버전</th>
+            <td style="border-bottom:none !important;">
+              <input class="ipt" type="text" placeholder="버전 입력하기" style="width:240px;">
+            </td>
+          </tr>
+          <tr style="height:300px; border-bottom:1px solid #e2e2e2 !important;">
+            <th style="text-align:center; vertical-align:middle; font-weight:300; border-bottom:none !important;">변경내역</th>
+            <td style="border-bottom:none !important; padding-left:9px;">
+              <textarea class="txt" name="change" placeholder="변경 내역 작성하기" style="width:100%; min-height:300px; resize:none;"></textarea>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+      <div class="ship-form__actions" style="justify-content:center; gap:8px;">
+        <button type="submit" class="btn-primary" style="font-weight:300; width: 110px;">등록하기</button>
+      </div>
+    </form>
+  </div>
+</template>
+    <style>
+        .euro-nav__list {
+            max-height: 0;                /* 기본은 접힘 */
+            overflow: hidden;             /* 안 보이게 */
+            transition: max-height 0.15s ease;
+        }
+
+            .euro-nav__group.open .euro-nav__list {
+            max-height: 500px;            /* 펼쳐졌을 때 (충분히 크게 설정) */
+        }
+        /* 모달 오버레이 기본 숨김 */
+.order-modal__overlay{
+  position: fixed; inset: 0;
+  display: none;                      /* 기본 비표시 */
+  align-items: center; justify-content: center;
+  background: rgba(0,0,0,.35);
+  z-index: 2000;
+}
+/* .show 붙으면 보이기 */
+.order-modal__overlay.show{ display: flex; }
+
+/* 모달 박스 */
+.order-modal{
+  background:#fff;
+  width: min(720px, 92vw);
+  max-height: 85vh;
+  border:1px solid #e5e5e5;
+  overflow: hidden;
+  box-shadow: 0 12px 40px rgba(0,0,0,.25);
+  display:flex; flex-direction:column;
+}
+
+/* 모달 헤더 */
+.ship-modal__head{
+  display:flex; align-items:center; justify-content:space-between;
+  padding:16px 18px; border-bottom:1px solid #eee;
+}
+.ship-head__title{ font-weight:600; }
+
+/* 닫기 버튼 */
+.order-modal__close{
+  width:36px; height:36px; border:none; background:transparent; cursor:pointer; position:relative;
+}
+.order-modal__close::before,
+.order-modal__close::after{
+  content:""; position:absolute; left:9px; right:9px; top:17px; height:2px; background:#000;
+}
+.order-modal__close::before{ transform:rotate(45deg); }
+.order-modal__close::after { transform:rotate(-45deg); }
+
+/* 본문 */
+.order-modal__body{ padding:18px; overflow:auto; }
+.ship-form__actions{ display:flex; gap:8px; padding:14px 18px; border-top:1px solid #eee; }
+.btn-primary{ background:#000; color:#fff; border:none; height:36px; padding:0 14px; cursor:pointer; }
+.btn-secondary{ background:#f3f3f3; border:1px solid #ddd; height:36px; padding:0 14px; cursor:pointer; }
+
+/* 인풋 대충 보기 좋게 */
+.ipt,.sel,.txt{ border:1px solid #ddd; padding:8px; }
+.txt{ width:100%; min-height:90px; }
+.ship-form__table{ width:100%; border-collapse:collapse; }
+.ship-form__table th{ text-align:left; vertical-align:top; padding:10px 8px; background:#fafafa; border-bottom:1px solid #eee; }
+.ship-form__table td{ padding:10px 8px; border-bottom:1px solid #eee; }
+
+.ship-form__table .js-version-cell{
+  padding-left: 16px !important;  /* 원하는 값으로 */
+}
+    </style>
+<script>
+    // ===== 공통 DOM =====
+    const shipModalOverlay = document.getElementById('shipModal');
+    const shipModalBody    = document.getElementById('shipModalBody');
+    const shipModalClose   = document.getElementById('shipModalClose');
+    let   shipTpl          = document.getElementById('shipFormTemplate');
+
+    const regModalOverlay  = document.getElementById('regModal');
+    const regModalBody     = document.getElementById('regModalBody');
+    const regModalClose    = document.getElementById('regModalClose');
+    let   regTpl           = document.getElementById('regFormTemplate');
+
+    const tbody            = document.getElementById('versionTbody');
+    const selAllChk        = document.getElementById('selAll');
+    const btnDelete        = document.getElementById('btnDelete');
+    const btnOpenReg       = document.getElementById('openRegBtn');
+
+    // ===== 유틸 =====
+    function fmt(ts){
+        if(!ts) return '';
+        const d = new Date(ts);
+        if (isNaN(d)) return ts;
+        const pad = n => n.toString().padStart(2,'0');
+        return `${d.getFullYear()}.${pad(d.getMonth()+1)}.${pad(d.getDate())} ${pad(d.getHours())}:${pad(d.getMinutes())}:${pad(d.getSeconds())}`;
+    }
+
+    function rowHtml(v){
+        const memo = (v.changeLog || '').replaceAll('"','&quot;');
+        return `
+    <tr style="border-bottom:1px solid #e2e2e2; height:70px;vertical-align: middle;">
+      <td><input type="checkbox" class="row-chk" data-id="${v.id}"></td>
+      <td>${v.id ?? ''}</td>
+      <td>${v.version ?? ''}</td>
+      <td>${v.author ?? ''}</td>
+      <td>${fmt(v.updatedAt || v.createdAt)}</td>
+      <td><a href="#" class="open-coupon" data-memo="${memo}">[확인]</a></td>
+    </tr>
+  `;
+    }
+
+    // ===== 목록 로드 =====
+    async function loadList(){
+        const res = await fetch('/NICHIYA/api/admin/versions', { method: 'GET' });
+        const list = await res.json();
+        tbody.innerHTML = list.map(rowHtml).join('');
+        selAllChk.checked = false;
+    }
+
+    // ===== 변경내역(확인) 모달 =====
+    function openShipModal(data){
+        if (!shipTpl) shipTpl = document.getElementById('shipFormTemplate');
+        document.getElementById('shipModalTitle').textContent = '버전확인';
+        shipModalBody.innerHTML = '';
+        shipModalBody.appendChild(shipTpl.content.cloneNode(true));
+
+        const verCell = shipModalBody.querySelector('.js-version-cell');
+        if (verCell) verCell.textContent = data.version || '-';
+
+        const memoTa  = shipModalBody.querySelector('textarea[name="memo"]');
+        if (memoTa) memoTa.value = data.memo || '';
+
+        const bottomCloseBtn = shipModalBody.querySelector('#modalCloseBtn');
+        if (bottomCloseBtn) bottomCloseBtn.addEventListener('click', closeShipModal);
+
+        shipModalOverlay.classList.add('show');
+        shipModalOverlay.setAttribute('aria-hidden','false');
+        document.body.style.overflow = 'hidden';
+    }
+
+    function closeShipModal(){
+        shipModalOverlay.classList.remove('show');
+        shipModalOverlay.setAttribute('aria-hidden','true');
+        document.body.style.overflow = '';
+    }
+
+    if (shipModalClose) shipModalClose.addEventListener('click', closeShipModal);
+    shipModalOverlay.addEventListener('click', (e)=>{ if(e.target === shipModalOverlay) closeShipModal(); });
+    window.addEventListener('keydown', (e)=>{ if(e.key==='Escape' && shipModalOverlay.classList.contains('show')) closeShipModal(); });
+
+    // 목록에서 [확인] 클릭
+    document.addEventListener('click', (e)=>{
+        const a = e.target.closest('a.open-coupon');
+        if(!a) return;
+        e.preventDefault();
+        const tr  = a.closest('tr');
+        const tds = tr ? tr.querySelectorAll('td') : [];
+        const ver = (tds[2]?.textContent || '').trim();
+        const memo= a.dataset.memo || '';
+        openShipModal({ version: ver, memo });
+    });
+
+    // ===== 버전 수정 모달 (PUT) =====
+    function openRegModal(){
+        if (!regTpl) regTpl = document.getElementById('regFormTemplate');
+        regModalBody.innerHTML = '';
+        regModalBody.appendChild(regTpl.content.cloneNode(true));
+
+        const form = regModalBody.querySelector('#regForm');
+        form.addEventListener('submit', async (e)=>{
+            e.preventDefault();
+            const version   = regModalBody.querySelector('input.ipt')?.value?.trim() || '';
+            const changeLog = regModalBody.querySelector('textarea.txt')?.value?.trim() || '';
+            if (!version){ alert('버전을 입력해주세요.'); return; }
+
+            await fetch('/NICHIYA/api/admin/versions', {
+                method: 'PUT',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ version, changeLog })
+            });
+
+            await loadList();
+            closeRegModal();
+        });
+
+        regModalOverlay.classList.add('show');
+        regModalOverlay.setAttribute('aria-hidden','false');
+        document.body.style.overflow = 'hidden';
+    }
+
+    function closeRegModal(){
+        regModalOverlay.classList.remove('show');
+        regModalOverlay.setAttribute('aria-hidden','true');
+        document.body.style.overflow = '';
+    }
+
+    if (regModalClose) regModalClose.addEventListener('click', closeRegModal);
+    regModalOverlay.addEventListener('click', (e)=>{ if(e.target === regModalOverlay) closeRegModal(); });
+    window.addEventListener('keydown', (e)=>{ if(e.key==='Escape' && regModalOverlay.classList.contains('show')) closeRegModal(); });
+
+    document.getElementById('openRegBtn')?.addEventListener('click', openRegModal);
+
+    // ===== 선택삭제 =====
+    btnDelete?.addEventListener('click', async ()=>{
+        const ids = Array.from(document.querySelectorAll('.row-chk:checked'))
+            .map(chk => Number(chk.dataset.id))
+            .filter(Boolean);
+        if (!ids.length){ alert('삭제할 항목을 선택하세요.'); return; }
+        if (!confirm(`${ids.length}건을 삭제할까요?`)) return;
+
+        await fetch('/NICHIYA/api/admin/versions', {
+            method: 'DELETE',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ ids })
+        });
+        await loadList();
+    });
+
+    // 전체선택
+    selAllChk?.addEventListener('change', ()=>{
+        const rows = document.querySelectorAll('.row-chk');
+        rows.forEach(chk => chk.checked = selAllChk.checked);
+    });
+
+    // 최초 로딩
+    loadList();
+</script>
+
+</div>
+<div th:replace="~{admin/_footer.html}"></div>

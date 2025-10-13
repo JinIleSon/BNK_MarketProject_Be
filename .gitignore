@@ -25,7 +25,7 @@ bin/
 out/
 !**/src/main/**/out/
 !**/src/test/**/out/
-
+**/src/main/generated/**
 ### NetBeans ###
 /nbproject/private/
 /nbbuild/
@@ -35,3 +35,10 @@ out/
 
 ### VS Code ###
 .vscode/
+
+# yml - application.yml 추적하지 않게
+*.yml
+
+# Gradle
+.gradle/
+build/

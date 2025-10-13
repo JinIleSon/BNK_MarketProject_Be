@@ -1,0 +1,332 @@
+<div th:replace="~{admin/_header.html}"></div>
+
+    <main style="display: flex; justify-content: center; border-top:1px solid #e2e2e2;">
+        <div>
+            <aside class="euro-nav" aria-label="관리자 사이드 메뉴" style="">
+                <section class="euro-nav__group">
+                    <h4 class="euro-nav__title" style="">환경설정</h4>
+                    <ul class="euro-nav__list">
+                        <li class="euro-nav__item"><a th:href="@{/admin/admin_basic}">기본설정</a></li>
+                        <li class="euro-nav__item"><a th:href="@{/admin/admin_banner}">배너관리</a></li>
+                        <li class="euro-nav__item"><a th:href="@{/admin/admin_policy}">약관관리</a></li>
+                        <li class="euro-nav__item"><a th:href="@{/admin/admin_category}">카테고리</a></li>
+                        <li class="euro-nav__item"><a th:href="@{/admin/admin_version}">버전관리</a></li>
+                    </ul>
+                </section>
+
+                <section class="euro-nav__group">
+                    <h4 class="euro-nav__title" style="">상점관리</h4>
+                    <ul class="euro-nav__list">
+                        <li class="euro-nav__item"><a th:href="@{/admin/shop/list}">상점목록</a></li>
+                        <li class="euro-nav__item"><a th:href="@{/admin/sales/list}">매출현황</a></li>
+                    </ul>
+                </section>
+
+                <section class="euro-nav__group">
+                    <h4 class="euro-nav__title" style="">회원관리</h4>
+                    <ul class="euro-nav__list">
+                        <li class="euro-nav__item"><a th:href="@{/admin/member/list}">회원목록</a></li>
+                        <li class="euro-nav__item"><a th:href="@{/admin/point/list}">포인트관리</a></li>
+                    </ul>
+                </section>
+
+                <section class="euro-nav__group">
+                    <h4 class="euro-nav__title" style="">상품관리</h4>
+                    <ul class="euro-nav__list">
+                        <li class="euro-nav__item"><a th:href="@{/admin/product/list}">상품목록</a></li>
+                        <li class="euro-nav__item"><a th:href="@{/admin/productReg/list}">상품등록</a></li>
+                    </ul>
+                </section>
+
+                <section class="euro-nav__group">
+                    <h4 class="euro-nav__title" style="">주문관리</h4>
+                    <ul class="euro-nav__list">
+                        <li class="euro-nav__item"><a th:href="@{/admin/order/list}">주문현황</a></li>
+                        <li class="euro-nav__item"><a th:href="@{/admin/delivery/list}">배송현황</a></li>
+                    </ul>
+                </section>
+
+                <section class="euro-nav__group">
+                    <h4 class="euro-nav__title" style="">쿠폰관리</h4>
+                    <ul class="euro-nav__list">
+                        <li class="euro-nav__item"><a th:href="@{/admin/coupon/list}">쿠폰목록</a></li>
+                        <li class="euro-nav__item"><a th:href="@{/admin/couponsnow/list}">쿠폰발급현황</a></li>
+                    </ul>
+                </section>
+
+                <section class="euro-nav__group">
+                    <h4 class="euro-nav__title" style="">고객센터</h4>
+                    <ul class="euro-nav__list">
+                        <li class="euro-nav__item"><a th:href="@{/admin/announcement/list}">공지사항</a></li>
+                        <li class="euro-nav__item is-active"><a th:href="@{/admin/FAQ/list}">자주묻는질문</a></li>
+                        <li class="euro-nav__item"><a th:href="@{/admin/inquiry/list}">문의하기</a></li>
+                        <li class="euro-nav__item"><a th:href="@{/admin/employ/list}">채용하기</a></li>
+                    </ul>
+                </section>
+            </aside>
+        </div>
+        <div style="border:1px solid #e2e2e2;"></div>
+        <!-- 오른쪽 콘텐츠 영역 -->
+          <div style="margin-left:40px; width:900px; height:1000px; border:none; padding:20px; box-sizing:border-box; font-family:'Noto Sans KR', sans-serif;">
+
+            <!-- 제목 + 경로 -->
+            <div style="display: flex;">
+                    <div style="font-size: 20px; font-weight: 800; margin-top:16px; margin-bottom:5px;">자주묻는질문 작성</div>
+                    <div style="margin-left: auto; margin-top:auto; margin-bottom:4px;font-size: 12px;">HOME > 고객센터 > <span style="font-weight: 800;">자주묻는질문</span></div>
+                </div>
+                <hr style="border:none; border-top:1px solid gray; margin-top:0px;">
+                <div style="padding-left:10px;">
+                <div style="display: flex; align-items: center; margin-top: 25px; margin-bottom:20px;">
+                    <form action="" method="post" style="display: flex; ">
+                        
+                </div>
+
+            
+            <!-- 2. 테이블 -->
+            <!-- 폼 박스 -->
+            <div style="width:100%; height: 500px; margin:50px auto; font-family:'맑은 고딕', sans-serif; font-size:14px; color:#333; background:#fff; border-top:2px solid #000;">
+
+            <!-- 유형 -->
+            <div style="display:flex; align-items:center; border-bottom:1px solid #e0e0e0; padding:12px 8px;">
+                <label for="cycleBtn" style="width:100px; font-weight:bold;">유형</label>
+                <style>
+                .radio-btn {
+                display: none; /* 실제 라디오 버튼은 숨김 */
+                }
+
+                .radio-label {
+                border: 3px solid #ccc;
+                background: #fff;
+                padding: 5px 40px;
+                cursor: pointer;
+                margin-top: 5px;
+                display: inline-block;
+                }
+
+                .radio-btn:checked + .radio-label {
+                background: #ddd; /* 선택된 버튼 강조 */
+                }
+                </style>
+
+                <div>
+                <div>
+                <form th:action="@{/admin/FAQ/write}" method="post">
+                    <input type="hidden" name="board_type" value="faq">
+                    <input type="hidden" name="hits" value="0">
+                    <select name="board_type2" id="firSel"
+                            style="padding-left:5px; height: 30px; width:120px; font-size: 12px; border:1px solid #e2e2e2; outline: none;"
+                            required>
+                        <option value="">1차분류 선택</option>
+                        <option value="member">회원</option>
+                        <option value="event">쿠폰 / 이벤트</option>
+                        <option value="pay">주문 / 결제</option>
+                        <option value="delivery">배송</option>
+                        <option value="cancel">취소 / 반품 / 교환</option>
+                        <option value="trip">여행 / 숙박 / 항공</option>
+                        <option value="safe">안전거래</option>
+                    </select>
+
+                    <select name="board_type3" id="secSel"
+                            style="padding-left:5px; height: 30px; width:180px; font-size: 12px; border:1px solid #e2e2e2; outline: none; margin-left:6px;"
+                            disabled required>
+                        <option value="">2차분류 선택</option>
+                    </select>
+                </div>
+                
+                <script>
+                    document.addEventListener('DOMContentLoaded', () => {
+                        // 1차 -> 2차 매핑
+                        // key는 1차 셀렉트의 value와 동일해야 합니다.
+                        const subMap = {
+                            member: [
+                                { value: 'signup',   text: '가입' },
+                                { value: 'withdraw', text: '탈퇴' },
+                                { value: 'account',  text: '회원정보' },
+                                { value: 'login',    text: '로그인' },
+                            ],
+                            event: [
+                                { value: 'couponissue',  text: '쿠폰발급' },
+                                { value: 'couponuse',    text: '쿠폰사용' },
+                                { value: 'eventjoin',    text: '이벤트참여' },
+                                { value: 'winnercheck',  text: '당첨확인' },
+                            ],
+                            pay: [
+                                { value: 'orderguide',     text: '주문방법' },
+                                { value: 'paymentmethod',  text: '결제수단' },
+                                { value: 'paymenterror',   text: '결제오류' },
+                                { value: 'receipt',        text: '영수증/증빙' },
+                            ],
+                            delivery: [
+                                { value: 'tracking',        text: '배송조회' },
+                                { value: 'deliverytime',    text: '배송기간' },
+                                { value: 'deliveryfee',     text: '배송비' },
+                                { value: 'globalshipping',  text: '해외배송' },
+                            ],
+                            cancel: [
+                                { value: 'ordercancel',   text: '주문취소' },
+                                { value: 'refund',        text: '반품' },
+                                { value: 'exchange',      text: '교환' },
+                                { value: 'refundprocess', text: '환불처리' },
+                            ],
+                            trip: [
+                                { value: 'reservation',  text: '예약' },
+                                { value: 'payment',      text: '결제' },
+                                { value: 'changecancel', text: '변경/취소' },
+                                { value: 'guide',        text: '이용안내' },
+                            ],
+                            safe: [
+                                { value: 'security',     text: '보안공지' },
+                                { value: 'alert',        text: '사기주의' },
+                                { value: 'safepayment',  text: '안전결제' },
+                                { value: 'privacy',      text: '개인정보보호' },
+                            ],
+                        };
+
+                        const first  = document.getElementById('firSel');
+                        const second = document.getElementById('secSel');
+
+                        function resetSecond() {
+                            second.innerHTML = '<option value="">2차분류 선택</option>';
+                            second.disabled = true;
+                        }
+                        function fillSecond(list) {
+                            resetSecond();
+                            list.forEach(opt => {
+                                const o = document.createElement('option');
+                                o.value = opt.value;
+                                o.textContent = opt.text;
+                                second.appendChild(o);
+                            });
+                            second.disabled = false;
+                        }
+                        function selectByValueOrText(selectEl, prev) {
+                            if (!prev) return;
+                            // value로 먼저 매칭
+                            const byValue = [...selectEl.options].find(o => o.value === prev);
+                            if (byValue) { selectEl.value = prev; return; }
+                            // 텍스트로도 허용(혹시 서버가 라벨을 보낼 때)
+                            const byText = [...selectEl.options].find(o => o.textContent.trim() === prev.trim());
+                            if (byText) selectEl.value = byText.value;
+                        }
+
+                        // 초기 세팅: 서버에서 내려준 prev 값으로 고정
+                        const prevFirst  = (first.dataset.prev  || '').trim(); // ex) 'member'
+                        const prevSecond = (second.dataset.prev || '').trim(); // ex) 'signup'
+
+                        if (prevFirst && subMap[prevFirst]) {
+                            first.value = prevFirst;               // 1차 선택
+                            fillSecond(subMap[prevFirst]);         // 2차 목록 채우기
+                            // onchange 자동 submit 방지
+                            const oldOnchange = second.onchange;
+                            second.onchange = null;
+                            selectByValueOrText(second, prevSecond);  // 2차 선택
+                            second.onchange = oldOnchange;
+                        } else {
+                            // prevFirst가 없거나 매핑이 없으면 기본 상태
+                            resetSecond();
+                        }
+
+                        // 1차 변경 시 2차 갱신
+                        first.addEventListener('change', () => {
+                            const key = first.value;
+                            if (subMap[key]) {
+                                fillSecond(subMap[key]);
+                                second.value = '';
+                            } else {
+                                resetSecond();
+                            }
+                        });
+                    });
+                    </script>
+                </div>
+            </div>
+
+            <div style="display:flex; align-items:center; border-bottom:1px solid #e0e0e0; padding:12px 8px;">
+                <label for="title" style="width:100px; font-weight:bold;">제목</label>
+                <input type="text" id="title" placeholder="제목을 입력합니다."
+                    style="width:500px; padding:8px; border:1px solid #ccc;"
+                name="title">
+            </div>
+
+            <!-- 내용 -->
+            <div style="display:flex; align-items:flex-start; border-bottom:1px solid #e0e0e0; padding:12px 8px;">
+                <label for="content" style="width:100px; font-weight:bold; margin-top: 120px;">내용</label>
+                <textarea id="content" placeholder="내용을 입력합니다."
+                    style="width:500px; height:280px; padding:8px; border:1px solid #ccc; resize:none;"
+                          name="content"></textarea>
+            </div>
+            </div>
+
+            <!-- 버튼 영역 -->
+            <div style="text-align:center; margin-top:-70px;">
+            <button type="button"
+                    th:onclick="|location.href='@{/admin/FAQ/list}'|"
+                    style="cursor:pointer; border:none; background-color: #760c0c; color:white; font-size: 10px; font-weight: 300; height:25px; width:62px;">취소하기</button>
+            <button type="submit"
+                    style="cursor:pointer; margin-left:auto; border:none; background-color: black; color:white; font-size: 10px; font-weight: 300; height:25px; width:62px;">등록하기</button>
+                </form>
+            </div>
+    </main>
+
+    <style>
+        .euro-nav__list {
+            max-height: 0;                /* 기본은 접힘 */
+            overflow: hidden;             /* 안 보이게 */
+            transition: max-height 0.15s ease;
+        }
+
+            .euro-nav__group.open .euro-nav__list {
+            max-height: 500px;            /* 펼쳐졌을 때 (충분히 크게 설정) */
+        }
+    </style>
+    <script>
+        // 아코디언: 클릭 시 높이를 실제 내용 높이로 애니메이션
+  document.querySelectorAll('.euro-nav__title').forEach(title => {
+    title.style.cursor = 'pointer'; // 클릭 가능 시각화(선택)
+    title.addEventListener('click', () => {
+      const group = title.parentElement;
+      const list  = group.querySelector('.euro-nav__list');
+
+      const isOpen = group.classList.contains('open');
+
+      if (isOpen) {
+        // 닫기: 현재 높이를 고정 -> 0으로
+        list.style.maxHeight = list.scrollHeight + 'px';
+        // 강제 리플로우로 트랜지션 시작점 확정
+        list.offsetHeight; 
+        list.style.maxHeight = '0px';
+        group.classList.remove('open');
+      } else {
+        // 열기: 0 -> 내용 높이
+        group.classList.add('open');
+        list.style.maxHeight = list.scrollHeight + 'px';
+
+        // 애니메이션 끝나면 inline max-height 제거(자연스런 레이아웃)
+        const onEnd = (e) => {
+          if (e.propertyName === 'max-height') {
+            list.style.maxHeight = 'none';
+            list.removeEventListener('transitionend', onEnd);
+          }
+        };
+        list.addEventListener('transitionend', onEnd);
+      }
+    });
+  });
+
+  const groups = document.querySelectorAll('.euro-nav__group');
+  document.querySelectorAll('.euro-nav__title').forEach(title => {
+    title.addEventListener('click', () => {
+      groups.forEach(g => {
+        if (g !== title.parentElement && g.classList.contains('open')) {
+          const l = g.querySelector('.euro-nav__list');
+          l.style.maxHeight = l.scrollHeight + 'px';
+          l.offsetHeight;
+          l.style.maxHeight = '0px';
+          g.classList.remove('open');
+        }
+      });
+    }, {capture:true});
+  });
+  
+    </script>
+<div th:replace="~{admin/_footer.html}"></div>

@@ -1,0 +1,609 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>register</title>
+    <style>
+        body {
+            font-family: "Noto Sans KR", sans-serif;
+            background: #fff;
+            color: #333;
+            margin: 0;
+            padding: 0;
+        }
+
+        .container {
+            max-width: 760px;
+            margin: 50px auto;
+            padding: 0 16px;
+        }
+
+        h2 {
+            text-align: center;
+            font-size: 28px;
+            margin-bottom: 30px;
+        }
+
+        form label {
+            display: block;
+            margin: 15px 0 8px;
+            font-weight: bold;
+        }
+
+        form input[type="text"],
+        form input[type="password"],
+        form input[type="email"],
+        form input[type="date"],
+        form input[type="tel"],
+        form select {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #ddd;
+            font-size: 14px;
+        }
+
+        .radio-group {
+            margin: 10px 0;
+        }
+
+        .radio-group label {
+            margin-right: 20px;
+            font-weight: normal;
+        }
+
+        .address-box {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 10px;
+        }
+
+        .address-box input {
+            flex: 1;
+        }
+
+        .address-box button {
+            padding: 12px 20px;
+            background: #333;
+            color: #fff;
+            border: none;
+            cursor: pointer;
+        }
+
+        .btn-area {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 20px;
+        }
+
+        .btn-area button {
+            width: 49%;
+            padding: 8px;
+            font-size: 16px;
+            cursor: pointer;
+        }
+
+        .btn-cancel {
+            background: #fff;
+            border: 1px solid #333;
+        }
+
+        .btn-submit {
+            background: #333;
+            color: #fff;
+            border: none;
+        }
+
+        .btn-submit:disabled {
+            background: #bbb;
+            cursor: not-allowed;
+            color: #fff;
+            opacity: .9;
+        }
+
+        .btn-verify {
+            background: #333;
+            color: #fff;
+            outline: none;
+            border: none;
+            box-shadow: none;
+            padding: 10px 12px;
+            cursor: pointer;
+            height: 44px;
+        }
+
+        .success {
+            color: green;
+            font-size: 13px;
+            margin-top: 4px;
+        }
+
+        .error {
+            color: red;
+            font-size: 13px;
+            margin-top: 4px;
+        }
+
+        /* =========================
+       회원인증 전용(네임스페이스)
+       ========================= */
+        .auth-group {
+            margin: 6px 0 16px;
+        }
+
+        .auth-row {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+        }
+
+        .auth-row .auth-field {
+            flex: 1 1 auto;
+            min-width: 0;
+        }
+
+        /* 입력칸 유연 폭 */
+        .auth-row .auth-btn {
+            flex: 0 0 120px;
+            width: 120px;
+        }
+
+        /* 버튼 고정 폭 */
+
+        .auth-tip {
+            font-size: 13px;
+            color: #666;
+            margin: 6px 0 0;
+        }
+
+        /* 인증번호 입력 줄 (입력칸 가변 + 버튼 고정) */
+        .auth-verify-line {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+            margin-top: 8px;
+        }
+
+        .auth-verify-line input {
+            flex: 1 1 auto;
+        }
+
+        .auth-verify-line .auth-btn {
+            flex: 0 0 120px;
+            width: 120px;
+            height: 44px;
+        }
+
+        .hidden {
+            display: none;
+        }
+    </style>
+</head>
+
+<body>
+    <div id="header"></div>
+
+    <div class="container">
+        <h2>회원가입</h2>
+
+        <form id="signupForm" novalidate>
+            <!-- 회원구분 -->
+            <label>회원구분 *</label>
+            <div class="radio-group">
+                <label><input type="radio" name="memberType" value="user" checked> 일반회원</label>
+            </div>
+
+            <!-- 회원인증 (이메일 + 휴대폰 둘 다 필요) -->
+            <label>회원인증 *</label>
+
+            <!-- 이메일 인증 -->
+            <div class="auth-group" id="emailAuth">
+                <div class="auth-row">
+                    <input type="email" id="email" class="auth-field" placeholder="이메일 입력 (example@domain.com)"
+                        autocomplete="email">
+                    <button type="button" id="btnSendEmail" class="btn-verify auth-btn">이메일 인증</button>
+                </div>
+                <div id="emailVerifyWrap" class="auth-verify-line hidden">
+                    <input type="text" id="emailCode" inputmode="numeric" pattern="[0-9]*"
+                        placeholder="이메일로 받은 인증번호 입력">
+                    <button type="button" id="btnCheckEmail" class="btn-verify auth-btn">확인</button>
+                </div>
+                <p id="emailStatus" class="error">이메일 인증이 필요합니다.</p>
+            </div>
+
+            <!-- 휴대폰 인증 -->
+            <div class="auth-group" id="phoneAuth">
+                <div class="auth-row">
+                    <input type="tel" id="phone" class="auth-field" placeholder="휴대폰 번호 입력 (하이픈 없이)" inputmode="tel"
+                        maxlength="11" autocomplete="tel">
+                    <button type="button" id="btnSendSms" class="btn-verify auth-btn">휴대폰 인증</button>
+                </div>
+                <div id="smsVerifyWrap" class="auth-verify-line hidden">
+                    <input type="text" id="smsCode" inputmode="numeric" pattern="[0-9]*" placeholder="문자로 받은 인증번호 입력">
+                    <button type="button" id="btnCheckSms" class="btn-verify auth-btn">확인</button>
+                </div>
+                <p id="phoneStatus" class="error">휴대폰 인증이 필요합니다.</p>
+            </div>
+
+            <!-- 아이디 -->
+            <label for="userid">아이디 *</label>
+            <input type="text" id="userid" name="userid" placeholder="영문/숫자 4~16자" required>
+            <div style="margin-top:8px;">
+                <button type="button" id="btnCheckId" class="btn-verify">중복확인</button>
+            </div>
+            <p id="idResult" class=""></p>
+
+            <!-- 비밀번호 -->
+            <label for="password">비밀번호 *</label>
+            <input type="password" id="password" name="password" placeholder="영문/숫자/특수문자 2가지 이상, 10~16자" required>
+
+            <label for="confirmPassword">비밀번호 확인 *</label>
+            <input type="password" id="confirmPassword" name="confirmPassword" required>
+            <p id="pwResult" class=""></p>
+
+            <!-- 이름 -->
+            <label for="name">이름 *</label>
+            <input type="text" id="name" name="name" placeholder="이름 입력" required>
+            <p id="nameResult" class=""></p>
+
+            <!-- 성별 -->
+            <label>성별</label>
+            <div class="radio-group">
+                <label><input type="radio" name="gender" value="M"> 남자</label>
+                <label><input type="radio" name="gender" value="F"> 여자</label>
+            </div>
+
+            <!-- 생년월일 -->
+            <label for="birth">생년월일 *</label>
+            <input type="date" id="birth" name="birth" required>
+            <p id="birthResult" class=""></p>
+
+            <!-- 주소 -->
+            <label>주소</label>
+            <div class="address-box">
+                <input type="text" id="postcode" placeholder="우편번호" readonly required>
+                <button type="button" id="btnFindAddr" onclick="execDaumPostcode()">주소찾기</button>
+            </div>
+            <input type="text" id="address" placeholder="기본주소" readonly required>
+            <input type="text" id="detailAddress" placeholder="상세주소">
+
+            <!-- 버튼 -->
+            <div class="btn-area">
+                <button type="button" class="btn-cancel" onclick="location.href='/'">취소</button>
+                <button type="submit" id="btnSubmit" class="btn-submit" disabled>가입하기</button>
+            </div>
+        </form>
+    </div>
+
+    <div id="footer"></div>
+
+    <!-- Daum 주소 API -->
+    <script src="//t1.daumcdn.net/mapjsapi/bundle/postcode/prod/postcode.v2.js"></script>
+
+    <script>
+        // ---------- 헤더/푸터 삽입 ----------
+        window.addEventListener('DOMContentLoaded', () => {
+            fetch("/NICHIYA/main/header.html")
+                .then(res => res.text())
+                .then(data => {
+                    const header = document.getElementById("header");
+                    if (!header) return;
+                    header.innerHTML = data;
+                    header.querySelectorAll("script").forEach(oldScript => {
+                        const s = document.createElement("script");
+                        if (oldScript.src) s.src = oldScript.src; else s.textContent = oldScript.textContent;
+                        document.body.appendChild(s);
+                    });
+                });
+
+            fetch("/NICHIYA/main/footer.html")
+                .then(res => res.text())
+                .then(data => {
+                    const footer = document.getElementById("footer");
+                    if (!footer) return;
+                    footer.innerHTML = data;
+                });
+        });
+
+        // ---------- 상태 ----------
+        let emailVerified = false;
+        let phoneVerified = false;
+        let emailCode = null;
+        let smsCode = null;
+
+        // ---------- DOM ----------
+        const form = document.getElementById("signupForm");
+        const btnSubmit = document.getElementById("btnSubmit");
+
+        const elUserId = document.getElementById("userid");
+        const elPw = document.getElementById("password");
+        const elPw2 = document.getElementById("confirmPassword");
+        const elName = document.getElementById("name");
+        const elBirth = document.getElementById("birth");
+
+        const idResult = document.getElementById("idResult");
+        const pwResult = document.getElementById("pwResult");
+        const nameResult = document.getElementById("nameResult");
+        const birthResult = document.getElementById("birthResult");
+
+        const emailInput = document.getElementById("email");
+        const phoneInput = document.getElementById("phone");
+        const emailStatus = document.getElementById("emailStatus");
+        const phoneStatus = document.getElementById("phoneStatus");
+        const emailVerifyWrap = document.getElementById("emailVerifyWrap");
+        const smsVerifyWrap = document.getElementById("smsVerifyWrap");
+
+        // ---------- 유틸: 유효성 ----------
+        function validateUserId() {
+            const v = elUserId.value.trim();
+            const ok = /^[A-Za-z0-9]{4,16}$/.test(v);
+            if (!v) { idResult.textContent = "아이디는 필수입니다."; idResult.className = "error"; }
+            else if (!ok) { idResult.textContent = "아이디는 영문/숫자 4~16자여야 합니다."; idResult.className = "error"; }
+            else { idResult.textContent = "사용 가능한 형식입니다."; idResult.className = "success"; }
+            return ok;
+        }
+
+        function validatePassword() {
+            const p1 = elPw.value;
+            const p2 = elPw2.value;
+            const lenOK = /^.{10,16}$/.test(p1);
+            const types = [/[A-Za-z]/.test(p1), /[0-9]/.test(p1), /[^A-Za-z0-9]/.test(p1)];
+            const typeOK = (types.filter(Boolean).length >= 2);
+            let ok = lenOK && typeOK;
+
+            if (!p1) { pwResult.textContent = "비밀번호는 필수입니다."; pwResult.className = "error"; return false; }
+            if (!ok) { pwResult.textContent = "영문/숫자/특수문자 중 2가지 이상 포함, 10~16자"; pwResult.className = "error"; }
+            else if (p2 && p1 !== p2) { pwResult.textContent = "비밀번호가 일치하지 않습니다."; pwResult.className = "error"; ok = false; }
+            else if (p2 && p1 === p2) { pwResult.textContent = "비밀번호가 일치합니다 ✅"; pwResult.className = "success"; }
+            else { pwResult.textContent = ""; pwResult.className = ""; }
+            return ok;
+        }
+
+        function validateName() {
+            const v = elName.value.trim();
+            const ok = v.length > 0;
+            if (!ok) { nameResult.textContent = "이름은 필수입니다."; nameResult.className = "error"; }
+            else { nameResult.textContent = ""; nameResult.className = ""; }
+            return ok;
+        }
+
+        function validateBirth() {
+            const v = elBirth.value;
+            let ok = !!v;
+            if (!ok) { birthResult.textContent = "생년월일은 필수입니다."; birthResult.className = "error"; return false; }
+            const today = new Date();
+            const b = new Date(v + "T00:00:00");
+            if (b > today) { birthResult.textContent = "생년월일은 오늘 이후일 수 없습니다."; birthResult.className = "error"; ok = false; }
+            else { birthResult.textContent = ""; birthResult.className = ""; }
+            return ok;
+        }
+
+        function validateEmailField() { return /.+@.+\..+/.test(emailInput.value.trim()); }
+        function validatePhoneField() { return /^01[0-9]{8,9}$/.test(phoneInput.value.trim()); }
+
+        function updateSubmitState() {
+            const allValid =
+                emailVerified &&
+                // phoneVerified &&
+                validateUserId() &&
+                validatePassword() &&
+                validateName() &&
+                validateBirth();
+            btnSubmit.disabled = !allValid;
+        }
+
+        // ---------- 인증(수정) ----------
+        const pseudoSend = () => new Promise(res => setTimeout(res, 500));
+
+        document.getElementById("btnSendEmail").addEventListener("click", async () => {
+            const email = emailInput.value.trim();
+
+            console.log("email: " + email);
+
+            if (!validateEmailField()) {
+                emailStatus.textContent = "이메일 형식을 확인해 주세요.";
+                emailStatus.className = "error";
+                return;
+            }
+
+            try {
+                const res = await fetch("/NICHIYA/email/send", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ email })
+                });
+
+                    console.log("email: " + email);
+
+                if (res.ok) {
+                    emailVerifyWrap.classList.remove("hidden");
+                    emailStatus.textContent = "인증번호를 이메일로 전송했습니다.";
+                    emailStatus.className = "success";
+                } else {
+                    emailStatus.textContent = "이메일 전송에 실패했습니다.";
+                    emailStatus.className = "error";
+                }
+            } catch (err) {
+                console.error(err);
+                emailStatus.textContent = "서버 오류로 전송 실패.";
+                emailStatus.className = "error";
+            }
+        });
+
+
+        document.getElementById("btnCheckEmail").addEventListener("click", async () => {
+            const input = document.getElementById("emailCode").value.trim();
+            if (!input) {
+                emailStatus.textContent = "인증번호를 입력해 주세요.";
+                emailStatus.className = "error";
+                return;
+            }
+
+            try {
+                const res = await fetch("/NICHIYA/email/code", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ code: input })
+                    // 만약 백엔드가 다른 포트/도메인이라면 아래처럼 절대경로 + credentials 필요할 수 있음:
+                    // credentials: 'include'
+                });
+
+                const body = await res.json();
+
+                if (res.ok && body.isMatched) {
+                    emailVerified = true;
+                    emailStatus.textContent = "이메일 인증 완료";
+                    emailStatus.className = "success";
+                } else {
+                    emailVerified = false;
+                    emailStatus.textContent = "인증번호가 일치하지 않습니다.";
+                    emailStatus.className = "error";
+                }
+            } catch (err) {
+                console.error(err);
+                emailVerified = false;
+                emailStatus.textContent = "서버 오류로 검증 실패.";
+                emailStatus.className = "error";
+            }
+
+            updateSubmitState();
+        });
+
+
+        document.getElementById("btnSendSms").addEventListener("click", async () => {
+            if (!validatePhoneField()) { phoneStatus.textContent = "휴대폰 번호를 정확히 입력해 주세요."; phoneStatus.className = "error"; return; }
+            await pseudoSend();
+            smsCode = String(Math.floor(100000 + Math.random() * 900000));
+            console.log("[DEV] sms code:", smsCode);
+            smsVerifyWrap.classList.remove("hidden");
+            phoneStatus.textContent = "인증번호를 전송했습니다. 문자메시지를 확인해 주세요.";
+            phoneStatus.className = "success";
+        });
+
+        document.getElementById("btnCheckSms").addEventListener("click", () => {
+            const input = document.getElementById("smsCode").value.trim();
+            if (input && input === smsCode) {
+                phoneVerified = true;
+                phoneStatus.textContent = "휴대폰 인증 완료";
+                phoneStatus.className = "success";
+            } else {
+                phoneVerified = false;
+                phoneStatus.textContent = "인증번호가 일치하지 않습니다.";
+                phoneStatus.className = "error";
+            }
+            updateSubmitState();
+        });
+
+        // ---------- 기타 이벤트 ----------
+        document.getElementById("btnCheckId").addEventListener("click", async () => {
+            const id = elUserId.value.trim();
+            if (!validateUserId()) {
+                idResult.textContent = "아이디 형식을 확인하세요.";
+                idResult.className = "error";
+                return;
+            }
+
+            try {
+                const res = await fetch(`/NICHIYA/user/check-id?user_id=${encodeURIComponent(id)}`);
+                const body = await res.json();
+                if (res.ok && body.available) {
+                    idResult.textContent = "사용 가능한 아이디입니다.";
+                    idResult.className = "success";
+                } else {
+                    idResult.textContent = "이미 사용중인 아이디입니다.";
+                    idResult.className = "error";
+                }
+            } catch (e) {
+                console.error(e);
+                idResult.textContent = "서버 오류";
+                idResult.className = "error";
+            }
+            updateSubmitState();
+        });
+
+        elUserId.addEventListener("input", updateSubmitState);
+        elPw.addEventListener("input", updateSubmitState);
+        elPw2.addEventListener("input", updateSubmitState);
+        elName.addEventListener("input", updateSubmitState);
+        elBirth.addEventListener("change", updateSubmitState);
+        emailInput.addEventListener("input", () => { emailVerified = false; emailStatus.textContent = "이메일 인증이 필요합니다."; emailStatus.className = "error"; updateSubmitState(); });
+        phoneInput.addEventListener("input", () => { phoneVerified = false; phoneStatus.textContent = "휴대폰 인증이 필요합니다."; phoneStatus.className = "error"; updateSubmitState(); });
+
+        // ---------- Daum 주소 ----------
+        function execDaumPostcode() {
+            new daum.Postcode({
+                oncomplete: function (data) {
+                    document.getElementById("postcode").value = data.zonecode;
+                    document.getElementById("address").value = data.address;
+                }
+            }).open();
+        }
+        window.execDaumPostcode = execDaumPostcode;
+
+        // ---------- 제출 ----------
+        form.addEventListener("submit",async function (e) {
+            e.preventDefault();
+
+            const okNow =
+                emailVerified &&
+                //phoneVerified &&
+                validateUserId() &&
+                validatePassword() &&
+                validateName() &&
+                validateBirth();
+
+            if (!okNow) {
+
+                alert("필수 인증/입력 항목을 완료해 주세요.");
+                updateSubmitState();
+                return;
+            }
+
+            const payload = {
+                userId: elUserId.value.trim(),
+                password: elPw.value,
+                name: elName.value.trim(),
+                gender: document.querySelector('input[name="gender"]:checked')?.value || null,
+                birth: elBirth.value,
+                email: emailInput.value.trim(),
+                phone: phoneInput.value.trim(),
+                postcode: document.getElementById("postcode").value,
+                address: document.getElementById("address").value,
+                detailAddress: document.getElementById("detailAddress").value,
+
+                // 🔽 추가: 회원 구분 값 전송
+                role: document.querySelector('input[name="memberType"]:checked')?.value || "user"
+            };
+
+            try {
+                const res = await fetch("/NICHIYA/user/register", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify(payload)
+                });
+                const body = await res.json();
+                if (res.ok && body.ok) {
+                    alert("회원가입이 완료되었습니다.");
+                    //location.href = "/welcome";
+
+                // ✅ 로그인 페이지로 이동 여부 확인
+                if (confirm("로그인 페이지로 이동하시겠습니까?")) {
+                    // ✅ 확인 클릭 시 로그인 페이지로 이동
+                    location.href = "/NICHIYA/member/login";
+                } else {
+                    // ❌ 취소 클릭 시 환영 페이지로 이동 (또는 메인 등)
+                    location.href = "/NICHIYA/member/join";
+                }
+                } else {
+                    alert("회원가입 실패: " + (body.error || "알 수 없는 오류"));
+                }
+            } catch (err) {
+                console.error(err);
+                alert("서버 오류로 가입 실패");
+            }
+        });
+    </script>
+</body>
+
+</html>

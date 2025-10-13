@@ -1,0 +1,806 @@
+<div th:replace="~{admin/_noneStickyHeader.html}"></div>
+
+<main style="border-top:1px solid #e2e2e2; display: flex; justify-content: center; ">
+    <div>
+        <aside class="euro-nav" aria-label="관리자 사이드 메뉴" style="">
+            <section class="euro-nav__group">
+                <h4 class="euro-nav__title" style="">환경설정</h4>
+                <ul class="euro-nav__list">
+                    <li class="euro-nav__item"><a th:href="@{/admin/admin_basic}">기본설정</a></li>
+                    <li class="euro-nav__item"><a th:href="@{/admin/admin_banner}">배너관리</a></li>
+                    <li class="euro-nav__item"><a th:href="@{/admin/admin_policy}">약관관리</a></li>
+                    <li class="euro-nav__item"><a th:href="@{/admin/admin_category}">카테고리</a></li>
+                    <li class="euro-nav__item"><a th:href="@{/admin/admin_version}">버전관리</a></li>
+                </ul>
+            </section>
+
+            <section class="euro-nav__group">
+                <h4 class="euro-nav__title" style="">상점관리</h4>
+                <ul class="euro-nav__list">
+                    <li class="euro-nav__item"><a th:href="@{/admin/shop/list}">상점목록</a></li>
+                    <li class="euro-nav__item"><a th:href="@{/admin/sales/list}">매출현황</a></li>
+                </ul>
+            </section>
+
+            <section class="euro-nav__group">
+                <h4 class="euro-nav__title" style="">회원관리</h4>
+                <ul class="euro-nav__list">
+                    <li class="euro-nav__item"><a th:href="@{/admin/member/list}">회원목록</a></li>
+                    <li class="euro-nav__item"><a th:href="@{/admin/point/list}">포인트관리</a></li>
+                </ul>
+            </section>
+
+            <section class="euro-nav__group">
+                <h4 class="euro-nav__title" style="">상품관리</h4>
+                <ul class="euro-nav__list">
+                    <li class="euro-nav__item"><a th:href="@{/admin/product/list}">상품목록</a></li>
+                    <li class="euro-nav__item"><a th:href="@{/admin/productReg/list}">상품등록</a></li>
+                </ul>
+            </section>
+
+            <section class="euro-nav__group">
+                <h4 class="euro-nav__title" style="">주문관리</h4>
+                <ul class="euro-nav__list">
+                    <li class="euro-nav__item"><a th:href="@{/admin/order/list}">주문현황</a></li>
+                    <li class="euro-nav__item"><a th:href="@{/admin/delivery/list}">배송현황</a></li>
+                </ul>
+            </section>
+
+            <section class="euro-nav__group">
+                <h4 class="euro-nav__title" style="">쿠폰관리</h4>
+                <ul class="euro-nav__list">
+                    <li class="euro-nav__item is-active"><a th:href="@{/admin/coupon/list}">쿠폰목록</a></li>
+                    <li class="euro-nav__item"><a th:href="@{/admin/couponsnow/list}">쿠폰발급현황</a></li>
+                </ul>
+            </section>
+
+            <section class="euro-nav__group">
+                <h4 class="euro-nav__title" style="">고객센터</h4>
+                <ul class="euro-nav__list">
+                    <li class="euro-nav__item"><a th:href="@{/admin/announcement/list}">공지사항</a></li>
+                    <li class="euro-nav__item"><a th:href="@{/admin/FAQ/list}">자주묻는질문</a></li>
+                    <li class="euro-nav__item"><a th:href="@{/admin/inquiry/list}">문의하기</a></li>
+                    <li class="euro-nav__item"><a th:href="@{/admin/employ/list}">채용하기</a></li>
+                </ul>
+            </section>
+        </aside>
+    </div>
+    <div style="width:940px; border-left:1px solid #e2e2e2;">
+        <div style="margin-left:60px;">
+            <div style="display: flex;">
+                <div style="font-size: 20px; font-weight: 800; margin-top:16px; margin-bottom:5px;">쿠폰목록</div>
+                <div style="margin-left: auto; margin-top:auto; margin-bottom:4px;font-size: 12px;">HOME > 쿠폰관리 > <span style="font-weight: 800;">쿠폰목록</span></div>
+            </div>
+            <hr style="border:none; border-top:1px solid gray; margin-top:0px;">
+            <div style="padding-left:10px;">
+                <div style="display: flex; align-items: center; margin-top: 25px; margin-bottom:20px;">
+                    <form th:action="@{/admin/coupon/search}" method="get" style="display: flex; ">
+                        <select name="searchType" id="" style="width:82px; height:28px; padding-left:5px; margin-right:3px; border:1px solid #bfbfbf; font-size: 10px !important;">
+                            <option value="code">쿠폰번호</option>
+                            <option value="coupon_name">쿠폰명</option>
+                            <option value="name">발급자</option>
+                        </select>
+                        <input type="text" name="keyword" placeholder="검색어입력" style="width:140px; height:28px; padding-left:10px; margin-right:3px; border:1px solid #bfbfbf; font-size: 10px !important;">
+                        <input type="submit" value="검색" style="width:50px; height:28px; color:white; background-color: black; border:none; font-size: 12px !important;">
+                    </form>
+                </div>
+                <table style="border-collapse: collapse; width:100%; font-size:12px; text-align: center; ">
+                    <tr style="border-top:1px solid gray; height:50px; border-bottom:1px solid #e2e2e2;">
+                        <th style="width:102px;">쿠폰번호</th>
+                        <th style="width:102px;">쿠폰종류</th>
+                        <th style="width:146px;">쿠폰명</th>
+                        <th style="width:77px;">혜택</th>
+                        <th style="width:101px;">사용기간</th>
+                        <th style="width:75px;">발급자</th>
+                        <th style="width:40px;">발급수</th>
+                        <th style="width:40px;">사용수</th>
+                        <th style="width:40px;">상태</th>
+                        <th style="width:86px;">발급일</th>
+                        <th style="width:59px;">관리</th>
+                    </tr>
+                    <tr style="border-bottom:1px solid #e2e2e2; height:70px;vertical-align: middle; font-size: 11px;"
+                        th:each="admin, stat:${pageResponseDTO.dtoList}">
+                        <td><a href="#" class="coupon-link" th:attr="data-coupon-no=${admin.code}" style="font-weight: 800;"
+                               th:text="${admin.code}">10121211341</a></td>
+                        <td th:text="${admin.discount_type}">개별상품 할인</td>
+                        <td th:text="${admin.coupon_name}">10월 한달 감사 쿠폰</td>
+                        <td th:text="${admin.discount_value == 0 ? '배송비 무료' :
+                                                (admin.discount_value < 100 ? admin.discount_value + '% 할인' :
+                                                (admin.discount_value + '원 할인'))}"></td>
+                        <td>
+                            <span th:text="${#temporals.format(admin.valid_from, 'yyyy-MM-dd')}">0000-00-00</span> <br>~
+                            <span th:text="${#temporals.format(admin.valid_to, 'yyyy-MM-dd')}">0000-00-00</span></td>
+                        <td th:text="${admin.company}">(주)다있어</td>
+                        <td th:text="${admin.issuecount}">102</td>
+                        <td th:text="${admin.usercount}">43</td>
+                        <td th:with="st=${#strings.trim(admin.status)}"
+                            th:text="${st}"
+                            th:classappend="${#strings.equalsIgnoreCase(st,'발급중')} ? 'st-open' : 'st-closed'">
+                        <td th:text="${#temporals.format(admin.created_at, 'yyyy-MM-dd HH:mm:ss')}"></td>
+                        <td><button class="end-btn"
+                                    style="height:30px; border: 1px solid #e2e2e2;"
+                                    th:classappend="${#strings.equalsIgnoreCase(#strings.trim(admin.status),'종료')} ? ' is-disabled' : ''"
+                                    th:disabled="${#strings.equalsIgnoreCase(#strings.trim(admin.status),'종료')}">종료</button></td>
+                        <!-- ▼ 배송입력 모달 콘텐츠 템플릿 -->
+                        <template class="shipFormTemplate">
+                            <div class="ship-form__wrap">
+                                <!-- 제목 라인은 모달 헤더에서 렌더링하므로 여기엔 폼만 -->
+                                <form>
+                                    <table class="ship-form__table">
+                                        <colgroup>
+                                            <col style="width:100px; ">
+                                            <col style="width:350px;">
+                                            <col style="width:100px;">
+                                        </colgroup>
+                                        <tbody>
+                                        <tr>
+                                            <th style="font-size: 14px;">쿠폰번호</th>
+                                            <td style="font-size:14px;"
+                                                th:text="${admin.code}">10121211341</td>
+                                            <th style="font-size:14px;">발급처</th>
+                                            <td style="font-size:14px;"
+                                                th:text="${admin.company}">(주)다있어</td>
+                                        </tr>
+                                        <tr >
+                                            <th style="font-size: 14px;">쿠폰종류</th>
+                                            <td style="font-size:14px;"
+                                                th:text="${admin.discount_type}">개별상품 할인</td>
+                                            <td ></td>
+                                            <td></td>
+                                        </tr>
+                                        <tr>
+                                            <th style="font-size: 14px;">쿠폰명</th>
+                                            <td style="font-size:14px;"
+                                                th:text="${admin.coupon_name}">10월 한달 감사 쿠폰 이벤트</td>
+                                            <td></td>
+                                            <td></td>
+                                        </tr>
+                                        <tr>
+                                            <th style="font-size: 14px;">혜택</th>
+                                            <td style="font-size:14px;"
+                                                th:text="${admin.discount_value == 0 ? '배송비 무료' :
+                                                (admin.discount_value < 100 ? admin.discount_value + '% 할인' :
+                                                (admin.discount_value + '원 할인'))}">2,000 원 할인</td>
+                                            <td></td>
+                                            <td></td>
+                                        </tr>
+                                        <tr>
+                                            <th style="font-size: 14px;">사용기간</th>
+                                            <td style="font-size:14px;">
+                                                <span th:text="${#temporals.format(admin.valid_from, 'yyyy-MM-dd')}">0000-00-00</span> ~
+                                                <span th:text="${#temporals.format(admin.valid_to, 'yyyy-MM-dd')}">0000-00-00</span></td>
+                                            <td></td>
+                                            <td></td>
+                                        </tr>
+                                        <tr>
+                                            <th style="font-size: 14px; height:200px;">유의사항</th>
+                                            <td style="font-size:14px;">
+                                                <div>
+                                                    <div><span th:text="${admin.discount_type}"></span> 쿠폰</div>
+                                                    <div
+                                                            th:with="raw=${admin.note} ?: '', txt=${#strings.trim(raw)}, i=${#strings.indexOf(txt,'-')}"
+                                                            th:utext="${i == -1
+                                                                        ? txt
+                                                                        : #strings.substring(txt,0,i+1)
+                                                                          + #strings.replace(#strings.substring(txt,i+1), '-', '<br>-')}">
+                                                    </div>
+                                                </div>
+                                                <div>
+                                                    <div style="margin-top:20px;">사용처</div>
+                                                    <div th:utext="'- ' + ${admin.company}">- (주)다있어</div>
+                                                </div>
+                                            </td>
+                                            <td></td>
+                                            <td></td>
+                                        </tr>
+                                        </tbody>
+                                    </table>
+                                    <div class="ship-form__actions" style="display: flex; justify-content: center;">
+                                        <button type="button" class="btn-primary" id="shipSubmitBtn" style="background-color: black !important; font-weight:300; min-width: 70px !important;">닫기</button>
+                                    </div>
+                                </form>
+                            </div>
+                        </template>
+                    </tr>
+                </table>
+                <style>
+                    /* 우선순위 확보 */
+                    table td.st-open  { color:#8bd8a7 !important; }
+                    table td.st-closed{ color:gray    !important; }
+
+                    .end-btn.is-disabled,
+                    .end-btn[disabled]{
+                        background: gray;
+                        color: white;
+                        cursor: not-allowed;
+                        opacity: .9;
+                    }
+                </style>
+                <div style="display:flex; margin-top:13px;">
+                    <button id="openCouponRegBtn" style="cursor:pointer;margin-left:auto;border:none; background-color: black; color:white; font-size: 10px; font-weight: 300; height:25px; width:62px;">쿠폰등록</button>
+                </div>
+                <div style=" height: 100px; margin-top:40px; display: flex; justify-content: center;">
+                    <input th:if="${pageResponseDTO.prev}"
+                           th:onclick="|location.href='@{/admin/coupon/search(pg=${pageResponseDTO.start - 1}, searchType=${pageResponseDTO.searchType}, keyword=${pageResponseDTO.keyword})}'|"
+                           type="button" class="prev-page" value="< 이전">
+
+                    <th:block th:if="${pageResponseDTO.end >= pageResponseDTO.start}"
+                              th:each="num:${#numbers.sequence(pageResponseDTO.start, pageResponseDTO.end)}">
+                        <input th:onclick="|location.href='@{/admin/coupon/search(pg=${num}, searchType=${pageResponseDTO.searchType}, keyword=${pageResponseDTO.keyword})}'|"
+                               th:class="${num == pageResponseDTO.pg ? 'current' : 'num'}"
+                               type="button"
+                               th:value="${num}" />
+                    </th:block>
+
+                    <input th:if="${pageResponseDTO.next}"
+                           th:onclick="|location.href='@{/admin/coupon/search(pg=${pageResponseDTO.end + 1}, searchType=${pageResponseDTO.searchType}, keyword=${pageResponseDTO.keyword})}'|"
+                           type="button" class="next-page" value="다음 >" style="">
+                </div>
+                <style>
+                    .current{
+                        border:1px solid #333;
+                        background-color: #333;
+                        color: white;
+                        height: 30px;
+                        width: 30px;
+                        margin-right:7px;
+                        line-height:1;
+                    }
+                    .num {
+                        cursor: pointer;
+                        border:1px solid #ddd;
+                        color: #555;
+                        height: 30px;
+                        width: 30px;
+                        margin-right:7px;
+                        line-height:1;
+                    }
+                </style>
+                <!-- 주문상세 콘텐츠 템플릿: '첫번째 사진' 영역 그대로 -->
+
+                <!-- ▼ 배송입력 모달 -->
+                <div id="shipModal" class="order-modal__overlay ship-modal" aria-hidden="true">
+                    <div class="order-modal" role="dialog" aria-modal="true" aria-labelledby="shipModalTitle">
+                        <!-- 세번째 이미지 스타일의 머리 -->
+                        <div class="ship-modal__head">
+                            <div class="ship-head__title">
+                                <span id="shipModalTitle" style="font-size: 20px">쿠폰정보</span>
+                                <span id="shipModalOrderNo" class="ship-head__order"></span>
+                            </div>
+                            <button type="button" class="order-modal__close" id="shipModalClose" aria-label="닫기"></button>
+                        </div>
+                        <div class="order-modal__body" id="shipModalBody"></div>
+                    </div>
+                </div>
+
+
+            </div>
+        </div>
+    </div>
+    <div id="orderDetailModal" class="order-modal__overlay" aria-hidden="true">
+        <div class="order-modal" role="dialog" aria-modal="true" aria-labelledby="orderModalTitle">
+            <div class="order-modal__head">
+                <span id="orderModalTitle" style="font-size: 20px;">주문상세</span>
+                <span id="orderModalNo" class="order-id"></span>
+                <button type="button" class="order-modal__close" id="orderModalClose" aria-label="닫기"></button>
+            </div>
+            <div class="order-modal__body" id="orderModalBody">
+            </div>
+        </div>
+    </div>
+    <!-- ▼ 쿠폰등록 폼 템플릿 -->
+    <template id="couponRegTemplate">
+        <div class="ship-form__wrap">
+            <form id="couponRegForm" method="post" th:action="@{/admin/coupon/register}">
+                <input type="hidden" name="users_id" value="61">
+                <input type="hidden" name="status" value="발급중">
+                <input type="hidden" name="issuecount" value="0">
+                <input type="hidden" name="usercount" value="0">
+                <table class="ship-form__table">
+                    <colgroup>
+                        <col style="width:120px;"><col><col style="width:120px;"><col>
+                    </colgroup>
+                    <tbody>
+                    <tr>
+                        <th>발급처</th>
+                        <td><input class="ipt" name="company" placeholder="(주) NICHIYA" required style="width: 400px;"></td>
+                    </tr>
+                    <tr>
+                        <th>쿠폰종류</th>
+                        <td>
+                            <select class="sel" name="discount_type" required style="width:140px;">
+                                <option value="" hidden>종류선택</option>
+                                <option value="개별상품 할인">개별상품 할인</option>
+                                <option value="주문상품 할인">주문상품 할인</option>
+                                <option value="배송비 무료">배송비 무료</option>
+                            </select>
+                        </td>
+                    </tr>
+                    <tr>
+                        <th>쿠폰명</th>
+                        <td colspan="3"><input class="ipt" name="coupon_name" maxlength="40" placeholder="예) 10월 한달 감사 쿠폰" required style="width: 400px;"></td>
+                    </tr>
+                    <tr style="">
+                        <th>혜택</th>
+                        <td colspan="3">
+                            <div style="display:flex; flex-wrap:wrap; gap:14px;">
+                                <div style="display: flex; flex-direction: column;">
+                                    <label style="margin-bottom:9px;"><input type="radio" name="discount_value" value="1000" required> 1,000원 할인</label>
+                                    <label style="margin-bottom:9px;"><input type="radio" name="discount_value" value="10"> 10% 할인</label>
+                                    <label><input type="radio" name="discount_value" value="0"> 배송비 무료</label>
+                                </div>
+                                <div style="display: flex; flex-direction: column;">
+                                    <label style="margin-bottom:9px;"><input type="radio" name="discount_value" value="2000"> 2,000원 할인</label>
+                                    <label><input type="radio" name="discount_value" value="20"> 20% 할인</label>
+                                </div>
+                                <div style="display: flex; flex-direction: column;">
+                                    <label style="margin-bottom:9px;"><input type="radio" name="discount_value" value="3000"> 3,000원 할인</label>
+                                    <label><input type="radio" name="discount_value" value="30"> 30% 할인</label>
+                                </div>
+                                <div style="display: flex; flex-direction: column;">
+                                    <label style="margin-bottom:9px;"><input type="radio" name="discount_value" value="4000"> 4,000원 할인</label>
+                                    <label><input type="radio" name="discount_value" value="40"> 40% 할인</label>
+                                </div>
+                                <div style="display: flex; flex-direction: column;">
+                                    <label style="margin-bottom:9px;"><input type="radio" name="discount_value" value="5000"> 5,000원 할인</label>
+                                    <label><input type="radio" name="discount_value" value="50"> 50% 할인</label>
+                                </div>
+                                <style>
+                                    input[type="radio"] {
+                                        width: 15px;   /* 가로 크기 */
+                                        height: 13px;  /* 세로 크기 */
+                                        transform: scale(1.5); /* 크기 배율 (1.5배) */
+                                        accent-color: #000; /* 지원되는 브라우저에서 색상 변경 */
+                                    }
+                                </style>
+
+                            </div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <th>사용기간</th>
+                        <td colspan="3">
+                            <div style="display:grid; gap:10px;">
+                                <!-- 절대기간 -->
+                                <label style="display:flex; align-items:center; gap:8px;">
+                                    <input required type="datetime-local" class="ipt" name="valid_from" style="max-width:180px;">
+                                    ~
+                                    <input required type="datetime-local" class="ipt" name="valid_to" style="max-width:180px;">
+                                </label>
+                            </div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <th>유의사항</th>
+                        <td colspan="3">
+              <textarea class="txt" name="note" placeholder="- 상품 1개에 대해 사용 가능&#10;- 판매자 즉시할인/상품할인 쿠폰과 중복 사용 가능"
+                        th:text="|- 상품 1개에 대해 사용 가능&#10;- 판매자 즉시할인/상품할인 쿠폰과 중복 사용 가능|"></textarea>
+                        </td>
+                    </tr>
+                    </tbody>
+                </table>
+                <div class="ship-form__actions" style="justify-content:center; gap:8px;">
+                    <button type="button" class="btn-secondary" id="couponRegCancelBtn" style="cursor:pointer;font-weight: 300;">취소</button>
+                    <button type="submit" class="btn-primary" style="cursor:pointer;font-weight: 300;">등록</button>
+                </div>
+            </form>
+        </div>
+    </template>
+
+    <!-- ▼ 쿠폰등록 모달(첫번째 모달과 동일한 프레임) -->
+    <div id="couponRegModal" class="order-modal__overlay" aria-hidden="true">
+        <div class="order-modal" role="dialog" aria-modal="true" aria-labelledby="couponRegTitle">
+            <div class="ship-modal__head">
+                <div class="ship-head__title">
+                    <span id="couponRegTitle" style="font-size:20px">쿠폰등록</span>
+                </div>
+                <button type="button" class="order-modal__close" id="couponRegClose" aria-label="닫기"></button>
+            </div>
+            <div class="order-modal__body" id="couponRegBody"></div>
+        </div>
+    </div>
+
+</main>
+
+<style>
+    /* 회색/비활성 버튼은 포인터 막고 흐리게 */
+    table button[disabled]{
+        cursor: not-allowed;
+        opacity: .9;
+    }
+    .euro-nav__list {
+        max-height: 0;                /* 기본은 접힘 */
+        overflow: hidden;             /* 안 보이게 */
+        transition: max-height 0.15s ease;
+    }
+
+    .euro-nav__group.open .euro-nav__list {
+        max-height: 500px;            /* 펼쳐졌을 때 (충분히 크게 설정) */
+    }
+    /* 주문상세 모달 */
+    /* 중앙 정렬 */
+    .order-modal__overlay{
+        position:fixed; inset:0;
+        background:rgba(0,0,0,.35);
+        display:none;
+        align-items:center;          /* flex-start → center */
+        justify-content:center;      /* 이미 center였지만 명시 */
+        z-index:1200;
+        padding:24px;                /* 화면 가장자리와 여백 */
+    }
+    .order-modal__overlay.show{ display:flex; }
+
+    .order-modal{
+        width:min(1200px, 80vw);
+        background:#fff; border:1px solid #ddd;
+        box-shadow:0 20px 50px rgba(0,0,0,.2);
+        margin:0;                    /* 24px auto → 0 (중앙정렬을 위해) */
+        display:flex; flex-direction:column;
+        /* (선택) 화면보다 커질 때 대비
+        max-height: calc(100vh - 48px);
+        */
+    }
+    /* ===== 배송입력(#shipModal) 전용 사이즈/레이아웃 ===== */
+    #shipModal .order-modal{
+        width: min(800px, 70vw);   /* 주문상세(700px)보다 작게 */
+    }
+
+    #couponRegModal .order-modal{
+        width: min(900px, 70vw)
+    }
+    .order-modal__head{
+        display:flex; align-items:center; gap:8px;
+        padding:14px 18px; border-bottom:1px solid #eee; font-weight:700;
+    }
+    .order-id { margin-left:20px; font-weight:600; }
+    /* 내부 스크롤 제거 */
+    .order-modal__body{
+        padding:18px;
+        overflow:visible;           /* auto → visible */
+    }
+    .order-modal__close{
+        margin-left:auto; background:none; border:0; cursor:pointer;
+        width:36px; height:36px; position:relative;
+    }
+    .order-modal__close:before,
+    .order-modal__close:after{
+        content:""; position:absolute; left:8px; right:8px; top:17px; height:2px; background:#000;
+    }
+    .order-modal__close:before{ transform:rotate(45deg); }
+    .order-modal__close:after{ transform:rotate(-45deg); }
+    /* 모달 본문 안에서는 고정폭 없애고 100%로 */
+    .order-modal__body table{ width:100% !important; }
+
+    /* 템플릿에 있던 width:1270px 같은 고정폭 무시 */
+    .order-modal__body [style*="width:1270px"]{ width:100% !important; }
+
+    /* 우측 합계 박스: margin-left 고정 → 자동 오른쪽 정렬 */
+    .order-modal__body [style*="margin-left:970px"]{
+        margin-left:auto !important;
+    }
+
+    /* 이미지/박스가 넘치지 않도록 */
+    .order-modal__body img{ max-width:100%; height:auto; display:block; }
+    .order-modal__body > *{ max-width:100%; box-sizing:border-box; }
+
+    /* 테이블은 화면 좁을 때 줄바꿈에 대비 */
+    .order-modal__body table{ table-layout:auto; }
+    /* ▼ 배송입력 폼 스타일 */
+    .ship-form__table{
+        width:100%;
+        border-top:1px solid #e5e5e5;
+        border-bottom:1px solid #e5e5e5;
+        border-collapse:collapse;
+        margin-top:12px;
+        background:#fff;
+    }
+    .ship-form__table th{
+        background:#f4f4f4;
+        text-align:left;
+        padding:12px 14px;
+        border-bottom:1px solid #e9e9e9;
+        font-weight:600;
+        color:#333;
+        vertical-align:middle;
+    }
+    .ship-form__table td{
+        padding:10px 12px;
+        border-bottom:1px solid #e9e9e9;
+    }
+    .ipt,.sel,.txt{
+        width:100%;
+        height:32px;
+        border:1px solid #d0d0d0;
+        padding:0 10px;
+        box-sizing:border-box;
+        font-size:14px;
+    }
+    .txt{ height:100px; padding:10px; resize:vertical; }
+    .ship-form__actions{
+        display:flex; justify-content:flex-start;
+        padding-top:16px;
+    }
+    .btn-primary{
+        min-width:120px; height:36px; border:none; cursor:pointer;
+        background:#2ba44e; color:#fff; font-weight:600;
+    }
+
+    /* ▼ 배송입력 모달 헤더(세번째 이미지 느낌) */
+    .ship-modal__head{
+        display:flex; align-items:center; gap:8px;
+        padding:14px 18px; border-bottom:1px solid #e5e5e5; font-weight:700;
+    }
+    .ship-head__title{ display:flex; align-items:center; gap:16px; }
+    .ship-head__order{ margin-left:10px; font-weight:600; color:#111; letter-spacing:0.02em; }
+
+    /* 주문상세에서 썼던 공통 헤더와 충돌 없도록 유지 */
+    /* 쿠폰등록 모달 버튼 디자인 */
+    #couponRegModal .btn-primary{
+        background:#000;           /* 요청: 검은색 등록 버튼 */
+        color:#fff;
+        min-width:120px; height:36px; border:none; cursor:pointer; font-weight:600;
+    }
+    #couponRegModal .btn-secondary{
+        background:#f0f0f0; color:#333;
+        min-width:120px; height:36px; border:1px solid #ddd; cursor:pointer; font-weight:600;
+    }
+</style>
+<script>
+    // 아코디언: 클릭 시 높이를 실제 내용 높이로 애니메이션
+    document.querySelectorAll('.euro-nav__title').forEach(title => {
+        title.style.cursor = 'pointer'; // 클릭 가능 시각화(선택)
+        title.addEventListener('click', () => {
+            const group = title.parentElement;
+            const list  = group.querySelector('.euro-nav__list');
+
+            const isOpen = group.classList.contains('open');
+
+            if (isOpen) {
+                // 닫기: 현재 높이를 고정 -> 0으로
+                list.style.maxHeight = list.scrollHeight + 'px';
+                // 강제 리플로우로 트랜지션 시작점 확정
+                list.offsetHeight;
+                list.style.maxHeight = '0px';
+                group.classList.remove('open');
+            } else {
+                // 열기: 0 -> 내용 높이
+                group.classList.add('open');
+                list.style.maxHeight = list.scrollHeight + 'px';
+
+                // 애니메이션 끝나면 inline max-height 제거(자연스런 레이아웃)
+                const onEnd = (e) => {
+                    if (e.propertyName === 'max-height') {
+                        list.style.maxHeight = 'none';
+                        list.removeEventListener('transitionend', onEnd);
+                    }
+                };
+                list.addEventListener('transitionend', onEnd);
+            }
+        });
+    });
+
+    const groups = document.querySelectorAll('.euro-nav__group');
+    document.querySelectorAll('.euro-nav__title').forEach(title => {
+        title.addEventListener('click', () => {
+            groups.forEach(g => {
+                if (g !== title.parentElement && g.classList.contains('open')) {
+                    const l = g.querySelector('.euro-nav__list');
+                    l.style.maxHeight = l.scrollHeight + 'px';
+                    l.offsetHeight;
+                    l.style.maxHeight = '0px';
+                    g.classList.remove('open');
+                }
+            });
+        }, {capture:true});
+    });
+
+    // 주문상세 모달 열기/닫기
+    const orderModalOverlay = document.getElementById('orderDetailModal');
+    const orderModalClose   = document.getElementById('orderModalClose');
+    const orderModalBody    = document.getElementById('orderModalBody');
+    const orderTpl          = document.getElementById('orderDetailTemplate');
+
+    function openOrderModal(orderNoText){
+        document.getElementById('orderModalTitle').textContent = '주문상세';
+        document.getElementById('orderModalNo').textContent = orderNoText || '';
+
+        orderModalBody.innerHTML = '';
+        if (orderTpl){
+            const node = orderTpl.content.cloneNode(true);
+            orderModalBody.appendChild(node);
+        }
+        orderModalOverlay.classList.add('show');
+        orderModalOverlay.setAttribute('aria-hidden', 'false');
+        document.body.style.overflow='hidden';
+    }
+    function closeOrderModal(){
+        orderModalOverlay.classList.remove('show');
+        orderModalOverlay.setAttribute('aria-hidden', 'true');
+        document.body.style.overflow='';
+    }
+    orderModalClose.addEventListener('click', closeOrderModal);
+    orderModalOverlay.addEventListener('click', (e)=>{
+        if(e.target === orderModalOverlay) closeOrderModal();
+    });
+    window.addEventListener('keydown', (e)=>{
+        if(e.key === 'Escape' && orderModalOverlay.classList.contains('show')) closeOrderModal();
+    });
+
+    // 쿠폰 링크 제외
+    document.querySelectorAll('table a[href="#"]:not(.coupon-link)').forEach(a=>{
+        a.addEventListener('click', (e)=>{
+            const isOrderNo = a.classList.contains('order-link') ||
+                /^\d{8,}$/.test(a.textContent.trim());
+            if(!isOrderNo) return;
+            e.preventDefault();
+            openOrderModal(a.textContent.trim());
+        });
+    });
+    (function () {
+        // ── 모달 엘리먼트
+        const shipModalOverlay = document.getElementById('shipModal');
+        const shipModalBody    = document.getElementById('shipModalBody');
+        const shipModalClose   = document.getElementById('shipModalClose');
+
+        function closeShipModal() {
+            shipModalOverlay.classList.remove('show');
+            shipModalOverlay.setAttribute('aria-hidden', 'true');
+            document.body.style.overflow = '';
+            shipModalBody.innerHTML = '';
+        }
+
+        function openShipModalFromRow(tr) {
+            const tpl = tr?.querySelector('template.shipFormTemplate');
+            shipModalBody.innerHTML = '';
+            if (tpl) shipModalBody.appendChild(tpl.content.cloneNode(true));
+
+            const closeBtn = shipModalBody.querySelector('#shipSubmitBtn');
+            if (closeBtn) closeBtn.addEventListener('click', closeShipModal, { once: true });
+
+            shipModalOverlay.classList.add('show');
+            shipModalOverlay.setAttribute('aria-hidden', 'false');
+            document.body.style.overflow = 'hidden';
+        }
+
+        // ── 단일 위임 핸들러: 쿠폰번호 클릭 + 종료 버튼
+        document.addEventListener('click', function (e) {
+            // 1) 쿠폰번호(숫자 링크) → 모달 열기
+            const couponA = e.target.closest('a.coupon-link');
+            if (couponA) {
+                e.preventDefault();
+                const tr = couponA.closest('tr');
+                const couponNo = couponA.dataset.couponNo || couponA.textContent.trim();
+                document.getElementById('shipModalTitle').textContent = '쿠폰정보';
+                document.getElementById('shipModalOrderNo').textContent = couponNo;
+                openShipModalFromRow(tr);
+                return;
+            }
+
+            // 2) 종료 버튼
+            const endBtn = e.target.closest('button.end-btn');
+            if (endBtn) {
+                e.preventDefault();
+                const tr = endBtn.closest('tr');
+                const statusTd = tr.querySelector('td:nth-child(9)'); // 상태 컬럼(9번째)
+                if (!statusTd) return;
+
+                const statusText = (statusTd.textContent || '').trim();
+                if (statusText !== '발급중') return; // 이미 종료/기타상태면 무시
+
+                if (!confirm('해당 쿠폰을 종료하시겠습니까?')) return;
+
+                // 상태 갱신 + 스타일
+                statusTd.textContent = '종료';
+                statusTd.classList.remove('st-open');
+                statusTd.classList.add('st-closed');
+
+                endBtn.disabled = true;
+                endBtn.style.backgroundColor = 'gray';
+                endBtn.style.color = 'white';
+                endBtn.style.cursor = 'not-allowed';
+
+                alert('쿠폰이 종료되었습니다.');
+                return;
+            }
+        });
+
+        // ── 모달 닫기(배경/버튼/Escape)
+        shipModalClose.addEventListener('click', closeShipModal);
+        shipModalOverlay.addEventListener('click', (e) => {
+            if (e.target === shipModalOverlay) closeShipModal();
+        });
+        window.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape' && shipModalOverlay.classList.contains('show')) closeShipModal();
+        });
+    })();
+    // 종료 버튼 - 이벤트 위임 (disabled는 자동으로 클릭 안 되지만, 방어적으로 선택자에서 제외)
+    document.addEventListener('click', function (e) {
+        const btn = e.target.closest('button.end-btn:not([disabled])');
+        if (!btn) return;
+
+        const tr = btn.closest('tr');
+        const statusTd = tr.querySelector('td:nth-child(9)');
+        if (!statusTd) return;
+
+        if (!confirm('해당 쿠폰을 종료하시겠습니까?')) return;
+
+        statusTd.textContent = '종료';
+        statusTd.classList.remove('st-open');
+        statusTd.classList.add('st-closed');
+
+        // 버튼 즉시 비활성화 & 스타일 적용
+        btn.disabled = true;
+        btn.classList.add('is-disabled');
+        alert('쿠폰이 종료되었습니다.');
+    });
+    (function () {
+        const modal = document.getElementById('couponRegModal');
+        const body  = document.getElementById('couponRegBody');
+        const tpl   = document.getElementById('couponRegTemplate');
+        const open  = document.getElementById('openCouponRegBtn');
+        const close = document.getElementById('couponRegClose');
+
+        function openCouponReg () {
+            // 템플릿 주입
+            body.innerHTML = '';
+            if (tpl) body.appendChild(tpl.content.cloneNode(true));
+
+            // 모달 표시
+            modal.classList.add('show');
+            modal.setAttribute('aria-hidden', 'false');
+            document.body.style.overflow = 'hidden';
+
+            // 취소 버튼
+            const cancelBtn = body.querySelector('#couponRegCancelBtn');
+            if (cancelBtn) cancelBtn.addEventListener('click', closeCouponReg, { once: true });
+
+        }
+
+        function closeCouponReg () {
+            modal.classList.remove('show');
+            modal.setAttribute('aria-hidden', 'true');
+            document.body.style.overflow = '';
+            body.innerHTML = '';
+        }
+
+        // 이벤트 바인딩
+        if (open)  open.addEventListener('click', openCouponReg);
+        if (close) close.addEventListener('click', closeCouponReg);
+        modal.addEventListener('click', (e) => { if (e.target === modal) closeCouponReg(); });
+    })();
+    (function(){
+        // '종료' 버튼 중복 confirm/alert 방지: 캡처 단계에서 처리하고 이벤트를 차단
+        document.addEventListener('click', function(e){
+            const btn = e.target.closest('button.end-btn:not([disabled])');
+            if(!btn) return;                // 다른 클릭은 무시
+
+            e.preventDefault();
+            e.stopImmediatePropagation();   // 이후에 등록된 중복 핸들러들 모두 차단
+
+            const tr = btn.closest('tr');
+            const statusTd = tr && tr.querySelector('td:nth-child(9)'); // 상태 컬럼
+            if(!statusTd) return;
+
+            const statusText = (statusTd.textContent || '').trim();
+            if(statusText !== '발급중') return; // 이미 종료/기타면 아무 것도 안 함
+
+            // 확인/취소 모달
+            if(!confirm('해당 쿠폰을 종료하시겠습니까?')) return; // 취소 시: 그대로 종료 (알림 없음)
+
+            // 확인 시: 기존 동작 그대로
+            statusTd.textContent = '종료';
+            statusTd.classList.remove('st-open');
+            statusTd.classList.add('st-closed');
+
+            btn.disabled = true;
+            btn.classList.add('is-disabled');      // 기존 스타일 유지
+            // 혹시 인라인 스타일을 쓰던 코드도 있었으므로 그대로 반영
+            btn.style.backgroundColor = 'gray';
+            btn.style.color = 'white';
+            btn.style.cursor = 'not-allowed';
+
+            alert('쿠폰이 종료되었습니다.');
+        }, true); // <-- capture 단계에서 선처리
+    })();
+</script>
+<div th:replace="~{admin/_footer.html}"></div>
