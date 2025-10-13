@@ -169,10 +169,17 @@ public class UserService {
 
     public Optional<UserDTO> findUserId(String name, String method, String email, String phone) {
         Optional<User> userOpt;
+        // 판매자 브랜드명까지 검색되게 조건 확장
         if ("email".equalsIgnoreCase(method)) {
             userOpt = userRepository.findByNameAndEmail(name, email);
+            if (userOpt.isEmpty()) {
+                userOpt = userRepository.findByNameAndEmail(name.toUpperCase(), email);
+            }
         } else {
             userOpt = userRepository.findByNameAndPhone(name, phone);
+            if (userOpt.isEmpty()) {
+                userOpt = userRepository.findByNameAndPhone(name.toUpperCase(), phone);
+            }
         }
 
         return userOpt.map(user -> modelMapper.map(user, UserDTO.class));
