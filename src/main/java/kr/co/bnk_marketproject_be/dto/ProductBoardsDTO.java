@@ -14,6 +14,7 @@ public class ProductBoardsDTO {
     private int id;
     private int products_id;
     private int users_id;
+    private int name;
     private String type;
     private String title;
     private String content;
