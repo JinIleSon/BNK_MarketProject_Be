@@ -8,6 +8,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Controller
 @RequiredArgsConstructor
@@ -16,11 +17,30 @@ public class CSFaqController {
 
     private final CSFaqService faqService;
 
-    /* FAQ 목록 */
+    /* FAQ 목록 최초 3개 */
     @GetMapping("/list")
-    public String list(Model model) {
-        List<CSNoticeDTO> faqList = faqService.getFaqList();
+    public String faqList(@RequestParam(required = false) String boardType,
+                          @RequestParam(required = false) String subType,
+                          Model model) {
+
+        if (boardType == null || boardType.isEmpty()) {
+            boardType = "faq";
+        }
+
+        // ✅ 기존 서비스 그대로 사용 (Map 제거)
+        List<CSNoticeDTO> faqList = faqService.getFaqListByType(boardType, 0, 100);
+
+        // ✅ subType이 있으면 title 기준으로 필터링
+        if (subType != null && !subType.isEmpty()) {
+            faqList = faqList.stream()
+                    .filter(faq -> faq.getTitle() != null && faq.getTitle().contains(subType))
+                    .collect(Collectors.toList());
+        }
+
+        model.addAttribute("boardType", boardType);
+        model.addAttribute("subType", subType);
         model.addAttribute("faqList", faqList);
+
         return "customer_service/faq/faq_list";
     }
 

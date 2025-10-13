@@ -47,15 +47,20 @@ public class SecurityConfig {
 //        // 기타 설정
 //        http.csrf(CsrfConfigurer::disable);
 
-        http.authorizeHttpRequests(auth -> auth.anyRequest().permitAll())
-                //.csrf(csrf -> csrf.disable()) // ← 이거 추가안하면 로그인개발안됩니다....
+        http
+                .authorizeHttpRequests(auth -> auth
+                        .anyRequest().permitAll()
+                )
                 .csrf(csrf -> csrf
-                        .csrfTokenRepository(CookieCsrfTokenRepository.withHttpOnlyFalse())
-                );
-                //.formLogin(form -> form  // 기본 /login 페이지 사용
-                //        .permitAll()
-                //)
-                //.logout(logout -> logout.permitAll());
+                        .ignoringRequestMatchers(
+                                "/api/**",
+                                "/h2-console/**",
+                                "/actuator/**"
+                        )
+                )
+                .formLogin(form -> form.permitAll())
+                .logout(logout -> logout.permitAll());
+
         return http.build();
     }
 

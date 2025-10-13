@@ -131,18 +131,18 @@
                 </svg>
             </button>
             <div style="margin-left:3%;">
-                <img src="/images/logo.png" alt="" style="width:270px;">
+                <img th:src="@{/images/logo.png}" alt="" style="width:270px;">
             </div>
             <div style="margin-top:27px; margin-left:auto; margin-right:3%; flex:1; max-width:30%;">
                 <ul style="list-style-type: none; padding: 0; margin:0; display:flex; gap:40px;">
                     <li style="flex:1; min-width: 100px;">
                         
                     </li>
-                    <li><a href="#" style="text-decoration: none; color:black; font-size:14px;">HOME</a></li>
-                    <li><a href="#" style="text-decoration: none; color:black; font-size:14px;">기업문화</a></li>
-                    <li><a href="#" style="text-decoration: none; color:black; font-size:14px;">소식과 이야기</a></li>
-                    <li><a href="#" style="text-decoration: none; color:black; font-size:14px; font-weight: 800;">채용</a></li>
-                    <li><a href="#" style="text-decoration: none; color:black; font-size:14px;">미디어</a></li>
+                    <li><a th:href="@{/compinfo/compinfo/main}" style="text-decoration: none; color:black; font-size:14px;">HOME</a></li>
+                    <li><a th:href="@{/compinfo/compinfo/culture}" style="text-decoration: none; color:black; font-size:14px;">기업문화</a></li>
+                    <li><a th:href="@{/compinfo/compinfo/news}" style="text-decoration: none; color:black; font-size:14px;">소식과 이야기</a></li>
+                    <li><a th:href="@{/compinfo/compinfo/emp}" style="text-decoration: none; color:black; font-size:14px; font-weight: 800;">채용</a></li>
+                    <li><a th:href="@{/compinfo/compinfo/media}" style="text-decoration: none; color:black; font-size:14px;">미디어</a></li>
                 </ul>
             </div>
         </div>
@@ -363,12 +363,13 @@
                     NICHIYA와 함께 내일을 디자인할 준비가 되셨나요?
                 </p>
                 <div style="margin-top:70px;">
-                    <img src="/images/companyInformation_employment.jpg" alt="" style="width:700px;">
+                    <img th:src="@{/images/companyInformation_employment.jpg}" alt="" style="width:700px;">
                 </div>
             </section>
             <div style="display: flex; justify-content: center;">
                 <table style="font-size:14px; border-collapse: collapse; border:none; border-top:2px solid gray; width:900px; text-align: center;">
-                    <tr style=" height:60px; font-weight: 800; border-bottom: 1px solid #dddddd;">
+                    <tr style=" height:60px; font-weight: 800; border-bottom: 1px solid #dddddd;"
+                        >
                         <th style="width:70px;">번호</th>
                         <th style="width:100px;">채용부서</th>
                         <th style="width:180px;">경력사항</th>
@@ -377,56 +378,59 @@
                         <th style="width:60px;">상태</th>
                         <th>모집기간</th>
                     </tr>
-                    <tr style=" height:65px;border-bottom: 1px solid #dddddd;">
-                        <td>4</td>
-                        <td>광고사업</td>
-                        <td>경력 4 ~ 15년</td>
-                        <td>정규직</td>
-                        <td>광고 플랫폼 기획</td>
-                        <td style="color:red;">모집중</td>
-                        <td>0000-00-00 ~ 0000-00-00</td>
-                    </tr>
-                    <tr style=" height:65px;border-bottom: 1px solid #dddddd;">
-                        <td>3</td>
-                        <td>IT</td>
-                        <td>경력 2 ~ 15년</td>
-                        <td>정규직</td>
-                        <td>IT 인재 상시 영입(경력)</td>
-                        <td style="color:red;">모집중</td>
-                        <td>0000-00-00 ~ 0000-00-00</td>
-                    </tr>
-                    <tr style=" height:65px;border-bottom: 1px solid #dddddd;">
-                        <td>2</td>
-                        <td>경영</td>
-                        <td>신입</td>
-                        <td>계약직</td>
-                        <td>경영지원 직원 채용 공고</td>
-                        <td style="color:gray">종료</td>
-                        <td>0000-00-00 ~ 0000-00-00</td>
-                    </tr>
-                    <tr style=" height:65px;border-bottom: 1px solid #dddddd;">
-                        <td>1</td>
-                        <td>운영</td>
-                        <td>무관</td>
-                        <td>계약직</td>
-                        <td>단기 아르바이트 모집</td>
-                        <td style="color:gray;">종료</td>
-                        <td>0000-00-00 ~ 0000-00-00</td>
+                    <tr style=" height:65px;border-bottom: 1px solid #dddddd;"
+                        th:each="compinfo, stat:${pageResponseDTO.dtoList}">
+                        <td th:text="${pageResponseDTO.startNo - stat.index}">4</td>
+                        <td th:text="${compinfo.department}">광고사업</td>
+                        <td th:text="${compinfo.career}">경력 4 ~ 15년</td>
+                        <td th:text="${compinfo.form}">정규직</td>
+                        <td th:text="${compinfo.title}">광고 플랫폼 기획</td>
+                        <td th:text="${compinfo.status}"
+                            th:style="${compinfo.status == '모집중' ? 'color:#6fce90;' : 'color:gray;'}">모집중</td>
+                        <td>
+                            <span th:utext="${compinfo.recruit_from}"></span> ~
+                            <span th:utext="${compinfo.recruit_to}"></span>
+                        </td>
                     </tr>
                 </table>
             </div>
         </div>
         <div style=" height: 100px; margin-top:40px; display: flex; justify-content: center;">
-            <form action="" method="" style="">
-                <input type="button" class="prev-page" value="< 이전">
+            <div style=" height: 100px; margin-top:40px; display: flex; justify-content: center;">
+                <input th:if="${pageResponseDTO.prev}"
+                       th:onclick="|location.href='@{/compinfo/compinfo/emp(pg=${pageResponseDTO.start - 1})}'|"
+                       type="button" class="prev-page" value="< 이전">
 
-                <input type="button" value="1" style="border:1px solid #333; background-color: #333; color: white; height: 30px; width: 30px; margin-right:2px; line-height:1;">
-                <input type="button" value="2" style="cursor: pointer; border:1px solid #ddd; color: #555; height: 30px; width: 30px; margin-right:2px; line-height:1;">
-                <input type="button" value="3" style="cursor: pointer; border:1px solid #ddd; color: #555; height: 30px; width: 30px; line-height:1;">
+                <th:block th:each="num:${#numbers.sequence(pageResponseDTO.start, pageResponseDTO.end)}">
+                    <input th:onclick="|location.href='@{/compinfo/compinfo/emp(pg=${num})}'|"
+                           th:class="${num == pageResponseDTO.pg ? 'current' : 'num'}"
+                           type="button"
+                           th:value="${num}" />
+                </th:block>
 
-                <input type="button" class="next-page" value="다음 >" style="">
-            </form>
+                <input th:if="${pageResponseDTO.next}"
+                       th:onclick="|location.href='@{/compinfo/compinfo/emp(pg=${pageResponseDTO.end + 1})}'|"
+                       type="button" class="next-page" value="다음 >" style="">
+            </div>
             <style>
+                .current{
+                    border:1px solid #333;
+                    background-color: #333;
+                    color: white;
+                    height: 30px;
+                    width: 30px;
+                    margin-right:7px;
+                    line-height:1;
+                }
+                .num {
+                    cursor: pointer;
+                    border:1px solid #ddd;
+                    color: #555;
+                    height: 30px;
+                    width: 30px;
+                    margin-right:7px;
+                    line-height:1;
+                }
                 /* 페이지네이션 */
                 /* 게시판 아래버튼 부분 */
                 .prev-page{
@@ -450,6 +454,7 @@
                  /* 게시판 아래버튼 부분 끝 */
             </style>
         </div>
+        <div style="margin-bottom:100px;"></div>
     </main>
 
     <footer>
