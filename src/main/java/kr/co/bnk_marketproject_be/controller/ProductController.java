@@ -2,16 +2,21 @@ package kr.co.bnk_marketproject_be.controller;
 
 import kr.co.bnk_marketproject_be.dto.PageRequestProductDTO;
 import kr.co.bnk_marketproject_be.dto.PageResponseProductDTO;
+import kr.co.bnk_marketproject_be.dto.ProductViewsDTO;
 import kr.co.bnk_marketproject_be.dto.ProductsDTO;
 import kr.co.bnk_marketproject_be.mapper.ProductsMapper;
+import kr.co.bnk_marketproject_be.service.ProductService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.data.domain.PageRequest;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.server.ResponseStatusException;
 
+import java.util.Arrays;
 import java.util.List;
 
 @Slf4j
@@ -20,6 +25,7 @@ import java.util.List;
 public class ProductController {
 
     private final ProductsMapper productsMapper; // 또는 ProductService
+    private final ProductService productService;
 
     @GetMapping("/product/list")
     public String productList(@RequestParam(defaultValue = "1") int pg,
@@ -48,9 +54,16 @@ public class ProductController {
         return "product/product_list";
     }
 
-    // 나머지 맵핑 동일 (오타 하나 수정)
     @GetMapping("/product/views")
-    public String product_views(){ return "product/product_views"; }
+    public String product_views(@RequestParam int id, Model model){
+        var dto = productService.getProductDetail(id);
+        System.out.println("product dto = " + dto); // 반드시 확인
+        if (dto == null) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "product not found: " + id);
+        }
+        model.addAttribute("product", dto);
+        return "product/product_views";
+    }
 
     @GetMapping("/product/cart")
     public String product_cart(){ return "product/product_cart"; }
