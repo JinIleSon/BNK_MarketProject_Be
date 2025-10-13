@@ -9,7 +9,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 @Slf4j
 @RequiredArgsConstructor
 public class MainController {
-//main 푸시
+//main 푸시합니다
     @GetMapping("/main/main/page")
     public String list(){
         return "main/main_main";
