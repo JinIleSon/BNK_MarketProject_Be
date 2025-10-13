@@ -21,10 +21,7 @@ public class CompInfoController {
         return "compInfo/compInfo_culture";
     }
 
-    @GetMapping("/compinfo/compinfo/emp")
-    public String empList(Model model){
-        return "compInfo/compInfo_emp";
-    }
+    // AdminEmployController에 회사소개_채용 넣어놓음
 
     @GetMapping("/compinfo/compinfo/media")
     public String mediaList(Model model){

@@ -22,6 +22,7 @@ public class AdminEmployController {
 
     private final AdminEmployService adminEmployService;
 
+    // 관리자_채용 리스트
     @GetMapping("/admin/employ/list")
     public String list(Model model, PageRequestDTO pageRequestDTO) {
         PageResponseAdminEmployDTO pageResponseAdminEmployDTO = adminEmployService.selectAdminEmployAll(pageRequestDTO);
@@ -30,6 +31,17 @@ public class AdminEmployController {
         model.addAttribute("pageResponseDTO", pageResponseAdminEmployDTO);
 
         return "admin/admin_hiring";
+    }
+
+    // 회사소개_채용 리스트
+    @GetMapping("/compinfo/compinfo/emp")
+    public String compInfoList(Model model, PageRequestDTO pageRequestDTO) {
+        PageResponseAdminEmployDTO pageResponseAdminEmployDTO = adminEmployService.selectAdminEmployAll(pageRequestDTO);
+
+        log.info("pageResponseAdminEmployDTO={}", pageResponseAdminEmployDTO);
+        model.addAttribute("pageResponseDTO", pageResponseAdminEmployDTO);
+
+        return "compInfo/compInfo_emp";
     }
 
     @GetMapping("/admin/employ/search")
