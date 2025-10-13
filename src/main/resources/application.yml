@@ -2,7 +2,7 @@
 spring:
   application:
     name: NICHIYA
-    version: ${version}
+    version: ${version:unknown}
   profiles:
     active: prod
 
