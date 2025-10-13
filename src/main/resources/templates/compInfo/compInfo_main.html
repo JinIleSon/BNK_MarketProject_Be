@@ -559,32 +559,25 @@
 </script>
 
             <div style="font-size:25px; margin-left:135px; margin-top:50px; margin-bottom:23px;">NICHIYA는 이렇게 성장하고 있어요.</div>
-            <div style="margin-left:150px;">
-                <div style="font-size:18px;">2025.03</div>
+            <div style="margin-left:150px;"
+            th:each="compinfo: ${dtoList}">
+                <div style="font-size:18px;"
+                th:text="${#temporals.format(compinfo.created_at, 'yyyy.MM')}">2025.03</div>
                 <div style="margin-bottom:10px;">
-                    <a href="#" style="color:blue; font-weight: 800; text-decoration: none;">'월간 NICHIYA 3월호에서 만나는 50원 도넛, 1천원 양념감자!</a>
-                    <a href="#" style="margin-left:160px;"><button>이미지버튼</button></a>
+                    <a class="title-font"
+                       th:href="@{${compinfo.url}}"
+                       style="color:black; text-decoration: none;"
+                    th:text="${compinfo.title}">'월간 NICHIYA 3월호에서 만나는 50원 도넛, 1천원 양념감자!</a>
+                    <a th:href="@{${compinfo.url}}"
+                       style="margin-left:160px;">
+                        <button class="img-round-btn" type="button" aria-label="글 보기" style="float:right; margin-right:300px;">
+                            <svg viewBox="0 0 24 24" aria-hidden="true">
+                                <polyline points="8,5 16,12 8,19" />
+                            </svg>
+                        </button>
+                    </a>
                 </div>
-                <div style="font-size:18px;">2025.03</div>
-                <div style="margin-bottom:10px;">
-                    <a href="#" style="color:blue; font-weight: 800;">'월간 NICHIYA 3월호에서 만나는 50원 도넛, 1천원 양념감자!</a>
-                    <a href="#" style="margin-left:160px;"><button>이미지버튼</button></a>
-                </div>
-                <div style="font-size:18px;">2025.03</div>
-                <div style="margin-bottom:10px;">
-                    <a href="#" style="color:blue; font-weight: 800;">'월간 NICHIYA 3월호에서 만나는 50원 도넛, 1천원 양념감자!</a>
-                    <a href="#" style="margin-left:160px;"><button>이미지버튼</button></a>
-                </div>
-                <div style="font-size:18px;">2025.03</div>
-                <div style="margin-bottom:10px;">
-                    <a href="#" style="color:blue; font-weight: 800;">'월간 NICHIYA 3월호에서 만나는 50원 도넛, 1천원 양념감자!</a>
-                    <a href="#" style="margin-left:160px;"><button>이미지버튼</button></a>
-                </div>
-                <div style="font-size:18px;">2025.03</div>
-                <div style="margin-bottom:10px;">
-                    <a href="#" style="color:blue; font-weight: 800;">'월간 NICHIYA 3월호에서 만나는 50원 도넛, 1천원 양념감자!</a>
-                    <a href="#" style="margin-left:160px;"><button>이미지버튼</button></a>
-                </div>
+
             </div>
             <div style="font-size:25px; margin-left:135px;margin-bottom:150px; margin-top:50px; line-height: 1.4;">
                 <div>국내 최초의 온라인 종합 쇼핑몰로 출발해</div>
@@ -660,6 +653,39 @@
                     </div>
                 </div>
             <style>
+                .title-font{
+                    display:inline-block;
+                    transition: transform .15s ease;
+                    transform-origin: left center;
+                }
+                .title-font:hover{
+                    transform: scale(1.04); /* 살짝 확대 */
+                }
+                /* 원형 이미지 버튼 */
+                .img-round-btn{
+                    width:40px; height:40px;
+                    display:inline-grid; place-items:center;
+                    border-radius:50%;
+                    border:1px solid #d6d6d6;
+                    background: linear-gradient(#ffffff,#f6f6f6);
+                    box-shadow: 0 1px 0 rgba(0,0,0,.03), inset 0 0 0 1px #fff;
+                    cursor:pointer;
+                    padding:0;
+                }
+                .img-round-btn:hover{
+                    background: linear-gradient(#ffffff,#efefef);
+                    border-color:#cfcfcf;
+                }
+                .img-round-btn:active{
+                    transform: translateY(1px);
+                }
+
+                /* ▶ 아이콘(SVG)을 위한 기본값 */
+                .img-round-btn svg{
+                    width:18px; height:18px;
+                    stroke:#777; stroke-width:2; fill:none;
+                }
+                .img-round-btn:hover svg{ stroke:#555; }
                 /* ====== 긴 선 + 센터링 뷰포트 ====== */
                 .timeline-wrap{ display:flex; align-items:center; gap:12px; margin:40px 0 24px; }
 
