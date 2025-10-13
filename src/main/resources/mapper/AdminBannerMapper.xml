@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="kr.co.bnk_marketproject_be.mapper.AdminBannerMapper">
+
+    <!-- ✅ 배너 전체 조회 -->
+    <select id="findAll" resultType="kr.co.bnk_marketproject_be.dto.AdminBannerDTO">
+        SELECT
+            ID,
+            NAME,
+            BNR_SIZE AS bnrSize,
+            BG_COLOR AS bgColor,
+            LINK_URL AS linkUrl,
+            BNR_POSITION AS bnrPosition,
+            DATE_FROM AS dateFrom,
+            DATE_TO AS dateTo,
+            TIME_FROM AS timeFrom,
+            TIME_TO AS timeTo,
+            IMAGE_PATH AS imagePath,
+            STATUS,
+            CREATED_AT AS createdAt,
+            UPDATED_AT AS updatedAt,
+            VISIBLE_FROM AS visibleFrom,
+            VISIBLE_TO AS visibleTo
+        FROM BANNER
+        <where>
+            <if test="position != null and position != ''">
+                BNR_POSITION = #{position}
+            </if>
+        </where>
+        ORDER BY CREATED_AT DESC
+    </select>
+
+    <!-- ✅ 배너 등록 -->
+    <insert id="insert" parameterType="kr.co.bnk_marketproject_be.dto.AdminBannerDTO">
+        INSERT INTO BANNER (
+            ID, NAME, BNR_SIZE, BG_COLOR, LINK_URL, BNR_POSITION,
+            DATE_FROM, DATE_TO, TIME_FROM, TIME_TO, IMAGE_PATH, STATUS, CREATED_AT
+        )
+        VALUES (
+                   BANNER_SEQ.NEXTVAL,
+                   #{name, jdbcType=VARCHAR},
+                   #{size, jdbcType=VARCHAR},
+                   #{bgColor, jdbcType=VARCHAR},
+                   #{linkUrl, jdbcType=VARCHAR},
+                   #{bnrPosition, jdbcType=VARCHAR},
+                   #{dateFrom, jdbcType=DATE},
+                   #{dateTo, jdbcType=DATE},
+                   #{timeFrom, jdbcType=VARCHAR},
+                   #{timeTo, jdbcType=VARCHAR},
+                   #{imagePath, jdbcType=VARCHAR},
+                   #{status, jdbcType=VARCHAR},
+                   SYSTIMESTAMP
+               )
+    </insert>
+
+
+    <!-- ✅ 배너 삭제 -->
+    <delete id="delete" parameterType="long">
+        DELETE FROM BANNER WHERE ID = #{id}
+    </delete>
+
+    <delete id="deleteAll" parameterType="java.util.List">
+        DELETE FROM BANNER WHERE ID IN
+        <foreach collection="list" item="id" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+
+
+</mapper>

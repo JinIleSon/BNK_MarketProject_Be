@@ -312,23 +312,30 @@
           // categories: [{ category:'가전', amount: number }, ...]
           function renderPieChart(categories) {
               const pieCanvas = document.getElementById('pieChart');
-              const box = pieCanvas.closest('.chart-box');
-
-              // 데이터 없음 처리
-              if (!Array.isArray(categories) || categories.length === 0) {
-                  // 기존 차트가 있었다면 정리
-                  if (_pieChart && typeof _pieChart.destroy === 'function') _pieChart.destroy();
-                  _pieChart = null;
-                  // 안내 UI
-                  box.innerHTML = `
-        <div style="display:grid;place-items:center;height:100%;
-                    color:#888;font-size:14px;border:1px dashed #ddd;border-radius:8px;">
-          카테고리별 매출 데이터가 없습니다
-        </div>`;
+              if (!pieCanvas) {
+                  console.warn('pieChart 캔버스를 찾을 수 없습니다.');
                   return;
               }
 
-              // 혹시 “데이터 없음” UI가 있었다면 캔버스로 복원
+              const box = pieCanvas.closest('.chart-box');
+              if (!box) {
+                  console.warn('chart-box 요소를 찾을 수 없습니다.');
+                  return;
+              }
+
+              // 데이터 없음 처리
+              if (!Array.isArray(categories) || categories.length === 0) {
+                  if (_pieChart && typeof _pieChart.destroy === 'function') _pieChart.destroy();
+                  _pieChart = null;
+                  box.innerHTML = `
+          <div style="display:grid;place-items:center;height:100%;
+                      color:#888;font-size:14px;border:1px dashed #ddd;border-radius:8px;">
+            카테고리별 매출 데이터가 없습니다
+          </div>`;
+                  return;
+              }
+
+              // 캔버스 복원
               if (!box.querySelector('canvas')) {
                   const canvas = document.createElement('canvas');
                   canvas.id = 'pieChart';
@@ -340,7 +347,6 @@
 
               const labels = categories.map(c => c.category);
               const data   = categories.map(c => Number(c.amount || 0));
-
               const ctx = document.getElementById('pieChart').getContext('2d');
               if (_pieChart && typeof _pieChart.destroy === 'function') _pieChart.destroy();
 
@@ -350,10 +356,7 @@
                       labels,
                       datasets: [{
                           data,
-                          backgroundColor: [
-                              '#4A90E2','#D0021B','#7ED321','#8977AD',
-                              '#F5A623','#50E3C2','#9013FE'
-                          ]
+                          backgroundColor: ['#4A90E2','#D0021B','#7ED321','#8977AD','#F5A623','#50E3C2','#9013FE']
                       }]
                   },
                   options: {
@@ -361,14 +364,12 @@
                       maintainAspectRatio: false,
                       plugins: {
                           title: { display: true, text: '주요매출' },
-                          legend: {
-                              position: 'bottom',
-                              labels: { boxWidth: 10, boxHeight: 10, padding: 15, font: { size: 12 } }
-                          }
+                          legend: { position: 'bottom', labels: { boxWidth: 10, boxHeight: 10, padding: 15, font: { size: 12 } } }
                       }
                   }
               });
           }
+
 
           /* ========== 데이터 로드 & 바인딩 ========== */
           (function () {

@@ -121,7 +121,7 @@
             </aside>
         </div>        
         <div style=" border-left:1px solid #e2e2e2;"></div>
-        <div style="margin-left:40px; width:900px; height:1500px; ">
+        <div style="margin-left:40px; width:900px; ">
 
     <div class="title-line" style="border-bottom: 2px solid #ccc;">
         <div style="padding-top: 10px; padding-bottom: 5px; font-size: 22px;"><b>기본설정</b></div>
@@ -193,11 +193,22 @@
 
                     <!-- 미리보기 -->
                     <div th:if="${config.headerLogo}" style="margin-top:8px;">
-                        <img th:src="${config.headerLogo}" alt="Header Logo" style="max-height:76px; max-width:370px;">
+                        <img id="headerLogoImg"
+                             th:src="${config.headerLogo.startsWith('/upload') ? '/NICHIYA' + config.headerLogo : config.headerLogo}"
+                             alt="Header Logo"
+                             style="max-height:76px; max-width:370px;">
                         <label style="margin-left:8px;">
                             <input type="checkbox" name="removeHeaderLogo"> 제거
                         </label>
                     </div>
+
+                    <script th:inline="javascript">
+                        const headerLogo = /*[[${config.headerLogo}]]*/ '';
+                        console.log("🧩 headerLogo =", headerLogo);
+                        console.log("🧩 실제 img src =", document.getElementById("headerLogoImg")?.src);
+                    </script>
+
+
                 </td>
             </tr>
 
@@ -210,7 +221,10 @@
                     <span> 크기 155 × 36 권장</span>
 
                     <div th:if="${config.footerLogo}" style="margin-top:8px;">
-                        <img th:src="${config.footerLogo}" alt="Footer Logo" style="max-height:36px; max-width:155px;">
+                        <img id="footerLogoImg"
+                             th:src="${config.footerLogo.startsWith('/upload') ? '/NICHIYA' + config.footerLogo : config.footerLogo}"
+                             alt="Footer Logo"
+                             style="max-height:36px; max-width:155px;">
                         <label style="margin-left:8px;">
                             <input type="checkbox" name="removeFooterLogo"> 제거
                         </label>
@@ -227,7 +241,10 @@
                     <span> 크기 32 × 32 권장</span>
 
                     <div th:if="${config.favicon}" style="margin-top:8px;">
-                        <img th:src="${config.favicon}" alt="Favicon" style="width:32px;height:32px;">
+                        <img id="faviconImg"
+                             th:src="${config.favicon.startsWith('/upload') ? '/NICHIYA' + config.favicon : config.favicon}"
+                             alt="Favicon"
+                             style="width:32px;height:32px;">
                         <label style="margin-left:8px;">
                             <input type="checkbox" name="removeFavicon"> 제거
                         </label>

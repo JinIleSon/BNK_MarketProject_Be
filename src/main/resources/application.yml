@@ -18,6 +18,11 @@ server:
   servlet:
     context-path: /NICHIYA
 
+# 어드민 로고 업로드 경로 (배포용 세현 수정)
+app:
+  upload:
+    dir: upload
+
 # ===== local =====
 ---
 spring:
@@ -75,8 +80,7 @@ spring:
 # 어드민 로고 업로드 경로 (배포용 세현 수정)
 app:
   upload:
-    dir: /var/nichiya/uploads
-  base-url: http://localhost:8080/NICHIYA  #테스트용
+    dir: upload
   #base-url: http://43.200.69.114:8080/NICHIYA
 
 mybatis:
