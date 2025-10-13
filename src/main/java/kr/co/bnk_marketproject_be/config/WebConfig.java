@@ -10,13 +10,17 @@ import java.nio.file.Paths;
 @Configuration
 public class WebConfig implements WebMvcConfigurer {
 
-    @Value("${app.upload.dir:upload}")
-    private String uploadDir;
-
     @Override
     public void addResourceHandlers(ResourceHandlerRegistry registry) {
-        String location = "file:" + Paths.get(uploadDir).toAbsolutePath().toString() + "/";
-        registry.addResourceHandler("/uploads/**")
-                .addResourceLocations(location);
+        // 실제 절대경로 (예: /Users/jeonsehyeon/Desktop/BNK/MarketProject_Be/upload/)
+        String absPath = "file:" + Paths.get("upload").toAbsolutePath().toString() + "/";
+        System.out.println("🌍 [WebConfig] 정적 리소스 매핑: " + absPath);
+
+        registry.addResourceHandler(
+                "/upload/**",          // 일반 경로 매핑
+                "/NICHIYA/upload/**"   // context-path 포함 경로 매핑
+        ).addResourceLocations(absPath);
+
+        System.out.println("📡 [WebConfig] 매핑 설정 완료: /upload/** → " + absPath);
     }
 }
