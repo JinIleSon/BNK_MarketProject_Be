@@ -138,11 +138,11 @@
                     <li style="flex:1; min-width: 100px;">
                         
                     </li>
-                    <li><a href="#" style="text-decoration: none; color:black; font-size:14px; font-weight: 800;">HOME</a></li>
-                    <li><a href="#" style="text-decoration: none; color:black; font-size:14px;">기업문화</a></li>
-                    <li><a href="#" style="text-decoration: none; color:black; font-size:14px;">소식과 이야기</a></li>
-                    <li><a href="#" style="text-decoration: none; color:black; font-size:14px;">채용</a></li>
-                    <li><a href="#" style="text-decoration: none; color:black; font-size:14px;">미디어</a></li>
+                    <li><a th:href="@{/compinfo/compinfo/main}" style="text-decoration: none; color:black; font-size:14px; font-weight: 800;">HOME</a></li>
+                    <li><a th:href="@{/compinfo/compinfo/culture}" style="text-decoration: none; color:black; font-size:14px;">기업문화</a></li>
+                    <li><a th:href="@{/compinfo/compinfo/news}" style="text-decoration: none; color:black; font-size:14px;">소식과 이야기</a></li>
+                    <li><a th:href="@{/compinfo/compinfo/emp}" style="text-decoration: none; color:black; font-size:14px;">채용</a></li>
+                    <li><a th:href="@{/compinfo/compinfo/media}" style="text-decoration: none; color:black; font-size:14px;">미디어</a></li>
                 </ul>
             </div>
         </div>
@@ -349,7 +349,7 @@
         <div style="line-height: 1.8; width:1000px;">
             <div style="display: flex; flex-direction: column; align-items: center; font-size:20px;">
                 <div style="position:relative; display:inline-block; width:1000px;">
-                    <img src="/images/companyIntroduction_main1.png" alt="" style="width:100%;">
+                    <img th:src="@{/images/companyIntroduction_main1.png}" alt="" style="width:100%;">
                     <div style="position: absolute; color:white; left:100px;top:480px; font-weight: 550; font-size:25px;" class="nanum-myeongjo-regular">NICHIYA와 함께 새로운 라이프스타일</div>
                     <div style="position: absolute; color:white; left:100px;top:520px; font-weight: 550; font-size:25px;" class="nanum-myeongjo-regular">브랜드를 넘어, 경험을 만나다</div>
                 </div>
@@ -367,7 +367,7 @@
                 <!-- slide 1 -->
                 <section class="slide">
                     <div class="card">
-                    <div class="thumb"><img src="#" alt="이미지1"></div>
+                    <div class="thumb"><img th:src="@{/images/compinfo_main_service.jpg}" alt="이미지1" decoding="sync" loading="eager"></div>
                     <div class="meta">
                         <h4>고객이 원하며 만족하는</h4>
                         <p class="subtitle">서비스를 만들어요</p>
@@ -378,7 +378,7 @@
                     </div>
 
                     <div class="card">
-                    <div class="thumb"><img src="#" alt="이미지2"></div>
+                    <div class="thumb"><img th:src="@{/images/compinfo_main_delivery.jpg}" alt="이미지2" decoding="sync" loading="eager"></div>
                     <div class="meta">
                         <h4>빠르고 믿을 수 있는</h4>
                         <p class="subtitle">당일·새벽 배송</p>
@@ -392,7 +392,7 @@
                 <!-- slide 2 (예시: 필요 없으면 삭제, 더 만들면 도트 자동 증가) -->
                 <section class="slide">
                     <div class="card">
-                    <div class="thumb"><img src="#" alt="이미지3"></div>
+                    <div class="thumb"><img th:src="@{/images/compinfo_main_stylistcare.jpg}" alt="이미지3" decoding="async" loading="lazy"></div>
                     <div class="meta">
                         <h4>취향을 배우는 AI 추천과</h4>
                         <p class="subtitle">스타일리스트 케어</p>
@@ -401,7 +401,7 @@
                     </div>
 
                     <div class="card">
-                    <div class="thumb"><img src="#" alt="이미지4"></div>
+                    <div class="thumb"><img th:src="@{/images/compinfo_main_globalshipping.jpg}" alt="이미지4" decoding="async" loading="lazy"></div>
                     <div class="meta">
                         <h4>해외직구를 더 쉽고,</h4>
                         <p class="subtitle">더 합리적으로</p>
@@ -412,7 +412,7 @@
 
                 <section class="slide">
                     <div class="card">
-                    <div class="thumb"><img src="#" alt="이미지5"></div>
+                    <div class="thumb"><img th:src="@{/images/compinfo_main_eco.jpg}" alt="이미지5" decoding="async" loading="lazy"></div>
                     <div class="meta">
                         <h4>지구를 생각하는</h4>
                         <p class="subtitle">지속가능 패키징</p>
@@ -421,7 +421,7 @@
                     </div>
 
                     <div class="card">
-                    <div class="thumb"><img src="#" alt="이미지6"></div>
+                    <div class="thumb"><img th:src="@{/images/compinfo_main_like.jpg}" alt="이미지6" decoding="async" loading="lazy"></div>
                     <div class="meta">
                         <h4>리뷰가 코디가 되는</h4>
                         <p class="subtitle">실전 사용자 콘텐츠</p>
@@ -432,7 +432,7 @@
 
                 <section class="slide">
                     <div class="card">
-                    <div class="thumb"><img src="#" alt="이미지7"></div>
+                    <div class="thumb"><img th:src="@{/images/compinfo_main_popupstore.jpg}" alt="이미지7" decoding="async" loading="lazy"></div>
                     <div class="meta">
                         <h4>팝업·컬래버로 만나는</h4>
                         <p class="subtitle">오프라인 경험</p>
@@ -441,7 +441,7 @@
                     </div>
 
                     <div class="card">
-                    <div class="thumb"><img src="#" alt="이미지8"></div>
+                    <div class="thumb"><img th:src="@{/images/compinfo_main_homecafe.jpg}" alt="이미지8" decoding="async" loading="lazy"></div>
                     <div class="meta">
                         <h4>패션을 넘어 뷰티·그로서리까지</h4>
                         <p class="subtitle">라이프스타일을 완성</p>
@@ -458,7 +458,9 @@
                 /* === Carousel 기본 === */
 .carousel{ position:relative; width:1000px; margin:0 auto 28px; }
 .car-viewport{ overflow:hidden; }
-.car-track{ display:flex; transition:transform .45s cubic-bezier(.2,.7,.2,1); }
+.car-track{ display:flex; transition:transform .45s cubic-bezier(.2,.7,.2,1);
+    will-change: transform;
+    transform: translateZ(0);      /* 합성 레이어 */}
 
 /* 한 장(슬라이드) = 100% 폭. 슬라이드 안에서 카드 2개 그리드 */
 .slide{ flex: 0 0 100%; padding: 6px 32px 18px; }
@@ -696,10 +698,10 @@
                 opacity:.25;                              /* 기본은 희미 */
                 transition:
                     opacity .35s ease,
-                    transform .35s ease,
-                    font-size .35s ease,
-                    filter .35s ease;
-                filter:blur(.15px);
+                    transform .35s ease;
+                    /*font-size .35s ease,*/
+                    /*filter .35s ease;*/
+                /*filter:blur(.15px);*/
                 pointer-events:none;
                 z-index:1;
                 }
@@ -714,9 +716,9 @@
                 /* 현재(더 크게) */
                 .year-btn.is-active{
                 opacity:1;
-                font-size: clamp(120px, 14vw, 170px); /* 최소 120px ~ 최대 170px */
+                /*font-size: clamp(120px, 14vw, 170px); !* 최소 120px ~ 최대 170px *!*/
                 line-height: 1;
-                transform:translateX(-50%) scale(1);      /* 글자 크기로 키움 */
+                transform:translateX(-50%) scale(2.2);      /* 글자 크기로 키움 */
                 filter:none;
                 pointer-events:auto;
                 z-index:2;                                /* 겹칠 때 위로 */
@@ -761,6 +763,7 @@
                 .timeline.timeline--line .tl-viewport{ position: relative; z-index: 1; }
                 /* 안쪽 라인은 겹치지 않게 투명 처리(선택) */
                 .tl-inner::after{ background: transparent; }
+
 
             </style>
             <script>
