@@ -9,11 +9,12 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class OrderItemsDTO {
-    private int id;
-    private int orders_id;
-    private int products_id;
-    private int product_options_id;
-    private int quantity;
-    private int price;
+public class PolicyDTO {
+
+    private String terms_buyer;
+    private String terms_seller;
+    private String terms_finance;
+    private String terms_location;
+    private String terms_privacy;
+
 }

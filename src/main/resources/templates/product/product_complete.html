@@ -1,478 +1,189 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>product_order</title>
+    <title>product_complete</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Bodoni+Moda:opsz,wght@6..96,400;500&family=Noto+Serif+KR:wght@300;400&display=swap" rel="stylesheet">
     <style>
         html{ scrollbar-gutter: stable; }
-        .icon-btn {
-            background:none; border:1px solid #000; cursor:pointer;
-            width:40px; height:40px; display:grid; place-items:center;
-        }
-
-        /* 1) 스크림(배경) - 화면 전체 덮음 + 블러 */
-        .overlay {
-            position: fixed; inset: 0;
-            background: rgba(255,255,255,0.28);      /* 반투명이어야 blur 보임 */
-            backdrop-filter: blur(1px);
-            -webkit-backdrop-filter: blur(1px); /* 사파리용 */
-            opacity: 0; 
-            pointer-events: none;
-            transition: opacity .25s ease;
-            z-index: 1000;
-        }
-        .overlay.open { opacity: 1; pointer-events: auto; }
-
-        /* 2) 왼쪽에서 나오는 패널 */
-        .overlay__panel {
-            position: absolute; top:0; left:0;
-            width: 50vw;                 /* 화면 절반 */
-            max-width: 900px;            /*(선택) 최대 폭 제한 */
-            height: 100%;
-            background: white;         /* 패널 자체는 불투명해도 OK */
-            transform: translateX(-100%); /* 화면 밖에서 시작 */
-            transition: transform .35s ease;
-            will-change: transform;
-            display: flex; flex-direction: column;
-        }
-        .overlay.open .overlay__panel { transform: translateX(0); }
-
-        /* 상단 닫기 버튼과 로고 영역 */
-        .overlay__top {
-            display:flex; align-items:center; gap:24px;
-            padding:20px;
-        }
-        .overlay__close {
-            background:none; border:1px solid; width:100px; height:50px; cursor:pointer;
-            position:relative;
-            border:none;
-            margin-left:0.3%;
-        }
-        .overlay__close::before,
-        .overlay__close::after{
-            content:""; position:absolute; left:15px; right:10px; top:25px; height:2px; background:#000;
-        }
-        .overlay__close::before{ transform:rotate(45deg); }
-        .overlay__close::after { transform:rotate(-45deg); }
-
-        /* 메뉴 그리드 */
-        .overlay__menu {
-            display:grid; grid-template-columns: 180px auto; gap:24px;
-            padding:40px 20px; font-size:16px;
-        }
-        .overlay__menu a {
-            text-decoration:none; color:#000; display:block; padding:8px 0;
-        }
-        .overlay__menu strong { font-weight:700; }
-        /* Header Sticky 및 background 적용 */
-        :root{
-            --glass-bg: rgba(255,255,255,.55); /* 호버 시 배경 투명도 */
-            --glass-blur: 8px;                 /* 블러 정도 */
-        }
-        *{ box-sizing: border-box; }
-        body{ margin:0; font-family:system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif; }
-        a{ color:inherit; text-decoration:none; }
-        ul{ margin:0; padding:0; list-style:none; }
-
-        /* ===== 헤더 (처음엔 투명, hover 시 반투명) ===== */
-        .site-header{
-            position: sticky;      /* 스크롤해도 상단 고정 */
-            top: 0;
-            z-index: 900;          /* 오버레이(1000)보다 낮게 */
-        }
-        .site-header::before{
-            content:"";
-            position:absolute; inset:0;
-            background: rgba(255,255,255,0);            /* 기본 완전 투명 */
-            transition: background 0.4s ease;
-            z-index: -1;
-            pointer-events: none;                        /* 클릭 방해 금지 */
-        }
-        .site-header:hover::before{
-            background: rgba(255,255,255,0.7);                /* 마우스 올리면 반투명 */
-        }
-        .site-header .inner{
-            position: relative; z-index: 1;             /* ::before 아래로 깔리게 */
-            display:flex; align-items:center; gap:24px;
-            padding: 16px 24px;
-            border-bottom: 1px solid #000;              /* 필요 없으면 제거 */
-        }
-        footer a {
-            text-decoration: none;
-            font-weight: 300;
-            color:black;
-        }
-        /* 페이지네이션 */
-        /* 게시판 아래버튼 부분 */
-        .prev-page{
-            background-color: white;
-            border: none;
-            margin-right: 15px;
-            width: 50px;
-            height: 30px;
-        }
-        .next-page{
-            background-color: white;
-            border: none;
-            margin-left: 15px;
-            width: 50px;
-            height: 30px;
-            margin-right:3px;
-        }
-        
-        /* 게시판 아래버튼 부분 끝 */
-        .title-didone{
-            text-align:center;
-            font-family: 'Bodoni Moda','Didot','Bodoni 72','Times New Roman',serif;
-            margin-left:45px;
-            font-weight:400;                 
-            letter-spacing:.02em;
-            -webkit-font-smoothing: antialiased;
-            -moz-osx-font-smoothing: grayscale;
-        }
-        .title-didone.ko{font-family: 'Noto Serif KR','Bodoni Moda',serif; font-weight:300;}
+        .icon-btn{ background:none; border:1px solid #000; cursor:pointer; width:40px; height:40px; display:grid; place-items:center; }
+        .overlay{ position: fixed; inset:0; background:rgba(255,255,255,.28); backdrop-filter:blur(1px); -webkit-backdrop-filter:blur(1px); opacity:0; pointer-events:none; transition:opacity .25s ease; z-index:1000; }
+        .overlay.open{ opacity:1; pointer-events:auto; }
+        .overlay__panel{ position:absolute; top:0; left:0; width:50vw; max-width:900px; height:100%; background:#fff; transform:translateX(-100%); transition:transform .35s ease; will-change:transform; display:flex; flex-direction:column; }
+        .overlay.open .overlay__panel{ transform:translateX(0); }
+        .overlay__top{ display:flex; align-items:center; gap:24px; padding:20px; }
+        .overlay__close{ background:none; border:1px solid; width:100px; height:50px; cursor:pointer; position:relative; border:none; margin-left:.3%; }
+        .overlay__close::before,.overlay__close::after{ content:""; position:absolute; left:15px; right:10px; top:25px; height:2px; background:#000; }
+        .overlay__close::before{ transform:rotate(45deg); } .overlay__close::after{ transform:rotate(-45deg); }
+        .overlay__menu{ display:grid; grid-template-columns:180px auto; gap:24px; padding:40px 20px; font-size:16px; }
+        .overlay__menu a{ text-decoration:none; color:#000; display:block; padding:8px 0; }
+        .overlay__menu strong{ font-weight:700; }
+        :root{ --glass-bg:rgba(255,255,255,.55); --glass-blur:8px; }
+        *{ box-sizing:border-box; } body{ margin:0; font-family:system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif; }
+        a{ color:inherit; text-decoration:none; } ul{ margin:0; padding:0; list-style:none; }
+        .site-header{ position:sticky; top:0; z-index:900; }
+        .site-header::before{ content:""; position:absolute; inset:0; background:rgba(255,255,255,0); transition:background .4s ease; z-index:-1; pointer-events:none; }
+        .site-header:hover::before{ background:rgba(255,255,255,.7); }
+        .site-header .inner{ position:relative; z-index:1; display:flex; align-items:center; gap:24px; padding:16px 24px; border-bottom:1px solid #000; }
+        footer a{ text-decoration:none; font-weight:300; color:black; }
+        .prev-page{ background:#fff; border:none; margin-right:15px; width:50px; height:30px; }
+        .next-page{ background:#fff; border:none; margin-left:15px; width:50px; height:30px; margin-right:3px; }
+        .title-didone{ text-align:center; font-family:'Bodoni Moda','Didot','Bodoni 72','Times New Roman',serif; margin-left:45px; font-weight:400; letter-spacing:.02em; -webkit-font-smoothing:antialiased; -moz-osx-font-smoothing:grayscale; }
+        .title-didone.ko{ font-family:'Noto Serif KR','Bodoni Moda',serif; font-weight:300; }
     </style>
 </head>
-<body>
-    <header class="site-header">
-        <div style="margin-left:2%; width:98%; box-sizing: border-box; margin-top:2%; display:flex; height:230px;">
-            <button style="border:none;" id="menuBtn" class="icon-btn" aria-controls="menuOverlay" aria-expanded="false" aria-label="메뉴 열기">
-                <svg width="64" height="64" viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg">
-                    <rect y="12" width="64" height="1" fill="black"/>
-                    <rect y="30" width="64" height="1" fill="black"/>
-                    <rect y="48" width="64" height="1" fill="black"/>
-                </svg>
-            </button>
-            <a href="#" style="margin-left:3%;">
-                <div >
-                    <img src="/images/logo.png" alt="" style="width:270px;">
-                </div>
-            </a>
-            <div style="margin-top:27px; margin-left:auto; margin-right:3%; flex:1; max-width:30%;">
-                <ul style="list-style-type: none; padding: 0; margin:0; display:flex; gap:40px;">
-                    <li style="flex:1; min-width: 100px;">
-                        <form action="" method="" style="width:100%;">
-                            <input type="text" style="background: transparent;border:none; border-bottom:1px solid; padding-bottom:10px; width:80%;" value="검색"
-                            onfocus="this.style.outline='none';" 
-                            onblur="this.style.outline='none';">
-                        </form>
-                    </li>
-                    <li><a href="#" style="text-decoration: none; color:black; font-size:14px;">로그인</a></li>
-                    <li><a href="#" style="text-decoration: none; color:black; font-size:14px;">도움말</a></li>
-                    <li><a href="#" style="text-decoration: none; color:black; font-size:14px;">바스켓백 [0]</a></li>
-                </ul>
-            </div>
-        </div>
-    </header>
-    <!-- 전체 화면 오버레이 메뉴 -->
-  <aside id="menuOverlay" class="overlay" aria-hidden="true">
-    <div class="overlay__panel">
-        <div class="overlay__top">
-            <button id="closeBtn" class="overlay__close" aria-label="메뉴 닫기"></button>
-            <div style="font-size:72px; font-weight:800; letter-spacing:4px;letter-spacing: -10px;"class="title-didone">NICHIYA</div>        </div>
-        <style>
-            /* 우측 서브항목 기본은 숨김 + 페이드 트랜지션 준비 */
-            .sub {
-                opacity: 0;
-                transform: translateY(6px);
-                pointer-events: none;
-                transition: opacity .28s ease, transform .28s ease;
-                display: none; /* 시각·레이아웃 모두 숨김 */
-            }
-            /* 보여줄 때 */
-            .sub.show {
-                display: block;
-                opacity: 1;
-                transform: translateY(0);
-                pointer-events: auto;
-            }
-            /* 오른쪽 컬럼은 패널들을 포개는 '스테이지' */
-            #subcol{
-                grid-row: span 2;
-                height:900px;
-                position: relative;          /* 자식 absolute 기준점 */
-                padding: 0;                  /* 안쪽 여백은 패널에서 */
-            }
-            /* 접근성: 현재 선택된 카테고리 표시(선택사항) */
-            .overlay__menu a[data-cat].is-active { font-weight: 700; text-decoration: underline; }
+<body th:object="${complete}">
+<div th:replace="~{main/header.html}"></div>
 
-            /* 오른쪽 컬럼의 항목은 여백 제거(전역 a padding 무시) */
-            #subcol .sub{
-                padding:0;
-                margin:0;
-            }
-            /* 패널: 전부 겹쳐 놓고 기본은 숨김 */
-            #subcol .panel{
-                position: absolute; inset: 0;
-                padding: 20px;
-                overflow: auto;
-                opacity: 0;
-                transform: translateY(6px);
-                transition: opacity .35s ease, transform .35s ease;
-                visibility: hidden;   /* display 대신 visibility */
-                pointer-events: none; /* 숨길 때 클릭 방지 */
-            }
+<!-- 헤더 장바구니 링크에도 uid 유지 -->
+<script th:inline="javascript">
+    const CART_PAGE_URL_TPL = /*[[@{/product/cart(uid=${uid})}]]*/ '/product/cart';
+    document.addEventListener('DOMContentLoaded', () => {
+        const link = document.getElementById('basketCountLink');
+        if (link) link.setAttribute('href', CART_PAGE_URL_TPL);
+    });
+</script>
 
-            /* 보이는 패널 */
-            #subcol .panel.show{
-                opacity: 1;
-                transform: none;
-                visibility: visible;
-                pointer-events: auto; /* 다시 클릭 가능 */
-            }
-
-            /* 예시용 그리드(원하면 커스터마이즈) */
-            .menu-grid{
-                display: grid;
-                grid-template-columns: repeat(2, auto);
-                column-gap: 50px;   /* 가로 간격 여기서 조절 */
-                row-gap: 6px;      /* 세로 간격(필요시) */
-                padding: 0;        /* UL 기본 패딩 제거 */
-                margin: 0;         /* UL 기본 마진 제거 */
-                justify-content: start; /* 왼쪽 정렬 */
-            }
-            .menu-grid li{ list-style: none; }
-            
-        </style>
-
-        <div style="display: flex; margin-left:20%; margin-top:1%; width:100%;">
-            <nav class="overlay__menu" style="width:100%;">
-                <div style="">
-                    <a href="#">히트상품</a>
-                    <a href="#">추천상품</a>
-                    <a href="#">최신상품</a>
-                    <a href="#">인기상품</a>
-                    <a href="#">할인상품</a>
-                    <br><br>
-                    <a href="#" data-cat="fashion">패션 · 의류 · 뷰티</a>
-                    <a href="#" data-cat="digital">가전 · 디지털</a>
-                    <a href="#" data-cat="grocery">식품 · 생필품</a>
-                    <a href="#" data-cat="home">홈 · 문구 · 취미</a>
-                    <a href="#" data-cat="book">도서</a>
-                </div>
-                <div id="subcol">
-                    <!-- 패션 패널 -->
-                    <section class="panel" data-key="fashion">
-                        <h3>패션 · 의류 · 뷰티</h3>
-                        <!-- 이 안은 자유롭게: 그리드/이미지/텍스트 무엇이든 -->
-                        <ul class="menu-grid" style="">
-                        <li><a href="#">여성 의류</a></li>
-                        <li><a href="#">스킨케어</a></li>
-                        <!-- … -->
-                        </ul>
-                    </section>
-
-                    <!-- 디지털 패널 -->
-                    <section class="panel" data-key="digital">
-                        <h3>가전 · 디지털</h3>
-                        <div class="menu-grid">
-                        <a href="#">생활가전</a>
-                        <a href="#">모바일 · PC</a>
-                        </div>
-                    </section>
-
-                    <!-- 식품 패널 -->
-                    <section class="panel" data-key="grocery">
-                        <h3>식품 · 생필품</h3>
-                        <div class="menu-grid">
-                            <a href="#">신선식품</a>
-                            <a href="#">생활용품</a>
-                        </div>
-                    </section>
-
-                    <!-- 홈/문구 패널 -->
-                    <section class="panel" data-key="home">
-                        <h3>홈 · 문구 · 취미</h3>
-                        <div class="menu-grid">
-                            <a href="#">가구 · 인테리어</a>
-                            <a href="#">문구 · 사무용품</a>
-                        </div>
-                    </section>
-
-                    <!-- 도서 패널 -->
-                    <section class="panel" data-key="book">
-                        <h3>도서</h3>
-                        <div class="menu-grid">
-                            <a href="#">소설 · 에세이</a>
-                            <a href="#">아동 · 교육</a>
-                        </div>
-                    </section>
-                </div>
-                <div style=""></div>
-            </nav>
-        </div>
+<!-- 본문 -->
+<div style="height:100%; display:flex; flex-direction:column; justify-content:center; align-items:center; margin:0 auto;">
+    <div style="display:flex;">
+        <div style="font-size:18px; margin-right:1200px;"><b>주문완료</b></div>
     </div>
-  </aside>
+    <hr style="border:none; border-top:1px solid black; margin-bottom:40px; width:100%;">
+    <div style="font-size:20px; margin-bottom:8px;">고객님의 주문이 정상적으로 완료되었습니다.</div>
+    <div style="margin-bottom:20px;">즐거운 쇼핑이 되셨나요? 항상 고객님을 위한 일야가 되겠습니다.</div>
 
-    <script>
-    const body     = document.body;
-    const menuBtn  = document.getElementById('menuBtn');
-    const closeBtn = document.getElementById('closeBtn');
-    const overlay  = document.getElementById('menuOverlay');
+    <!-- 아이템 테이블 -->
+    <table style="border-collapse:collapse; border:none; width:1270px; text-align:center;">
+        <form action="" method="">
+            <tr style="height:50px; border-top:4px solid black; border-bottom:1px solid #dddddd;">
+                <td style="width:50px;"><input type="checkbox" disabled></td>
+                <td style="width:450px;">상품명</td>
+                <td style="width:92px;">상품금액</td>
+                <td style="width:136px;">할인금액</td>
+                <td style="width:92px;">수량</td>
+                <td style="width:136px;">주문금액</td>
+            </tr>
 
-    function openMenu(){
-        overlay.classList.add('open');
-        overlay.setAttribute('aria-hidden', 'false');
-        menuBtn.setAttribute('aria-expanded', 'true');
-        body.style.overflow = 'hidden'; // 뒤 스크롤 잠금
-    }
-    function closeMenu(){
-        overlay.classList.remove('open');
-        overlay.setAttribute('aria-hidden', 'true');
-        menuBtn.setAttribute('aria-expanded', 'false');
-        body.style.overflow = '';
-    }
+            <!-- 목록 -->
+            <tr th:each="it : *{items}" style="border-bottom:1px solid #dddddd;">
+                <td><input type="checkbox" disabled></td>
+                <td style="display:flex;">
+                    <div style="margin:10px; width:80px; height:75px; background-color:#dddddd;">
+                        <!-- URL 바인딩 수정 -->
+                        <img th:src="${it.url} != null ? @{|/${it.url}|} : @{/images/placeholder.png}"
+                             alt="이미지" style="width:100%; height:100%; object-fit:cover;">
+                    </div>
+                    <div style="padding-left:18px; display:flex; font-size:14px; align-items:flex-start; justify-content:center; flex-direction:column;">
+                        <div style="margin-bottom:6px;" th:text="${it.product_name}">상품명</div>
+                        <!-- 옵션명 삼항 수정 -->
+                        <div style="color:gray; font-size:12px;" th:text="${it.option_name} != null ? it.option_name : ''">옵션</div>
+                    </div>
+                </td>
 
-    menuBtn.addEventListener('click', openMenu);
-    closeBtn.addEventListener('click', closeMenu);
-    overlay.addEventListener('click', (e) => {
-        // 빈 배경 클릭 시 닫기 (메뉴 콘텐츠 클릭은 무시)
-        if(e.target === overlay) closeMenu();
-    });
-    // Esc 키로 닫기
-    window.addEventListener('keydown', (e)=>{
-        if(e.key === 'Escape' && overlay.classList.contains('open')) closeMenu();
-    });
-    // ====== 새로 추가: 카테고리 클릭 시 페이드인 ======
-    // 매핑은 data-cat 값과 data-sub 값을 동일 키로 연결
-    const catLinks = document.querySelectorAll('.overlay__menu a[data-cat]');
-    const panels   = document.querySelectorAll('#subcol .panel');
+                <!-- 상품금액(정가 × 수량) -->
+                <td th:text="${#numbers.formatInteger(it.unitPrice * it.quantity, 3, 'COMMA')}">27,000</td>
 
-    function setActiveCat(target){
-        catLinks.forEach(a => a.classList.remove('is-active'));
-        if(target) target.classList.add('is-active');
-    }
+                <!-- 할인금액((정가×할인율)×수량) -->
+                <td th:text="${#numbers.formatInteger((it.unitPrice * it.discountRate / 100) * it.quantity, 3, 'COMMA')}">-1,350</td>
 
-    function showPanel(key){
-        panels.forEach(p => p.classList.toggle('show', p.dataset.key === key));
-    }
+                <!-- 수량 -->
+                <td th:text="${it.quantity}">1</td>
 
-    catLinks.forEach(link => {
-    link.addEventListener('click', (e) => {
-            e.preventDefault();
-            const key = link.getAttribute('data-cat');
-            setActiveCat(link);
-            showPanel(key);
-        });
-    });
+                <!-- 주문금액(판매가×수량 = lineTotal) -->
+                <td style="color:red;" th:text="${#numbers.formatInteger(it.lineTotal, 3, 'COMMA')}">25,650</td>
+            </tr>
 
-    // 기본으로 한 패널 오픈(원하는 키로 바꾸세요)
-    setActiveCat(document.querySelector('.overlay__menu a[data-cat="fashion"]'));
-    showPanel('fashion');
-    </script>
+            <!-- 비어있을 때 -->
+            <tr th:if="*{items} == null or *{items.isEmpty()}">
+                <td colspan="6" style="padding:24px;">주문 상품이 없습니다.</td>
+            </tr>
+        </form>
+    </table>
 
-    <div style=" height:100%; display: flex; flex-direction: column; justify-content: center; align-items: center;  margin: 0 auto;">
-        <div style="display: flex;">
-            <div style="font-size:18px; margin-right:1200px;"><b>주문완료</b></div>
-        </div>
-        <hr style="border:none; border-top:1px solid black; margin-bottom:40px; width:100%;">
-        <div style="font-size:20px; margin-bottom:8px;">고객님의 주문이 정상적으로 완료되었습니다.</div>
-        <div style="margin-bottom:20px;">즐거운 쇼핑이 되셨나요? 항상 고객님을 위한 일야가 되겠습니다.</div>
-        <table style="border-collapse: collapse; border:none; width:1270px; text-align: center; ">
-            <form action="" method="">
-                <tr style="height:50px;border-top: 4px solid black; border-bottom: 1px solid #dddddd;">
-                    <td style="width:50px;"><input type="checkbox"></td>
-                    <td style="width:450px;">상품명</td>
-                    <td style="width:92px;">상품금액</td>
-                    <td style="width:136px;">할인금액</td>
-                    <td style="width:92px;">수량</td>
-                    <td style="width:136px;">주문금액</td>
-                </tr>
-                <tr style=" border-bottom: 1px solid #dddddd;">
-                    <td><input type="checkbox"></td>
-                    <td style="  display: flex;">
-                        <div style="margin:10px;width:80px; height:75px; background-color: #dddddd;">
-                            <img src="#" alt="이미지">
-                        </div>
-                        <div style="padding-left:18px; display:flex; font-size:14px; align-items: flex-start; justify-content: center; flex-direction: column;">
-                            <div style="margin-bottom:6px;">상품명</div><div style="color: gray; font-size:12px;">상품설명</div>
-                        </div>
-                    </td>
-                    <td>27,000</td>
-                    <td>-1,350</td>
-                    <td>1</td>
-                    <td style="color:red;">25,650</td>
-                </tr>
-            </form>
-        </table>
-        <div style="border:1px solid #f2f2f2; width:300px;margin-left:970px; height:148px; padding:20px; background-color: #f2f2f2;">
-            <div style="padding-left:7px;padding-right:7px;">
-                <div style="margin-bottom:6px;">
-                    <div>총 상품금액<span style="float:right;">27,000 원</span></div>
-                </div>
-                <div style="margin-bottom:6px;">
-                    <div>총 할인금액<span style="float:right;">-1,350 원</span></div>
-                </div>
-                <div style="margin-bottom:6px;">
-                    <div>배송비<span style="float:right;">0 원</span></div>
-                </div>
-                <div style="margin-bottom:6px;">
-                    <div>총 결제금액<span style="float:right; color:red;">25,650 원</span></div>
+    <!-- 합계 박스 -->
+    <div style="border:1px solid #f2f2f2; width:300px; margin-left:970px; height:148px; padding:20px; background-color:#f2f2f2;">
+        <div style="padding-left:7px; padding-right:7px;">
+            <div style="margin-bottom:6px;">
+                <div>총 상품금액
+                    <span style="float:right;"
+                          th:text="|${#numbers.formatInteger(*{summary.subtotalAmount}, 3, 'COMMA')} 원|">27,000 원</span>
                 </div>
             </div>
-        </div>
-        <div style="display: flex; margin-top:14px; margin-bottom:10px;">
-            <div style="font-size:18px; margin-right:1200px;"><b>주문정보</b></div>
-        </div>
-        <div style="border-top:4px solid; width:1270px;  display: flex; border-bottom: 1px solid #dddddd;">
-            <div style=" width:150px; padding:17px; background-color: #f2f2f2;">
-                <div style="margin-bottom:6px;">주문정보</div>
-                <div style="margin-bottom:6px;">결제방법</div>
-                <div style="margin-bottom:6px;">주문자</div>
-                <div style="">연락처</div>
+            <div style="margin-bottom:6px;">
+                <div>총 할인금액
+                    <span style="float:right;"
+                          th:text="|-${#numbers.formatInteger((*{summary.discountAmount} + (*{summary.couponAmount} != null ? *{summary.couponAmount} : 0) + (*{summary.pointUse} != null ? *{summary.pointUse} : 0)), 3, 'COMMA')} 원|">-1,350 원</span>
+                </div>
             </div>
-            <div style="padding-left:19px;  display: flex; justify-content: center; flex-direction:column;">
-                <div style="margin-bottom:7px;">1000121121</div>
-                <div style="margin-bottom:7px;">신용카드</div>
-                <div style="margin-bottom:7px;">홍길동</div>
-                <div style="margin-bottom:4px;">010-1234-1234</div>
+            <div style="margin-bottom:6px;">
+                <div>배송비
+                    <span style="float:right;"
+                          th:text="|${#numbers.formatInteger(*{summary.delichar}, 3, 'COMMA')} 원|">0 원</span>
+                </div>
             </div>
-            <div style="display: flex; align-items: end; margin-left: auto;">
-                <div style="width:210px; margin-right:45px; margin-bottom:8px;"><span>총 결제금액</span><span style="float:right;">원</span><span style="color:red; float:right;">24,650</span></div>
-            </div>
-        </div>
-        <div style="display: flex; margin-top:14px;margin-bottom:10px; ">
-            <div style="font-size:18px; margin-right:1200px;"><b>배송정보</b></div>
-        </div>
-        <div style="border-top:4px solid; width:1270px;  display: flex; border-bottom: 1px solid #dddddd; margin-bottom:60px;">
-            <div style=" width:150px; padding:17px; background-color: #f2f2f2;">
-                <div style="margin-bottom:6px;">수취인</div>
-                <div style="margin-bottom:6px;">연락처</div>
-                <div >배송지 주소</div>
-            </div>
-            <div style="padding-left:19px;  display: flex; justify-content: center; flex-direction:column;">
-                <div style="margin-bottom:7px;">홍길동</div>
-                <div style="margin-bottom:7px;">010-1234-1234</div>
-                <div >부산 금정구 123-11 10층</div>
+            <div style="margin-bottom:6px;">
+                <div>총 결제금액
+                    <span style="float:right; color:red;"
+                          th:text="|${#numbers.formatInteger(*{summary.totalPayable}, 3, 'COMMA')} 원|">25,650 원</span>
+                </div>
             </div>
         </div>
     </div>
-    <footer>
-        <div style="">
-            <ul style="display: flex; gap:20px; margin-left:40px; list-style-type: none;">
-                <li><a href="#">YOUTUBE</a></li>
-                <li><a href="/compInfo/compInfo_main.html">회사소개</a></li>
-                <li><a href="/policy/policy_terms.html">서비스이용약관</a></li>
-                <li><a href="/policy/policy_terms.html#privacy">개인정보처리방침</a></li>
-                <li><a href="/customer_service/cs_main.html">고객센터</a></li>
-            </ul>
+
+    <!-- 주문정보 -->
+    <div style="display:flex; margin-top:14px; margin-bottom:10px;">
+        <div style="font-size:18px; margin-right:1200px;"><b>주문정보</b></div>
+    </div>
+    <div style="border-top:4px solid; width:1270px; display:flex; border-bottom:1px solid #dddddd;">
+        <div style="width:150px; padding:17px; background-color:#f2f2f2;">
+            <div style="margin-bottom:6px;">주문정보</div>
+            <div style="margin-bottom:6px;">결제방법</div>
+            <div style="margin-bottom:6px;">주문자</div>
+            <div>연락처</div>
         </div>
-        <div style="width:870px; margin-top:90px; margin-left:40px;">
-            <span>
-                NICHIYA 주식회사 &nbsp;|&nbsp; 사업자등록번호: 123-45-67890 &nbsp;|&nbsp; 대표자 : TANAKA HARUTO &nbsp;|&nbsp; 서울특별시 강남구 테헤란로 321 15층 1501호 (역삼동, 니치야타워) 
-                &nbsp;|&nbsp; 대표번호: 080-123-4567 &nbsp;|&nbsp; 호스팅 서비스 사업자: NICHIYA SYSTEMS Co., Ltd. 
-                &nbsp;|&nbsp; 통신판매업신고 : 제2025-서울강남-01234 (<a href="/main/main_nichiyaLicense.html" style="font-weight:800; text-decoration-line: underline;">사업자정보확인</a>)
-                &nbsp;|&nbsp; <a href="/policy/policy_terms.html#privacy" style="font-weight: 800; text-decoration-line: underline;">개인정보처리방침</a> 
-                &nbsp;|&nbsp; <a href="/policy/policy_terms.html#location" style="font-weight: 800; text-decoration-line: underline;">위치기반서비스 이용약관</a>
-                &nbsp;|<a href="/policy/policy_terms.html" style="font-weight: 800; text-decoration-line: underline;">이용약관</a> 
-            </span>
+        <div style="padding-left:19px; display:flex; justify-content:center; flex-direction:column;">
+            <!-- ✅ orderCode → orderId 로 바인딩 (쿼리에서 orderId를 내려줌) -->
+            <div style="margin-bottom:7px;" th:text="*{orderId}">1000121121</div>
+            <div style="margin-bottom:7px;" th:text="*{payMethod}">신용카드</div>
+            <div style="margin-bottom:7px;" th:text="*{buyerName}">홍길동</div>
+            <div style="margin-bottom:4px;" th:text="*{buyerPhone}">010-1234-1234</div>
         </div>
-    </footer>
+        <div style="display:flex; align-items:end; margin-left:auto;">
+            <div style="width:210px; margin-right:45px; margin-bottom:8px;">
+                <span>총 결제금액</span>
+                <span style="float:right;">원</span>
+                <span style="color:red; float:right;"
+                      th:text="${#numbers.formatInteger(*{summary.totalPayable}, 3, 'COMMA')}">24,650</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- 배송정보 -->
+    <div style="display:flex; margin-top:14px; margin-bottom:10px;">
+        <div style="font-size:18px; margin-right:1200px;"><b>배송정보</b></div>
+    </div>
+    <div style="border-top:4px solid; width:1270px; display:flex; border-bottom:1px solid #dddddd; margin-bottom:60px;">
+        <div style="width:150px; padding:17px; background-color:#f2f2f2;">
+            <div style="margin-bottom:6px;">수취인</div>
+            <div style="margin-bottom:6px;">연락처</div>
+            <div>배송지 주소</div>
+        </div>
+        <div style="padding-left:19px; display:flex; justify-content:center; flex-direction:column;">
+            <div style="margin-bottom:7px;" th:text="*{shipping.recipient}">홍길동</div>
+            <div style="margin-bottom:7px;" th:text="*{shipping.delicom}">010-1234-1234</div>
+
+            <!-- 주소 문자열: 선택 객체(*{})만으로 삼항 정리 -->
+            <div th:text="*{shipping.zipcode != null ? '#' + shipping.zipcode + ' ' + shipping.address + (shipping.address2 != null ? ' ' + shipping.address2 : '') : shipping.address + (shipping.address2 != null ? ' ' + shipping.address2 : '')}">
+                부산 금정구 123-11 10층
+            </div>
+        </div>
+    </div>
+</div>
+
+<div th:replace="~{main/footer.html}"></div>
 </body>
 </html>
-
-

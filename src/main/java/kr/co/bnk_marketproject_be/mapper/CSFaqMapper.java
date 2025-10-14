@@ -10,7 +10,6 @@ public interface CSFaqMapper {
 
     List<CSNoticeDTO> selectFaqList(Map<String, Object> params);
     List<CSNoticeDTO> selectFaqListByType(Map<String, Object> params);
-    CSNoticeDTO selectFaqDetail(Long id);
-    void insertFaq(CSNoticeDTO faq);
+    CSNoticeDTO selectFaqView(Long id);
 }
 

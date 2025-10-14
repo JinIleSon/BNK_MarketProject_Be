@@ -45,13 +45,12 @@
     ) sales
     ON sales.products_id = p.id
 
-    /* 리뷰: product_boards에서 type='review'만 */
     LEFT JOIN (
     SELECT pb.products_id,
     AVG(pb.rating) AS avg_rating,
     COUNT(*)       AS review_cnt
     FROM product_boards pb
-    WHERE pb.type = 'review'
+    WHERE UPPER(pb.type) = 'REVIEW'   -- ← 여기
     GROUP BY pb.products_id
     ) rv
     ON rv.products_id = p.id
@@ -107,7 +106,7 @@
     AVG(rating) AS rating_avg,
     COUNT(*)    AS rating_cnt
     FROM product_boards
-    WHERE type = 'review'
+    WHERE UPPER(type) = 'REVIEW'      -- ← 여기
     GROUP BY products_id
     ) r ON r.products_id = p.id
     <where>
@@ -181,17 +180,31 @@
         parameterType="int"
         resultType="kr.co.bnk_marketproject_be.dto.ProductViewsDTO">
     SELECT
-    p.id                 AS id,
-    p.product_code       AS product_code,
-    p.product_name       AS product_name,
-    p.description        AS description,
-    p.sub_description    AS sub_description,
-    TO_CHAR(p.created_at, 'YYYY-MM-DD HH24:MI:SS') AS created_at,
-    p.price              AS price,
-    p.discount           AS discount,
-    p.delichar           AS delichar,
-    p.sellers_id         AS sellers_id
+    p.id                         AS id,
+    p.product_code               AS product_code,
+    p.product_name               AS product_name,
+    p.description                AS description,
+    p.sub_description            AS sub_description,
+    TO_CHAR(p.created_at,'YYYY-MM-DD HH24:MI:SS') AS created_at,
+    p.price                      AS price,
+    NVL(p.discount,0)            AS discount,
+    NVL(p.delichar,0)            AS delichar,
+    p.sellers_id                 AS sellers_id,
+    s.brand_name                 AS brand_name,   <!-- ★ 여기 -->
+
+    /* 평점/리뷰 수 (기존 그대로) */
+    NVL((
+    SELECT ROUND(AVG(pb.rating),1)
+    FROM product_boards pb
+    WHERE pb.type='REVIEW' AND pb.products_id = p.id
+    ),0)                         AS rating_avg,
+    (
+    SELECT COUNT(1)
+    FROM product_boards pb
+    WHERE pb.type='REVIEW' AND pb.products_id = p.id
+    )                            AS rating_cnt
     FROM products p
+    LEFT JOIN sellers s ON s.id = p.sellers_id   <!-- ★ 연결 -->
     WHERE p.id = #{id}
 </select>
 
@@ -241,14 +254,60 @@
         parameterType="int"
         resultType="kr.co.bnk_marketproject_be.dto.ProductBoardsDTO">
     SELECT
-    SUBSTR(u.user_id, 1, 2) || '***'     AS userName,   -- ← nickname 대신 user_id 마스킹
-    pb.rating                             AS rating,
-    pb.content                            AS content,
-    TO_CHAR(pb.created_at,'YYYY-MM-DD')   AS createdAt
+    pb.id,
+    pb.products_id as products_id,
+    pb.users_id as users_id,
+    CASE
+    WHEN LENGTH(u.user_id) &lt;= 2 THEN u.user_id
+    ELSE SUBSTR(u.user_id, 1, 2)
+    || RPAD('*', GREATEST(LENGTH(u.user_id) - 2, 0), '*')
+    END AS user_id,
+    pb.type,
+    pb.title,
+    pb.content,
+    pb.rating,
+    TO_CHAR(pb.created_at,'YYYY-MM-DD') AS created_at
     FROM product_boards pb
     JOIN users u ON u.id = pb.users_id
     WHERE pb.type = 'REVIEW'
     AND pb.products_id = #{id}
     ORDER BY pb.created_at DESC
 </select>
+
+<!-- 리뷰 총 카운트 -->
+<select id="countProductReviews" resultType="int">
+    SELECT COUNT(1)
+    FROM product_boards pb
+    WHERE pb.type = 'REVIEW'
+    AND pb.products_id = #{productId}
+</select>
+
+<!-- 리뷰 페이지네이션 목록 -->
+<select id="selectProductReviewsPaged"
+        resultType="kr.co.bnk_marketproject_be.dto.ProductBoardsDTO">
+    SELECT
+    pb.id,
+    pb.products_id  AS products_id,
+    pb.users_id     AS users_id,
+    CASE
+    WHEN LENGTH(u.user_id) &lt;= 2 THEN u.user_id
+    ELSE SUBSTR(u.user_id, 1, 2)
+    || RPAD('*', GREATEST(LENGTH(u.user_id) - 2, 0), '*')
+    END             AS user_id,
+    pb.type,
+    pb.title,
+    pb.content,
+    pb.rating,
+    TO_CHAR(pb.created_at,'YYYY-MM-DD') AS created_at
+    FROM product_boards pb
+    JOIN users u ON u.id = pb.users_id
+    WHERE pb.type = 'REVIEW'
+    AND pb.products_id = #{productId}
+    ORDER BY pb.created_at DESC
+    <![CDATA[
+    OFFSET #{req.offset} ROWS
+    FETCH NEXT #{req.size} ROWS ONLY
+    ]]>
+</select>
+
 </mapper>

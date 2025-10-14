@@ -5,7 +5,6 @@ import kr.co.bnk_marketproject_be.mapper.AdminCategoryMapper;
 import kr.co.bnk_marketproject_be.service.AdminCategoryService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
-// 👇 스프링 트랜잭션으로 교체
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -22,62 +21,65 @@ public class AdminCategoryServiceImpl implements AdminCategoryService {
         return mapper.findAll();
     }
 
+    /** ✅ 1차 카테고리 추가 (parent_id = null) */
     @Transactional
     @Override
     public void addParentCategory(String name) {
-        Integer nextNo = mapper.nextOrderForParent(null);
-        mapper.insert(new AdminCategoryDTO(null, name, null, nextNo));
+        mapper.insert(new AdminCategoryDTO(null, name, null, null)); // category_no 자동
     }
 
+    /** ✅ 2차 카테고리 추가 (parent_id 존재) */
     @Transactional
     @Override
     public void addChildCategory(Integer parentId, String name) {
-        Integer nextNo = mapper.nextOrderForParent(parentId);
-        mapper.insert(new AdminCategoryDTO(null, name, parentId, nextNo));
+        mapper.insert(new AdminCategoryDTO(null, name, parentId, null));
     }
 
+    /** ✅ 카테고리 삭제 (자식 포함 + 재정렬) */
     @Transactional
     @Override
     public void deleteCategory(Integer id) {
-        mapper.deleteChildren(id);
-        mapper.delete(id);
-    }
+        // 1️⃣ 삭제 전, parent_id 확보
+        AdminCategoryDTO deleted = mapper.findById(id);
+        if (deleted == null) return;
 
-    // ✅ 커밋에서 먼저 실행되는 삭제(별도 트랜잭션으로 확정 커밋)
-    @Override
-    @Transactional(propagation = Propagation.REQUIRES_NEW)
-    public void deleteAll(List<Integer> ids) {
-        if (ids == null || ids.isEmpty()) return;
-        for (Integer id : ids) {
-            mapper.deleteChildren(id);
-            mapper.delete(id);
+        // 2️⃣ 자식 먼저 삭제
+        mapper.deleteChildren(id);
+
+        // 3️⃣ 본인 삭제
+        mapper.delete(id);
+
+        // 4️⃣ 재정렬 — parentId 있는 경우만 호출 (null 전달 금지)
+        if (deleted.getParentId() != null) {
+            mapper.reorderAfterDelete(deleted.getParentId());
         }
     }
 
+    /** ✅ 다중 삭제 (각 항목별로 안전하게 처리) */
+    @Transactional(propagation = Propagation.REQUIRES_NEW)
+    @Override
+    public void deleteAll(List<Integer> ids) {
+        if (ids == null || ids.isEmpty()) return;
+        for (Integer id : ids) {
+            deleteCategory(id);
+        }
+    }
+
+    /** ✅ 전체 업데이트 (부모 먼저 → 자식 나중) */
     @Transactional
     @Override
     public void updateAll(List<AdminCategoryDTO> list) {
         if (list == null || list.isEmpty()) return;
 
-        // (선택) 간단 검증
-        for (AdminCategoryDTO dto : list) {
-            if (dto.getName() == null || dto.getName().isBlank()) {
-                throw new IllegalArgumentException("Category name is required");
-            }
-            if (dto.getCategoryNo() == null) {
-                dto.setCategoryNo(1);
-            }
-        }
-
-        // 1) 1차(부모: parentId == null) 먼저
+        // 부모 먼저
         list.stream()
                 .filter(c -> c.getParentId() == null)
                 .forEach(c -> {
-                    if (c.getId() == null) mapper.insert(c);  // 신규 → INSERT
-                    else mapper.update(c);                     // 기존 → UPDATE
+                    if (c.getId() == null) mapper.insert(c);
+                    else mapper.update(c);
                 });
 
-        // 2) 2차(자식: parentId != null) 다음
+        // 자식 나중에
         list.stream()
                 .filter(c -> c.getParentId() != null)
                 .forEach(c -> {
@@ -86,12 +88,12 @@ public class AdminCategoryServiceImpl implements AdminCategoryService {
                 });
     }
 
+    /** ✅ 특정 부모의 자식만 삭제 (null-safe) */
     @Override
     @Transactional
     public void deleteChildrenOnly(Integer parentId) {
+        if (parentId == null) return; // null-safe
         mapper.deleteChildren(parentId);
+        mapper.reorderAfterDelete(parentId);
     }
-
-
-
 }

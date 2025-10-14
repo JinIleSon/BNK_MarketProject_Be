@@ -14,10 +14,12 @@ public class ProductBoardsDTO {
     private int id;
     private int products_id;
     private int users_id;
-    private int name;
     private String type;
     private String title;
     private String content;
     private int rating;
     private String created_at;
+
+    // ★ 추가: 표시할 로그인 ID
+    private String user_id; // users.user_id
 }
