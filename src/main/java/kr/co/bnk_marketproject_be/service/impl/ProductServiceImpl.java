@@ -19,7 +19,7 @@ public class ProductServiceImpl implements ProductService {
 
     @Override
     public ProductViewsDTO getProductDetail(int id) {
-        // 1) 기본 상품만
+        // 1) 기본 상품(평점/개수 포함)
         ProductViewsDTO dto = productsMapper.selectProductDetailBase(id);
         if (dto == null) return null;
 
@@ -27,27 +27,37 @@ public class ProductServiceImpl implements ProductService {
         dto.setMainImage(productsMapper.selectMainImage(id));
         dto.setSubImages(productsMapper.selectProductDetailImages(id));
 
-        // 3) 평점/리뷰
-        Map<String, Object> agg = productsMapper.selectRatingAgg(id);
-        if (agg != null) {
-            dto.setRating_avg( agg.get("rating_avg") == null ? null : ((Number)agg.get("rating_avg")).doubleValue() );
-            dto.setRating_cnt( ((Number)agg.getOrDefault("rating_cnt", 0)).intValue() );
-        }
-        dto.setReviews(productsMapper.selectProductReviews(id));
-
         // 4) 옵션
         dto.setOptions(productsMapper.selectProductOptions(id));
 
-        // 5) 가격 계산(자바에서)
-        int price    = dto.getPrice();
-        int discount = dto.getDiscount();
-        int sale     = Math.max(price - Math.max(discount, 0), 0);
-        dto.setSale_price(sale);
-        int rate = (price > 0 && discount > 0) ? (int)Math.round(100.0*discount/price) : 0;
-        dto.setDiscount_rate(rate);
-        dto.setFreeDelivery(dto.getDelichar() == 0);
+        // 5) 자바 쪽 파생값 계산
+        dto.calculatePriceInfo();                  // sale_price, discount_rate, freeDelivery 계산
+
+        // (선택) rating_avg/rating_cnt 가 null 이면 fallback 집계쿼리
+        if (dto.getRating_avg() == null || dto.getRating_cnt() == 0) {
+            Map<String, Object> agg = productsMapper.selectRatingAgg(id);
+            if (agg != null) {
+                Object avg = agg.get("rating_avg");
+                dto.setRating_avg(avg == null ? 0.0 : ((Number) avg).doubleValue());
+                dto.setRating_cnt(((Number) agg.getOrDefault("rating_cnt", 0)).intValue());
+            }
+        }
 
         return dto;
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public PageResponseProductDTO<ProductBoardsDTO> getProductReviewPage(int productId,
+                                                                         PageRequestProductDTO req) {
+        // 총 개수
+        var total = productsMapper.countProductReviews(productId);
+        List<ProductBoardsDTO> list = total > 0
+                ? productsMapper.selectProductReviewsPaged(productId, req)
+                : List.of();
+
+        // 페이지 응답 DTO 조립 (네가 쓰던 PageResponseProductDTO 그대로 활용)
+        return new PageResponseProductDTO<>(req, list, total);
     }
 }
 

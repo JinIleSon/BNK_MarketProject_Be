@@ -34,4 +34,11 @@ public interface ProductsMapper {
 
     /** 옵션 목록 */
     List<ProductOptionsDTO> selectProductOptions(@Param("id") int id);
+
+    int countProductReviews(@Param("productId") int productId);
+
+    List<ProductBoardsDTO> selectProductReviewsPaged(
+            @Param("productId") int productId,
+            @Param("req") PageRequestProductDTO req
+    );
 }
