@@ -54,29 +54,37 @@
     </select>
 
     <!-- 주문 생성 -->
-    <insert id="insertOrder" parameterType="kr.co.bnk_marketproject_be.dto.OrdersDTO" useGeneratedKeys="true" keyProperty="id">
-        INSERT INTO orders (id, users_id, status, total_amount, order_code, created_at)
-        VALUES (orders_seq.NEXTVAL, #{users_id}, #{status}, #{total_amount}, #{order_code}, SYSDATE)
+    <insert id="insertOrder"
+            parameterType="kr.co.bnk_marketproject_be.dto.OrdersDTO"
+            useGeneratedKeys="true"
+            keyProperty="id"
+            keyColumn="ID">
+        INSERT INTO orders (users_id, status, total_amount, order_code, created_at)
+        VALUES (#{users_id}, #{status}, #{total_amount}, #{order_code}, SYSTIMESTAMP)
     </insert>
 
-    <insert id="insertPayment" parameterType="kr.co.bnk_marketproject_be.dto.PaymentsDTO">
-        INSERT INTO payments (id, orders_id, amount, method, status, paid_at)
-        VALUES (payments_seq.NEXTVAL, #{orders_id}, #{amount}, #{method}, #{status}, SYSDATE)
+    <insert id="insertPayment" parameterType="kr.co.bnk_marketproject_be.dto.PaymentsDTO"
+            useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO payments (orders_id, amount, method, status, paid_at)
+        VALUES (#{orders_id}, #{amount}, #{method}, #{status}, SYSTIMESTAMP)
     </insert>
 
-    <insert id="insertDelivery" parameterType="kr.co.bnk_marketproject_be.dto.DeliveriesDTO">
-        INSERT INTO deliveries (id, orders_id, recipient, delicom, zipcode, address, address2, status, delichar)
-        VALUES (deliveries_seq.NEXTVAL, #{orders_id}, #{recipient}, #{delicom}, #{zipcode}, #{address}, #{address2}, '배송준비', #{delichar})
+    <insert id="insertDelivery" parameterType="kr.co.bnk_marketproject_be.dto.DeliveriesDTO"
+            useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO deliveries (orders_id, recipient, delicom, zipcode, address, address2, status, delichar)
+        VALUES (#{orders_id}, #{recipient}, #{delicom}, #{zipcode}, #{address}, #{address2}, '배송준비', #{delichar})
     </insert>
+
 
     <!-- 장바구니의 특정 라인들을 주문아이템으로 복사하는 방식이라면 이 쿼리 대신 개별 insert 사용 -->
     <insert id="insertOrderItemFromCart">
-        INSERT INTO order_items (id, orders_id, products_id, product_options_id, quantity, price)
-        SELECT order_items_seq.NEXTVAL, #{orderId}, oi.products_id, oi.product_options_id, oi.quantity, p.price
+        INSERT INTO order_items (orders_id, products_id, product_options_id, quantity, price)
+        SELECT #{orderId}, oi.products_id, oi.product_options_id, oi.quantity, p.price
         FROM order_items oi
         JOIN products p ON p.id = oi.products_id
         WHERE oi.id = #{orderItemId}
     </insert>
+
 
     <update id="decreaseStock">
         UPDATE products
@@ -92,27 +100,25 @@
     </update>
 
     <insert id="consumePoint">
-        INSERT INTO point_ledgers (id, users_id, change_amount, balance, description, created_at, board_type)
+        INSERT INTO point_ledgers (users_id, change_amount, balance, description, created_at, board_type)
         VALUES (
-        point_ledgers_seq.NEXTVAL,
         #{userId},
         -#{amount},
         (SELECT NVL(MAX(balance),0) FROM point_ledgers WHERE users_id=#{userId}) - #{amount},
         #{orderId},
-        SYSDATE,
+        SYSTIMESTAMP,
         'ORDER_USE'
         )
     </insert>
 
     <insert id="addRewardPoint">
-        INSERT INTO point_ledgers (id, users_id, change_amount, balance, description, created_at, board_type)
+        INSERT INTO point_ledgers (users_id, change_amount, balance, description, created_at, board_type)
         VALUES (
-        point_ledgers_seq.NEXTVAL,
         #{userId},
         #{amount},
         (SELECT NVL(MAX(balance),0) FROM point_ledgers WHERE users_id=#{userId}) + #{amount},
         #{orderId},
-        SYSDATE,
+        SYSTIMESTAMP,
         'ORDER_REWARD'
         )
     </insert>
@@ -169,7 +175,7 @@
         SELECT id
         FROM orders
         WHERE users_id = #{userId}
-        AND status = '결제대기(장바구니)'
+        AND status = '결제대기'
         ORDER BY id DESC
         FETCH FIRST 1 ROWS ONLY
     </select>
@@ -179,8 +185,8 @@
         MERGE INTO order_items t
         USING (
         SELECT
-        #{orderId}                 AS orders_id,
-        #{productId}               AS products_id,
+        #{orderId} AS orders_id,
+        #{productId} AS products_id,
         #{optionId,jdbcType=INTEGER} AS product_options_id
         FROM dual
         ) s
@@ -195,9 +201,8 @@
         WHEN MATCHED THEN
         UPDATE SET t.quantity = t.quantity + #{qty}
         WHEN NOT MATCHED THEN
-        INSERT (id, orders_id, products_id, product_options_id, quantity, price)
+        INSERT (orders_id, products_id, product_options_id, quantity, price)
         VALUES (
-        order_items_seq.NEXTVAL,
         #{orderId},
         #{productId},
         #{optionId,jdbcType=INTEGER},

@@ -419,18 +419,18 @@
             <div style="height:100px; margin-top:40px; display:flex; justify-content:center;">
                 <input class="prev-page"
                        th:if="${rp != null and rp.prev}"
-                       th:onclick="|location.href='@{/product/views(id=*{id}, rpg=${rp.start - 1}, rsize=${rp.size}, uid=${uid})}'|"
+                       th:onclick="|location.href='@{/product/views(id=*{id}, rpg=${rp.start - 1}, rsize=${rp.size})}'|"
                        type="button" value="&lt; 이전">
 
                 <th:block th:if="${rp != null}" th:each="num : ${#numbers.sequence(rp.start, rp.end)}">
                     <input th:class="${num == rp.pg ? 'current' : 'num'}"
-                           th:onclick="|location.href='@{/product/views(id=*{id}, rpg=${num}, rsize=${rp.size}, uid=${uid})}'|"
+                           th:onclick="|location.href='@{/product/views(id=*{id}, rpg=${num}, rsize=${rp.size})}'|"
                            th:value="${num}" type="button"/>
                 </th:block>
 
                 <input class="next-page"
                        th:if="${rp != null and rp.next}"
-                       th:onclick="|location.href='@{/product/views(id=*{id}, rpg=${rp.end + 1}, rsize=${rp.size}, uid=${uid})}'|"
+                       th:onclick="|location.href='@{/product/views(id=*{id}, rpg=${rp.end + 1}, rsize=${rp.size})}'|"
                        type="button" value="다음 &gt;">
             </div>
         </div>
