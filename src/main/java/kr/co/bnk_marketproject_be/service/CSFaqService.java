@@ -15,6 +15,7 @@ public class CSFaqService {
 
     private final CSFaqMapper faqMapper;
 
+    // Faq List
     public List<CSNoticeDTO> getFaqList(int offset, int limit) {
         Map<String,Object> params = new HashMap<>();
         params.put("offset", offset);
@@ -30,13 +31,11 @@ public class CSFaqService {
         return faqMapper.selectFaqListByType(params);
     }
 
-    public CSNoticeDTO getFaqDetail(Long id) {
-        return faqMapper.selectFaqDetail(id);
+    // Faq view
+    public CSNoticeDTO getFaqView(Long id) {
+        return faqMapper.selectFaqView(id);
     }
 
-    public void insertFaq(CSNoticeDTO faq) {
-        faqMapper.insertFaq(faq);
-    }
 }
 
 
