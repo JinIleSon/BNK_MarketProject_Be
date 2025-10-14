@@ -252,19 +252,16 @@
                     </div>
 
                     <form id="termsForm" class="modal-body review-form" method="post" action="/NICHIYA/admin/terms">
-                        <!-- CSRF 토큰(프로젝트에 맞게 바인딩) -->
-                        <!--<input type="hidden" name="_csrf" th:value="${_csrf.token}">-->
-                        <!-- 어떤 섹션인지(BUYER/SELLER/FINANCE/LOCATION/PRIVACY) -->
                         <input type="hidden" name="type" id="termsType">
 
                         <table class="review-grid" style="border-top:1px solid #eee;">
                             <tr>
                                 <td>약관 내용</td>
                                 <td>
-            <textarea id="termsTextarea" name="content" maxlength="500"
-                      placeholder="수정할 약관 내용을 입력하세요 (최대 500자)"
+            <textarea id="termsTextarea" name="content" maxlength="4000"
+                      placeholder="수정할 약관 내용을 입력하세요 (최대 4000자)"
                       style="width:100%; min-height:160px;"></textarea>
-                                    <div class="char-count"><span id="termsCount">0</span>/500</div>
+                                    <div class="char-count"><span id="termsCount">0</span>/4000</div>
                                 </td>
                             </tr>
                         </table>
@@ -488,9 +485,9 @@
                 alert('약관 내용을 입력해 주세요.');
                 return;
             }
-            if ($textarea.value.length > 500) {
+            if ($textarea.value.length > 4000) {
                 e.preventDefault();
-                alert('약관 내용은 500자 이내여야 합니다.');
+                alert('약관 내용은 4000자 이내여야 합니다.');
                 return;
             }
             // 정상 submit → 닫기는 서버 응답 후 페이지 리로드로 처리
