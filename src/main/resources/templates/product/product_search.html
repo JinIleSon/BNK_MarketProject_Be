@@ -53,6 +53,8 @@
                 <button style="margin:0 30px; background:#000; color:#fff; border:none; height:34px; width:57px;">검색
                 </button>
                 <label><input name="searchType" th:checked="${query.searchType}=='name'" type="radio" value="name"> 상품명</label>
+                <!-- ★ 현재 카테고리 유지 - 추가 손진일 -->
+                <input type="hidden" name="categoryId" th:if="${categoryId != null}" th:value="${categoryId}">
                 <label style="margin-left:10px;"><input name="searchType" th:checked="${query.searchType}=='explain'" type="radio"
                                                         value="explain"> 설명</label>
                 <label style="margin-left:10px;"><input name="searchType" th:checked="${query.searchType}=='price'" type="radio"

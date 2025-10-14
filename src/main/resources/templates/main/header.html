@@ -223,10 +223,10 @@
                         <h3>패션</h3>
                         <!-- 이 안은 자유롭게: 그리드/이미지/텍스트 무엇이든 -->
                         <ul class="menu-grid" style="">
-                        <li><a href="#">여성의류</a></li>
-                        <li><a href="#">남성의류</a></li>
-                        <li><a href="#">키즈의류</a></li>
-                        <li><a href="#">스포츠의류</a></li>
+                        <li><a th:href="@{/product/list(categoryId=4, sort='recent', pg=1, size=8)}">여성의류</a></li>
+                        <li><a th:href="@{/product/list(categoryId=3, sort='recent', pg=1, size=8)}">남성의류</a></li>
+                        <li><a th:href="@{/product/list(categoryId=2, sort='recent', pg=1, size=8)}">키즈의류</a></li>
+                        <li><a th:href="@{/product/list(categoryId=5, sort='recent', pg=1, size=8)}">스포츠의류</a></li>
                         <!-- … -->
                         </ul>
                     </section>
@@ -235,8 +235,8 @@
                     <section class="panel" data-key="beauty">
                         <h3>뷰티</h3>
                         <div class="menu-grid">
-                        <a href="#">화장품</a>
-                        <a href="#">향수</a>
+                        <a th:href="@{/product/list(categoryId=7,  sort='recent', pg=1, size=8)}">화장품</a>
+                        <a th:href="@{/product/list(categoryId=8,  sort='recent', pg=1, size=8)}">향수</a>
                         </div>
                     </section>
 
@@ -244,8 +244,8 @@
                     <section class="panel" data-key="electronics">
                         <h3>전자제품</h3>
                         <div class="menu-grid">
-                            <a href="#">생활기기</a>
-                            <a href="#">음향기기</a>
+                            <a th:href="@{/product/list(categoryId=10, sort='recent', pg=1, size=8)}">생활기기</a>
+                            <a th:href="@{/product/list(categoryId=11, sort='recent', pg=1, size=8)}">음향기기</a>
                         </div>
                     </section>
 
@@ -253,8 +253,8 @@
                     <section class="panel" data-key="home">
                         <h3>홈</h3>
                         <div class="menu-grid">
-                            <a href="#">대형가구</a>
-                            <a href="#">소형가구</a>
+                            <a th:href="@{/product/list(categoryId=13, sort='recent', pg=1, size=8)}">대형가구</a>
+                            <a th:href="@{/product/list(categoryId=14, sort='recent', pg=1, size=8)}">소형가구</a>
                         </div>
                     </section>
 
@@ -262,8 +262,8 @@
                     <section class="panel" data-key="leisure">
                         <h3>레저</h3>
                         <div class="menu-grid">
-                            <a href="#">스터프</a>
-                            <a href="#">탈것</a>
+                            <a th:href="@{/product/list(categoryId=16, sort='recent', pg=1, size=8)}">스터프</a>
+                            <a th:href="@{/product/list(categoryId=17, sort='recent', pg=1, size=8)}">탈것</a>
                         </div>
                     </section>
                 </div>
