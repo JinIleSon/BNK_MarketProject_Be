@@ -96,7 +96,8 @@ public class OrdersService {
         // 아이템/재고/결제/배송/쿠폰/포인트 처리 (기존 로직 유지)
         for (var r : cart.getItems()) {
             ordersMapper.insertOrderItemFromCart(orderId, r.getOrder_item_id());
-            ordersMapper.decreaseStock(r.getId(), r.getQuantity());
+            // 여기! 상품 ID는 product_id 로 들어옵니다.
+            ordersMapper.decreaseStock(r.getProduct_code(), r.getQuantity());
         }
         ordersMapper.insertPayment(PaymentsDTO.builder()
                 .orders_id(orderId)

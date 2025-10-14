@@ -38,6 +38,15 @@
 <body th:object="${complete}">
 <div th:replace="~{main/header.html}"></div>
 
+<!-- 헤더 장바구니 링크에도 uid 유지 -->
+<script th:inline="javascript">
+    const CART_PAGE_URL_TPL = /*[[@{/product/cart(uid=${uid})}]]*/ '/product/cart';
+    document.addEventListener('DOMContentLoaded', () => {
+        const link = document.getElementById('basketCountLink');
+        if (link) link.setAttribute('href', CART_PAGE_URL_TPL);
+    });
+</script>
+
 <!-- 본문 -->
 <div style="height:100%; display:flex; flex-direction:column; justify-content:center; align-items:center; margin:0 auto;">
     <div style="display:flex;">
@@ -107,7 +116,7 @@
             <div style="margin-bottom:6px;">
                 <div>총 할인금액
                     <span style="float:right;"
-                          th:text="|-${#numbers.formatInteger(*{summary.discountAmount + (summary.couponAmount != null ? summary.couponAmount : 0) + (summary.pointUse != null ? summary.pointUse : 0)}, 3, 'COMMA')} 원|">-1,350 원</span>
+                          th:text="|-${#numbers.formatInteger((*{summary.discountAmount} + (*{summary.couponAmount} != null ? *{summary.couponAmount} : 0) + (*{summary.pointUse} != null ? *{summary.pointUse} : 0)), 3, 'COMMA')} 원|">-1,350 원</span>
                 </div>
             </div>
             <div style="margin-bottom:6px;">
@@ -137,7 +146,8 @@
             <div>연락처</div>
         </div>
         <div style="padding-left:19px; display:flex; justify-content:center; flex-direction:column;">
-            <div style="margin-bottom:7px;" th:text="*{orderCode}">1000121121</div>
+            <!-- ✅ orderCode → orderId 로 바인딩 (쿼리에서 orderId를 내려줌) -->
+            <div style="margin-bottom:7px;" th:text="*{orderId}">1000121121</div>
             <div style="margin-bottom:7px;" th:text="*{payMethod}">신용카드</div>
             <div style="margin-bottom:7px;" th:text="*{buyerName}">홍길동</div>
             <div style="margin-bottom:4px;" th:text="*{buyerPhone}">010-1234-1234</div>
