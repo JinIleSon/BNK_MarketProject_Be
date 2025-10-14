@@ -27,10 +27,8 @@ public class CSFaqController {
             boardType = "faq";
         }
 
-        // ✅ 기존 서비스 그대로 사용 (Map 제거)
         List<CSNoticeDTO> faqList = faqService.getFaqListByType(boardType, 0, 100);
 
-        // ✅ subType이 있으면 title 기준으로 필터링
         if (subType != null && !subType.isEmpty()) {
             faqList = faqList.stream()
                     .filter(faq -> faq.getTitle() != null && faq.getTitle().contains(subType))
@@ -45,17 +43,10 @@ public class CSFaqController {
     }
 
     /* FAQ 상세 미구현 */
-    @GetMapping("/detail/{id}")
-    public String detail(@PathVariable Long id, Model model) {
-        CSNoticeDTO faq = faqService.getFaqDetail(id);
+    @GetMapping("/view")
+    public String faqview(@RequestParam("id") Long id, Model model) {
+        CSNoticeDTO faq = faqService.getFaqView(id);
         model.addAttribute("faq", faq);
         return "customer_service/faq/faq_view";
-    }
-
-    /* 관리자 FAQ 등록 미구현 */
-    @PostMapping("/write")
-    public String write(@ModelAttribute CSNoticeDTO faq) {
-        faqService.insertFaq(faq);
-        return "redirect:/faq/list";
     }
 }

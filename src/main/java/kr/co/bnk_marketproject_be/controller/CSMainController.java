@@ -8,10 +8,10 @@ import org.springframework.web.bind.annotation.GetMapping;
 @Controller
 @Slf4j
 @RequiredArgsConstructor
-public class PrivacyController {
+public class CSMainController {
 
-    @GetMapping("/policy/policy/terms")
-    public String list(){
-        return "policy/policy_terms";
+    @GetMapping("/cs/index")
+    public String index() {
+        return "customer_service/cs_main";
     }
 }

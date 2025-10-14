@@ -65,23 +65,16 @@
         OFFSET #{offset} ROWS FETCH NEXT #{limit} ROWS ONLY
     </select>
 
-
     <!-- FAQ view -->
-    <select id="selectFaqDetail" parameterType="long" resultType="kr.co.bnk_marketproject_be.dto.CSNoticeDTO">
+    <select id="selectFaqView" parameterType="long" resultType="kr.co.bnk_marketproject_be.dto.CSNoticeDTO">
         SELECT
             id,
             board_type AS boardType,
-            title
+            title,
+            content
         FROM board
         WHERE id = #{id}
     </select>
 
-
-    <!-- FAQ 등록 주석처리
-    <insert id="insertFaq" parameterType="kr.co.bnk_marketproject_be.dto.CSNoticeDTO">
-        INSERT INTO cs_notice (board_type, title, content, created_at)
-        VALUES (#{boardType}, #{title}, #{content}, NOW())
-    </insert>
-    -->
 
 </mapper>

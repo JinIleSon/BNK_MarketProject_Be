@@ -13,7 +13,7 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 @Builder
 public class ProductImagesDTO {
-    private int id;
+    private int orderId;
     private int products_id;
     private String url;
     private String is_main;

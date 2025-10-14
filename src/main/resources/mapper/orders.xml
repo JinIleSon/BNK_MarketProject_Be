@@ -1,0 +1,209 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="kr.co.bnk_marketproject_be.mapper.OrdersMapper">
+
+    <select id="selectCartLineRows" resultType="kr.co.bnk_marketproject_be.dto.OrderPageLineRowDTO">
+        SELECT
+        oi.id              AS order_item_id,
+        p.id               AS product_id,
+        p.product_code     AS product_code,
+        p.product_name     AS product_name,
+        po.option_name     AS option_name,
+        oi.quantity        AS quantity,
+        p.price            AS unit_price,
+        NVL(p.discount,0)  AS discount_rate,
+        img.url            AS url,
+        p.delichar         AS delichar
+        FROM order_items oi
+        JOIN orders o               ON o.id = oi.orders_id
+        JOIN products p             ON p.id = oi.products_id
+        LEFT JOIN product_options po ON po.id = oi.product_options_id
+        LEFT JOIN product_images img ON img.products_id = p.id AND img.is_main='Y'
+        WHERE o.users_id = #{userId}
+        AND o.status = '결제대기(장바구니)'
+        ORDER BY oi.id DESC
+    </select>
+
+    <!-- 쿠폰/포인트/기본배송지 -->
+    <select id="selectAvailableCoupons" resultType="kr.co.bnk_marketproject_be.dto.OrderPageCouponViewDTO">
+        SELECT id, coupon_name, discount_type, discount_value, company, note,
+        TO_CHAR(valid_from,'YYYY-MM-DD HH24:MI') AS valid_from,
+        TO_CHAR(valid_to,'YYYY-MM-DD HH24:MI')   AS valid_to,
+        status
+        FROM coupons
+        WHERE users_id = #{userId}
+        AND status = 'USABLE'
+        AND SYSDATE BETWEEN valid_from AND valid_to
+        ORDER BY id DESC
+    </select>
+
+    <select id="selectAvailablePoint" resultType="int">
+        SELECT NVL(MAX(balance),0)
+        FROM point_ledgers
+        WHERE users_id = #{userId}
+    </select>
+
+    <select id="selectDefaultShipping" resultType="kr.co.bnk_marketproject_be.dto.OrderPageShippingInfoDTO">
+        SELECT recipient, delicom, zipcode, address, address2, '' AS memo
+        FROM user_addresses
+        WHERE users_id = #{userId}
+        AND is_default='Y'
+    </select>
+
+    <!-- 주문 생성 -->
+    <insert id="insertOrder" parameterType="kr.co.bnk_marketproject_be.dto.OrdersDTO" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO orders (id, users_id, status, total_amount, order_code, created_at)
+        VALUES (orders_seq.NEXTVAL, #{users_id}, #{status}, #{total_amount}, #{order_code}, SYSDATE)
+    </insert>
+
+    <insert id="insertPayment" parameterType="kr.co.bnk_marketproject_be.dto.PaymentsDTO">
+        INSERT INTO payments (id, orders_id, amount, method, status, paid_at)
+        VALUES (payments_seq.NEXTVAL, #{orders_id}, #{amount}, #{method}, #{status}, SYSDATE)
+    </insert>
+
+    <insert id="insertDelivery" parameterType="kr.co.bnk_marketproject_be.dto.DeliveriesDTO">
+        INSERT INTO deliveries (id, orders_id, recipient, delicom, zipcode, address, address2, status, delichar)
+        VALUES (deliveries_seq.NEXTVAL, #{orders_id}, #{recipient}, #{delicom}, #{zipcode}, #{address}, #{address2}, '배송준비', #{delichar})
+    </insert>
+
+    <!-- 장바구니의 특정 라인들을 주문아이템으로 복사하는 방식이라면 이 쿼리 대신 개별 insert 사용 -->
+    <insert id="insertOrderItemFromCart">
+        INSERT INTO order_items (id, orders_id, products_id, product_options_id, quantity, price)
+        SELECT order_items_seq.NEXTVAL, #{orderId}, oi.products_id, oi.product_options_id, oi.quantity, p.price
+        FROM order_items oi
+        JOIN products p ON p.id = oi.products_id
+        WHERE oi.id = #{orderItemId}
+    </insert>
+
+    <update id="decreaseStock">
+        UPDATE products
+        SET stock = stock - #{qty}
+        WHERE id = #{productId}
+        AND stock >= #{qty}
+    </update>
+
+    <update id="markCouponUsed">
+        UPDATE coupons
+        SET status='USED'
+        WHERE id=#{couponId}
+    </update>
+
+    <insert id="consumePoint">
+        INSERT INTO point_ledgers (id, users_id, change_amount, balance, description, created_at, board_type)
+        VALUES (
+        point_ledgers_seq.NEXTVAL,
+        #{userId},
+        -#{amount},
+        (SELECT NVL(MAX(balance),0) FROM point_ledgers WHERE users_id=#{userId}) - #{amount},
+        #{orderId},
+        SYSDATE,
+        'ORDER_USE'
+        )
+    </insert>
+
+    <insert id="addRewardPoint">
+        INSERT INTO point_ledgers (id, users_id, change_amount, balance, description, created_at, board_type)
+        VALUES (
+        point_ledgers_seq.NEXTVAL,
+        #{userId},
+        #{amount},
+        (SELECT NVL(MAX(balance),0) FROM point_ledgers WHERE users_id=#{userId}) + #{amount},
+        #{orderId},
+        SYSDATE,
+        'ORDER_REWARD'
+        )
+    </insert>
+
+    <delete id="clearCartByUser">
+        DELETE FROM order_items
+        WHERE orders_id IN (
+        SELECT id FROM orders
+        WHERE users_id=#{userId}
+        AND status='결제대기(장바구니)'
+        )
+    </delete>
+
+    <!-- 완료 화면 -->
+    <select id="selectOrderLines" parameterType="int" resultType="kr.co.bnk_marketproject_be.dto.OrderPageLineRowDTO">
+        SELECT
+        pr.id           AS id,
+        pr.product_code AS product_code,
+        pr.product_name AS product_name,
+        po.option_name  AS option_name,
+        oi.quantity     AS quantity,
+        pr.price        AS unitPrice,
+        pr.discount     AS discountRate,
+        img.url         AS url,
+        pr.delichar     AS delichar
+        FROM order_items oi
+        JOIN products pr           ON pr.id = oi.products_id
+        LEFT JOIN product_options po ON po.id = oi.product_options_id
+        LEFT JOIN product_images img ON img.products_id = pr.id AND img.is_main = 'Y'
+        WHERE oi.orders_id = #{orderId}
+    </select>
+
+    <select id="selectOrderCompleteHeader" parameterType="int" resultType="kr.co.bnk_marketproject_be.dto.ProductCompleteDTO">
+        SELECT
+        o.id            AS orderId,      <!-- ✅ DTO 필드명과 일치 -->
+        p.method        AS payMethod,
+        u.name          AS buyerName,
+        u.phone         AS buyerPhone,
+        to_char(o.created_at, 'YYYY-MM-DD HH24:MI:SS') AS completedAt,
+        d.recipient     AS "shipping.recipient",
+        d.delicom       AS "shipping.delicom",
+        d.zipcode       AS "shipping.zipcode",
+        d.address       AS "shipping.address",
+        d.address2      AS "shipping.address2"
+        FROM orders o
+        JOIN users u        ON u.id = o.users_id
+        LEFT JOIN payments p ON p.orders_id = o.id
+        LEFT JOIN deliveries d ON d.orders_id = o.id
+        WHERE o.id = #{orderId}
+    </select>
+
+    <!-- ✅ 사용자의 "결제대기(장바구니)" 주문 id 조회 -->
+    <select id="selectOpenCartId" resultType="int">
+        SELECT id
+        FROM orders
+        WHERE users_id = #{userId}
+        AND status = '결제대기(장바구니)'
+        ORDER BY id DESC
+        FETCH FIRST 1 ROWS ONLY
+    </select>
+
+    <!-- ✅ 장바구니 MERGE: 같은 상품(+옵션)은 수량 증가, 없으면 신규 insert -->
+    <update id="mergeCartItem">
+        MERGE INTO order_items t
+        USING (
+        SELECT
+        #{orderId}                 AS orders_id,
+        #{productId}               AS products_id,
+        #{optionId,jdbcType=INTEGER} AS product_options_id
+        FROM dual
+        ) s
+        ON (
+        t.orders_id = s.orders_id
+        AND t.products_id = s.products_id
+        AND (
+        (t.product_options_id IS NULL AND s.product_options_id IS NULL)
+        OR t.product_options_id = s.product_options_id
+        )
+        )
+        WHEN MATCHED THEN
+        UPDATE SET t.quantity = t.quantity + #{qty}
+        WHEN NOT MATCHED THEN
+        INSERT (id, orders_id, products_id, product_options_id, quantity, price)
+        VALUES (
+        order_items_seq.NEXTVAL,
+        #{orderId},
+        #{productId},
+        #{optionId,jdbcType=INTEGER},
+        #{qty},
+        (SELECT price FROM products WHERE id = #{productId})
+        )
+    </update>
+
+</mapper>
