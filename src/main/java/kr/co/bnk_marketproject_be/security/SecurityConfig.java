@@ -74,12 +74,14 @@ public class SecurityConfig {
                         "/main/**",
                         "/product/**",
                         "/cs/**",
-                        "/member/**"
+                        "/member/**",
+                        "/mypage/**"
 
                 ).permitAll()
 
                 // 🔹 일반 회원, 셀러 접근 허용
                 .requestMatchers("/article/**").hasAnyRole("user", "seller", "admin")
+                .requestMatchers("/mypage/**").hasAnyRole("user", "seller", "admin")
                 .requestMatchers("/admin/**").hasAnyRole( "admin")
 
                 // 🔹 관리자(admin)는 모든 페이지 접근 가능

@@ -103,35 +103,8 @@
   </style>
 </head>
 <body>
-    <!--헤더푸터 연결-->
-    <script>
-        fetch("../main/header.html")
-          .then(res => res.text())
-          .then(data => {
-            document.getElementById("header").innerHTML = data;
-
-            // header.html 안의 스크립트 실행 강제
-            const scripts = document.getElementById("header").querySelectorAll("script");
-            scripts.forEach(oldScript => {
-            const newScript = document.createElement("script");
-            if (oldScript.src) {
-                newScript.src = oldScript.src;
-            } else {
-                newScript.textContent = oldScript.textContent;
-            }
-            document.body.appendChild(newScript);
-            });
-          });
-
-       
-        fetch("../main/footer.html")
-          .then(res => res.text())
-          .then(data => {
-            document.getElementById("footer").innerHTML = data;
-          });
-    </script>
     <main>
-        <div id="header"></div>
+        <div th:replace="~{main/header.html}"></div>
         <div style="background-color: #f6f5f5; border-bottom: 1px solid #dddddd;">
             <div style="display: flex; justify-content: center; align-items: center;">
                 <div style="width:1270px; font-size:15px; height:70px; display: flex; align-items: center; ">
@@ -170,7 +143,7 @@
                 <div style="width: 100%;">
                     <div style="margin-top:30px; display: flex; justify-content: center;">
                         <div>
-                          <img src="/images/mypage_mainBanner2.jpg" alt="" style="width:400px;">
+                          <img th:src="@{/images/mypage_mainBanner2.jpg}" alt="" style="width:400px;">
                           <div style="font-size:10px;">Image by <a href="https://www.freepik.com" target="_blank" style="color:inherit; text-decoration:none;">Freepik</a></div>
                         </div>
                     </div>
@@ -191,7 +164,7 @@
                                 <td style="text-align: left; padding-left:10px;">
                                     <div style="display: flex; align-items: center;">
                                         <div>
-                                            <img src="/images/product_list1.jpg" alt="" style="height:121px;">
+                                            <img th:src="@{/images/product_list1.jpg}" alt="" style="height:121px;">
                                         </div>
                                         <div style="padding-left:30px; letter-spacing: -1px;">
                                             <div style="margin-bottom:5px;"><a href="#" class="order-link" data-order-id="1012211341" style="color:gray;">주문번호 : 1012211341</a></div>
@@ -215,7 +188,7 @@
                                 <td style="text-align: left; padding-left:10px;">
                                     <div style="display: flex; align-items: center;">
                                         <div>
-                                            <img src="/images/product_list1.jpg" alt="" style="height:121px;">
+                                            <img th:src="@{/images/product_list1.jpg}" alt="" style="height:121px;">
                                         </div>
                                         <div style="padding-left:30px; letter-spacing: -1px;">
                                             <div style="margin-bottom:5px;"><a href="#" class="order-link" data-order-id="1012211341" style="color:gray;">주문번호 : 1012211341</a></div>
@@ -239,7 +212,7 @@
                                 <td style="text-align: left; padding-left:10px;">
                                     <div style="display: flex; align-items: center;">
                                         <div>
-                                            <img src="/images/product_list1.jpg" alt="" style="height:121px;">
+                                            <img th:src="@{/images/product_list1.jpg}" alt="" style="height:121px;">
                                         </div>
                                         <div style="padding-left:30px; letter-spacing: -1px;">
                                             <div style="margin-bottom:5px;"><a href="#" class="order-link" data-order-id="1012211341" style="color:gray;">주문번호 : 1012211341</a></div>
@@ -263,7 +236,7 @@
                                 <td style="text-align: left; padding-left:10px;">
                                     <div style="display: flex; align-items: center;">
                                         <div>
-                                            <img src="/images/product_list1.jpg" alt="" style="height:121px;">
+                                            <img th:src="@{/images/product_list1.jpg}" alt="" style="height:121px;">
                                         </div>
                                         <div style="padding-left:30px; letter-spacing: -1px;">
                                             <div style="margin-bottom:5px;"><a href="#" class="order-link" data-order-id="1012211341" style="color:gray;">주문번호 : 1012211341</a></div>
@@ -287,7 +260,7 @@
                                 <td style="text-align: left; padding-left:10px;">
                                     <div style="display: flex; align-items: center;">
                                         <div>
-                                            <img src="/images/product_list1.jpg" alt="" style="height:121px;">
+                                            <img th:src="@{/images/product_list1.jpg}" alt="" style="height:121px;">
                                         </div>
                                         <div style="padding-left:30px; letter-spacing: -1px;">
                                             <div style="margin-bottom:5px;"><a href="#" class="order-link" data-order-id="1012211341" style="color:gray;">주문번호 : 1012211341</a></div>
@@ -310,7 +283,7 @@
                     </div>
                     <div style="margin-top:30px; display: flex; justify-content: center;">
                         <div>
-                          <img src="/images/mypage_mainBanner3.jpg" alt="" style="width:400px;">
+                          <img th:src="@{/images/mypage_mainBanner3.jpg}" alt="" style="width:400px;">
                           <div style="font-size:10px;">Image by <a href="https://www.freepik.com" target="_blank" style="color:inherit; text-decoration:none;">Freepik</a></div>
                         </div>
                     </div>
@@ -422,7 +395,7 @@
                     </div>
                     <div style="margin-top:30px; display: flex; justify-content: center;">
                         <div>
-                          <img src="/images/mypage_mainBanner4.jpg" alt="" style="width:400px;">
+                          <img th:src="@{/images/mypage_mainBanner4.jpg}" alt="" style="width:400px;">
                           <div style="font-size:10px; padding-left:15px;">Image by <a href="https://www.freepik.com" target="_blank" style="color:inherit; text-decoration:none;">Freepik</a></div>
                         </div>
                     </div>
@@ -519,13 +492,13 @@
             </div>
         </div>
         <div style="margin-top:100px;"></div>
-        <div id="footer"></div>
+        <div th:replace="~{main/footer.html}"></div>
     </main>
     <!-- 주문 상세 마이페이지_메인#2-->
     <!-- ===== 모달 마크업 ===== -->
   <div class="modal-backdrop" id="orderModalBackdrop" aria-hidden="true"></div>
-  <div class="modal" id="orderModal" role="dialog" aria-modal="true" aria-labelledby="orderModalTitle" aria-hidden="true">
-    <div class="modal-dialog" tabindex="-1" style="border-radius: 0px !important;">
+  <div class="modal" id="orderModal" role="dialog}" aria-modal="true" aria-labelledby="orderModalTitle" aria-hidden="true">
+    <div class="modal-dialog}" tabindex="-1" style="border-radius: 0px !important;">
       <div class="modal-header" style="border-radius: 0px !important;">
         <div>
           <span id="orderModalTitle">주문상세</span>
@@ -555,7 +528,7 @@
                     <td style="text-align: left; padding-left:10px;">
                         <div style="display: flex; align-items: center;">
                             <div>
-                                <img src="/images/product_list1.jpg" alt="" style="height:121px;">
+                                <img th:src="@{/images/product_list1.jpg}" alt="" style="height:121px;">
                             </div>
                             <div style="padding-left:30px; letter-spacing: -1px;">
                                 <div style="margin-bottom:5px;"><a href="#" class="order-link" data-order-id="1012211341" style="color:gray;">주문번호 : 1012211341</a></div>
@@ -680,8 +653,8 @@
   <!-- 주문 상세 마이페이지_메인#3-->
    <!-- ===== 판매자정보 모달 ===== -->
 <div class="modal-backdrop" id="sellerModalBackdrop" aria-hidden="true"></div>
-<div class="modal" id="sellerModal" role="dialog" aria-modal="true" aria-labelledby="sellerModalTitle" aria-hidden="true">
-  <div class="modal-dialog" tabindex="-1" style="border-radius:0 !important;">
+<div class="modal" id="sellerModal" role="dialog}" aria-modal="true" aria-labelledby="sellerModalTitle" aria-hidden="true">
+  <div class="modal-dialog}" tabindex="-1" style="border-radius:0 !important;">
     <div class="modal-header" style="border-radius:0 !important;">
       <div>
         <span id="sellerModalTitle">판매자정보</span>
@@ -783,8 +756,8 @@
   <!-- 주문 상세 마이페이지_메인#4-->
    <!-- ===== 문의하기 모달 ===== -->
 <div class="modal-backdrop" id="inquiryModalBackdrop" aria-hidden="true"></div>
-<div class="modal" id="inquiryModal" role="dialog" aria-modal="true" aria-labelledby="inquiryModalTitle" aria-hidden="true">
-  <div class="modal-dialog" tabindex="-1" style="border-radius:0 !important; width:720px; max-width:calc(100% - 40px);">
+<div class="modal" id="inquiryModal" role="dialog}" aria-modal="true" aria-labelledby="inquiryModalTitle" aria-hidden="true">
+  <div class="modal-dialog}" tabindex="-1" style="border-radius:0 !important; width:720px; max-width:calc(100% - 40px);">
     <div class="modal-header" style="border-radius:0 !important;">
       <div><span id="inquiryModalTitle">문의하기</span></div>
       <button class="modal-close" type="button" aria-label="닫기" id="inquiryModalClose">✕</button>
@@ -913,8 +886,8 @@
   <!-- 주문 상세 마이페이지_메인#5-->
   <!-- ===== 구매확정 모달 ===== -->
   <div class="modal-backdrop" id="buyModalBackdrop" aria-hidden="true"></div>
-  <div class="modal" id="buyModal" role="dialog" aria-modal="true" aria-labelledby="buyModalTitle" aria-hidden="true">
-    <div class="modal-dialog" tabindex="-1" style="border-radius:0 !important; width:420px; max-width:calc(100% - 40px);">
+  <div class="modal" id="buyModal" role="dialog}" aria-modal="true" aria-labelledby="buyModalTitle" aria-hidden="true">
+    <div class="modal-dialog}" tabindex="-1" style="border-radius:0 !important; width:420px; max-width:calc(100% - 40px);">
       <div class="modal-header" style="border-radius:0 !important;">
         <div><span id="buyModalTitle">구매확정</span></div>
         <button class="modal-close" type="button" aria-label="닫기" id="buyClose">✕</button>
@@ -1016,9 +989,9 @@
   <!-- 주문 상세 마이페이지_메인#6-->
   <!-- ===== 상품평 모달 ===== -->
   <div class="modal-backdrop" id="reviewModalBackdrop" aria-hidden="true"></div>
-  <div class="modal" id="reviewModal" role="dialog" aria-modal="true"
+  <div class="modal" id="reviewModal" role="dialog}" aria-modal="true"
       aria-labelledby="reviewModalTitle" aria-hidden="true">
-    <div class="modal-dialog" tabindex="-1" style="border-radius:0 !important; width:720px; max-width:calc(100% - 40px);">
+    <div class="modal-dialog}" tabindex="-1" style="border-radius:0 !important; width:720px; max-width:calc(100% - 40px);">
       <div class="modal-header" style="border-radius:0 !important;">
         <div><span id="reviewModalTitle">상품평작성하기</span></div>
         <button class="modal-close" type="button" aria-label="닫기" id="reviewClose">✕</button>
@@ -1035,12 +1008,12 @@
           <tr>
             <td>만족도</td>
             <td>
-              <div class="rating" role="radiogroup" aria-label="만족도">
-                <input type="radio" id="star5" name="rating" value="5"><label for="star5" title="5점"></label>
-                <input type="radio" id="star4" name="rating" value="4"><label for="star4" title="4점"></label>
-                <input type="radio" id="star3" name="rating" value="3"><label for="star3" title="3점"></label>
-                <input type="radio" id="star2" name="rating" value="2"><label for="star2" title="2점"></label>
-                <input type="radio" id="star1" name="rating" value="1"><label for="star1" title="1점"></label>
+              <div class="rating}" role="radiogroup" aria-label="만족도">
+                <input type="radio" id="star5" name="rating}" value="5"><label for="star5" title="5점"></label>
+                <input type="radio" id="star4" name="rating}" value="4"><label for="star4" title="4점"></label>
+                <input type="radio" id="star3" name="rating}" value="3"><label for="star3" title="3점"></label>
+                <input type="radio" id="star2" name="rating}" value="2"><label for="star2" title="2점"></label>
+                <input type="radio" id="star1" name="rating}" value="1"><label for="star1" title="1점"></label>
               </div>
             </td>
           </tr>
@@ -1156,7 +1129,7 @@ rSentinel.addEventListener('focus', ()=> rModal.querySelector('.modal-close').fo
   // 제출
   rForm.addEventListener('submit', (e)=>{
     e.preventDefault();
-    const selected = rForm.querySelector('input[name="rating"]:checked');
+    const selected = rForm.querySelector('input[name="rating}"]:checked');
     const rating = selected ? Number(selected.value) : 0;
 
     if (rating === 0) { alert('만족도를 선택해주세요.'); return; }
@@ -1172,8 +1145,8 @@ rSentinel.addEventListener('focus', ()=> rModal.querySelector('.modal-close').fo
   <!-- 주문 상세 마이페이지_메인#7-->
    <!-- ===== 반품신청 모달 ===== -->
 <div class="modal-backdrop" id="returnModalBackdrop" aria-hidden="true"></div>
-<div class="modal" id="returnModal" role="dialog" aria-modal="true" aria-labelledby="returnModalTitle" aria-hidden="true">
-  <div class="modal-dialog" tabindex="-1" style="border-radius:0 !important; width:860px; max-width:calc(100% - 40px);">
+<div class="modal" id="returnModal" role="dialog}" aria-modal="true" aria-labelledby="returnModalTitle" aria-hidden="true">
+  <div class="modal-dialog}" tabindex="-1" style="border-radius:0 !important; width:860px; max-width:calc(100% - 40px);">
     <div class="modal-header" style="border-radius:0 !important;">
       <div>
         <span id="returnModalTitle">반품신청</span>
@@ -1199,7 +1172,7 @@ rSentinel.addEventListener('focus', ()=> rModal.querySelector('.modal-close').fo
               <td id="rtDate">0000-00-00</td>
               <td style="text-align:left; padding-left:10px;">
                 <div style="display:flex; align-items:center;">
-                  <div><img id="rtThumb" src="/images/product_list1.jpg" alt="" style="height:100px;"></div>
+                  <div><img id="rtThumb" th:src="@{/images/product_list1.jpg}" alt="" style="height:100px;"></div>
                   <div style="padding-left:20px; letter-spacing:-1px;">
                     <div style="margin-bottom:4px; color:gray;">주문번호 : <span id="rtOrderNo">-</span></div>
                     <div style="margin-bottom:4px; color:gray;" id="rtSeller">(주) 상호명</div>
@@ -1427,8 +1400,8 @@ rSentinel.addEventListener('focus', ()=> rModal.querySelector('.modal-close').fo
   <!-- 주문 상세 마이페이지_메인#8-->
   <!-- ===== 교환신청 모달 ===== -->
 <div class="modal-backdrop" id="exchangeModalBackdrop" aria-hidden="true"></div>
-<div class="modal" id="exchangeModal" role="dialog" aria-modal="true" aria-labelledby="exchangeModalTitle" aria-hidden="true">
-  <div class="modal-dialog" tabindex="-1" style="border-radius:0 !important; width:860px; max-width:calc(100% - 40px);">
+<div class="modal" id="exchangeModal" role="dialog}" aria-modal="true" aria-labelledby="exchangeModalTitle" aria-hidden="true">
+  <div class="modal-dialog}" tabindex="-1" style="border-radius:0 !important; width:860px; max-width:calc(100% - 40px);">
     <div class="modal-header" style="border-radius:0 !important;">
       <div><span id="exchangeModalTitle">교환신청</span></div>
       <button class="modal-close" type="button" aria-label="닫기" id="exClose">✕</button>
@@ -1452,7 +1425,7 @@ rSentinel.addEventListener('focus', ()=> rModal.querySelector('.modal-close').fo
               <td id="exDate">0000-00-00</td>
               <td style="text-align:left; padding-left:10px;">
                 <div style="display:flex; align-items:center;">
-                  <div><img id="exThumb" src="/images/product_list1.jpg" alt="" style="height:100px;"></div>
+                  <div><img id="exThumb" th:src="@{/images/product_list1.jpg}" alt="" style="height:100px;"></div>
                   <div style="padding-left:20px; letter-spacing:-1px;">
                     <div style="margin-bottom:4px; color:gray;">주문번호 : <span id="exOrderNo">-</span></div>
                     <div style="margin-bottom:4px; color:gray;" id="exSeller">(주) 상호명</div>
