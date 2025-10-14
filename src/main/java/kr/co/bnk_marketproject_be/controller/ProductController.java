@@ -41,17 +41,19 @@ public class ProductController {
     public String productList(@RequestParam(defaultValue = "1") int pg,
                               @RequestParam(defaultValue = "8") int size,
                               @RequestParam(defaultValue = "recent") String sort,
+                              @RequestParam(required = false) Integer categoryId, // ← 손진일 - 추가
                               @RequestParam(required = false) Integer uid,   // 🔹 URL uid 유지용
                               Model model) {
 
         PageRequestProductDTO pageReq = PageRequestProductDTO.builder()
                 .pg(pg)
                 .size(size)
+                .categoryId(categoryId)
                 .build();
 
         // 1️⃣ 상품 목록 조회
-        List<ProductsDTO> products = productsMapper.selectProductListPaged(pageReq, sort);
-        int total = productsMapper.selectTotalProductCount();
+        List<ProductsDTO> products = productsMapper.selectProductListPaged(pageReq, sort, categoryId);
+        int total = productsMapper.selectTotalProductCount(categoryId); // ← 손진일 - 전체 개수도 필터 적용
 
         for (ProductsDTO p : products) {
             log.info("[LIST] 상품명: {}, 이미지URL: {}", p.getProduct_name(), p.getUrl());
@@ -63,7 +65,13 @@ public class ProductController {
         // 🔹 뷰에서 링크 만들 때 그대로 붙이도록 전달
         model.addAttribute("pageResponseProductDTO", pageRes);
         model.addAttribute("sort", sort);
+        model.addAttribute("categoryId", categoryId); // ← 손진일 - 페이지네이션/링크 유지
         model.addAttribute("uid", uid); // ← 중요: pagination/상세보기 링크에 함께 넘겨라
+
+        // ★ 여기 추가: 리스트 화면에서도 query를 항상 제공
+        model.addAttribute("query", PageRequestProductDTO.builder()
+                .categoryId(categoryId)   // 카테고리 유지되게
+                .build());
 
         return "product/product_list";
     }
@@ -294,6 +302,7 @@ public class ProductController {
             @RequestParam(defaultValue = "recent") String sort,
             @RequestParam(defaultValue = "1") int pg,
             @RequestParam(defaultValue = "8") int size,
+            @RequestParam(required = false) Integer categoryId, // 손진일 - 추가
             Model model) {
 
         PageRequestProductDTO req = PageRequestProductDTO.builder()
@@ -314,6 +323,7 @@ public class ProductController {
         model.addAttribute("pageResponseProductDTO", page);
         model.addAttribute("sort", sort);
         model.addAttribute("query", req); // 뷰에서 기존 값 유지용
+        model.addAttribute("categoryId", categoryId);     // 손진일 - 추가
         return "product/product_search";
     }
 

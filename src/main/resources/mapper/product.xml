@@ -7,7 +7,14 @@
 
 <!-- 전체 상품 개수 -->
 <select id="selectTotalProductCount" resultType="int">
-    SELECT COUNT(*) FROM products
+    SELECT COUNT(*) FROM products p
+    <where>
+        <if test="categoryId != null">
+            AND p.categories_id = #{categoryId}
+        </if>
+        <!-- 필요하면 null 제외 -->
+        <!-- <if test="categoryId == null"> AND p.categories_id IS NOT NULL </if> -->
+    </where>
 </select>
 
 <select id="selectProductListPaged"
@@ -17,6 +24,7 @@
     p.id,
     p.product_name                       AS product_name,
     p.description,
+    p.categories_id                      AS categories_id,
     p.sub_description                    AS sub_description,
     p.price,
     p.discount,
@@ -54,6 +62,14 @@
     GROUP BY pb.products_id
     ) rv
     ON rv.products_id = p.id
+    <where>
+        <if test="categoryId != null">
+            AND p.categories_id = #{categoryId}
+        </if>
+        <if test="page.categoryId != null">
+            AND p.categories_id = #{page.categoryId}
+        </if>
+    </where>
 
     <!-- 정렬: 화이트리스트 -->
     <choose>
@@ -132,6 +148,10 @@
         <if test="req.maxPrice != null">
             AND (p.price - NVL(p.discount,0)) &lt;= #{req.maxPrice}
         </if>
+        <!-- ★ 카테고리 한정 - 손진일 추가 -->
+        <if test="req.categoryId != null">
+            AND p.categories_id = #{req.categoryId}
+        </if>
     </where>
 
     <!-- 정렬 -->
@@ -172,6 +192,10 @@
         </if>
         <if test="req.maxPrice != null">
             AND (p.price - NVL(p.discount,0)) &lt;= #{req.maxPrice}
+        </if>
+        <!-- ★ 동일하게 - 손진일 추가 -->
+        <if test="req.categoryId != null">
+            AND p.categories_id = #{req.categoryId}
         </if>
     </where>
 </select>

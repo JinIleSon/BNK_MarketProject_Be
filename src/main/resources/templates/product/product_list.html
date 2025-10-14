@@ -232,17 +232,17 @@
     <hr style="border:none; border-top:1px solid black;">
     <div style="color:gray; margin-left:7.6%; margin-bottom:30px;">
         <a th:classappend="${sort}=='sales' ? ' active'"
-           th:href="@{/product/list(sort='sales',     pg=1, size=${pageResponseProductDTO.size})}">판매많은순</a>&nbsp;&nbsp;|&nbsp;
+           th:href="@{/product/list(sort='sales',     pg=1, size=${pageResponseProductDTO.size}, categoryId=${categoryId})}">판매많은순</a>&nbsp;&nbsp;|&nbsp;
         <a th:classappend="${sort}=='priceAsc' ? ' active'"
-           th:href="@{/product/list(sort='priceAsc',  pg=1, size=${pageResponseProductDTO.size})}">낮은가격순</a>&nbsp;&nbsp;|&nbsp;
+           th:href="@{/product/list(sort='priceAsc',  pg=1, size=${pageResponseProductDTO.size}, categoryId=${categoryId})}">낮은가격순</a>&nbsp;&nbsp;|&nbsp;
         <a th:classappend="${sort}=='priceDesc' ? ' active'"
-           th:href="@{/product/list(sort='priceDesc', pg=1, size=${pageResponseProductDTO.size})}">높은가격순</a>&nbsp;&nbsp;|&nbsp;
+           th:href="@{/product/list(sort='priceDesc', pg=1, size=${pageResponseProductDTO.size}, categoryId=${categoryId})}">높은가격순</a>&nbsp;&nbsp;|&nbsp;
         <a th:classappend="${sort}=='rating' ? ' active'"
-           th:href="@{/product/list(sort='rating',    pg=1, size=${pageResponseProductDTO.size})}">평점높은순</a>&nbsp;&nbsp;|&nbsp;
+           th:href="@{/product/list(sort='rating',    pg=1, size=${pageResponseProductDTO.size}, categoryId=${categoryId})}">평점높은순</a>&nbsp;&nbsp;|&nbsp;
         <a th:classappend="${sort}=='review' ? ' active'"
-           th:href="@{/product/list(sort='review',    pg=1, size=${pageResponseProductDTO.size})}">후기많은순</a>&nbsp;&nbsp;|&nbsp;
+           th:href="@{/product/list(sort='review',    pg=1, size=${pageResponseProductDTO.size}, categoryId=${categoryId})}">후기많은순</a>&nbsp;&nbsp;|&nbsp;
         <a th:classappend="${sort}=='recent' ? ' active'"
-           th:href="@{/product/list(sort='recent',    pg=1, size=${pageResponseProductDTO.size})}">최근등록순</a>
+           th:href="@{/product/list(sort='recent',    pg=1, size=${pageResponseProductDTO.size}, categoryId=${categoryId})}">최근등록순</a>
     </div>
 
     <style>
@@ -325,17 +325,17 @@
 <div style="height:100px; margin-top:40px; display:flex; justify-content:center;">
     <input class="prev-page"
            th:if="${pageResponseProductDTO.prev}"
-           th:onclick="|location.href='@{/product/list(pg=${pageResponseProductDTO.start - 1}, size=${pageResponseProductDTO.size}, sort=${sort})}'|" type="button" value="< 이전">
+           th:onclick="|location.href='@{/product/list(pg=${pageResponseProductDTO.start - 1}, size=${pageResponseProductDTO.size}, sort=${sort}, categoryId=${categoryId})}'|" type="button" value="< 이전">
 
     <th:block th:each="num : ${#numbers.sequence(pageResponseProductDTO.start, pageResponseProductDTO.end)}">
         <input th:class="${num == pageResponseProductDTO.pg ? 'current' : 'num'}"
-               th:onclick="|location.href='@{/product/list(pg=${num}, size=${pageResponseProductDTO.size}, sort=${sort})}'|"
+               th:onclick="|location.href='@{/product/list(pg=${num}, size=${pageResponseProductDTO.size}, sort=${sort}, categoryId=${categoryId})}'|"
                th:value="${num}" type="button"/>
     </th:block>
 
     <input class="next-page"
            th:if="${pageResponseProductDTO.next}"
-           th:onclick="|location.href='@{/product/list(pg=${pageResponseProductDTO.end + 1}, size=${pageResponseProductDTO.size}, sort=${sort})}'|" type="button" value="다음 >">
+           th:onclick="|location.href='@{/product/list(pg=${pageResponseProductDTO.end + 1}, size=${pageResponseProductDTO.size}, sort=${sort}, categoryId=${categoryId})}'|" type="button" value="다음 >">
 </div>
 <style>
     .current {
