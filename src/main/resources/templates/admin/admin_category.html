@@ -623,6 +623,7 @@
           const result = await postJson(`${API_BASE}api/admin/categories/commit`, payload, 'PUT');
           console.log('✅ 저장 성공:', result);
           deletedIds.clear();
+          alert('수정이 완료되었습니다!');
           await renderCategories(); // DB 기준 재랜더
         } catch (err) {
           console.error('저장 실패:', err);

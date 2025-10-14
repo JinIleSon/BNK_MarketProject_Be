@@ -5,6 +5,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -47,5 +48,17 @@ public class AdminStorageService {
         log.info("🗄️ DB 저장 경로 : {}", dbPath);
 
         return dbPath;
+    }
+
+    public void deleteFile(String fileUrl) {
+        if (fileUrl == null || !fileUrl.startsWith("/upload")) return;
+
+        try {
+            Path path = Paths.get(uploadDir, fileUrl.replace("/upload/", ""));
+            Files.deleteIfExists(path);
+            log.info("🗑️ 삭제된 파일: {}", path);
+        } catch (IOException e) {
+            log.error("파일 삭제 중 오류", e);
+        }
     }
 }

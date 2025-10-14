@@ -1,9 +1,10 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <!-- Spring Security CSRF -->
-    <meta name="_csrf" th:content="${_csrf.token}"/>
-    <meta name="_csrf_header" th:content="${_csrf.headerName}"/>
+    <!-- admin/_header.html 등 -->
+    <meta th:if="${_csrf != null}" name="_csrf" th:content="${_csrf.token}">
+    <meta th:if="${_csrf != null}" name="_csrf_header" th:content="${_csrf.headerName}">
+    <meta th:if="${_csrf != null}" name="_csrf_parameter" th:content="${_csrf.parameterName}">
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>관리자페이지</title>
@@ -229,13 +230,15 @@ outline-offset:2px;
             </svg>
         </button>
         <div style="margin-left:3%;">
-            <img th:src="@{/images/logo.png}" alt="" style="width:270px;">
+            <a th:href="@{/main/main/page}">
+                <img th:src="@{/images/logo.png}" alt="" style="width:270px;">
+            </a>
         </div>
         <div style="margin-top:27px; margin-left:auto; margin-right:3%; flex:1; max-width:30%;">
             <ul style="list-style-type: none; padding: 0; margin:0; display:flex; gap:40px; float:right; margin-right:100px;">
-                <li><a href="#" style="text-decoration: none; color:black; font-size:14px;">홈</a></li>
+                <li><a th:href="@{/main/main/page}" style="text-decoration: none; color:black; font-size:14px;">홈</a></li>
                 <li><a href="#" style="text-decoration: none; color:black; font-size:14px;">로그아웃</a></li>
-                <li><a href="#" style="text-decoration: none; color:black; font-size:14px;">고객센터</a></li>
+                <li><a th:href="@{/cs/index}" style="text-decoration: none; color:black; font-size:14px;">고객센터</a></li>
             </ul>
         </div>
     </div>

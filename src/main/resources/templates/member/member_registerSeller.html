@@ -127,7 +127,7 @@
 </head>
 
 <body>
-    <div id="header"></div>
+<div th:replace="~{main/header.html}"></div>
 
     <div class="container">
         <h2>회원가입 (판매자)</h2>
@@ -203,41 +203,19 @@
 
             <!-- 버튼 -->
             <div class="btn-area">
-                <button type="button" class="btn-cancel" onclick="location.href='/'">취소</button>
+                <button type="button" class="btn-cancel" th:onclick="|location.href='@{/main/main/page}'|">취소</button>
                 <button type="submit" id="btnSubmit" class="btn-submit" disabled>가입하기</button>
             </div>
         </form>
     </div>
 
-    <div id="footer"></div>
+    <div th:replace="~{main/footer.html}"></div>
 
     <!-- Daum 주소 API -->
     <script src="//t1.daumcdn.net/mapjsapi/bundle/postcode/prod/postcode.v2.js"></script>
 
     <script>
-        // ===== 헤더/푸터 로드 =====
-        window.addEventListener('DOMContentLoaded', () => {
-            fetch("/NICHIYA/main/header.html")
-                .then(res => res.text())
-                .then(data => {
-                    const header = document.getElementById("header");
-                    if (!header) return;
-                    header.innerHTML = data;
-                    header.querySelectorAll("script").forEach(oldScript => {
-                        const s = document.createElement("script");
-                        if (oldScript.src) s.src = oldScript.src; else s.textContent = oldScript.textContent;
-                        document.body.appendChild(s);
-                    });
-                });
 
-            fetch("/NICHIYA/main/footer.html")
-                .then(res => res.text())
-                .then(data => {
-                    const footer = document.getElementById("footer");
-                    if (!footer) return;
-                    footer.innerHTML = data;
-                });
-        });
 
         // ===== DOM 참조 =====
         const form = document.getElementById("signupForm");
@@ -386,7 +364,7 @@
 
             try {
                 // 서버에 아이디 중복 체크 요청
-                const res = await fetch(`/NICHIYA/seller/check-id?userId=${encodeURIComponent(userId)}`);
+                const res = await fetch(`/seller/check-id?userId=${encodeURIComponent(userId)}`);
                 const data = await res.json();
 
                 if (data.exists) {
@@ -464,7 +442,7 @@
             };
 
             try {
-                const res = await fetch("/NICHIYA/seller/register", {
+                const res = await fetch("/seller/register", {
                     method: "POST",
                     headers: { "Content-Type": "application/json" },
                     body: JSON.stringify(payload)
@@ -476,9 +454,9 @@
                     alert("판매자 회원가입이 완료되었습니다!");
 
                     if (confirm("로그인 페이지로 이동하시겠습니까?")) {
-                        location.href = "/NICHIYA/member/login";
+                        location.href = "/member/login";
                     } else {
-                        location.href = "/NICHIYA/member/join";
+                        location.href = "/member/join";
                     }
                 } else {
                     alert("회원가입 실패: " + (result.error || "알 수 없는 오류"));

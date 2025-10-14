@@ -116,7 +116,9 @@
                 </svg>
             </button>
             <div style="margin-left:3%;">
-                <img th:src="@{/images/logo.png}" alt="" style="width:270px;">
+                <a th:href="@{/main/main/page}">
+                    <img th:src="@{/images/logo.png}" alt="" style="width:270px;">
+                </a>
             </div>
             <div style="margin-top:27px; margin-left:auto; margin-right:3%; flex:1; max-width:30%;">
                 <ul style="list-style-type: none; padding: 0; margin:0; display:flex; gap:40px;">
@@ -127,9 +129,9 @@
                             onblur="this.style.outline='none';">
                         </form>
                     </li>
-                    <li><a href="#" style="text-decoration: none; color:black; font-size:14px;">로그인</a></li>
-                    <li><a href="#" style="text-decoration: none; color:black; font-size:14px;">도움말</a></li>
-                    <li><a href="#" style="text-decoration: none; color:black; font-size:14px;">바스켓백 [0]</a></li>
+                    <li><a th:href="@{/member/login}" style="text-decoration: none; color:black; font-size:14px;">로그인</a></li>
+                    <li><a th:href="@{/member/join}" style="text-decoration: none; color:black; font-size:14px;">회원가입</a></li>
+                    <li><a th:href="@{/product/cart}" style="text-decoration: none; color:black; font-size:14px;">바스켓백</a></li>
                 </ul>
             </div>
         </div>
@@ -208,76 +210,61 @@
 
         <div style="display: flex; margin-left:20%; margin-top:1%; width:100%;">
             <nav class="overlay__menu" style="width:100%;">
-                <div style="">
-                    <a href="#">히트상품</a>
-                    <a href="#">추천상품</a>
-                    <a href="#">최신상품</a>
-                    <a href="#">인기상품</a>
-                    <a href="#">할인상품</a>
-                    <br><br>
-                    <a href="#" data-cat="fashion">패션 · 의류 · 뷰티</a>
-                    <a href="#" data-cat="digital">가전 · 디지털</a>
-                    <a href="#" data-cat="grocery">식품 · 생필품</a>
-                    <a href="#" data-cat="home">홈 · 문구 · 취미</a>
-                    <a href="#" data-cat="book">도서</a>
-                    <a href="#" data-cat="cs">고객센터</a>
+                <div style="padding-top: 31px;">
+                    <a href="#" data-cat="fashion" style="margin-bottom: 10px;">패션</a>
+                    <a href="#" data-cat="beauty" style="margin-bottom: 10px;">뷰티</a>
+                    <a href="#" data-cat="electronics" style="margin-bottom: 10px;">전자제품</a>
+                    <a href="#" data-cat="home" style="margin-bottom: 10px;">홈</a>
+                    <a href="#" data-cat="leisure" style="margin-bottom: 10px;">레저</a>
                 </div>
                 <div id="subcol">
                     <!-- 패션 패널 -->
                     <section class="panel" data-key="fashion">
-                        <h3>패션 · 의류 · 뷰티</h3>
+                        <h3>패션</h3>
                         <!-- 이 안은 자유롭게: 그리드/이미지/텍스트 무엇이든 -->
                         <ul class="menu-grid" style="">
-                        <li><a href="#">여성 의류</a></li>
-                        <li><a href="#">스킨케어</a></li>
+                        <li><a href="#">여성의류</a></li>
+                        <li><a href="#">남성의류</a></li>
+                        <li><a href="#">키즈의류</a></li>
+                        <li><a href="#">스포츠의류</a></li>
                         <!-- … -->
                         </ul>
                     </section>
 
                     <!-- 디지털 패널 -->
-                    <section class="panel" data-key="digital">
-                        <h3>가전 · 디지털</h3>
+                    <section class="panel" data-key="beauty">
+                        <h3>뷰티</h3>
                         <div class="menu-grid">
-                        <a href="#">생활가전</a>
-                        <a href="#">모바일 · PC</a>
+                        <a href="#">화장품</a>
+                        <a href="#">향수</a>
                         </div>
                     </section>
 
                     <!-- 식품 패널 -->
-                    <section class="panel" data-key="grocery">
-                        <h3>식품 · 생필품</h3>
+                    <section class="panel" data-key="electronics">
+                        <h3>전자제품</h3>
                         <div class="menu-grid">
-                            <a href="#">신선식품</a>
-                            <a href="#">생활용품</a>
+                            <a href="#">음향기기</a>
+                            <a href="#">생활기기</a>
                         </div>
                     </section>
 
                     <!-- 홈/문구 패널 -->
                     <section class="panel" data-key="home">
-                        <h3>홈 · 문구 · 취미</h3>
+                        <h3>홈</h3>
                         <div class="menu-grid">
-                            <a href="#">가구 · 인테리어</a>
-                            <a href="#">문구 · 사무용품</a>
+                            <a href="#">대가구</a>
+                            <a href="#">소가구</a>
                         </div>
                     </section>
 
                     <!-- 도서 패널 -->
-                    <section class="panel" data-key="book">
-                        <h3>도서</h3>
+                    <section class="panel" data-key="leisure">
+                        <h3>레저</h3>
                         <div class="menu-grid">
-                            <a href="#">소설 · 에세이</a>
-                            <a href="#">아동 · 교육</a>
+                            <a href="#">자동차 · 오토바이</a>
+                            <a href="#">레저용품</a>
                         </div>
-                    </section>
-
-                    <!-- 고객센터 패널 -->
-                    <section class="panel" data-key="cs">
-                        <h3>고객센터</h3>
-                        <ul class="menu-grid">
-                            <li><a th:href="@{/cs/notice/list}">공지사항</a></li>
-                            <li><a th:href="@{/cs/faq/list}">FAQ</a></li>
-                            <li><a th:href="@{/cs/qna/list}">Qna</a></li>
-                        </ul>
                     </section>
                 </div>
                 <div style=""></div>
@@ -342,5 +329,3 @@
     setActiveCat(document.querySelector('.overlay__menu a[data-cat="fashion"]'));
     showPanel('fashion');
     </script>
-
-
