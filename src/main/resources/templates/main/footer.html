@@ -15,15 +15,18 @@
 <body>
     <footer style="padding-bottom:10px; background:#f8f9fa;padding-top: 20px;">
         <div style="">
-            <ul style="display: flex; gap:20px; margin-left:40px; list-style-type: none;justify-content:flex-end;    margin-right: 60px;">
+            <ul style="display: flex; gap:20px; margin-left:40px; list-style-type: none;justify-content:center;    margin-right: 60px;">
                 <li><a th:href="@{/compinfo/compinfo/media}">YOUTUBE</a></li>
                 <li><a th:href="@{/compinfo/compinfo/main}">회사소개</a></li>
                 <li><a th:href="@{/policy/policy/terms}">서비스이용약관</a></li>
                 <li><a th:href="@{/policy/policy/terms#privacy}">개인정보처리방침</a></li>
                 <li><a th:href="@{/cs/index}">고객센터</a></li>
             </ul>
+            <div style="display:flex; justify-content: center; margin-top:20px;">
+                <span>Copyright ©NICHIYA.co.kr All rights reserved. [[${appInfo.appName}]] ADMINISTRATOR Version [[${appInfo.appVersion}]]</span>
+            </div>
         </div>
-        <div style="width:870px; margin:90px auto 20px; text-align:center; ">
+        <div style="width:870px; margin:50px auto 20px; text-align:center; ">
             <span>
                 NICHIYA 주식회사 &nbsp;|&nbsp; 사업자등록번호: 123-45-67890 &nbsp;|&nbsp; 대표자 : TANAKA HARUTO &nbsp;|&nbsp; 서울특별시 강남구 테헤란로 321 15층 1501호 (역삼동, 니치야타워) 
                 &nbsp;|&nbsp; 대표번호: 080-123-4567 &nbsp;|&nbsp; 호스팅 서비스 사업자: NICHIYA SYSTEMS Co., Ltd. 
@@ -32,6 +35,7 @@
                 &nbsp;|&nbsp; <a th:href="@{/policy/policy/terms#location}" style="font-weight: 800; text-decoration-line: underline;">위치기반서비스 이용약관</a>
                 &nbsp;|<a th:href="@{/policy/policy/terms}" style="font-weight: 800; text-decoration-line: underline;">이용약관</a>
             </span>
+
         </div>
     </footer>
 </body>
