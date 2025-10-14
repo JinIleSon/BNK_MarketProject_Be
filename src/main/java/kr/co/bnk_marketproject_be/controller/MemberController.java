@@ -19,7 +19,7 @@ public class MemberController {
 
     @GetMapping("/member/login")
     public String member_login(){
-
+        System.out.println("✅ MemberController.member_login() 호출됨");
         return "member/member_login";
     }
 
@@ -63,6 +63,12 @@ public class MemberController {
     @GetMapping("/member/signupseller")
     public String member_signupSeller(){
         return "member/member_signup_seller";
+    }
+
+    // 임시로 맵핑한것
+    @GetMapping("/main/mainpage")
+    public String mainPage() {
+        return "main/main_main"; // ✅ templates/main/main_main.html 렌더링
     }
 
 }
