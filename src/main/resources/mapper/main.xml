@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="kr.co.bnk_marketproject_be.mapper.MainMapper">
+
+    <select id="selectProductOrderBy" resultType="kr.co.bnk_marketproject_be.dto.ProductCardDTO">
+        SELECT
+        p.id,
+        p.price,
+        p.discount,
+        p.hits,
+        p.sold,
+        to_char(p.created_at,'YYYY-MM-DD HH24:MI:SS') as createdAt,
+        '/' || pi.url AS url,                    <!-- ← '/images/..' 로 보정 -->
+        NVL(r.rating_avg,0) AS ratingAvg,
+        NVL(r.rating_cnt,0) AS ratingCnt
+        FROM products p
+        LEFT JOIN product_images pi
+        ON pi.products_id = p.id AND pi.is_main = 'Y'
+        LEFT JOIN (
+        SELECT products_id,
+        AVG(rating) AS rating_avg,
+        COUNT(*)    AS rating_cnt
+        FROM product_boards
+        WHERE UPPER(type) = 'REVIEW'
+        GROUP BY products_id
+        ) r ON r.products_id = p.id
+
+        <!-- 정렬 -->
+        <choose>
+            <when test="sort == 'sold'">
+                ORDER BY p.sold DESC
+            </when>
+            <when test="sort == 'hits'">
+                ORDER BY p.hits DESC
+            </when>
+            <when test="sort == 'rating'">
+                ORDER BY r.rating_avg DESC NULLS LAST
+            </when>
+            <when test="sort == 'discount'">
+                ORDER BY p.discount DESC
+            </when>
+            <otherwise>
+                ORDER BY p.created_at DESC
+            </otherwise>
+        </choose>
+
+        OFFSET 0 ROWS FETCH NEXT #{limit} ROWS ONLY
+    </select>
+</mapper>
