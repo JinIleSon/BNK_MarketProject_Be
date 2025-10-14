@@ -3,6 +3,7 @@ package kr.co.bnk_marketproject_be.entity;
 import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.UpdateTimestamp;
 
 @Getter
 @Setter
@@ -34,8 +35,11 @@ public class User{
     @Builder.Default
     private String role = "user";
 
+    // 생성시 자동
     @CreationTimestamp
     private String created_at;
+    // 수정시 자동
+    @UpdateTimestamp
     private String updated_at;
 
 }

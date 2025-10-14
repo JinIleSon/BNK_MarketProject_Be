@@ -153,7 +153,22 @@
     <update id="updatePassword" parameterType="map">
         UPDATE NICHIYA.SELLERS
         SET PASSWORD = #{password}
+            UPDATED_AT = (CURRENT_TIMESTAMP AT TIME ZONE 'Asia/Seoul')
         WHERE SELLER_ID = #{sellerId}
     </update>
+
+    <!-- ============================== -->
+    <!-- 판매자 정보 수정 (updated_at 자동 갱신) -->
+    <!-- ============================== -->
+    <update id="updateSeller" parameterType="kr.co.bnk_marketproject_be.dto.SellerDTO">
+        UPDATE NICHIYA.SELLERS
+        SET
+            BRAND_NAME = #{brand_name},
+            BIZ_REGISTRATION_NUMBER = #{biz_registration_number},
+            MAIL_ORDER_NUMBER = #{mail_order_number},
+            UPDATED_AT = (CURRENT_TIMESTAMP AT TIME ZONE 'Asia/Seoul')
+        WHERE SELLER_ID = #{sellerId}
+    </update>
+
 
 </mapper>
