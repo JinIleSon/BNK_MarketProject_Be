@@ -285,7 +285,9 @@
         <section class="login-side">
             <div class="login-panel">
                 <div class="header-logo">
-                    <img class="header-logo-img" src="../images/logo.png" alt="logo">
+                    <a th:href="@{/main/main/page}">
+                        <img class="header-logo-img" th:src="@{/images/logo.png}" alt="logo">
+                    </a>
                 </div>
                 <div class="login-text">로그인</div>
 
