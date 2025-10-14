@@ -58,11 +58,6 @@ public class CustomAuthenticationProvider implements AuthenticationProvider {
 
         log.info("✅ 로그인 성공: 아이디={} (권한={})", username, user.getRole());
 
-        // 관리자면 ROLE_ADMIN 부여
-        if ("admin".equalsIgnoreCase(username)) {
-            userDetails.getUser().setRole("ROLE_ADMIN");
-        }
-
         return new UsernamePasswordAuthenticationToken(
                 userDetails, null, userDetails.getAuthorities()
         );

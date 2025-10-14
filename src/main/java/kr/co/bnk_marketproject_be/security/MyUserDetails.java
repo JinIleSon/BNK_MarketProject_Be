@@ -22,7 +22,8 @@ public class MyUserDetails implements UserDetails {
     public Collection<? extends GrantedAuthority> getAuthorities() {
         // 계정 목록 리스트 생성, 인가 처리에 사용
         List<GrantedAuthority> authorities = new ArrayList<>();
-        authorities.add(new SimpleGrantedAuthority("ROLE_" + user.getRole())); // 계정 권한 앞에 접두에 ROLE_ 작성!!!
+        // ROLE_ 접두어 제거했으므로 그대로 넣기
+        authorities.add(new SimpleGrantedAuthority(user.getRole())); // "admin" / "seller" / "user"
         return authorities;
     }
 
