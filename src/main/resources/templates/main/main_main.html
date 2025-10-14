@@ -106,29 +106,28 @@
                 <button class="prev"></button>
                 <div class="viewport">
                     <div class="main-slides">
-                        <img th:src="@{/images/sport01.jpg}" alt="배너1">
-                        <img th:src="@{/images/sport02.jpg}" alt="배너2">
-                        <img th:src="@{/images/sport03.jpg}" alt="배너3">
-                        <img th:src="@{/images/sport04.jpg}" alt="배너4">
-                        <img th:src="@{/images/sport05.jpg}" alt="배너5">
+                        <a th:each="p : ${newList}" th:href="@{'/product/views?id=' + ${p.id}}">
+                            <img th:with="path=${#strings.startsWith(p.url,'/') ? #strings.substring(p.url,1) : p.url}"
+                                 th:src="@{/{path}(path=${path})}"
+                                 th:alt="${'new-' + p.id}">
+                        </a>
                     </div>
                 </div>
                 <button class="next"></button>
             </div>
         </div>
 
-        <!-- 패널: Best Seller -->
+        <!-- 패널: Best Seller (상위 5) -->
         <div class="panel" id="panel-best">
             <div class="main-slider">
                 <button class="prev"></button>
                 <div class="viewport">
                     <div class="main-slides">
-                        <!-- 베스트 이미지들 -->
-                        <img th:src="@{/images/sport02.jpg}" alt="best1">
-                        <img th:src="@{/images/sport01.jpg}" alt="best2">
-                        <img th:src="@{/images/sport03.jpg}" alt="best3">
-                        <img th:src="@{/images/sport04.jpg}" alt="best4">
-                        <img th:src="@{/images/sport05.jpg}" alt="best5">
+                        <a th:each="p : ${bestList}" th:href="@{'/product/views?id=' + ${p.id}}">
+                            <img th:with="path=${#strings.startsWith(p.url,'/') ? #strings.substring(p.url,1) : p.url}"
+                                 th:src="@{/{path}(path=${path})}"
+                                 th:alt="${'best-' + p.id}">
+                        </a>
                     </div>
                 </div>
                 <button class="next"></button>
@@ -141,12 +140,11 @@
                 <button class="prev"></button>
                 <div class="viewport">
                     <div class="main-slides">
-                        <!-- 히트 이미지들 -->
-                        <img th:src="@{/images/sport03.jpg}" alt="hit3">
-                        <img th:src="@{/images/sport02.jpg}" alt="hit1">
-                        <img th:src="@{/images/sport01.jpg}" alt="hit2">
-                        <img th:src="@{/images/sport04.jpg}" alt="hit4">
-                        <img th:src="@{/images/sport05.jpg}" alt="hit5">
+                        <a th:each="p : ${hitList}" th:href="@{'/product/views?id=' + ${p.id}}">
+                            <img th:with="path=${#strings.startsWith(p.url,'/') ? #strings.substring(p.url,1) : p.url}"
+                                 th:src="@{/{path}(path=${path})}"
+                                 th:alt="${'hit-' + p.id}">
+                        </a>
                     </div>
                 </div>
                 <button class="next"></button>
@@ -159,19 +157,16 @@
                 <button class="prev"></button>
                 <div class="viewport">
                     <div class="main-slides">
-                        <!-- 추천상품 이미지들 -->
-                        <img th:src="@{/images/sport04.jpg}" alt="reco4">
-                        <img th:src="@{/images/sport03.jpg}" alt="reco3">
-                        <img th:src="@{/images/sport02.jpg}" alt="reco1">
-                        <img th:src="@{/images/sport01.jpg}" alt="reco2">
-                        <img th:src="@{/images/sport05.jpg}" alt="reco5">
+                        <a th:each="p : ${recoList}" th:href="@{'/product/views?id=' + ${p.id}}">
+                            <img th:with="path=${#strings.startsWith(p.url,'/') ? #strings.substring(p.url,1) : p.url}"
+                                 th:src="@{/{path}(path=${path})}"
+                                 th:alt="${'reco-' + p.id}">
+                        </a>
                     </div>
                 </div>
                 <button class="next"></button>
             </div>
         </div>
-
-
 
         <!-- 패널: Discount -->
         <div class="panel" id="panel-discount">
@@ -179,12 +174,11 @@
                 <button class="prev"></button>
                 <div class="viewport">
                     <div class="main-slides">
-                        <!-- 히트 이미지들 -->
-                        <img th:src="@{/images/sport02.jpg}" alt="discount1">
-                        <img th:src="@{/images/sport01.jpg}" alt="discount2">
-                        <img th:src="@{/images/sport03.jpg}" alt="discount3">
-                        <img th:src="@{/images/sport04.jpg}" alt="discount4">
-                        <img th:src="@{/images/sport05.jpg}" alt="discount5">
+                        <a th:each="p : ${discountList}" th:href="@{'/product/views?id=' + ${p.id}}">
+                            <img th:with="path=${#strings.startsWith(p.url,'/') ? #strings.substring(p.url,1) : p.url}"
+                                 th:src="@{/{path}(path=${path})}"
+                                 th:alt="${'discount-' + p.id}">
+                        </a>
                     </div>
                 </div>
                 <button class="next"></button>
@@ -211,42 +205,23 @@
         const viewport = slider.querySelector('.viewport');
 
         let index = 0;
-        const slideImages = slider.querySelectorAll('.main-slides img');
-
+        const items = Array.from(slides.children); // <a> 단위를 슬라이드로
         let prevBtn = slider.querySelector('.prev');
         let nextBtn = slider.querySelector('.next');
-
-        if (!prevBtn || !nextBtn) {
-            const after = slider.nextElementSibling;
-            const after2 = after && after.nextElementSibling;
-            prevBtn = prevBtn || (after && after.classList.contains('prev') ? after : null);
-            nextBtn = nextBtn || (after2 && after2.classList.contains('next') ? after2 : null);
-        }
-
-        const total = slideImages.length;
+        const total = items.length;
 
         function update() {
             const width = viewport.clientWidth;
             slides.style.transform = `translateX(-${index * width}px)`;
         }
 
-        slideImages.forEach(img => {
-            img.style.flexShrink = '0';
-            img.style.width = '100%';
+        // 각 슬라이드 폭 고정
+        items.forEach(el => {
+            el.style.flex = '0 0 100%';
         });
 
-        if (nextBtn) {
-            nextBtn.addEventListener('click', () => {
-                index = (index + 1) % total;
-                update();
-            });
-        }
-        if (prevBtn) {
-            prevBtn.addEventListener('click', () => {
-                index = (index - 1 + total) % total;
-                update();
-            });
-        }
+        nextBtn?.addEventListener('click', () => { index = (index + 1) % total; update(); });
+        prevBtn?.addEventListener('click', () => { index = (index - 1 + total) % total; update(); });
 
         window.addEventListener('resize', update);
         update();
