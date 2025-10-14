@@ -7,12 +7,19 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 
 @Service
 @RequiredArgsConstructor
 public class OrdersService {
 
     private final OrdersMapper ordersMapper;
+
+    private String generateOrderCode() {
+        return "O" + LocalDateTime.now()
+                .format(DateTimeFormatter.ofPattern("yyyyMMddHHmmss"));
+    }
 
     /**
      * 장바구니
@@ -88,6 +95,7 @@ public class OrdersService {
                 .users_id(userId)
                 .status("결제완료")
                 .total_amount(finalPay)
+                .order_code(generateOrderCode())
                 .build();
         ordersMapper.insertOrder(order);        // ✅ order.id 세팅
 
@@ -167,8 +175,9 @@ public class OrdersService {
         if (cartOrderId == null) {
             OrdersDTO order = OrdersDTO.builder()
                     .users_id(uid)
-                    .status("결제대기(장바구니)")
+                    .status("결제대기")
                     .total_amount(0)
+                    .order_code(generateOrderCode())
                     .build();
             ordersMapper.insertOrder(order); // keyProperty="id"로 PK 채워짐
             cartOrderId = order.getId();
