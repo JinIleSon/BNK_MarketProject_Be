@@ -32,7 +32,7 @@ public class SecurityConfig {
         http.formLogin(form -> form
                 .loginPage("/member/login")            // 로그인 페이지
                 .loginProcessingUrl("/member/login")   // 로그인 요청 처리 URL (form action과 동일)
-                .defaultSuccessUrl("/main/mainpage", true) // 로그인 성공 시
+                .defaultSuccessUrl("/NICHIYA/main/main/page", true) // 로그인 성공 시
                 // 로그인 실패 성공 시 핸들러
                 .failureHandler((request, response, exception) -> {
                     String username = request.getParameter("userId");
@@ -43,7 +43,7 @@ public class SecurityConfig {
                 .successHandler((request, response, authentication) -> {
                     String username = authentication.getName();
                     System.out.println("✅ 로그인 성공 (Controller 로그): 아이디=" + username);
-                    response.sendRedirect("/NICHIYA/main/mainpage");
+                    response.sendRedirect("/NICHIYA/main/main/page");
                 })
                 //.failureUrl("/member/login?error=true")    // 실패 시
                 .usernameParameter("userId")
