@@ -130,30 +130,44 @@
                       '?', '?<br/>'),
                     '✔', '<br/>✔')}"></span></td>
                 </tr>
-                <tr style="border-bottom:1px solid #e2e2e2; height:70px; vertical-align: middle;">
-                    <th style="padding:8px; text-align:left;">답변</th>
-                    <td style="padding:8px; text-align:left;">
-                    <span th:utext="${#strings.replace(
-                      #strings.replace(
-                        #strings.replace(
-                          #strings.replace(adminCommentDTO.content, '.', '.<br/>'),
-                        '!', '!<br/>'),
-                      '?', '?<br/>'),
-                    '✔', '<br/>✔')}"></span>
-                    </td>
-                </tr>
+                    <!-- 답변 존재 -->
+                    <tr th:if="${adminCommentDTO != null}"
+                        style="border-bottom:1px solid #e2e2e2; height:70px; vertical-align:middle;">
+                        <th style="padding:8px; text-align:left;">답변</th>
+                        <td style="padding:8px; text-align:left;">
+                            <span th:utext="${#strings.replace(
+                                #strings.replace(
+                                  #strings.replace(
+                                    #strings.replace(adminCommentDTO.content, '.', '.<br/>'),
+                                  '!', '!<br/>'),
+                                '?', '?<br/>'),
+                              '✔', '<br/>✔')}"></span>
+                        </td>
+                    </tr>
+
+                    <!-- 답변 없음 -->
+                    <tr th:if="${adminCommentDTO == null}"
+                        style="border-bottom:1px solid #e2e2e2; height:70px; vertical-align:middle;">
+                        <th style="padding:8px; text-align:left;">답변</th>
+                        <td style="padding:8px; text-align:left; color:#888;">아직 답변이 등록되지 않았습니다.</td>
+                    </tr>
                 </table>
-                <div style="display: flex; justify-content: flex-end; margin-top:30px;">
-                <input type="button" value="삭제" 
-                        style="cursor: pointer; border:none;width: 80px; height: 40px; background-color: #760c0c; color: #ffffff; margin-left:8px;"
-                       th:onclick="|if(confirm('정말로 삭제하시겠습니까?')) location.href='@{/admin/inquiry/delete(id=${adminInquiryDTO.id})}';|">
-                <input type="button" value="목록" 
-                        style="cursor: pointer; border:none;width: 80px; height: 40px; background-color: #000; color: #ffffff; margin-left:8px;"
-                       th:onclick="|location.href='@{/admin/inquiry/list}'|">
+
+                    <div style="display:flex; justify-content:flex-end; margin-top:30px;">
+                        <input type="button" value="삭제"
+                               style="cursor:pointer; border:none; width:80px; height:40px; background-color:#760c0c; color:#fff; margin-left:8px;"
+                               th:onclick="|if(confirm('정말로 삭제하시겠습니까?')) location.href='@{~/admin/inquiry/delete(id=${adminInquiryDTO.id})}';|">
+                        <input type="button" value="목록"
+                               style="cursor:pointer; border:none; width:80px; height:40px; background-color:#000; color:#fff; margin-left:8px;"
+                               th:onclick="|location.href='@{~/admin/inquiry/list}'|">
+                    </div>
                 </div>
+            </div>
+        </div>
     </main>
 
-    <style>
+
+<style>
 .euro-nav__list {
     max-height: 0;                /* 기본은 접힘 */
     overflow: hidden;             /* 안 보이게 */

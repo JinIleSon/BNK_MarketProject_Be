@@ -17,7 +17,7 @@ public class CSFaqController {
 
     private final CSFaqService faqService;
 
-    /* FAQ 목록 최초 3개 */
+    /* FAQ list 최초 3개 */
     @GetMapping("/list")
     public String faqList(@RequestParam(required = false) String boardType,
                           @RequestParam(required = false) String subType,
@@ -42,7 +42,7 @@ public class CSFaqController {
         return "customer_service/faq/faq_list";
     }
 
-    /* FAQ 상세 미구현 */
+    /* FAQ view */
     @GetMapping("/view")
     public String faqview(@RequestParam("id") Long id, Model model) {
         CSNoticeDTO faq = faqService.getFaqView(id);

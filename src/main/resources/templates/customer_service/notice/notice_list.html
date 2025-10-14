@@ -397,212 +397,183 @@
 </head>
 <body>
 
-<header th:replace="~{main/header :: header}">
-    <div style="margin-left:2%; width:98%; box-sizing: border-box; margin-top:2%; display:flex; height:230px;">
-        <button style="border:none;" id="menuBtn" class="icon-btn" aria-controls="menuOverlay" aria-expanded="false" aria-label="메뉴 열기">
-            <svg width="64" height="64" viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg">
-                <rect y="12" width="64" height="1" fill="black"/>
-                <rect y="30" width="64" height="1" fill="black"/>
-                <rect y="48" width="64" height="1" fill="black"/>
-            </svg>
-        </button>
-        <div style="margin-left:3%;">
-            <img src="/images/logo.png" alt="" style="width:270px;">
+<header th:replace="~{main/header :: header}"></header>
+
+    <aside id="menuOverlay" class="overlay" aria-hidden="true">
+        <div class="overlay__panel">
+            <div class="overlay__top"  style="margin-top:20px;">
+                <button id="closeBtn" class="overlay__close" aria-label="메뉴 닫기"></button>
+                <div style="font-size:72px; font-weight:800; letter-spacing:-10px; "class="title-didone">NICHIYA</div>
+            </div>
+            <style>
+                /* 우측 서브항목 기본은 숨김 + 페이드 트랜지션 준비 */
+                .sub {
+                    opacity: 0;
+                    transform: translateY(6px);
+                    pointer-events: none;
+                    transition: opacity .28s ease, transform .28s ease;
+                    display: none; /* 시각·레이아웃 모두 숨김 */
+                }
+                /* 보여줄 때 */
+                .sub.show {
+                    display: block;
+                    opacity: 1;
+                    transform: translateY(0);
+                    pointer-events: auto;
+                }
+                /* 오른쪽 컬럼은 패널들을 포개는 '스테이지' */
+                #subcol{
+                    grid-row: span 2;
+                    height:900px;
+                    position: relative;          /* 자식 absolute 기준점 */
+                    padding: 0;                  /* 안쪽 여백은 패널에서 */
+                }
+                /* 접근성: 현재 선택된 카테고리 표시(선택사항) */
+                .overlay__menu a[data-cat].is-active { font-weight: 700; text-decoration: underline; }
+
+                /* 오른쪽 컬럼의 항목은 여백 제거(전역 a padding 무시) */
+                #subcol .sub{
+                    padding:0;
+                    margin:0;
+                }
+                /* 패널: 전부 겹쳐 놓고 기본은 숨김 */
+                #subcol .panel{
+                    position: absolute; inset: 0;
+                    padding: 20px;
+                    overflow: auto;
+                    opacity: 0;
+                    transform: translateY(6px);
+                    transition: opacity .35s ease, transform .35s ease;
+                    visibility: hidden;   /* display 대신 visibility */
+                    pointer-events: none; /* 숨길 때 클릭 방지 */
+                }
+
+                /* 보이는 패널 */
+                #subcol .panel.show{
+                    opacity: 1;
+                    transform: none;
+                    visibility: visible;
+                    pointer-events: auto; /* 다시 클릭 가능 */
+                }
+
+                /* 예시용 그리드(원하면 커스터마이즈) */
+                .menu-grid{
+                    display: grid;
+                    grid-template-columns: repeat(2, auto);
+                    column-gap: 50px;   /* 가로 간격 여기서 조절 */
+                    row-gap: 6px;      /* 세로 간격(필요시) */
+                    padding: 0;        /* UL 기본 패딩 제거 */
+                    margin: 0;         /* UL 기본 마진 제거 */
+                    justify-content: start; /* 왼쪽 정렬 */
+                }
+                .menu-grid li{ list-style: none; }
+                #header{ display: contents; }
+            </style>
+
+            <div style="display: flex; margin-left:20%; margin-top:1%; width:100%;">
+                <nav class="overlay__menu" style="width:100%;">
+                    <div style="">
+                        <b>공지사항</b>
+                        <br><br>
+                        <a th:href="@{/cs/notice/list}">전체</a>
+                        <a th:href="@{/cs/notice/list(boardType='서비스')}">고객서비스</a>
+                        <a th:href="@{/cs/notice/list(boardType='안전거래')}">안전거래</a>
+                        <a th:href="@{/cs/notice/list(boardType='판매중지')}">위해상품</a>
+                        <a th:href="@{/cs/notice/list(boardType='당첨자')}">이벤트당첨</a>
+                    </div>
+                    <div style=""></div>
+                </nav>
+            </div>
         </div>
-        <div style="margin-top:27px; margin-left:auto; margin-right:3%; flex:1; max-width:30%;">
-            <ul style="list-style-type: none; padding: 0; margin:0; display:flex; gap:40px;">
-                <li style="flex:1; min-width: 100px;">
-                    <form action="" method="" style="width:100%;">
-                        <input type="text" style="background: transparent;border:none; border-bottom:1px solid; padding-bottom:10px; width:80%;" value="검색"
-                               onfocus="this.style.outline='none';"
-                               onblur="this.style.outline='none';">
-                    </form>
-                </li>
-                <li><a href="#" style="text-decoration: none; color:black; font-size:14px;">로그인</a></li>
-                <li><a href="#" style="text-decoration: none; color:black; font-size:14px;">도움말</a></li>
-                <li><a href="#" style="text-decoration: none; color:black; font-size:14px;">바스켓백 [0]</a></li>
-            </ul>
-        </div>
+    </aside>
+
+    <h1 style="margin-left: 20px">NOTICE</h1>
+    <div class="cs_sub_nav" style="margin: 10px;">
+        <ul>
+            <li th:classappend="${boardType == null or boardType == '' or boardType == '전체'} ? 'on'">
+                <a th:href="@{/cs/notice/list}">전체</a>
+            </li>
+            <li th:classappend="${boardType == '서비스'} ? 'on'">
+                <a th:href="@{/cs/notice/list(boardType='서비스')}">고객서비스</a>
+            </li>
+            <li th:classappend="${boardType == '안전거래'} ? 'on'">
+                <a th:href="@{/cs/notice/list(boardType='안전거래')}">안전거래</a>
+            </li>
+            <li th:classappend="${boardType == '판매중지'} ? 'on'">
+                <a th:href="@{/cs/notice/list(boardType='판매중지')}">위해상품</a>
+            </li>
+            <li th:classappend="${boardType == '당첨자'} ? 'on'">
+                <a th:href="@{/cs/notice/list(boardType='당첨자')}">이벤트당첨</a>
+            </li>
+        </ul>
     </div>
-</header>
 
-<aside id="menuOverlay" class="overlay" aria-hidden="true">
-    <div class="overlay__panel">
-        <div class="overlay__top"  style="margin-top:20px;">
-            <button id="closeBtn" class="overlay__close" aria-label="메뉴 닫기"></button>
-            <div style="font-size:72px; font-weight:800; letter-spacing:-10px; "class="title-didone">NICHIYA</div>
-        </div>
-        <style>
-            /* 우측 서브항목 기본은 숨김 + 페이드 트랜지션 준비 */
-            .sub {
-                opacity: 0;
-                transform: translateY(6px);
-                pointer-events: none;
-                transition: opacity .28s ease, transform .28s ease;
-                display: none; /* 시각·레이아웃 모두 숨김 */
-            }
-            /* 보여줄 때 */
-            .sub.show {
-                display: block;
-                opacity: 1;
-                transform: translateY(0);
-                pointer-events: auto;
-            }
-            /* 오른쪽 컬럼은 패널들을 포개는 '스테이지' */
-            #subcol{
-                grid-row: span 2;
-                height:900px;
-                position: relative;          /* 자식 absolute 기준점 */
-                padding: 0;                  /* 안쪽 여백은 패널에서 */
-            }
-            /* 접근성: 현재 선택된 카테고리 표시(선택사항) */
-            .overlay__menu a[data-cat].is-active { font-weight: 700; text-decoration: underline; }
+    <!-- 제목  -->
+    <h2 style="font-size:23px; font-weight:bold; margin: 20px"  th:text="${
+                boardType == '서비스' ? '고객서비스' :
+                boardType == '안전거래' ? '안전거래' :
+                boardType == '판매중지' ? '위해상품' :
+                boardType == '당첨자' ? '이벤트당첨' :
+    '전체'}"></h2>
 
-            /* 오른쪽 컬럼의 항목은 여백 제거(전역 a padding 무시) */
-            #subcol .sub{
-                padding:0;
-                margin:0;
-            }
-            /* 패널: 전부 겹쳐 놓고 기본은 숨김 */
-            #subcol .panel{
-                position: absolute; inset: 0;
-                padding: 20px;
-                overflow: auto;
-                opacity: 0;
-                transform: translateY(6px);
-                transition: opacity .35s ease, transform .35s ease;
-                visibility: hidden;   /* display 대신 visibility */
-                pointer-events: none; /* 숨길 때 클릭 방지 */
-            }
 
-            /* 보이는 패널 */
-            #subcol .panel.show{
-                opacity: 1;
-                transform: none;
-                visibility: visible;
-                pointer-events: auto; /* 다시 클릭 가능 */
-            }
+    <div class="cs_list_table" style="margin-left: 20px; margin-right: 20px; margin-bottom: 20px">
+            <p class="total_count">
+                총 <span class="count" th:text="${totalCount}"></span>건
+            </p>
 
-            /* 예시용 그리드(원하면 커스터마이즈) */
-            .menu-grid{
-                display: grid;
-                grid-template-columns: repeat(2, auto);
-                column-gap: 50px;   /* 가로 간격 여기서 조절 */
-                row-gap: 6px;      /* 세로 간격(필요시) */
-                padding: 0;        /* UL 기본 패딩 제거 */
-                margin: 0;         /* UL 기본 마진 제거 */
-                justify-content: start; /* 왼쪽 정렬 */
-            }
-            .menu-grid li{ list-style: none; }
-            #header{ display: contents; }
-        </style>
+            <table style="border-top: 3px solid #ddd">
+                <colgroup>
+                    <col style="width: auto;">
+                    <col style="width: 25%;">
+                </colgroup>
+                <thead>
+                <tr>
+                    <th>제목</th>
+                    <th>등록일</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr th:each="n : ${dtoPage}">
+                    <td>
+                        <a th:href="@{/cs/notice/view/{id}(id=${n.id}, boardType=${boardType})}" th:text="${n.title}"></a>
+                    </td>
+                    <td th:text="${#temporals.format(n.createdAt, 'yyyy-MM-dd')}"></td>
+                </tr>
+                </tbody>
+            </table>
 
-        <div style="display: flex; margin-left:20%; margin-top:1%; width:100%;">
-            <nav class="overlay__menu" style="width:100%;">
-                <div style="">
-                    <b>공지사항</b>
-                    <br><br>
-                    <a th:href="@{/cs/notice/list}">전체</a>
-                    <a th:href="@{/cs/notice/list(boardType='서비스')}">고객서비스</a>
-                    <a th:href="@{/cs/notice/list(boardType='안전거래')}">안전거래</a>
-                    <a th:href="@{/cs/notice/list(boardType='판매중지')}">위해상품</a>
-                    <a th:href="@{/cs/notice/list(boardType='당첨자')}">이벤트당첨</a>
-                </div>
-                <div style=""></div>
-            </nav>
-        </div>
+            <!-- 페이지네이션 -->
+            <div class="pagination"
+                 th:with="
+                            start=${T(java.lang.Math).floor(currentPage / 5) * 5},
+                            end=${(start + 4) < (totalPages - 1) ? (start + 4) : (totalPages - 1)}">
+
+                <!-- 이전 버튼 -->
+                <a th:href="@{/cs/notice/list(
+                                page=${currentPage > 0 ? currentPage - 1 : 0},
+                                boardType=${boardType}
+                            )}">
+                    이전
+                </a>
+
+                <!-- 페이지 번호 5개씩 출력 -->
+                <span th:each="i : ${#numbers.sequence(start, end)}">
+                            <a th:href="@{/cs/notice/list(page=${i}, boardType=${boardType})}"
+                               th:text="${i + 1}"
+                               th:classappend="${i == currentPage} ? 'on'"></a>
+                        </span>
+
+                <!-- 다음 버튼 -->
+                <a th:href="@{/cs/notice/list(
+                                page=${currentPage < totalPages - 1 ? currentPage + 1 : totalPages - 1},
+                                boardType=${boardType}
+                            )}">
+                    다음
+                </a>
+            </div>
     </div>
-</aside>
 
-<h1 style="margin-left: 20px">NOTICE</h1>
-<div class="cs_sub_nav" style="margin: 10px;">
-    <ul>
-        <li th:classappend="${boardType == null or boardType == '' or boardType == '전체'} ? 'on'">
-            <a th:href="@{/cs/notice/list}">전체</a>
-        </li>
-        <li th:classappend="${boardType == '서비스'} ? 'on'">
-            <a th:href="@{/cs/notice/list(boardType='서비스')}">고객서비스</a>
-        </li>
-        <li th:classappend="${boardType == '안전거래'} ? 'on'">
-            <a th:href="@{/cs/notice/list(boardType='안전거래')}">안전거래</a>
-        </li>
-        <li th:classappend="${boardType == '판매중지'} ? 'on'">
-            <a th:href="@{/cs/notice/list(boardType='판매중지')}">위해상품</a>
-        </li>
-        <li th:classappend="${boardType == '당첨자'} ? 'on'">
-            <a th:href="@{/cs/notice/list(boardType='당첨자')}">이벤트당첨</a>
-        </li>
-    </ul>
-</div>
-
-<!-- 제목  -->
-<h2 style="font-size:23px; font-weight:bold; margin: 20px"  th:text="${
-            boardType == '서비스' ? '고객서비스' :
-            boardType == '안전거래' ? '안전거래' :
-            boardType == '판매중지' ? '위해상품' :
-            boardType == '당첨자' ? '이벤트당첨' :
-            '전체'
-        }"></h2>
-
-
-<div class="cs_list_table" style="margin-left: 20px; margin-right: 20px; margin-bottom: 20px">
-    <p class="total_count">
-        총 <span class="count" th:text="${totalCount}"></span>건
-    </p>
-
-    <table style="border-top: 3px solid #ddd">
-        <colgroup>
-            <col style="width: auto;">
-            <col style="width: 25%;">
-        </colgroup>
-        <thead>
-        <tr>
-            <th>제목</th>
-            <th>등록일</th>
-        </tr>
-        </thead>
-        <tbody>
-        <tr th:each="n : ${dtoPage}">
-            <td>
-                <a th:href="@{/cs/notice/view/{id}(id=${n.id}, boardType=${boardType})}" th:text="${n.title}"></a>
-            </td>
-            <td th:text="${#temporals.format(n.createdAt, 'yyyy-MM-dd')}"></td>
-        </tr>
-        </tbody>
-    </table>
-
-    <!-- 페이지네이션 -->
-    <div class="pagination"
-         th:with="
-                    start=${T(java.lang.Math).floor(currentPage / 5) * 5},
-                    end=${(start + 4) < (totalPages - 1) ? (start + 4) : (totalPages - 1)}">
-
-        <!-- 이전 버튼 -->
-        <a th:href="@{/cs/notice/list(
-                        page=${currentPage > 0 ? currentPage - 1 : 0},
-                        boardType=${boardType}
-                    )}">
-            이전
-        </a>
-
-        <!-- 페이지 번호 5개씩 출력 -->
-        <span th:each="i : ${#numbers.sequence(start, end)}">
-                    <a th:href="@{/cs/notice/list(page=${i}, boardType=${boardType})}"
-                       th:text="${i + 1}"
-                       th:classappend="${i == currentPage} ? 'on'"></a>
-                </span>
-
-        <!-- 다음 버튼 -->
-        <a th:href="@{/cs/notice/list(
-                        page=${currentPage < totalPages - 1 ? currentPage + 1 : totalPages - 1},
-                        boardType=${boardType}
-                    )}">
-            다음
-        </a>
-    </div>
-</div>
-
-</iv>
 <div th:replace="~{main/footer :: footer}"></div>
 <script>
     // --- 요소 가져오기 ---
