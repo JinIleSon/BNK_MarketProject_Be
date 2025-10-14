@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>product_views</title>
 
-    <!-- CSRF -->
+    <!-- ✅ CSRF 메타 (UI 영향 없음) -->
     <meta name="_csrf" th:content="${_csrf.token}"/>
     <meta name="_csrf_header" th:content="${_csrf.headerName}"/>
 
@@ -17,9 +17,11 @@
         html{ scrollbar-gutter: stable; }
         .icon-btn{ background:none; border:1px solid #000; cursor:pointer; width:40px; height:40px; display:grid; place-items:center; }
 
+        /* Overlay */
         .overlay{ position:fixed; inset:0; background:rgba(255,255,255,.28); backdrop-filter:blur(1px); -webkit-backdrop-filter:blur(1px); opacity:0; pointer-events:none; transition:opacity .25s ease; z-index:1000; }
         .overlay.open{ opacity:1; pointer-events:auto; }
 
+        /* Panel */
         .overlay__panel{ position:absolute; top:0; left:0; width:50vw; max-width:900px; height:100%; background:#fff; transform:translateX(-100%); transition:transform .35s ease; will-change:transform; display:flex; flex-direction:column; }
         .overlay.open .overlay__panel{ transform:translateX(0); }
 
@@ -38,6 +40,7 @@
         a{ color:inherit; text-decoration:none; }
         ul{ margin:0; padding:0; list-style:none; }
 
+        /* Header */
         .site-header{ position:sticky; top:0; z-index:900; }
         .site-header::before{ content:""; position:absolute; inset:0; background:rgba(255,255,255,0); transition:background .4s ease; z-index:-1; pointer-events:none; }
         .site-header:hover::before{ background:rgba(255,255,255,.7); }
@@ -46,18 +49,19 @@
         footer a{ text-decoration:none; font-weight:300; color:#000; }
 
         .prev-page,.next-page{ background:#fff; border:none; width:50px; height:30px; cursor:pointer; }
-        .prev-page{ margin-right:15px; }
-        .next-page{ margin-left:15px; margin-right:3px; }
+        .prev-page{ margin-right:15px; } .next-page{ margin-left:15px; margin-right:3px; }
 
         .title-didone{ text-align:center; font-family:'Bodoni Moda','Didot','Bodoni 72','Times New Roman',serif; margin-left:45px; font-weight:400; letter-spacing:.02em; -webkit-font-smoothing:antialiased; -moz-osx-font-smoothing:grayscale; }
         .title-didone.ko{ font-family:'Noto Serif KR','Bodoni Moda',serif; font-weight:300; }
 
+        /* 오른쪽 옵션셀렉트 */
         .select-box{ position:relative; display:block; width:100%; }
         .select-wrap{ position:relative; display:inline-block; width:155px; height:27px; }
         .select-wrap select{ appearance:none; -webkit-appearance:none; -moz-appearance:none; padding:0 25px 0 10px; width:100%; height:100%; box-sizing:border-box; }
         .select-wrap select::-ms-expand{ display:none; }
         .select-wrap::after{ content:"▼"; position:absolute; right:8px; top:50%; transform:translateY(-50%); font-size:12px; color:#000; pointer-events:none; }
 
+        /* 우측 서브패널 페이드 */
         #subcol{ grid-row:span 2; height:900px; position:relative; padding:0; }
         #subcol .panel{ position:absolute; inset:0; padding:20px; overflow:auto; opacity:0; transform:translateY(6px); transition:opacity .35s ease, transform .35s ease; visibility:hidden; pointer-events:none; }
         #subcol .panel.show{ opacity:1; transform:none; visibility:visible; pointer-events:auto; }
@@ -66,19 +70,11 @@
     </style>
 </head>
 
+
 <body th:object="${product}">
 <div th:replace="~{main/header.html}"></div>
 
-<!-- 헤더 장바구니 링크에도 uid 붙여주기 -->
-<script th:inline="javascript">
-    const CART_PAGE_URL_TPL = /*[[@{/product/cart(uid=${uid})}]]*/ '/NICHIYA/product/cart';
-    document.addEventListener('DOMContentLoaded', () => {
-        const link = document.getElementById('basketCountLink');
-        if (link) link.setAttribute('href', CART_PAGE_URL_TPL);
-    });
-</script>
-
-<!-- 본문 -->
+<!-- 본문 상단 경로/제목 -->
 <div style="height:100%; display:flex; flex-direction:column; justify-content:center; align-items:center; margin:0 auto;">
     <div style="display:flex; width:100%; max-width:1270px;">
         <div style="font-size:18px; margin-right:auto;"><b>상품목록</b></div>
@@ -86,6 +82,7 @@
     </div>
     <hr style="border:none; border-top:1px solid #000; margin-bottom:40px; width:100%; max-width:1270px;">
 
+    <!-- 2-컬럼: 좌 이미지 / 우 정보 -->
     <div style="display:flex; gap:100px; width:1270px;">
         <!-- 메인 이미지 -->
         <img id="mainImage"
@@ -97,8 +94,8 @@
         <!-- 우측 패널 -->
         <div style="width:463px; margin-top:100px;">
             <div style="margin-top:10px;">
-        <span style="font-size:14px; font-weight:800; letter-spacing:-1px; color:gray;"
-              th:text="|상품번호 : *{product_code}|">상품번호</span>
+                <span style="font-size:14px; font-weight:800; letter-spacing:-1px; color:gray;"
+                      th:text="|상품번호 : *{product_code}|">상품번호</span>
 
                 <span style="float:right; font-weight:800;"
                       th:with="bn=*{brand_name}"
@@ -109,25 +106,27 @@
             <div>
                 <span style="font-weight:800;" th:text="*{product_name}">상품명</span>
                 <span style="float:right;">
-          <span th:with="avg=${product.rating_avg} ?: 0.0"
-                th:text="${#numbers.formatDecimal(avg,1,1)}">0.0</span>
-          <a href="#" style="text-decoration-line:underline; color:blue;"
-             th:text="'상품평보기'">상품평보기</a>
-        </span>
+                    <span th:with="avg=${product.rating_avg} ?: 0.0"
+                          th:text="${#numbers.formatDecimal(avg,1,1)}">0.0</span>
+                    <a href="#"
+                       style="text-decoration-line:underline; color:blue;"
+                       th:text="'상품평보기'">상품평보기</a>
+                </span>
             </div>
 
             <hr style="border:none; border-top:1px solid #ddd;">
             <div style="display:flex; align-items:center;">
-        <span style="color:gray;" th:with="p=*{price}">
-          <s th:text="|₩ ${#numbers.formatInteger(p != null ? p : 0,3,'COMMA')}|">₩ 150,000</s>
-        </span>
+                <span style="color:gray;"
+                      th:with="p=*{price}">
+                    <s th:text="|₩ ${#numbers.formatInteger(p != null ? p : 0,3,'COMMA')}|">₩ 150,000</s>
+                </span>
                 <font color="red" th:if="*{discount_rate} > 0"
                       th:text="|&nbsp;&nbsp;*{discount_rate}%↓|">&nbsp;&nbsp;10%↓</font>
                 <a href="#"><div style="border:1px red solid; color:red; margin-left:23px; margin-right:28px; font-size:12px;">쿠폰받기</div></a>
                 <span>💳무이자할부 💳카드추가혜택</span>
             </div>
 
-            <!-- 단가 표시 -->
+            <!-- 판매가(=단가) 표시 + JS용 data-unit 주입 -->
             <span id="priceLabel"
                   th:with="sp=*{sale_price}, pp=*{price}, unit=${sp != null ? sp : (pp != null ? pp : 0)}"
                   th:attr="data-unit=${unit}"
@@ -140,41 +139,10 @@
                 <span style="color:#84a9e2;" th:if="*{delichar} != 0"
                       th:with="dc=*{delichar}"
                       th:text="|배송비 ₩ ${#numbers.formatInteger(dc != null ? dc : 0,3,'COMMA')}|">배송비</span>
-                <span id="etaText" style="font-weight:600;">도착 예정일 계산중…</span>
+                <span style="font-weight:600;" th:text="|&nbsp; *{created_at} 등록|">&nbsp; 등록일</span>
                 <br>
                 <span style="display:block; padding-top:4px; font-size:14px; font-weight:600; color:gray; letter-spacing:-1px;">본상품은 국내배송만 가능합니다.</span>
             </div>
-            <script>
-                // KST(한국) 기준으로 +offsetDays의 날짜를 "모레 (금) 7/8 도착예정" 형식으로 렌더
-                function renderEtaLabel(offsetDays = 2) {
-                    const el = document.getElementById('etaText');
-                    if (!el) return;
-
-                    const now = new Date();
-                    const target = new Date(now.getTime() + offsetDays * 24 * 60 * 60 * 1000);
-
-                    // KST로 안전하게 파츠 추출 (KST는 DST 없음)
-                    const dtf = new Intl.DateTimeFormat('ko-KR', {
-                        timeZone: 'Asia/Seoul',
-                        month: 'numeric',
-                        day: 'numeric',
-                        weekday: 'short'
-                    });
-                    const parts = dtf.formatToParts(target);
-                    const month = parts.find(p => p.type === 'month').value;   // "7"
-                    const day   = parts.find(p => p.type === 'day').value;     // "8"
-                    const wday  = parts.find(p => p.type === 'weekday').value; // "금"
-
-                    const rel = offsetDays === 0 ? '오늘'
-                        : offsetDays === 1 ? '내일'
-                            : offsetDays === 2 ? '모레'
-                                : `${offsetDays}일 뒤`;
-
-                    el.textContent = `${rel} (${wday}) ${month}/${day} 도착예정`;
-                }
-
-                document.addEventListener('DOMContentLoaded', () => renderEtaLabel(2));
-            </script>
 
             <hr style="border:none; border-top:1px solid #ddd;">
             <span style="letter-spacing:-1px;">원산지 - 상세설명 참고</span>
@@ -183,10 +151,11 @@
             <!-- 옵션/수량 -->
             <div class="select-box">
                 <form action="" method="" onsubmit="return false;">
+                    <!-- ✅ productId 히든(필수 파라미터) -->
                     <input type="hidden" name="productId" th:value="*{id}"/>
-                    <input type="hidden" id="uidHidden" th:value="${uid}"/>
 
                     <div class="select-wrap">
+                        <!-- ✅ 서버 기대 파라미터: optionId -->
                         <select name="optionId" id="optionSelect" style="width:155px; height:27px; border:1px solid #ddd;"
                                 th:with="opts=*{options}">
                             <option value="">선택하기</option>
@@ -217,9 +186,12 @@
 
                     <br>
                     <div style="display:flex; width:100%; gap:10px; margin-top:10px;">
-                        <button type="button" onclick="addToCart()"
+                        <!-- ✅ 컨트롤러 연동 -->
+                        <button type="button"
+                                onclick="addToCart()"
                                 style="color:#fff; height:35px; background:#bfbfbf; border:none; font-size:13px; font-weight:300; width:47%;">장바구니</button>
-                        <button type="button" onclick="buyNow()"
+                        <button type="button"
+                                onclick="buyNow()"
                                 style="margin-left:auto; color:#fff; background:#5e8fd7; border:none; font-size:13px; font-weight:300; width:47%;">구매하기</button>
                     </div>
 
@@ -227,14 +199,14 @@
                 </form>
             </div>
 
-            <!-- 컨트롤러 연동 (URL은 전부 타임리프가 생성) -->
-            <script th:inline="javascript">
-                // 엔드포인트 (컨텍스트/uid 자동 포함)
-                const ADD_TO_CART_URL = /*[[@{/product/cart(uid=${uid})}]]*/ '/NICHIYA/product/cart';
-                const ADD_AND_GO_URL  = /*[[@{/product/cart/add-and-go(uid=${uid})}]]*/ '/NICHIYA/product/cart/add-and-go';
-                const CART_PAGE_URL   = /*[[@{/product/cart(uid=${uid})}]]*/ '/NICHIYA/product/cart';
+            <!-- 컨트롤러 연동용 임시 작업-->
+            <script>
+                // === 엔드포인트 ===
+                const ADD_TO_CART_URL = '/NICHIYA/product/cart';
+                const ADD_AND_GO_URL  = '/NICHIYA/product/cart/add-and-go';
+                const CART_PAGE_URL   = '/NICHIYA/product/cart';
 
-                // CSRF
+                // === CSRF: meta 우선, 없으면 쿠키(XSRF-TOKEN)에서 ===
                 function readMeta(name){
                     const el = document.querySelector(`meta[name="${name}"]`);
                     return el ? el.content : null;
@@ -244,41 +216,57 @@
                     return m ? decodeURIComponent(m[1]) : null;
                 }
                 function getCsrf(){
-                    const headerName = readMeta('_csrf_header') || 'X-CSRF-TOKEN';
+                    // meta(_csrf.headerName/_csrf.token)가 있으면 그걸 사용
+                    const headerName = readMeta('_csrf_header') || 'X-XSRF-TOKEN';
                     const token      = readMeta('_csrf')        || readCookie('XSRF-TOKEN');
                     return { headerName, token };
                 }
 
-                // 값
-                function readQty(){ const t = document.getElementById('number')?.innerText?.trim(); const n = Number(t); return Number.isFinite(n)&&n>0?n:1; }
-                function readOptionId(){ const sel = document.getElementById('optionSelect'); return sel ? (sel.value || '') : ''; }
-                function hasOptions(){ const sel = document.getElementById('optionSelect'); return !!sel && sel.options && sel.options.length > 1; }
-                function readProductId(){ const el = document.querySelector('input[name="productId"]'); return el ? el.value : ''; }
-                function readUid(){ return document.getElementById('uidHidden')?.value || ''; }
+                // === 값 읽기 ===
+                function readQty(){
+                    const t = document.getElementById('number')?.innerText?.trim();
+                    const n = Number(t);
+                    return Number.isFinite(n) && n > 0 ? n : 1;
+                }
+                function readOptionId(){
+                    const sel = document.getElementById('optionSelect');
+                    return sel ? (sel.value || '') : '';
+                }
+                function hasOptions(){
+                    const sel = document.getElementById('optionSelect');
+                    return !!sel && sel.options && sel.options.length > 1;
+                }
+                function readProductId(){
+                    const el = document.querySelector('input[name="productId"]');
+                    return el ? el.value : '';
+                }
 
-                // 토스트
+                // === UX 토스트(간단) ===
                 function toast(msg, danger){
                     const t = document.createElement('div');
                     t.textContent = msg;
                     t.style.cssText = `
-            position:fixed; right:16px; bottom:16px; z-index:2000;
-            padding:10px 14px; border-radius:8px; color:#fff;
-            background:${danger ? '#d64545' : '#333'};
-            box-shadow:0 6px 14px rgba(0,0,0,.15); font-size:14px;`;
-                    document.body.appendChild(t); setTimeout(()=>t.remove(),1500);
+    position:fixed; right:16px; bottom:16px; z-index:2000;
+    padding:10px 14px; border-radius:8px; color:#fff;
+    background:${danger ? '#d64545' : '#333'};
+    box-shadow:0 6px 14px rgba(0,0,0,.15); font-size:14px;
+    opacity:.96; transform:translateY(10px); transition:transform .18s ease;`;
+                    document.body.appendChild(t);
+                    requestAnimationFrame(()=> t.style.transform='translateY(0)');
+                    setTimeout(()=>{ t.style.transform='translateY(10px)'; setTimeout(()=> t.remove(), 150); }, 1500);
                 }
 
-                // 파라미터
+                // === 파라미터 구성 ===
                 function buildParams(){
                     const p = new URLSearchParams();
                     p.append('productId', readProductId());
-                    const opt = readOptionId(); if (opt) p.append('optionId', opt);
+                    const opt = readOptionId();
+                    if (opt) p.append('optionId', opt);
                     p.append('qty', String(readQty()));
-                    const u = readUid(); if (u) p.append('uid', String(u));
                     return p;
                 }
 
-                // 장바구니 담기 (AJAX)
+                // === 장바구니 담기 (AJAX) ===
                 async function addToCart(){
                     if (hasOptions() && !readOptionId()){
                         toast('옵션을 선택해 주세요.', true);
@@ -295,19 +283,21 @@
                             },
                             body: buildParams().toString()
                         });
-                        if (!res.ok) throw new Error('HTTP ' + res.status);
+                        if (!res.ok) throw new Error(`HTTP ${res.status}`);
                         const json = await res.json();
+                        // 헤더 카운트 갱신 (있으면)
                         const link = document.getElementById('basketCountLink');
                         if (link && typeof json.itemCount === 'number'){
                             link.textContent = `바스켓백 [${json.itemCount}]`;
                         }
                         toast('장바구니에 담았습니다.');
                     }catch(e){
-                        console.error(e); toast('장바구니 담기 실패', true);
+                        console.error(e);
+                        toast('장바구니 담기 실패. 잠시 후 다시 시도해 주세요.', true);
                     }
                 }
 
-                // 구매하기 (POST → redirect)
+                // === 구매하기 (POST 후 서버 리다이렉트) ===
                 function buyNow(){
                     if (hasOptions() && !readOptionId()){
                         toast('옵션을 선택해 주세요.', true);
@@ -317,35 +307,36 @@
                     const { token } = getCsrf();
                     const params = buildParams();
 
+                    // 표준 form POST → 서버 redirect 따라가서 장바구니 페이지 진입
                     const form = document.createElement('form');
                     form.method = 'POST';
                     form.action = ADD_AND_GO_URL;
 
+                    // CSRF 히든
                     if (token){
                         const input = document.createElement('input');
-                        input.type='hidden'; input.name='_csrf'; input.value=token;
+                        input.type = 'hidden';
+                        input.name = '_csrf'; // CookieCsrfTokenRepo는 헤더로 보내지만, 서버가 히든 필드명은 무시 → 방어용
+                        input.value = token;
+                        // ↑ 대부분 불필요하지만 환경에 따라 유용. 확실히 하려면 아래처럼 표준명도 함께 넣기:
+                        // input.name = '_csrf';
                         form.appendChild(input);
                     }
+
                     for (const [k,v] of params.entries()){
                         const el = document.createElement('input');
-                        el.type='hidden'; el.name=k; el.value=v; form.appendChild(el);
+                        el.type = 'hidden';
+                        el.name = k;
+                        el.value = v;
+                        form.appendChild(el);
                     }
                     document.body.appendChild(form);
                     form.submit();
                 }
 
-                // 수량/이미지 교체
-                const unitPrice = (() => { const el=document.getElementById('priceLabel'); const raw=el?.dataset?.unit ?? '0'; return Number(raw)||0; })();
-                let count=1; const min=1, max=100;
-                const formatKRW=n=>n.toLocaleString('ko-KR');
-                function render(){ const q=document.getElementById('number'), l=document.getElementById('linePrice'), t=document.getElementById('totalPrice'); const sub=unitPrice*count; if(q) q.innerText=String(count); if(l) l.textContent=formatKRW(sub); if(t) t.textContent=`총 상품금액 ₩ ${formatKRW(sub)}`; }
-                function increase(){ if(count<max){ count++; render(); } }
-                function decrease(){ if(count>min){ count--; render(); } }
-                function swapMain(th){ const main=document.getElementById('mainImage'); if(main && th && th.src){ main.src=th.src; } }
-
-                window.increase=increase; window.decrease=decrease;
-                window.swapMain=swapMain; window.addToCart=addToCart; window.buyNow=buyNow;
-                render();
+                // 전역에 노출 (버튼 onclick에서 사용)
+                window.addToCart = addToCart;
+                window.buyNow = buyNow;
             </script>
 
             <!-- 썸네일 -->
@@ -355,8 +346,22 @@
                      alt="" style="width:80px; height:80px; object-fit:cover; border:1px solid #ddd; cursor:pointer;"
                      onclick="swapMain(this)">
             </div>
-        </div>
-    </div>
+
+            <!-- 수량/이미지 교체 스크립트 (UI 유지) -->
+            <script>
+                const unitPrice = (() => { const el=document.getElementById('priceLabel'); const raw=el?.dataset?.unit ?? '0'; return Number(raw)||0; })();
+                let count=1; const min=1, max=100;
+                const formatKRW=n=>n.toLocaleString('ko-KR');
+                function render(){ const q=document.getElementById('number'), l=document.getElementById('linePrice'), t=document.getElementById('totalPrice'); const sub=unitPrice*count; if(q) q.innerText=String(count); if(l) l.textContent=formatKRW(sub); if(t) t.textContent=`총 상품금액 ₩ ${formatKRW(sub)}`; }
+                function increase(){ if(count<max){ count++; render(); } }
+                function decrease(){ if(count>min){ count--; render(); } }
+                window.increase=increase; window.decrease=decrease;
+                function swapMain(th){ const main=document.getElementById('mainImage'); if(main && th && th.src){ main.src=th.src; } }
+                window.swapMain=swapMain;
+                render();
+            </script>
+        </div><!-- /우측 패널 -->
+    </div><!-- /2-컬럼 래퍼 -->
 
     <!-- 전폭 상품정보/리뷰 섹션 -->
     <div style="width:1265px; margin-top:5px; margin-bottom:5px;">
@@ -419,22 +424,25 @@
                 <hr style="border:none; border-top:1px solid #ddd; margin-top:13px;">
             </div>
 
-            <!-- 페이지네이션: uid 유지 -->
+            <!-- 페이지네이션 -->
             <div style="height:100px; margin-top:40px; display:flex; justify-content:center;">
+                <!-- 이전 블록 -->
                 <input class="prev-page"
                        th:if="${rp != null and rp.prev}"
-                       th:onclick="|location.href='@{/product/views(id=*{id}, rpg=${rp.start - 1}, rsize=${rp.size}, uid=${uid})}'|"
+                       th:onclick="|location.href='@{/product/views(id=*{id}, rpg=${rp.start - 1}, rsize=${rp.size})}'|"
                        type="button" value="&lt; 이전">
 
+                <!-- 번호들 -->
                 <th:block th:if="${rp != null}" th:each="num : ${#numbers.sequence(rp.start, rp.end)}">
                     <input th:class="${num == rp.pg ? 'current' : 'num'}"
-                           th:onclick="|location.href='@{/product/views(id=*{id}, rpg=${num}, rsize=${rp.size}, uid=${uid})}'|"
+                           th:onclick="|location.href='@{/product/views(id=*{id}, rpg=${num}, rsize=${rp.size})}'|"
                            th:value="${num}" type="button"/>
                 </th:block>
 
+                <!-- 다음 블록 -->
                 <input class="next-page"
                        th:if="${rp != null and rp.next}"
-                       th:onclick="|location.href='@{/product/views(id=*{id}, rpg=${rp.end + 1}, rsize=${rp.size}, uid=${uid})}'|"
+                       th:onclick="|location.href='@{/product/views(id=*{id}, rpg=${rp.end + 1}, rsize=${rp.size})}'|"
                        type="button" value="다음 &gt;">
             </div>
         </div>
@@ -446,6 +454,7 @@
             .euro-nav__group.open .euro-nav__list { max-height: 500px; }
         </style>
     </div>
+</div>
 </div>
 
 <div th:replace="~{main/footer.html}"></div>

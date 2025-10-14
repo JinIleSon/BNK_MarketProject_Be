@@ -10,27 +10,12 @@ import java.util.List;
 public interface OrdersMapper {
 
     // ===== 카트 조회 =====
-    List<OrderPageLineRowDTO> selectCartLineRows(int userId);
-
-    // ===== 장바구니 담기용 =====
-    Integer selectDraftCartOrderId(@Param("userId") int userId);
-    void insertDraftCart(OrdersDTO draft); // selectKey로 id 채움
-
-    Integer findCartItemIdByKey(@Param("ordersId") int ordersId,
-                                @Param("productId") int productId,
-                                @Param("optionId") Integer optionId);
-
-    int increaseCartQty(@Param("id") int id, @Param("delta") int delta);
-
-    int insertCartItem(@Param("ordersId") int ordersId,
-                       @Param("productId") int productId,
-                       @Param("optionId") Integer optionId,
-                       @Param("qty") int qty);
+    List<OrderPageLineRowDTO> selectCartLineRows(@Param("userId") int userId);
 
     // ===== 주문화면용 쿠폰/포인트/기본배송지 =====
-    List<OrderPageCouponViewDTO> selectAvailableCoupons(int userId);
-    Integer selectAvailablePoint(int userId);
-    OrderPageShippingInfoDTO selectDefaultShipping(int userId);
+    List<OrderPageCouponViewDTO> selectAvailableCoupons(@Param("userId") int userId);
+    Integer selectAvailablePoint(@Param("userId") int userId);
+    OrderPageShippingInfoDTO selectDefaultShipping(@Param("userId") int userId);
 
     // ===== 체크아웃(주문생성) =====
     void insertOrder(OrdersDTO order);
@@ -54,10 +39,10 @@ public interface OrdersMapper {
     ProductCompleteDTO selectOrderCompleteHeader(@Param("orderId") int orderId);
     List<OrderPageLineRowDTO> selectOrderLines(@Param("orderId") int orderId);
 
-    // ✅ 추가: 사용자의 "결제대기(장바구니)" 주문 id 조회
+    // ✅ 사용자의 "결제대기(장바구니)" 주문 id 조회
     Integer selectOpenCartId(@Param("userId") int userId);
 
-    // ✅ 추가: 장바구니 아이템 MERGE (같은 상품/옵션이면 수량 증가, 없으면 새로 삽입)
+    // ✅ 장바구니 아이템 MERGE
     int mergeCartItem(@Param("orderId") int orderId,
                       @Param("productId") int productId,
                       @Param("optionId") Integer optionId,
