@@ -67,22 +67,17 @@ public class SecurityConfig {
                 .requestMatchers(
                         "/css/**", "/js/**", "/images/**", "/fonts/**",
                         "/favicon.ico", "/error",
-                        "/member/login",
-                        "/member/join",
-                        "/member/signup",
-                        "/member/finduserId",
-                        "/member/findpassword",
-                        "/member/findresultId",
-                        "/member/register",
-                        "/member/registerSeller",
-                        "/member/signupseller",
+                        "/member/**",
                         "/policy/**",
                         "/compinfo/**",
-                        "/main/**"
+                        "/main/**",
+                        "/product/**",
+                        "/cs/**",
+                        "/member/**"
+
                 ).permitAll()
 
                 // 🔹 일반 회원, 셀러 접근 허용
-                .requestMatchers("/member/**").hasAnyRole("user", "seller", "admin")
                 .requestMatchers("/article/**").hasAnyRole("user", "seller", "admin")
                 .requestMatchers("/admin/**").hasAnyRole( "admin")
 
