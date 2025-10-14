@@ -143,4 +143,46 @@
         WHERE o.id = #{orderId}
     </select>
 
+    <!-- ✅ 사용자의 "결제대기(장바구니)" 주문 id 조회 -->
+    <select id="selectOpenCartId" resultType="int">
+        SELECT id
+        FROM orders
+        WHERE users_id = #{userId}
+        AND status = '결제대기(장바구니)'
+        ORDER BY id DESC
+        FETCH FIRST 1 ROWS ONLY
+    </select>
+
+    <!-- ✅ 장바구니 MERGE: 같은 상품(+옵션)은 수량 증가, 없으면 신규 insert -->
+    <update id="mergeCartItem">
+        MERGE INTO order_items t
+        USING (
+        SELECT
+        #{orderId}          AS orders_id,
+        #{productId}        AS products_id,
+        #{optionId,jdbcType=INTEGER} AS product_options_id
+        FROM dual
+        ) s
+        ON (
+        t.orders_id = s.orders_id
+        AND t.products_id = s.products_id
+        AND (
+        (t.product_options_id IS NULL AND s.product_options_id IS NULL)
+        OR t.product_options_id = s.product_options_id
+        )
+        )
+        WHEN MATCHED THEN
+        UPDATE SET t.quantity = t.quantity + #{qty}
+        WHEN NOT MATCHED THEN
+        INSERT (id, orders_id, products_id, product_options_id, quantity, price)
+        VALUES (
+        order_items_seq.NEXTVAL,
+        #{orderId},
+        #{productId},
+        #{optionId,jdbcType=INTEGER},
+        #{qty},
+        (SELECT price FROM products WHERE id = #{productId})
+        )
+    </update>
+
 </mapper>

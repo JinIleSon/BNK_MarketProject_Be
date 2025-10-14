@@ -151,6 +151,31 @@ public class OrdersService {
         return header;
     }
 
-    public void addToCart(int uid, int productId, Integer optionId, int qty) {
+    /**
+     * 장바구니 담기: 결제대기(장바구니) 주문을 보장하고, 같은 상품(+옵션)은 수량만 증가
+     * @return 영향 행 수(성공 시 1 이상)
+     */
+    @Transactional
+    public int addToCart(int uid, int productId, Integer optionId, int qty) {
+        if (qty <= 0) throw new IllegalArgumentException("수량은 1 이상이어야 합니다.");
+
+        // 1) 사용자의 "결제대기(장바구니)" 주문 id 조회
+        Integer cartOrderId = ordersMapper.selectOpenCartId(uid);
+
+        // 2) 없으면 생성
+        if (cartOrderId == null) {
+            OrdersDTO order = OrdersDTO.builder()
+                    .users_id(uid)
+                    .status("결제대기(장바구니)")
+                    .total_amount(0)
+                    .build();
+            ordersMapper.insertOrder(order); // keyProperty="id"로 PK 채워짐
+            cartOrderId = order.getId();
+        }
+
+        // 3) 아이템 MERGE(같은 상품/옵션이면 qty += ?, 없으면 INSERT)
+        int affected = ordersMapper.mergeCartItem(cartOrderId, productId, optionId, qty);
+
+        return affected;
     }
 }
