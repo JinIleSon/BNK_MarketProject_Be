@@ -92,7 +92,7 @@
                 </table>
                 <div style="display: flex; margin-top:25px;">
                     <button id="btnDelete" style="border:none; background:#760c0c; color:#fff; font-size:10px; height:25px; width:62px;">선택삭제</button>
-                    <button id="openRegBtn" style="margin-left:auto; border:none; background:#000; color:#fff; font-size:10px; height:25px; width:62px;">수정</button>
+                    <button id="openRegBtn" style="margin-left:auto; border:none; background:#000; color:#fff; font-size:10px; height:25px; width:62px;">등록</button>
                 </div>
             <div style="margin-top:300px;"></div>
         </div>
@@ -172,12 +172,6 @@
         </colgroup>
         <tbody>
         <tr style="border-top:1px solid #e2e2e2; border-bottom:1px solid #e2e2e2;">
-            <th style="text-align:center; font-weight:300; border-bottom:none !important; vertical-align: middle;">작성자</th>
-            <td style="border-bottom:none !important;">
-                <input class="author-input" type="text" placeholder="작성자 입력하기" style="width:240px;">
-            </td>
-        </tr>
-        <tr style="border-top:1px solid #e2e2e2; border-bottom:1px solid #e2e2e2;">
             <th style="text-align:center; font-weight:300; border-bottom:none !important; vertical-align: middle;">버전</th>
             <td style="border-bottom:none !important;">
               <input class="ipt" type="text" placeholder="버전 입력하기" style="width:240px;">
@@ -197,17 +191,68 @@
     </form>
   </div>
 </template>
-
 <style>
-.euro-nav__list {
-    max-height: 0;                /* 기본은 접힘 */
-    overflow: hidden;             /* 안 보이게 */
-    transition: max-height 0.15s ease;
-}
+    .euro-nav__list {
+        max-height: 0;                /* 기본은 접힘 */
+        overflow: hidden;             /* 안 보이게 */
+        transition: max-height 0.15s ease;
+    }
 
     .euro-nav__group.open .euro-nav__list {
-    max-height: 500px;            /* 펼쳐졌을 때 (충분히 크게 설정) */
-}
+        max-height: 500px;            /* 펼쳐졌을 때 (충분히 크게 설정) */
+    }
+</style>
+<script>
+    // 아코디언: 클릭 시 높이를 실제 내용 높이로 애니메이션
+    document.querySelectorAll('.euro-nav__title').forEach(title => {
+        title.style.cursor = 'pointer'; // 클릭 가능 시각화(선택)
+        title.addEventListener('click', () => {
+            const group = title.parentElement;
+            const list  = group.querySelector('.euro-nav__list');
+
+            const isOpen = group.classList.contains('open');
+
+            if (isOpen) {
+                // 닫기: 현재 높이를 고정 -> 0으로
+                list.style.maxHeight = list.scrollHeight + 'px';
+                // 강제 리플로우로 트랜지션 시작점 확정
+                list.offsetHeight;
+                list.style.maxHeight = '0px';
+                group.classList.remove('open');
+            } else {
+                // 열기: 0 -> 내용 높이
+                group.classList.add('open');
+                list.style.maxHeight = list.scrollHeight + 'px';
+
+                // 애니메이션 끝나면 inline max-height 제거(자연스런 레이아웃)
+                const onEnd = (e) => {
+                    if (e.propertyName === 'max-height') {
+                        list.style.maxHeight = 'none';
+                        list.removeEventListener('transitionend', onEnd);
+                    }
+                };
+                list.addEventListener('transitionend', onEnd);
+            }
+        });
+    });
+
+    const groups = document.querySelectorAll('.euro-nav__group');
+    document.querySelectorAll('.euro-nav__title').forEach(title => {
+        title.addEventListener('click', () => {
+            groups.forEach(g => {
+                if (g !== title.parentElement && g.classList.contains('open')) {
+                    const l = g.querySelector('.euro-nav__list');
+                    l.style.maxHeight = l.scrollHeight + 'px';
+                    l.offsetHeight;
+                    l.style.maxHeight = '0px';
+                    g.classList.remove('open');
+                }
+            });
+        }, {capture:true});
+    });
+
+</script>
+<style>
 /* 모달 오버레이 기본 숨김 */
 .order-modal__overlay{
   position: fixed; inset: 0;
@@ -298,9 +343,9 @@
     <tr style="border-bottom:1px solid #e2e2e2; height:70px;vertical-align: middle;">
       <td><input type="checkbox" class="row-chk" data-id="${v.id}"></td>
       <td>${v.id ?? ''}</td>
-      <td>${v.version ?? ''}</td>
+      <td>${v.versionName ?? ''}</td>
       <td>${v.author ? v.author : '-'}</td>
-      <td>${fmt(v.updatedAt || v.createdAt)}</td>
+      <td>${fmt(v.createdAt)}</td>
       <td><a href="#" class="open-coupon" data-memo="${memo}">[확인]</a></td>
     </tr>
   `;
@@ -323,7 +368,7 @@
 
         // 버전
         const verCell = shipModalBody.querySelector('.js-version-cell');
-        if (verCell) verCell.textContent = data.version || '-';
+        if (verCell) verCell.textContent = data.versionName || '-';
 
         // 작성자
         const authorCell = shipModalBody.querySelector('.js-author-cell');
@@ -363,7 +408,7 @@
         const version = (tds[2]?.textContent || '').trim();
         const author  = (tds[3]?.textContent || '').trim();
         const changeLog = a.dataset.memo || '';
-        openShipModal({ version, author, changeLog });
+        openShipModal({ versionName: version, author, changeLog });
     });
 
 
@@ -377,19 +422,21 @@
         form.addEventListener('submit', async (e)=>{
             e.preventDefault();
             const versionInput   = regModalBody.querySelector('input.ipt');
-            const authorInput    = regModalBody.querySelector('input.author-input');
             const textarea       = regModalBody.querySelector('textarea.txt');
 
             const version   = versionInput?.value?.trim() || '';
             const changeLog = textarea?.value?.trim() || '';
-            const author    = authorInput?.value?.trim() || '관리자';
+            const author = '관리자';
 
             if (!version){ alert('버전을 입력해주세요.'); return; }
 
             await fetch('/NICHIYA/api/admin/versions', {
-                method: 'PUT',
+                method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ version, changeLog, author })
+                body: JSON.stringify({ versionName: version,   // ✅ 필드명 맞추기
+                    author: author,
+                    changeLog: changeLog
+                })
             });
 
             await loadList();

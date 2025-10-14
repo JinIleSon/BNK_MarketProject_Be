@@ -45,7 +45,6 @@
            OR (parent_id = #{parentId})
     </select>
 
-    <!-- INSERT: category_no 자동 계산 -->
     <insert id="insert" parameterType="kr.co.bnk_marketproject_be.dto.AdminCategoryDTO">
         INSERT INTO CATEGORIES (name, parent_id, category_no)
         VALUES (
@@ -58,13 +57,24 @@
                 NULL
             </otherwise>
         </choose>,
-        NVL((
-        SELECT MAX(category_no) + 1
-        FROM CATEGORIES
-        WHERE
-        (#{parentId, jdbcType=NUMERIC} IS NULL AND parent_id IS NULL)
-        OR (parent_id = #{parentId, jdbcType=NUMERIC})
-        ), 1)
+        <choose>
+            <!-- 부모가 있을 때: 부모의 category_no * 10 + 하위 순번 -->
+            <when test="parentId != null">
+                (
+                SELECT parent.category_no * 10
+                + (NVL(MAX(child.category_no), parent.category_no * 10)
+                - parent.category_no * 10) + 1
+                FROM CATEGORIES parent
+                LEFT JOIN CATEGORIES child ON child.parent_id = parent.id
+                WHERE parent.id = #{parentId}
+                GROUP BY parent.category_no
+                )
+            </when>
+            <!-- 부모가 없을 때: 최상위 카테고리 -->
+            <otherwise>
+                NVL((SELECT MAX(category_no) + 1 FROM CATEGORIES WHERE parent_id IS NULL), 1)
+            </otherwise>
+        </choose>
         )
     </insert>
 
@@ -73,10 +83,10 @@
         UPDATE CATEGORIES
         SET
             name       = #{name},
-            parent_id  = #{parentId, jdbcType=NUMERIC},
-            category_no= #{categoryNo, jdbcType=NUMERIC}
+            parent_id  = #{parentId, jdbcType=NUMERIC}
         WHERE id = #{id}
     </update>
+
 
     <delete id="delete" parameterType="int">
         DELETE FROM CATEGORIES WHERE id = #{id}

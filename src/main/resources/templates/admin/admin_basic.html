@@ -170,7 +170,7 @@
     <div class="title-line" style="padding-bottom: 5px;"><b>로고</b></div>
 
     <form th:action="@{/admin/admin_basic}" method="post" enctype="multipart/form-data">
-        <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>
+        <!--<input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>-->
 
         <!-- 기존 값도 함께 보냄: 새 파일이 없으면 서비스에서 이 값 유지 -->
         <input type="hidden" name="headerLogo" th:value="${config.headerLogo}">
@@ -257,32 +257,32 @@
 
     <!-- 기업 정보 -->
             <form th:action="@{/admin/admin_basic}" method="post" th:object="${config}">
-                <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>
-                <input type="hidden" name="section" value="company"/>
+                <!-- <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>-->
+                 <input type="hidden" name="section" value="company"/>
 
-                <div class="title-line"><b>기업 정보</b></div>
-                <table>
-                    <tr class="th-gray"><th colspan="2">브라우저 탭, 헤더 및 푸터 노출 정보 입니다.</th></tr>
-                    <tr><th class="th-blue">상호명</th>
-                        <td><input type="text" th:field="*{companyName}" style="width:250px"/></td></tr>
-                    <tr><th class="th-blue">대표이사</th>
-                        <td><input type="text" th:field="*{ceoName}" style="width:250px"/></td></tr>
-                    <tr><th class="th-blue">사업자등록번호</th>
-                        <td><input type="text" th:field="*{bizRegNo}" style="width:250px"/></td></tr>
-                    <tr><th class="th-blue">통신판매업신고</th>
-                        <td><input type="text" th:field="*{mailOrderNo}" style="width:250px"/></td></tr>
-                    <tr><th class="th-blue">기본주소</th>
-                        <td><input type="text" th:field="*{addrBase}" style="width:350px"/></td></tr>
-                    <tr><th class="th-blue">상세주소</th>
-                        <td><input type="text" th:field="*{addrDetail}" style="width:350px"/></td></tr>
-                </table>
-                <button class="btn" type="submit">수정하기</button>
-            </form>
+                 <div class="title-line"><b>기업 정보</b></div>
+                 <table>
+                     <tr class="th-gray"><th colspan="2">브라우저 탭, 헤더 및 푸터 노출 정보 입니다.</th></tr>
+                     <tr><th class="th-blue">상호명</th>
+                         <td><input type="text" th:field="*{companyName}" style="width:250px"/></td></tr>
+                     <tr><th class="th-blue">대표이사</th>
+                         <td><input type="text" th:field="*{ceoName}" style="width:250px"/></td></tr>
+                     <tr><th class="th-blue">사업자등록번호</th>
+                         <td><input type="text" th:field="*{bizRegNo}" style="width:250px"/></td></tr>
+                     <tr><th class="th-blue">통신판매업신고</th>
+                         <td><input type="text" th:field="*{mailOrderNo}" style="width:250px"/></td></tr>
+                     <tr><th class="th-blue">기본주소</th>
+                         <td><input type="text" th:field="*{addrBase}" style="width:350px"/></td></tr>
+                     <tr><th class="th-blue">상세주소</th>
+                         <td><input type="text" th:field="*{addrDetail}" style="width:350px"/></td></tr>
+                 </table>
+                 <button class="btn" type="submit">수정하기</button>
+             </form>
 
 
-            <!-- 고객센터 정보 -->
+             <!-- 고객센터 정보 -->
             <form th:action="@{/admin/admin_basic}" method="post" th:object="${config}">
-                <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>
+                <!--<input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>-->
                 <input type="hidden" name="section" value="cs"/>
 
                 <div class="title-line"><b>고객센터 정보</b></div>
@@ -303,7 +303,7 @@
 
             <!-- 카피라이트 -->
             <form th:action="@{/admin/admin_basic}" method="post" th:object="${config}">
-                <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>
+                <!--<input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>-->
                 <input type="hidden" name="section" value="copyright"/>
 
                 <div class="title-line"><b>카피라이트</b></div>
