@@ -24,4 +24,9 @@ public class MainController {
         model.addAttribute("discountList",  mainService.getProducts("discount",  8)); // 할인율 상위 8
         return "main/main_main";
     }
+
+    @GetMapping("/main/main/license")
+    public String licenseList(){
+        return "main/main_nichiyaLicense";
+    }
 }
