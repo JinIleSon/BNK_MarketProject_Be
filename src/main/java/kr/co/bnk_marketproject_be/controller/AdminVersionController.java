@@ -34,7 +34,8 @@ public class AdminVersionController {
     public Map<String, Object> update(@RequestBody Map<String, String> body, Principal principal) {
         String version   = body.getOrDefault("version", "").trim();
         String changeLog = body.getOrDefault("changeLog", "").trim();
-        String author    = principal != null ? principal.getName() : body.getOrDefault("author", "SYSTEM");
+        String author = body.getOrDefault("author", "관리자");
+
 
         AdminSiteConfigDTO dto = AdminSiteConfigDTO.builder()
                 .version(version)

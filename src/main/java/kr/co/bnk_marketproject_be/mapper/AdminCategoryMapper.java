@@ -8,16 +8,11 @@ import java.util.List;
 
 @Mapper
 public interface AdminCategoryMapper {
-
-    // 서비스에서 쓰는 시그니처와 정확히 일치
     List<AdminCategoryDTO> findAll();
-
-    int insert(AdminCategoryDTO dto);
-    int update(AdminCategoryDTO dto);
-
-    int delete(@Param("id") Integer id);
-    int deleteChildren(@Param("id") Integer id);
-
-    // parentId가 null일 수도 있으니 @Param 이름 고정
-    Integer nextOrderForParent(@Param("parentId") Integer parentId);
+    AdminCategoryDTO findById(Integer id);  // ✅ 추가
+    void insert(AdminCategoryDTO dto);
+    void update(AdminCategoryDTO dto);
+    void delete(Integer id);
+    void deleteChildren(Integer id);
+    void reorderAfterDelete(Integer parentId);
 }
