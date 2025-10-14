@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="kr.co.bnk_marketproject_be.mapper.PolicyMapper">
+
+    <select id="selectAllPolicies" resultType="kr.co.bnk_marketproject_be.dto.PolicyDTO">
+        SELECT
+        terms_buyer, terms_seller, terms_finance, terms_location, terms_privacy
+        FROM SITE_CONFIG
+    </select>
+
+
+</mapper>
