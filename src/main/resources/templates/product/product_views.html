@@ -69,27 +69,10 @@
         .menu-grid li{ list-style:none; }
     </style>
 </head>
-<script>
-    /* 헤더/푸터 include (기존 유지) */
-    fetch("/NICHIYA/main/header.html")
-        .then(res => res.text())
-        .then(data => {
-            document.getElementById("header").innerHTML = data;
-            const scripts = document.getElementById("header").querySelectorAll("script");
-            scripts.forEach(oldScript => {
-                const s = document.createElement("script");
-                if (oldScript.src) s.src = oldScript.src; else s.textContent = oldScript.textContent;
-                document.body.appendChild(s);
-            });
-        });
 
-    fetch("/NICHIYA/main/footer.html")
-        .then(res => res.text())
-        .then(data => { document.getElementById("footer").innerHTML = data; });
-</script>
 
 <body th:object="${product}">
-<div id="header"></div>
+<div th:replace="~{main/header.html}"></div>
 
 <!-- 본문 상단 경로/제목 -->
 <div style="height:100%; display:flex; flex-direction:column; justify-content:center; align-items:center; margin:0 auto;">
@@ -216,20 +199,33 @@
                 </form>
             </div>
 
-            <!-- === 컨트롤러 연동용 JS (UI 변경 없음) === -->
-            <script th:inline="javascript">
-                // 엔드포인트
-                const ADD_TO_CART_URL = /*[[@{/product/cart}]]*/ '/product/cart';
-                const ADD_AND_GO_URL  = /*[[@{/product/cart/add-and-go}]]*/ '/product/cart/add-and-go';
+            <!-- 컨트롤러 연동용 임시 작업-->
+            <script>
+                // === 엔드포인트 ===
+                const ADD_TO_CART_URL = '/NICHIYA/product/cart';
+                const ADD_AND_GO_URL  = '/NICHIYA/product/cart/add-and-go';
+                const CART_PAGE_URL   = '/NICHIYA/product/cart';
 
-                // CSRF
-                const CSRF_TOKEN  = document.querySelector('meta[name="_csrf"]')?.content;
-                const CSRF_HEADER = document.querySelector('meta[name="_csrf_header"]')?.content;
+                // === CSRF: meta 우선, 없으면 쿠키(XSRF-TOKEN)에서 ===
+                function readMeta(name){
+                    const el = document.querySelector(`meta[name="${name}"]`);
+                    return el ? el.content : null;
+                }
+                function readCookie(name){
+                    const m = document.cookie.match(new RegExp('(?:^|; )' + name + '=([^;]*)'));
+                    return m ? decodeURIComponent(m[1]) : null;
+                }
+                function getCsrf(){
+                    // meta(_csrf.headerName/_csrf.token)가 있으면 그걸 사용
+                    const headerName = readMeta('_csrf_header') || 'X-XSRF-TOKEN';
+                    const token      = readMeta('_csrf')        || readCookie('XSRF-TOKEN');
+                    return { headerName, token };
+                }
 
-                // 수량/옵션/상품ID
+                // === 값 읽기 ===
                 function readQty(){
-                    const raw = document.getElementById('number')?.innerText?.trim();
-                    const n = Number(raw);
+                    const t = document.getElementById('number')?.innerText?.trim();
+                    const n = Number(t);
                     return Number.isFinite(n) && n > 0 ? n : 1;
                 }
                 function readOptionId(){
@@ -241,59 +237,55 @@
                     return !!sel && sel.options && sel.options.length > 1;
                 }
                 function readProductId(){
-                    return document.querySelector('input[name="productId"]')?.value || '';
-                }
-                function needOptionButNotSelected(){
-                    return hasOptions() && !readOptionId();
+                    const el = document.querySelector('input[name="productId"]');
+                    return el ? el.value : '';
                 }
 
-                function buildParams(){
-                    const params = new URLSearchParams();
-                    params.append('productId', readProductId());
-                    const optionId = readOptionId();
-                    if (optionId) params.append('optionId', optionId);
-                    params.append('qty', String(readQty()));
-                    // 테스트용 uid가 쿼리에 있으면 전파(선택)
-                    const uid = new URL(location.href).searchParams.get('uid');
-                    if (uid) params.append('uid', uid);
-                    return params;
-                }
-
-                // 토스트
+                // === UX 토스트(간단) ===
                 function toast(msg, danger){
                     const t = document.createElement('div');
                     t.textContent = msg;
                     t.style.cssText = `
-                      position:fixed; right:16px; bottom:16px; z-index:2000;
-                      padding:10px 14px; border-radius:8px; color:#fff;
-                      background:${danger ? '#d64545' : '#333'};
-                      box-shadow:0 6px 14px rgba(0,0,0,.15); font-size:14px;
-                      opacity:.96; transform:translateY(10px); transition:transform .18s ease;
-                    `;
+    position:fixed; right:16px; bottom:16px; z-index:2000;
+    padding:10px 14px; border-radius:8px; color:#fff;
+    background:${danger ? '#d64545' : '#333'};
+    box-shadow:0 6px 14px rgba(0,0,0,.15); font-size:14px;
+    opacity:.96; transform:translateY(10px); transition:transform .18s ease;`;
                     document.body.appendChild(t);
                     requestAnimationFrame(()=> t.style.transform='translateY(0)');
                     setTimeout(()=>{ t.style.transform='translateY(10px)'; setTimeout(()=> t.remove(), 150); }, 1500);
                 }
 
-                // 장바구니 담기 (AJAX)
+                // === 파라미터 구성 ===
+                function buildParams(){
+                    const p = new URLSearchParams();
+                    p.append('productId', readProductId());
+                    const opt = readOptionId();
+                    if (opt) p.append('optionId', opt);
+                    p.append('qty', String(readQty()));
+                    return p;
+                }
+
+                // === 장바구니 담기 (AJAX) ===
                 async function addToCart(){
-                    if (needOptionButNotSelected()){
+                    if (hasOptions() && !readOptionId()){
                         toast('옵션을 선택해 주세요.', true);
                         document.getElementById('optionSelect')?.focus();
                         return;
                     }
+                    const { headerName, token } = getCsrf();
                     try{
                         const res = await fetch(ADD_TO_CART_URL, {
                             method: 'POST',
                             headers: {
                                 'Content-Type':'application/x-www-form-urlencoded;charset=UTF-8',
-                                ...(CSRF_HEADER ? { [CSRF_HEADER]: CSRF_TOKEN } : {})
+                                ...(token ? { [headerName]: token } : {})
                             },
                             body: buildParams().toString()
                         });
-                        if (!res.ok) throw new Error('HTTP ' + res.status);
+                        if (!res.ok) throw new Error(`HTTP ${res.status}`);
                         const json = await res.json();
-
+                        // 헤더 카운트 갱신 (있으면)
                         const link = document.getElementById('basketCountLink');
                         if (link && typeof json.itemCount === 'number'){
                             link.textContent = `바스켓백 [${json.itemCount}]`;
@@ -301,42 +293,48 @@
                         toast('장바구니에 담았습니다.');
                     }catch(e){
                         console.error(e);
-                        toast('장바구니 담기에 실패했습니다. 잠시 후 다시 시도해 주세요.', true);
+                        toast('장바구니 담기 실패. 잠시 후 다시 시도해 주세요.', true);
                     }
                 }
 
-                // 구매하기 (POST → 서버가 장바구니 담고 /product/cart로 리다이렉트)
+                // === 구매하기 (POST 후 서버 리다이렉트) ===
                 function buyNow(){
-                    if (needOptionButNotSelected()){
+                    if (hasOptions() && !readOptionId()){
                         toast('옵션을 선택해 주세요.', true);
                         document.getElementById('optionSelect')?.focus();
                         return;
                     }
+                    const { token } = getCsrf();
                     const params = buildParams();
+
+                    // 표준 form POST → 서버 redirect 따라가서 장바구니 페이지 진입
                     const form = document.createElement('form');
                     form.method = 'POST';
                     form.action = ADD_AND_GO_URL;
 
                     // CSRF 히든
-                    if (CSRF_TOKEN){
-                        const csrf = document.createElement('input');
-                        csrf.type = 'hidden';
-                        csrf.name = /*[[${_csrf.parameterName}]]*/ '_csrf';
-                        csrf.value = CSRF_TOKEN;
-                        form.appendChild(csrf);
-                    }
-                    for (const [k,v] of params.entries()){
+                    if (token){
                         const input = document.createElement('input');
                         input.type = 'hidden';
-                        input.name = k;
-                        input.value = v;
+                        input.name = '_csrf'; // CookieCsrfTokenRepo는 헤더로 보내지만, 서버가 히든 필드명은 무시 → 방어용
+                        input.value = token;
+                        // ↑ 대부분 불필요하지만 환경에 따라 유용. 확실히 하려면 아래처럼 표준명도 함께 넣기:
+                        // input.name = '_csrf';
                         form.appendChild(input);
+                    }
+
+                    for (const [k,v] of params.entries()){
+                        const el = document.createElement('input');
+                        el.type = 'hidden';
+                        el.name = k;
+                        el.value = v;
+                        form.appendChild(el);
                     }
                     document.body.appendChild(form);
                     form.submit();
                 }
 
-                // 전역 노출
+                // 전역에 노출 (버튼 onclick에서 사용)
                 window.addToCart = addToCart;
                 window.buyNow = buyNow;
             </script>
@@ -459,6 +457,6 @@
 </div>
 </div>
 
-<div id="footer"></div>
+<div th:replace="~{main/footer.html}"></div>
 </body>
 </html>
