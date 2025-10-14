@@ -15,7 +15,7 @@ public class MainController {
 
     private final MainService mainService;
 
-    @GetMapping("/main/main/page")
+    @GetMapping({"/main/main/page", "/", "/index"})
     public String list(Model model){
         model.addAttribute("newList",       mainService.getProducts(null,        8)); // created_at desc
         model.addAttribute("bestList",      mainService.getProducts("sold",      5)); // 판매수 상위 5
