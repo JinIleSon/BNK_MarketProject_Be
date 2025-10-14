@@ -82,12 +82,12 @@ public class SecurityConfig {
                 ).permitAll()
 
                 // 🔹 일반 회원, 셀러 접근 허용
-                .requestMatchers("/member/**").hasAnyRole("USER", "SELLER", "ADMIN")
-                .requestMatchers("/article/**").hasAnyRole("USER", "SELLER", "ADMIN")
-                .requestMatchers("/manager/**").hasAnyRole("MANAGER", "ADMIN")
+                .requestMatchers("/member/**").hasAnyRole("user", "seller", "admin")
+                .requestMatchers("/article/**").hasAnyRole("user", "seller", "admin")
+                .requestMatchers("/admin/**").hasAnyRole( "admin")
 
                 // 🔹 관리자(admin)는 모든 페이지 접근 가능
-                .anyRequest().hasAnyRole("ADMIN")
+                .anyRequest().hasAnyRole("admin")
         );
 
         // ✅ CSRF (쿠키 기반) 너무 복잡하고 어려워서 안함
