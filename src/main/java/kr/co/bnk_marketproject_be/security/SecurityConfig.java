@@ -54,6 +54,7 @@ public class SecurityConfig {
                 .csrf(csrf -> csrf
                         .ignoringRequestMatchers(
                                 "/api/**",
+                                "/admin/**",
                                 "/h2-console/**",
                                 "/actuator/**"
                         )

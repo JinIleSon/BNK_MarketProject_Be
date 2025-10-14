@@ -39,6 +39,7 @@ public class AdminBasicController {
                 environment.getProperty("spring.application.version", "unknown"));
         return "admin/admin_basic";
     }
+
     // ===== POST =====
     @PostMapping("/admin/admin_basic")
     public String updateAdminBasic(
@@ -46,10 +47,10 @@ public class AdminBasicController {
             @RequestParam(required = false) MultipartFile headerLogoFile,
             @RequestParam(required = false) MultipartFile footerLogoFile,
             @RequestParam(required = false) MultipartFile faviconFile,
-            @RequestParam(required = false, defaultValue = "false") boolean removeHeaderLogo,
-            @RequestParam(required = false, defaultValue = "false") boolean removeFooterLogo,
-            @RequestParam(required = false, defaultValue = "false") boolean removeFavicon,
-                                   RedirectAttributes ra) {
+            @RequestParam(required = false) String removeHeaderLogo,
+            @RequestParam(required = false) String removeFooterLogo,
+            @RequestParam(required = false) String removeFavicon,
+            RedirectAttributes ra) {
         // 디버그 로그
         log.info("POST /admin/admin_basic form = {}", form);
 
@@ -58,47 +59,55 @@ public class AdminBasicController {
         if (current == null) current = new AdminSiteConfigDTO();
 
         // 1) 텍스트 필드 머지 (빈 값이면 기존 유지)
-        String siteTitle    = blankToNull(form.getSiteTitle());
+        String siteTitle = blankToNull(form.getSiteTitle());
         String siteSubtitle = blankToNull(form.getSiteSubtitle());
-        String version      = blankToNull(form.getVersion());
+        String version = blankToNull(form.getVersion());
 
-        form.setSiteTitle(    siteTitle    != null ? siteTitle    : current.getSiteTitle());
-        form.setSiteSubtitle( siteSubtitle != null ? siteSubtitle : current.getSiteSubtitle());
-        form.setVersion(      version      != null ? version      : current.getVersion());
+        form.setSiteTitle(siteTitle != null ? siteTitle : current.getSiteTitle());
+        form.setSiteSubtitle(siteSubtitle != null ? siteSubtitle : current.getSiteSubtitle());
+        form.setVersion(version != null ? version : current.getVersion());
 
         // 2) 파일 처리 (제거 > 새 업로드 > 기존 유지)
         try {
-            // header
-            if (removeHeaderLogo) {
-                form.setHeaderLogo(null);
+            // HEADER LOGO
+            if (removeHeaderLogo != null) { // 체크박스 선택 시 "on"
+                if (current.getHeaderLogo() != null)
+                    storageService.deleteFile(current.getHeaderLogo());
+                form.setHeaderLogo(null); // DB null 처리
             } else if (headerLogoFile != null && !headerLogoFile.isEmpty()) {
                 form.setHeaderLogo(storageService.saveAndReturnUrl(headerLogoFile, "header"));
             } else {
-                form.setHeaderLogo( form.getHeaderLogo() != null ? form.getHeaderLogo() : current.getHeaderLogo() );
+                form.setHeaderLogo(current.getHeaderLogo());
             }
 
-            // footer
-            if (removeFooterLogo) {
+            // FOOTER LOGO
+            if (removeFooterLogo != null) {
+                if (current.getFooterLogo() != null)
+                    storageService.deleteFile(current.getFooterLogo());
                 form.setFooterLogo(null);
             } else if (footerLogoFile != null && !footerLogoFile.isEmpty()) {
                 form.setFooterLogo(storageService.saveAndReturnUrl(footerLogoFile, "footer"));
             } else {
-                form.setFooterLogo( form.getFooterLogo() != null ? form.getFooterLogo() : current.getFooterLogo() );
+                form.setFooterLogo(current.getFooterLogo());
             }
 
-            // favicon
-            if (removeFavicon) {
+            // FAVICON
+            if (removeFavicon != null) {
+                if (current.getFavicon() != null)
+                    storageService.deleteFile(current.getFavicon());
                 form.setFavicon(null);
             } else if (faviconFile != null && !faviconFile.isEmpty()) {
                 form.setFavicon(storageService.saveAndReturnUrl(faviconFile, "favicon"));
             } else {
-                form.setFavicon( form.getFavicon() != null ? form.getFavicon() : current.getFavicon() );
+                form.setFavicon(current.getFavicon());
             }
+
         } catch (Exception e) {
             log.error("File upload error", e);
             ra.addFlashAttribute("msg", "파일 업로드 중 오류가 발생했습니다.");
             return "redirect:/admin/admin_basic";
         }
+
 
         // 파일 처리 끝난 직후
         log.info("==== DEBUG CHECK ====");

@@ -107,15 +107,27 @@
             <if test="version != null and version != ''">
                 VERSION = #{version},
             </if>
-            <if test="headerLogo != null and headerLogo != ''">
+            <if test="headerLogo != null">
                 HEADER_LOGO = #{headerLogo},
             </if>
-            <if test="footerLogo != null and footerLogo != ''">
+            <if test="headerLogo == null">
+                HEADER_LOGO = NULL,
+            </if>
+
+            <if test="footerLogo != null">
                 FOOTER_LOGO = #{footerLogo},
             </if>
-            <if test="favicon != null and favicon != ''">
+            <if test="footerLogo == null">
+                FOOTER_LOGO = NULL,
+            </if>
+
+            <if test="favicon != null">
                 FAVICON = #{favicon},
             </if>
+            <if test="favicon == null">
+                FAVICON = NULL,
+            </if>
+
             <!-- 신규 필드 -->
             <if test="companyName    != null">COMPANY_NAME     = #{companyName},</if>
             <if test="ceoName        != null">CEO_NAME         = #{ceoName},</if>

@@ -218,7 +218,7 @@
             <!-- 데이터 있는 경우 -->
             <li th:each="n : ${notices}">
                 <span th:text="${n.pinned} ? '📌 ' : ''"></span>
-                <a th:href="@{/admin/notice/{id}(id=${n.id})}"
+                <a th:href="@{/admin/announcement/view(id=${n.id})}"
                    th:text="${n.title}">공지 타이틀</a>
                 <span th:text="${n.createdAt}"></span>
             </li>
@@ -226,26 +226,26 @@
     </div>
 
 
-        <!-- 고객문의 -->
-        <div class="board-section">
-            <div style="padding-top:20px; padding-bottom:5px;"><b>고객문의</b></div>
-            <hr style="margin-top:10px;">
-            <ul>
-                <li th:if="${#lists.isEmpty(inquiries)}" style="justify-content:center; color:#888;">
-                    등록된 문의가 없습니다.
-                </li>
+    <!-- 고객문의 -->
+    <div class="board-section">
+        <div style="padding-top:20px; padding-bottom:5px;"><b>고객문의</b></div>
+        <hr style="margin-top:10px;">
+        <ul>
+            <li th:if="${#lists.isEmpty(inquiries)}" style="justify-content:center; color:#888;">
+                등록된 문의가 없습니다.
+            </li>
 
-                <li th:each="q : ${inquiries}">
-                    <span th:text="${q.qnaStatus == 'NEW' ? '[ 미답변 ]' : '[ 답변완료 ]'}"></span>
-                    <a th:href="@{/admin/qna/{id}(id=${q.id})}"
-                       th:text="${q.title}">문의 제목</a>
-                    <span th:text="${q.userId}">user</span>
-                    <span th:text="${q.createdAt}">25.09.30</span>
-                </li>
-            </ul>
-        </div>
-
+            <li th:each="q : ${inquiries}">
+                <span th:text="${q.qnaStatus == 'NEW' ? '[ 미답변 ]' : '[ 답변완료 ]'}"></span>
+                <a th:href="@{/admin/inquiry/view(id=${q.id})}"
+                   th:text="${q.title}">문의 제목</a>
+                <span th:text="${q.userId}">user</span>
+                <span th:text="${q.createdAt}">25.09.30</span>
+            </li>
+        </ul>
+    </div>
   </div>
+
   </div>
       <script>
           /* ========== 차트 렌더 함수들 ========== */
