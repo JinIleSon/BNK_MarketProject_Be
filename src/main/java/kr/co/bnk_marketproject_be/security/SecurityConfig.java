@@ -90,7 +90,9 @@ public class SecurityConfig {
 //                //.ignoringRequestMatchers("/member/login")
 //                .csrfTokenRepository(CookieCsrfTokenRepository.withHttpOnlyFalse())
 //        );
+
         http.csrf(csrf -> csrf.disable());
+
 
         // ✅ remember-me (자동 로그인)
         http.rememberMe(remember -> remember
