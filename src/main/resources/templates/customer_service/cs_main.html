@@ -3,40 +3,13 @@
 <head>
     <meta charset="UTF-8">
     <title>케이마켓 고객센터</title>
-    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" th:href="@{/css/style.css}">
 
-    <link rel="stylesheet" href="css/common.css">
+    <link rel="stylesheet" th:href="@{/css/common.css}">
     <link rel="stylesheet" href="">
 </head>
 <body>
-    <!--헤더푸터 연결-->
-    <script>
-        fetch("../main/header.html")
-          .then(res => res.text())
-          .then(data => {
-            document.getElementById("header").innerHTML = data;
-
-            // header.html 안의 스크립트 실행 강제
-            const scripts = document.getElementById("header").querySelectorAll("script");
-            scripts.forEach(oldScript => {
-            const newScript = document.createElement("script");
-            if (oldScript.src) {
-                newScript.src = oldScript.src;
-            } else {
-                newScript.textContent = oldScript.textContent;
-            }
-            document.body.appendChild(newScript);
-            });
-          });
-
-       
-        fetch("../main/footer.html")
-          .then(res => res.text())
-          .then(data => {
-            document.getElementById("footer").innerHTML = data;
-          });
-    </script>
-    <div id="header"></div>
+<div th:replace="~{main/header.html}"></div>
 
     <div id="content" class="cs_main_wrap">
 
@@ -66,27 +39,27 @@
             </h2>
             <div class="faq_category">
                 <a href="faq/faq_view.html?category=회원">
-                    <img src="images/user.png" alt="회원 아이콘">
+                    <img th:src="@{/images/user.png}" alt="회원 아이콘">
                     <span>회원</span>
                 </a>
                 <a href="faq/faq_view.html?category=쿠폰/이벤트">
-                    <img src="images/event.png" alt="쿠폰/이벤트 아이콘">
+                    <img th:src="@{/images/event.png}" alt="쿠폰/이벤트 아이콘">
                     <span>쿠폰<br>이벤트</span>
                 </a>
                 <a href="faq/faq_view.html?category=주문/결제">
-                    <img src="images/order.png" alt="주문/결제 아이콘">
+                    <img th:src="@{/images/order.png}" alt="주문/결제 아이콘">
                     <span>주문<br>결제</span>
                 </a>
                 <a href="faq/faq_view.html?category=배송">
-                    <img src="images/delivery.png" alt="배송 아이콘">
+                    <img th:src="@{/images/delivery.png}" alt="배송 아이콘">
                     <span>배송</span>
                 </a>
                 <a href="faq/faq_view.html?category=취소/반품/교환">
-                    <img src="images/exchange.png" alt="취소/반품/교환 아이콘">
+                    <img th:src="@{/images/exchange.png}" alt="취소/반품/교환 아이콘">
                     <span>취소<br>반품/교환</span>
                 </a>
                 <a href="faq/faq_view.html?category=안전거래">
-                    <img src="images/lock.png" alt="안전거래 아이콘">
+                    <img th:src="@{/images/lock.png}" alt="안전거래 아이콘">
                     <span>안전거래</span>
                 </a>
             </div>
@@ -133,6 +106,6 @@
         </div>
 
     </div>
-    <div id="footer" style="margin-top:50px;"></div>
+<div th:replace="~{main/footer.html}"></div>
     </body>
 </html>

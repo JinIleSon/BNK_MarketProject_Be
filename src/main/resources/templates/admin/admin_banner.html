@@ -61,7 +61,7 @@
     }
     .btn-gray { background-color: #ccc; color: #333; }
     .btn-gray:disabled { opacity: 0.6; cursor: not-allowed; }
-    .btn-blue { background-color: #6FADCF; color: #fff; }
+    .btn-blue { background-color: #ccc; color: #333; }
     .btn-blue:hover { filter: brightness(0.95); }
 
     /* 테이블 */
@@ -503,42 +503,54 @@
 
         if (!list || list.length === 0){
             tbody.innerHTML = `
-        <tr><td colspan="10" style="text-align:center; padding:20px; color:#888;">
-          등록된 배너가 없습니다.
-        </td></tr>`;
+            <tr><td colspan="10" style="text-align:center; padding:20px; color:#888;">
+              등록된 배너가 없습니다.
+            </td></tr>`;
             return;
         }
 
-        tbody.innerHTML = list.map((b, idx)=> `
-      <tr data-id="${b.id}">
-        <td><input type="checkbox" class="row-check"></td>
-        <td>${idx + 1}</td>
-        <td>
-          <div class="thumb">
-            <img src="${b.imagePath.startsWith('/upload') ? '/NICHIYA' + b.imagePath : b.imagePath}"
-               alt="사진"
-               style="width:100px;height:40px;object-fit:cover;">
-          </div>
-        </td>
-        <td class="banner-info">
-          ${b.name}<br>
-          크기 : ${b.size || '-'}<br>
-          배경색 : ${b.bgColor || '-'}<br>
-          배너링크
-        </td>
-        <td>${b.bnrPosition}</td>
-        <td>${b.dateFrom || '-'}</td>
-        <td>${b.dateTo || '-'}</td>
-        <td>${b.timeFrom || '-'}</td>
-        <td>${b.timeTo || '-'}</td>
-        <td>
-           ${b.status === 'ACTIVE'
-                      ? `<button class="btn" data-action="disable" data-id="${b.id}">[비활성]</button>`
-                      : `<button class="btn" data-action="enable"  data-id="${b.id}">[활성]</button>`
-           }
-        </td>
-      </tr>
-    `).join('');
+        // 현재 날짜와 시간 (yyyy-MM-dd HH:mm 형태)
+        const now = new Date();
+
+        tbody.innerHTML = list.map((b, idx) => {
+            // 날짜/시간 파싱
+            const start = new Date(`${b.dateFrom}T${b.timeFrom}`);
+            const end   = new Date(`${b.dateTo}T${b.timeTo}`);
+
+            // 활성 상태 판정
+            const isActive = now >= start && now <= end;
+
+            // 버튼 텍스트
+            const actionBtn = isActive
+                ? `<button class="btn" data-action="disable" data-id="${b.id}">[비활성]</button>`
+                : `<button class="btn" data-action="enable"  data-id="${b.id}">[활성]</button>`;
+
+            return `
+            <tr data-id="${b.id}">
+                <td><input type="checkbox" class="row-check"></td>
+                <td>${idx + 1}</td>
+                <td>
+                    <div class="thumb">
+                        <img src="${b.imagePath.startsWith('/upload') ? '/NICHIYA' + b.imagePath : b.imagePath}"
+                             alt="배너"
+                             style="width:100px;height:40px;object-fit:cover;">
+                    </div>
+                </td>
+                <td class="banner-info">
+                    ${b.name}<br>
+                    크기 : ${b.size || '-'}<br>
+                    배경색 : ${b.bgColor || '-'}<br>
+                    배너링크
+                </td>
+                <td>${b.bnrPosition}</td>
+                <td>${b.dateFrom || '-'}</td>
+                <td>${b.dateTo || '-'}</td>
+                <td>${b.timeFrom || '-'}</td>
+                <td>${b.timeTo || '-'}</td>
+                <td>${actionBtn}</td>
+            </tr>
+        `;
+        }).join('');
 
         // 전체선택
         const checkAll = document.getElementById('checkAll');
@@ -549,6 +561,7 @@
             };
         }
     }
+
 
     // 탭 전환
     (function initTabsBar(){

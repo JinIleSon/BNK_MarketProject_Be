@@ -1,84 +1,133 @@
 package kr.co.bnk_marketproject_be.security;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+// 아래 두개 DB 데이터 로그인을 위한 것, import 수동
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
-import org.springframework.security.config.annotation.web.configurers.CsrfConfigurer;
-import org.springframework.security.core.userdetails.User;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.security.provisioning.InMemoryUserDetailsManager;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.csrf.CookieCsrfTokenRepository;
+// import org.springframework.security.core.userdetails.User;
+// import org.springframework.security.core.userdetails.UserDetails;
+// import org.springframework.security.provisioning.InMemoryUserDetailsManager;
 
 @Configuration
 public class SecurityConfig {
 
+    @Autowired
+    private MyUserDetailsService myUserDetailsService;
+
 
     @Bean
-    public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
+    public SecurityFilterChain filterChain(HttpSecurity http, CustomAuthenticationProvider customAuthenticationProvider) throws Exception {
 
-//        // 로그인 설정
-//        http.formLogin(form -> form
-//                .loginPage("/user/login")
-//                .defaultSuccessUrl("/")
-//                .failureUrl("/user/login?error=true")
-//                .usernameParameter("usid")
-//                .passwordParameter("pass")
-//        );
-//
-//        // 로그아웃 설정
-//        http.logout(logout -> logout
-//                .logoutUrl("/user/logout")
-//                .invalidateHttpSession(true)
-//                .logoutSuccessUrl("/user/login?logout=true"));
-//
-//        // 인가 설정
-//        http.authorizeHttpRequests(authorize -> authorize
-//                .requestMatchers("/admin/**").hasRole("ADMIN")
-//                .requestMatchers("/manager/**").hasAnyRole("ADMIN", "MANAGER")
-//                .requestMatchers("/member/**").hasAnyRole("ADMIN", "MANAGER", "MEMBER")
-//                .requestMatchers("/guest/**").permitAll()
-//                .requestMatchers("/article/**").hasAnyRole("ADMIN", "MANAGER", "MEMBER")
-//                .anyRequest().permitAll()
-//        );
-//
-//        // 기타 설정
-//        http.csrf(CsrfConfigurer::disable);
+        // ✅ DB 기반 인증 (CustomAuthenticationProvider)
+        http.authenticationProvider(customAuthenticationProvider);
 
-        http
-                .authorizeHttpRequests(auth -> auth
-                        .anyRequest().permitAll()
-                )
-                .csrf(csrf -> csrf
-                        .ignoringRequestMatchers(
-                                "/api/**",
-                                "/h2-console/**",
-                                "/actuator/**"
-                        )
-                )
-                .formLogin(form -> form.permitAll())
-                .logout(logout -> logout.permitAll());
+        // ✅ 로그인 설정
+        http.formLogin(form -> form
+                .loginPage("/member/login")            // 로그인 페이지
+                .loginProcessingUrl("/member/login")   // 로그인 요청 처리 URL (form action과 동일)
+                .defaultSuccessUrl("/NICHIYA/main/main/page", true) // 로그인 성공 시
+                // 로그인 실패 성공 시 핸들러
+                .failureHandler((request, response, exception) -> {
+                    String username = request.getParameter("userId");
+                    System.out.println("❌ 로그인 실패 (Controller 로그): 아이디=" + username);
+                    exception.printStackTrace();
+                    response.sendRedirect("/member/login?error=true");
+                })
+                .successHandler((request, response, authentication) -> {
+                    String username = authentication.getName();
+                    System.out.println("✅ 로그인 성공 (Controller 로그): 아이디=" + username);
+                    response.sendRedirect("/NICHIYA/main/main/page");
+                })
+                //.failureUrl("/member/login?error=true")    // 실패 시
+                .usernameParameter("userId")
+                .passwordParameter("password")
+                .permitAll()
+        );
+
+        // ✅ 로그아웃 설정
+        http.logout(logout -> logout
+                .logoutUrl("/member/logout")
+                .logoutSuccessUrl("/member/login?logout=true")
+                .invalidateHttpSession(true)
+                .deleteCookies("JSESSIONID")
+                .permitAll()
+        );
+
+        // ✅ 접근 권한 설정
+        http.authorizeHttpRequests(auth -> auth
+
+                // 🔹 정적 리소스 및 공개 페이지는 누구나 접근 가능
+                .requestMatchers(
+                        "/", "/index",
+                        "/css/**", "/js/**", "/images/**", "/fonts/**",
+                        "/favicon.ico", "/error",
+                        "/member/**",
+                        "/policy/**",
+                        "/compinfo/**",
+                        "/main/**",
+                        "/product/**",
+                        "/cs/**",
+                        "/member/**"
+
+                ).permitAll()
+
+                // 🔹 일반 회원, 셀러 접근 허용
+                .requestMatchers("/article/**").hasAnyRole("user", "seller", "admin")
+                .requestMatchers("/admin/**").hasAnyRole( "admin")
+
+                // 🔹 관리자(admin)는 모든 페이지 접근 가능
+                .anyRequest().hasAnyRole("admin")
+        );
+
+        // ✅ CSRF (쿠키 기반) 너무 복잡하고 어려워서 안함
+//        http.csrf(csrf -> csrf
+//                //.ignoringRequestMatchers("/member/login")
+//                .csrfTokenRepository(CookieCsrfTokenRepository.withHttpOnlyFalse())
+//        );
+
+        http.csrf(csrf -> csrf.disable());
+
+
+        // ✅ remember-me (자동 로그인)
+        http.rememberMe(remember -> remember
+                .key("NICHIYA-REMEMBER-ME")
+                .tokenValiditySeconds(60 * 60 * 24 * 7) // 7일 유지
+                .userDetailsService(myUserDetailsService)
+        );
 
         return http.build();
     }
 
-    // 실제 배포때는 없앨까요? 만들기 쉽게 user/123만 하면 로그인되게 했어요.
-    @Bean
-    public InMemoryUserDetailsManager userDetailsService(PasswordEncoder passwordEncoder) {
-        UserDetails user = User.builder()
-                .username("a")               // 아이디
-                .password(passwordEncoder.encode("123")) // 비밀번호 고정
-                .roles("USER")                  // 권한
-                .build();
-        return new InMemoryUserDetailsManager(user);
-    }
-
+    // ✅ 비밀번호 암호화기 (BCrypt)
     @Bean
     public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
     }
 
+    // ✅ 인증 매니저 (AuthenticationManager)
+    @Bean
+    public AuthenticationManager authenticationManager(AuthenticationConfiguration authConfig) throws Exception {
+        return authConfig.getAuthenticationManager();
+    }
 
+    // 🚫 개발용 가짜 로그인 (InMemoryUserDetailsManager)
+    // - 현재는 DB 연동 로그인으로 전환 예정이므로 주석 처리
+    /*
+    @Bean
+    public InMemoryUserDetailsManager userDetailsService(PasswordEncoder passwordEncoder) {
+        UserDetails user = User.builder()
+                .username("a") // 아이디
+                .password(passwordEncoder.encode("123")) // 비밀번호
+                .roles("USER") // 권한
+                .build();
+        return new InMemoryUserDetailsManager(user);
+    }
+    */
 }

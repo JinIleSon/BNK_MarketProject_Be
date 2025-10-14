@@ -206,27 +206,9 @@
     </style>
 </head>
 
-<script>
-    /* 헤더/푸터 include (기존 유지) */
-    fetch("/NICHIYA/main/header.html")
-        .then(res => res.text())
-        .then(data => {
-            document.getElementById("header").innerHTML = data;
-            const scripts = document.getElementById("header").querySelectorAll("script");
-            scripts.forEach(oldScript => {
-                const s = document.createElement("script");
-                if (oldScript.src) s.src = oldScript.src; else s.textContent = oldScript.textContent;
-                document.body.appendChild(s);
-            });
-        });
-
-    fetch("/NICHIYA/main/footer.html")
-        .then(res => res.text())
-        .then(data => { document.getElementById("footer").innerHTML = data; });
-</script>
 
 <body>
-    <div id="header"></div>
+<div th:replace="~{main/header.html}"></div>
     <div class="wrap">
         <h1>아이디 찾기</h1>
         <p class="desc">이메일 또는 휴대폰 인증으로 아이디를 찾을 수 있습니다.</p>
@@ -499,7 +481,8 @@
         updateNextAvailability();
     </script>
 
-    <div id="footer"></div>
+<div th:replace="~{main/footer.html}"></div>
+
 </body>
 
 </html>

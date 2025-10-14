@@ -289,17 +289,19 @@
                 </div>
                 <div class="login-text">로그인</div>
 
-                <form id="loginForm" class="login-form" method="post" novalidate>
+                <form id="loginForm" class="login-form" method="post" action="/NICHIYA/member/login" novalidate>
                     <div class="form-field form-field-id">
-                        <input id="userid" name="userId" type="text" placeholder="아이디" minlength="4" required />
+                        <input id="userid" name="userId" type="text" placeholder="아이디"  required />
                         <p class="error-msg"></p>
+                        <!--minlength="4" 아이디 비번뒤에 들어가야 되는데 로그인 확인용으로 잠깐 제거-->
                     </div>
 
                     <div class="form-field form-field-pw">
-                        <input id="password" name="password" type="password" placeholder="비밀번호" minlength="4"
+                        <input id="password" name="password" type="password" placeholder="비밀번호"
                             required />
                         <p class="error-msg"></p>
                     </div>
+
 
                     <div class="login-assist">
                         <div class="find-pw">
@@ -354,6 +356,13 @@
 
     <script>
         document.addEventListener("DOMContentLoaded", function() {
+
+            // 로그인 실패 시 경고 표시
+            const params = new URLSearchParams(window.location.search);
+            if (params.get("error") === "true") {
+                alert("아이디 또는 비밀번호가 올바르지 않습니다.");
+            }
+
             const form = document.getElementById('loginForm');
             const groups = [
                 document.querySelector('.form-field-id'),
