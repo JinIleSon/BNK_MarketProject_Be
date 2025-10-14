@@ -3,10 +3,10 @@
 <head>
   <meta charset="UTF-8" />
   <title>자주하는 질문 (FAQ)</title>
+  <link rel="stylesheet" th:href="@{/css/common.css}" />
 </head>
 
 <style>
-
     /* ============ 공통 버튼 ============ */
     .icon-btn {
         background:none;
@@ -189,6 +189,7 @@
         line-height: 1.5;
         background-color: #f8f8f8;
     }
+    a{ color:inherit; text-decoration:none; }
     .faq-item {
         border-bottom: 1px solid #ccc;
         padding: 10px 0;
@@ -229,6 +230,7 @@
         content: "Q.";
         color: #007bff;
         font-weight: bold;
+        margin-left: 6px;
         margin-right: 6px;
     }
 
@@ -291,73 +293,6 @@
         border-color: #007bff;
     }
 
-
-    /* Sub Navigation (사이드 메뉴) */
-    .cs_sub_nav {
-        float: left;
-        width: 180px;
-    }
-
-    .cs_sub_nav ul {
-        list-style: none;
-        padding: 0;
-        margin: 0;
-    }
-
-    .cs_sub_nav li a {
-        display: block;
-        padding: 15px 10px;
-        border-bottom: 1px solid #ddd;
-        text-decoration: none;
-        color: #555;
-    }
-
-    .cs_sub_nav li.on a,
-    .cs_sub_nav li a:hover {
-        background-color: gray !important;
-        color: white !important;
-    }
-
-    .cs_sub_nav {
-        width: 100%;
-        background-color: #f1f1f1;
-        border: 1px solid #ccc;
-        margin-bottom: 20px;
-    }
-
-    .cs_sub_nav ul {
-        display: flex;
-        padding: 0;
-        margin: 0;
-        list-style: none;
-        width: 100%;
-    }
-
-    .cs_sub_nav ul li {
-        flex: 1; /* ← 화면 가로를 각 항목이 1/n 로 균등 분할 */
-        text-align: center;
-        border-right: 1px solid #ddd;
-    }
-
-    .cs_sub_nav ul li:last-child {
-        border-right: none;
-    }
-
-    .cs_sub_nav ul li a {
-        display: block;
-        padding: 15px 0;
-        text-decoration: none;
-        color: #333;
-        font-weight: bold;
-        background-color: #fff;
-        transition: background-color 0.2s, color 0.2s;
-    }
-
-    .cs_sub_nav ul li.on a,
-    .cs_sub_nav ul li a:hover {
-        background-color: gray;
-        color: white;
-    }
 
     .faq_section h2 {
         font-size: 20px;
@@ -427,34 +362,7 @@
     }
 </style>
 <body>
-    <header th:replace="~{main/header :: header}">
-        <div style="margin-left:2%; width:98%; box-sizing: border-box; margin-top:2%; display:flex; height:230px;">
-            <button style="border:none;" id="menuBtn" class="icon-btn" aria-controls="menuOverlay" aria-expanded="false" aria-label="메뉴 열기">
-                <svg width="64" height="64" viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg">
-                    <rect y="12" width="64" height="1" fill="black"/>
-                    <rect y="30" width="64" height="1" fill="black"/>
-                    <rect y="48" width="64" height="1" fill="black"/>
-                </svg>
-            </button>
-            <div style="margin-left:3%;">
-                <img src="/images/logo.png" alt="" style="width:270px;">
-            </div>
-            <div style="margin-top:27px; margin-left:auto; margin-right:3%; flex:1; max-width:30%;">
-                <ul style="list-style-type: none; padding: 0; margin:0; display:flex; gap:40px;">
-                    <li style="flex:1; min-width: 100px;">
-                        <form action="" method="" style="width:100%;">
-                            <input type="text" style="background: transparent;border:none; border-bottom:1px solid; padding-bottom:10px; width:80%;" value="검색"
-                                   onfocus="this.style.outline='none';"
-                                   onblur="this.style.outline='none';">
-                        </form>
-                    </li>
-                    <li><a href="#" style="text-decoration: none; color:black; font-size:14px;">로그인</a></li>
-                    <li><a href="#" style="text-decoration: none; color:black; font-size:14px;">도움말</a></li>
-                    <li><a href="#" style="text-decoration: none; color:black; font-size:14px;">바스켓백 [0]</a></li>
-                </ul>
-            </div>
-        </div>
-    </header>
+    <header th:replace="~{main/header :: header}"></header>
 
     <aside id="menuOverlay" class="overlay" aria-hidden="true">
         <div class="overlay__panel">
@@ -512,7 +420,7 @@
                     <div id="subcol">
                         <!-- 회원 -->
                         <section class="panel" data-key="member">
-                            <h3>회원</h3>
+                                <a th:href="@{/cs/faq/list(boardType='회원')}"><h3>회원</h3></a>
                             <ul class="menu-grid">
                                 <li><a th:href="@{/cs/faq/list(boardType='회원', subType='로그인')}">로그인</a></li>
                                 <li><a th:href="@{/cs/faq/list(boardType='회원', subType='가입')}">가입</a></li>
@@ -522,7 +430,7 @@
 
                         <!-- 쿠폰/이벤트 -->
                         <section class="panel" data-key="coupon">
-                            <h3>쿠폰/이벤트</h3>
+                            <a th:href="@{/cs/faq/list(boardType='쿠폰/이벤트')}"><h3>쿠폰/이벤트</h3></a>
                             <ul class="menu-grid">
                                 <li><a th:href="@{/cs/faq/list(boardType='쿠폰/이벤트', subType='쿠폰발급')}">쿠폰발급</a></li>
                                 <li><a th:href="@{/cs/faq/list(boardType='쿠폰/이벤트', subType='쿠폰사용')}">쿠폰사용</a></li>
@@ -533,7 +441,7 @@
 
                         <!-- 주문/결제 -->
                         <section class="panel" data-key="order">
-                            <h3>주문/결제</h3>
+                            <a th:href="@{/cs/faq/list(boardType='주문/결제')}"><h3>주문/결제</h3></a>
                             <ul class="menu-grid">
                                 <li><a th:href="@{/cs/faq/list(boardType='주문/결제', subType='주문방법')}">주문방법</a></li>
                                 <li><a th:href="@{/cs/faq/list(boardType='주문/결제', subType='결제수단')}">결제수단</a></li>
@@ -543,7 +451,7 @@
 
                         <!-- 배송 -->
                         <section class="panel" data-key="delivery">
-                            <h3>배송</h3>
+                            <a th:href="@{/cs/faq/list(boardType='배송')}"><h3>배송</h3></a>
                             <ul class="menu-grid">
                                 <li><a th:href="@{/cs/faq/list(boardType='배송', subType='배송조회')}">배송조회</a></li>
                                 <li><a th:href="@{/cs/faq/list(boardType='배송', subType='배송비')}">배송비</a></li>
@@ -553,7 +461,7 @@
 
                         <!-- 취소/반품/교환 -->
                         <section class="panel" data-key="return">
-                            <h3>취소/반품/교환</h3>
+                            <a th:href="@{/cs/faq/list(boardType='취소/반품/교환')}"><h3>취소/반품/교환</h3></a>
                             <ul class="menu-grid">
                                 <li><a th:href="@{/cs/faq/list(boardType='취소/반품/교환', subType='주문취소')}">주문취소</a></li>
                                 <li><a th:href="@{/cs/faq/list(boardType='취소/반품/교환', subType='반품')}">반품</a></li>
@@ -563,7 +471,7 @@
 
                         <!-- 여행/숙박/항공 -->
                         <section class="panel" data-key="travel">
-                            <h3>여행/숙박/항공</h3>
+                            <a th:href="@{/cs/faq/list(boardType='여행/숙박/항공')}"><h3>여행/숙박/항공</h3></a>
                             <ul class="menu-grid">
                                 <li><a th:href="@{/cs/faq/list(boardType='여행/숙박/항공', subType='이용안내')}">이용안내</a></li>
                                 <li><a th:href="@{/cs/faq/list(boardType='여행/숙박/항공', subType='예약')}">예약</a></li>
@@ -573,7 +481,7 @@
 
                         <!-- 안전거래 -->
                         <section class="panel" data-key="safe">
-                            <h3>안전거래</h3>
+                            <a th:href="@{/cs/faq/list(boardType='안전거래')}"><h3>안전거래</h3></a>
                             <ul class="menu-grid">
                                 <li><a th:href="@{/cs/faq/list(boardType='안전거래', subType='안전결제')}">안전결제</a></li>
                                 <li><a th:href="@{/cs/faq/list(boardType='안전거래', subType='사기주의')}">사기주의</a></li>
@@ -706,19 +614,24 @@
     </div>
 
     <!-- 제목 -->
-    <h2 style="font-size:23px; font-weight:bold; margin: 0; margin-top: 10px; margin-left: 20px"
-        th:text="${
-        subType != null && subType != '' ?
-            (boardType + ' · ' + subType) :
-        boardType == '회원' ? '회원' :
-        boardType == '쿠폰/이벤트' ? '쿠폰 · 이벤트' :
-        boardType == '주문/결제' ? '주문 · 결제' :
-        boardType == '배송' ? '배송' :
-        boardType == '취소/반품/교환' ? '취소 · 반품 · 교환' :
-        boardType == '여행/숙박/항공' ? '여행 · 숙박 · 항공' :
-        boardType == '안전거래' ? '안전거래' :
-        '전체'}">
+    <h2 th:if="${subType != null and subType != ''}"
+        th:text="${boardType + ' · ' + subType}"
+        style="font-size:23px; font-weight:bold; margin: 0; margin-top: 10px; margin-left: 20px">
     </h2>
+
+    <h2 th:unless="${subType != null and subType != ''}"
+        th:switch="${boardType}"
+        style="font-size:23px; font-weight:bold; margin: 0; margin-top: 10px; margin-left: 20px">
+        <span th:case="'회원'">회원</span>
+        <span th:case="'쿠폰/이벤트'">쿠폰 · 이벤트</span>
+        <span th:case="'주문/결제'">주문 · 결제</span>
+        <span th:case="'배송'">배송</span>
+        <span th:case="'취소/반품/교환'">취소 · 반품 · 교환</span>
+        <span th:case="'여행/숙박/항공'">여행 · 숙박 · 항공</span>
+        <span th:case="'안전거래'">안전거래</span>
+        <span th:case="*">전체</span>
+    </h2>
+
 
     <!-- FAQ 리스트 -->
     <div class="faq-container" style="margin: 20px">
@@ -730,8 +643,6 @@
             </a>
         </div>
     </div>
-
-
 
     <!-- 더보기 버튼 -->
     <div class="btn_area">
@@ -777,7 +688,6 @@
             content.style.display = content.style.display === "block" ? "none" : "block";
         }
     </script>
-
 
     <!-- 구분선 -->
     <script>
@@ -848,7 +758,6 @@
         });
     </script>
 
-
+    <div th:replace="~{main/footer :: footer}"></div>
 </body>
-<div th:replace="~{main/footer :: footer}"></div>
 </html>

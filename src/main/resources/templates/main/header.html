@@ -220,6 +220,7 @@
                     <a href="#" data-cat="grocery">식품 · 생필품</a>
                     <a href="#" data-cat="home">홈 · 문구 · 취미</a>
                     <a href="#" data-cat="book">도서</a>
+                    <a href="#" data-cat="cs">고객센터</a>
                 </div>
                 <div id="subcol">
                     <!-- 패션 패널 -->
@@ -267,6 +268,16 @@
                             <a href="#">소설 · 에세이</a>
                             <a href="#">아동 · 교육</a>
                         </div>
+                    </section>
+
+                    <!-- 고객센터 패널 -->
+                    <section class="panel" data-key="cs">
+                        <h3>고객센터</h3>
+                        <ul class="menu-grid">
+                            <li><a th:href="@{/cs/notice/list}">공지사항</a></li>
+                            <li><a th:href="@{/cs/faq/list}">FAQ</a></li>
+                            <li><a th:href="@{/cs/qna/list}">Qna</a></li>
+                        </ul>
                     </section>
                 </div>
                 <div style=""></div>
