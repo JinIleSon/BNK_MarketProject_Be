@@ -10,8 +10,9 @@ import java.util.Map;
 @Mapper
 public interface ProductsMapper {
     List<ProductsDTO> selectProductListPaged(@Param("page") PageRequestProductDTO page,
-                                             @Param("sort") String sort);
-    int selectTotalProductCount();
+                                             @Param("sort") String sort,
+                                             @Param("categoryId") Integer categoryId); // ← 손진일 - 추가
+    int selectTotalProductCount(@Param("categoryId") Integer categoryId);             // ←  손진일 - 시그니처 변경
 
     List<ProductsDTO> selectProductSearch(@Param("req") PageRequestProductDTO req);
     int selectProductSearchTotal(@Param("req") PageRequestProductDTO req);

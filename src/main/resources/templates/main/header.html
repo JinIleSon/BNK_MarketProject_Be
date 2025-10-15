@@ -106,6 +106,8 @@
         }
         .title-didone.ko{font-family: 'Noto Serif KR','Bodoni Moda',serif; font-weight:300;}
     </style>
+    <html xmlns:th="http://www.thymeleaf.org"
+          xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
     <header class="site-header">
         <div style="margin-left:2%; width:98%; box-sizing: border-box; margin-top:2%; display:flex; height:230px;">
             <button style="border:none;" id="menuBtn" class="icon-btn" aria-controls="menuOverlay" aria-expanded="false" aria-label="메뉴 열기">
@@ -120,22 +122,42 @@
                     <img th:src="@{/images/logo.png}" alt="" style="width:270px;">
                 </a>
             </div>
-            <div style="margin-top:27px; margin-left:auto; margin-right:3%; flex:1; max-width:30%;">
+            <div style="margin-top:27px; margin-left:auto; margin-right:3%; flex:1; max-width:40%;">
                 <ul style="list-style-type: none; padding: 0; margin:0; display:flex; gap:40px;">
                     <li style="flex:1; min-width: 100px;">
-                        <form action="" method="" style="width:100%;">
-                            <input type="text" style="background: transparent;border:none; border-bottom:1px solid; padding-bottom:10px; width:80%;" value="검색"
-                            onfocus="this.style.outline='none';" 
+                        <form th:action="@{/product/header/search}" method="get" style="width:100%;">
+                            <input type="text" name="keyword" style="background: transparent;border:none; border-bottom:1px solid; padding-bottom:10px; width:80%;" placeholder="검색"
+                            onfocus="this.style.outline='none';"
                             onblur="this.style.outline='none';">
                         </form>
                     </li>
-                    <li><a th:href="@{/member/login}" style="text-decoration: none; color:black; font-size:14px;">로그인</a></li>
-                    <li><a th:href="@{/member/join}" style="text-decoration: none; color:black; font-size:14px;">회원가입</a></li>
-                    <li><a th:href="@{/product/cart}" style="text-decoration: none; color:black; font-size:14px;">바스켓백</a></li>
+                    <!-- ① 비로그인 -->
+                    <th:block sec:authorize="isAnonymous()">
+                        <li><a th:href="@{/member/login}" style="text-decoration:none; color:black; font-size:14px;">로그인</a></li>
+                        <li><a th:href="@{/member/join}"  style="text-decoration:none; color:black; font-size:14px;">회원가입</a></li>
+                        <li><a th:href="@{/member/login}" style="text-decoration:none; color:black; font-size:14px;">바스켓백</a></li>
+                    </th:block>
+
+                    <!-- ② 로그인(관리자 아님: user/seller) -->
+                    <th:block sec:authorize="isAuthenticated() and !hasAuthority('admin')">
+                        <li><a th:href="@{/member/logout}"         style="text-decoration:none; color:black; font-size:14px;">로그아웃</a></li>
+                        <li><a th:href="@{/member/join}"           style="text-decoration:none; color:black; font-size:14px;">회원가입</a></li>
+                        <li><a th:href="@{/mypage/mypage/main}"    style="text-decoration:none; color:black; font-size:14px;">마이페이지</a></li>
+                        <li><a th:href="@{/product/cart}"                style="text-decoration:none; color:black; font-size:14px;">바스켓백</a></li>
+                    </th:block>
+
+                    <!-- ③ 로그인(관리자) -->
+                    <th:block sec:authorize="hasAuthority('admin')">
+                        <li><a th:href="@{/admin/admin_main}"      style="text-decoration:none; color:black; font-size:14px;">관리자</a></li>
+                        <li><a th:href="@{/member/logout}"         style="text-decoration:none; color:black; font-size:14px;">로그아웃</a></li>
+                        <li><a th:href="@{/mypage/mypage/main}"    style="text-decoration:none; color:black; font-size:14px;">마이페이지</a></li>
+                        <li><a th:href="@{/product/cart}"                style="text-decoration:none; color:black; font-size:14px;">바스켓백</a></li>
+                    </th:block>
                 </ul>
             </div>
         </div>
     </header>
+    </html>
     <!-- 전체 화면 오버레이 메뉴 -->
   <aside id="menuOverlay" class="overlay" aria-hidden="true">
     <div class="overlay__panel">
@@ -223,10 +245,10 @@
                         <h3>패션</h3>
                         <!-- 이 안은 자유롭게: 그리드/이미지/텍스트 무엇이든 -->
                         <ul class="menu-grid" style="">
-                        <li><a href="#">여성의류</a></li>
-                        <li><a href="#">남성의류</a></li>
-                        <li><a href="#">키즈의류</a></li>
-                        <li><a href="#">스포츠의류</a></li>
+                        <li><a th:href="@{/product/list(categoryId=4, sort='recent', pg=1, size=8)}">여성의류</a></li>
+                        <li><a th:href="@{/product/list(categoryId=3, sort='recent', pg=1, size=8)}">남성의류</a></li>
+                        <li><a th:href="@{/product/list(categoryId=2, sort='recent', pg=1, size=8)}">키즈의류</a></li>
+                        <li><a th:href="@{/product/list(categoryId=5, sort='recent', pg=1, size=8)}">스포츠의류</a></li>
                         <!-- … -->
                         </ul>
                     </section>
@@ -235,8 +257,8 @@
                     <section class="panel" data-key="beauty">
                         <h3>뷰티</h3>
                         <div class="menu-grid">
-                        <a href="#">화장품</a>
-                        <a href="#">향수</a>
+                        <a th:href="@{/product/list(categoryId=7,  sort='recent', pg=1, size=8)}">화장품</a>
+                        <a th:href="@{/product/list(categoryId=8,  sort='recent', pg=1, size=8)}">향수</a>
                         </div>
                     </section>
 
@@ -244,8 +266,8 @@
                     <section class="panel" data-key="electronics">
                         <h3>전자제품</h3>
                         <div class="menu-grid">
-                            <a href="#">음향기기</a>
-                            <a href="#">생활기기</a>
+                            <a th:href="@{/product/list(categoryId=10, sort='recent', pg=1, size=8)}">생활기기</a>
+                            <a th:href="@{/product/list(categoryId=11, sort='recent', pg=1, size=8)}">음향기기</a>
                         </div>
                     </section>
 
@@ -253,8 +275,8 @@
                     <section class="panel" data-key="home">
                         <h3>홈</h3>
                         <div class="menu-grid">
-                            <a href="#">대가구</a>
-                            <a href="#">소가구</a>
+                            <a th:href="@{/product/list(categoryId=13, sort='recent', pg=1, size=8)}">대형가구</a>
+                            <a th:href="@{/product/list(categoryId=14, sort='recent', pg=1, size=8)}">소형가구</a>
                         </div>
                     </section>
 
@@ -262,8 +284,8 @@
                     <section class="panel" data-key="leisure">
                         <h3>레저</h3>
                         <div class="menu-grid">
-                            <a href="#">자동차 · 오토바이</a>
-                            <a href="#">레저용품</a>
+                            <a th:href="@{/product/list(categoryId=16, sort='recent', pg=1, size=8)}">스터프</a>
+                            <a th:href="@{/product/list(categoryId=17, sort='recent', pg=1, size=8)}">탈것</a>
                         </div>
                     </section>
                 </div>

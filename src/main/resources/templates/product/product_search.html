@@ -31,10 +31,23 @@
 </head>
 <body>
 
-<div th:replace="~{main/footer.html}"></div>
+<div th:replace="~{main/header.html}"></div>
 <main>
     <div style="display: flex;">
-        <div style="font-size:18px; margin-left:7.6%;"><b>상품검색결과</b></div>
+        <div style="flex:1; font-size:18px; margin-left:7.6%;"><b>상품검색결과</b></div>
+        <div style="margin-right:7.5%;"><span
+                th:utext="${categoryId == 4 ? 'HOME > 패션 > <b>여성의류</b>' :
+                            (categoryId == 3 ? 'HOME > 패션 > <b>남성의류</b>' :
+                            (categoryId == 2 ? 'HOME > 패션 > <b>키즈의류</b>' :
+                            (categoryId == 5 ? 'HOME > 패션 > <b>스포츠의류</b>' :
+                            (categoryId == 7 ? 'HOME > 뷰티 > <b>화장품</b>' :
+                            (categoryId == 8 ? 'HOME > 뷰티 > <b>향수</b>' :
+                            (categoryId == 10 ? 'HOME > 전자제품 > <b>생활기기</b>' :
+                            (categoryId == 11 ? 'HOME > 전자제품 > <b>음향기기</b>' :
+                            (categoryId == 13 ? 'HOME > 홈 > <b>대형가구</b>' :
+                            (categoryId == 14 ? 'HOME > 홈 > <b>소형가구</b>' :
+                            (categoryId == 16 ? 'HOME > 레저 > <b>스터프</b>' :
+                            (categoryId == 17 ? 'HOME > 레저 > <b>탈것</b>' : 'HOME > 상품검색 > <b>검색결과</b>')))))))))))}"></span></div>
     </div>
     <hr style="border:none; border-top:1px solid black; margin-bottom:40px; width:100%;">
     <div style="margin-left:7.5%; width:687px; margin-bottom:30px;">
@@ -46,21 +59,25 @@
       <span style="color:red;" th:text="${pageResponseProductDTO.total}">0</span>
       건 )
     </span></div>
-        <div style=" display: flex; align-items: center; height:70px;">
-            <form method="get" style="display:flex; align-items:center;" th:action="@{/product/search}">
+        <div style=" display: flex; align-items: center; height:70px; width:1000px;">
+            <form method="get" style="display:flex; align-items:center;" th:action="@{/product/header/search}">
                 <input name="keyword" style="border:1px solid #ddd; width:170px; height:32px;" th:value="${query.keyword}"
                        type="text">
                 <button style="margin:0 30px; background:#000; color:#fff; border:none; height:34px; width:57px;">검색
                 </button>
                 <label><input name="searchType" th:checked="${query.searchType}=='name'" type="radio" value="name"> 상품명</label>
+                <!-- ★ 현재 카테고리 유지 - 추가 손진일 -->
+                <input type="hidden" name="categoryId" th:if="${categoryId != null}" th:value="${categoryId}">
                 <label style="margin-left:10px;"><input name="searchType" th:checked="${query.searchType}=='explain'" type="radio"
                                                         value="explain"> 설명</label>
                 <label style="margin-left:10px;"><input name="searchType" th:checked="${query.searchType}=='price'" type="radio"
                                                         value="price"> 가격</label>
-                <input name="minPrice" placeholder="최소" style="margin-left:10px; border:1px solid #ddd; width:90px; height:32px;" th:value="${query.minPrice}"
+                <input name="minPrice" placeholder="최소" style="margin-left:30px; border:1px solid #ddd; width:90px; height:32px;" th:value="${query.minPrice}"
+                       th:disabled="${query.searchType}!='price'"
                        type="number">
                 <span style="margin:0 6px;">~</span>
                 <input name="maxPrice" placeholder="최대" style="border:1px solid #ddd; width:90px; height:32px;" th:value="${query.maxPrice}"
+                       th:disabled="${query.searchType}!='price'"
                        type="number">
             </form>
         </div>
@@ -75,26 +92,47 @@
                 }
             });
         });
+        document.addEventListener('DOMContentLoaded', function () {
+            const radios   = document.querySelectorAll('input[name="searchType"]');
+            const minInput = document.querySelector('input[name="minPrice"]');
+            const maxInput = document.querySelector('input[name="maxPrice"]');
+
+            function setPriceInputsEnabled(enabled) {
+                [minInput, maxInput].forEach(el => {
+                    el.disabled = !enabled;          // 사용/미사용 전환
+                    if (!enabled) el.value = '';     // 끄면 값 비우기(원치 않으면 이 줄 삭제)
+                    el.style.backgroundColor = enabled ? '' : '#f5f5f5'; // 시각적 표시(선택)
+                });
+            }
+
+            function updateByRadio() {
+                const selected = document.querySelector('input[name="searchType"]:checked');
+                setPriceInputsEnabled(selected && selected.value === 'price');
+            }
+
+            radios.forEach(r => r.addEventListener('change', updateByRadio));
+            updateByRadio(); // 초기 상태 반영
+        });
     </script>
     <hr style="border:none; border-top:1px solid black;">
     <div style="color:gray; margin-left:7.6%; margin-bottom:30px;">
         <a th:classappend="${sort}=='sales' ? ' active'"
-           th:href="@{/product/search(sort='sales',     keyword=${query.keyword}, searchType=${query.searchType}, minPrice=${query.minPrice}, maxPrice=${query.maxPrice}, pg=1, size=${pageResponseProductDTO.size})}">판매많은순</a>&nbsp;|&nbsp;
+           th:href="@{/product/header/search(sort='sales',     keyword=${query.keyword}, searchType=${query.searchType}, minPrice=${query.minPrice}, maxPrice=${query.maxPrice}, pg=1, size=${pageResponseProductDTO.size}, categoryId=${categoryId})}">판매많은순</a>&nbsp;|&nbsp;
 
         <a th:classappend="${sort}=='priceAsc' ? ' active'"
-           th:href="@{/product/search(sort='priceAsc',  keyword=${query.keyword}, searchType=${query.searchType}, minPrice=${query.minPrice}, maxPrice=${query.maxPrice}, pg=1, size=${pageResponseProductDTO.size})}">낮은가격순</a>&nbsp;|&nbsp;
+           th:href="@{/product/header/search(sort='priceAsc',  keyword=${query.keyword}, searchType=${query.searchType}, minPrice=${query.minPrice}, maxPrice=${query.maxPrice}, pg=1, size=${pageResponseProductDTO.size}, categoryId=${categoryId})}">낮은가격순</a>&nbsp;|&nbsp;
 
         <a th:classappend="${sort}=='priceDesc' ? ' active'"
-           th:href="@{/product/search(sort='priceDesc', keyword=${query.keyword}, searchType=${query.searchType}, minPrice=${query.minPrice}, maxPrice=${query.maxPrice}, pg=1, size=${pageResponseProductDTO.size})}">높은가격순</a>&nbsp;|&nbsp;
+           th:href="@{/product/header/search(sort='priceDesc', keyword=${query.keyword}, searchType=${query.searchType}, minPrice=${query.minPrice}, maxPrice=${query.maxPrice}, pg=1, size=${pageResponseProductDTO.size}, categoryId=${categoryId})}">높은가격순</a>&nbsp;|&nbsp;
 
         <a th:classappend="${sort}=='rating' ? ' active'"
-           th:href="@{/product/search(sort='rating',    keyword=${query.keyword}, searchType=${query.searchType}, minPrice=${query.minPrice}, maxPrice=${query.maxPrice}, pg=1, size=${pageResponseProductDTO.size})}">평점높은순</a>&nbsp;|&nbsp;
+           th:href="@{/product/header/search(sort='rating',    keyword=${query.keyword}, searchType=${query.searchType}, minPrice=${query.minPrice}, maxPrice=${query.maxPrice}, pg=1, size=${pageResponseProductDTO.size}, categoryId=${categoryId})}">평점높은순</a>&nbsp;|&nbsp;
 
         <a th:classappend="${sort}=='review' ? ' active'"
-           th:href="@{/product/search(sort='review',    keyword=${query.keyword}, searchType=${query.searchType}, minPrice=${query.minPrice}, maxPrice=${query.maxPrice}, pg=1, size=${pageResponseProductDTO.size})}">후기많은순</a>&nbsp;|&nbsp;
+           th:href="@{/product/header/search(sort='review',    keyword=${query.keyword}, searchType=${query.searchType}, minPrice=${query.minPrice}, maxPrice=${query.maxPrice}, pg=1, size=${pageResponseProductDTO.size}, categoryId=${categoryId})}">후기많은순</a>&nbsp;|&nbsp;
 
         <a th:classappend="${sort}=='recent' ? ' active'"
-           th:href="@{/product/search(sort='recent',    keyword=${query.keyword}, searchType=${query.searchType}, minPrice=${query.minPrice}, maxPrice=${query.maxPrice}, pg=1, size=${pageResponseProductDTO.size})}">최근등록순</a>
+           th:href="@{/product/header/search(sort='recent',    keyword=${query.keyword}, searchType=${query.searchType}, minPrice=${query.minPrice}, maxPrice=${query.maxPrice}, pg=1, size=${pageResponseProductDTO.size}, categoryId=${categoryId})}">최근등록순</a>
     </div>
     <style>.active {
         font-weight: 700;
@@ -119,7 +157,7 @@
              stars=${p.ratingAvg != null ? T(java.lang.Math).round(p.ratingAvg) : 0}
            ">
                         <span style="font-size:18px;" th:text="${p.product_name}">상품명</span>
-                        <span style="font-size:10px;" th:text="${p.sub_description}">설명</span>
+                        <span style="font-size:10px; width:460px;" th:text="${p.sub_description}">설명</span>
 
                         <!-- 최종가 -->
                         <span style="font-size:18px;"
@@ -161,17 +199,17 @@
     <div style="height:100px; margin-top:40px; display:flex; justify-content:center;">
         <input class="prev-page"
                th:if="${pageResponseProductDTO.prev}"
-               th:onclick="|location.href='@{/product/search(pg=${pageResponseProductDTO.start - 1}, size=${pageResponseProductDTO.size}, sort=${sort}, keyword=${query.keyword}, searchType=${query.searchType}, minPrice=${query.minPrice}, maxPrice=${query.maxPrice})}'|" type="button" value="< 이전">
+               th:onclick="|location.href='@{/product/header/search(pg=${pageResponseProductDTO.start - 1}, size=${pageResponseProductDTO.size}, sort=${sort}, keyword=${query.keyword}, searchType=${query.searchType}, minPrice=${query.minPrice}, maxPrice=${query.maxPrice}, categoryId=${categoryId})}'|" type="button" value="< 이전">
 
         <th:block th:each="num : ${#numbers.sequence(pageResponseProductDTO.start, pageResponseProductDTO.end)}">
             <input th:class="${num == pageResponseProductDTO.pg ? 'current' : 'num'}"
-                   th:onclick="|location.href='@{/product/search(pg=${num}, size=${pageResponseProductDTO.size}, sort=${sort}, keyword=${query.keyword}, searchType=${query.searchType}, minPrice=${query.minPrice}, maxPrice=${query.maxPrice})}'|"
+                   th:onclick="|location.href='@{/product/header/search(pg=${num}, size=${pageResponseProductDTO.size}, sort=${sort}, keyword=${query.keyword}, searchType=${query.searchType}, minPrice=${query.minPrice}, maxPrice=${query.maxPrice}, categoryId=${categoryId})}'|"
                    th:value="${num}" type="button"/>
         </th:block>
 
         <input class="next-page"
                th:if="${pageResponseProductDTO.next}"
-               th:onclick="|location.href='@{/product/search(pg=${pageResponseProductDTO.end + 1}, size=${pageResponseProductDTO.size}, sort=${sort}, keyword=${query.keyword}, searchType=${query.searchType}, minPrice=${query.minPrice}, maxPrice=${query.maxPrice})}'|" type="button" value="다음 >">
+               th:onclick="|location.href='@{/product/header/search(pg=${pageResponseProductDTO.end + 1}, size=${pageResponseProductDTO.size}, sort=${sort}, keyword=${query.keyword}, searchType=${query.searchType}, minPrice=${query.minPrice}, maxPrice=${query.maxPrice}, categoryId=${categoryId})}'|" type="button" value="다음 >">
     </div>
     <style>
         .current {

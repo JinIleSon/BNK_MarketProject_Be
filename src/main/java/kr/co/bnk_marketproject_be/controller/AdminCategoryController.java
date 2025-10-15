@@ -70,6 +70,7 @@ public class AdminCategoryController {
 
 
     // ✅ 전체 커밋 (삭제 + 수정)
+    // PUT, POST 둘 다 허용하도록 두 개의 매핑을 둔다
     @PutMapping("/api/admin/categories/commit")
     @ResponseBody
     public Map<String, Object> commit(@RequestBody CategoryCommitRequest req) {
@@ -78,7 +79,14 @@ public class AdminCategoryController {
         return Map.of("ok", true);
     }
 
-    // ✅ 이 부분이 바로 DTO를 컨트롤러 안에 넣는 방식
+    @PostMapping("/api/admin/categories/commit")
+    @ResponseBody
+    public Map<String, Object> commitPost(@RequestBody CategoryCommitRequest req) {
+        // POST 요청으로 들어와도 동일한 로직 실행
+        return commit(req);
+    }
+
+    // ✅ 요청 DTO (내부 static class)
     @Getter
     @Setter
     public static class CategoryCommitRequest {
