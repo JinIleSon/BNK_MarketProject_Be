@@ -11,24 +11,33 @@ import java.util.List;
 
 @Controller
 @RequiredArgsConstructor
-@RequestMapping("/qna")
+@RequestMapping("/cs/qna")
 public class CSQnaController {
 
     private final CSQnaService qnaService;
 
     /* QnA 목록 */
+    /* QnA 목록 */
     @GetMapping("/list")
-    public String list(@RequestParam(required = false) String userId, Model model) {
-        List<CSNoticeDTO> qnaList = qnaService.getQnaList(userId);
+    public String list(
+            @RequestParam(required = false) String userid,
+            @RequestParam(defaultValue = "0") int offset,
+            @RequestParam(defaultValue = "10") int limit,
+            Model model) {
+
+        List<CSNoticeDTO> qnaList = qnaService.getQnaList(userid, offset, limit);
         model.addAttribute("qnaList", qnaList);
+
         return "customer_service/qna/qna_list";
     }
 
     /* QnA 상세 */
-    @GetMapping("/detail/{id}")
-    public String detail(@PathVariable Long id, Model model) {
-        CSNoticeDTO qna = qnaService.getQnaDetail(id);
+    @GetMapping("/view/{id}")
+    public String view(@PathVariable Long id, Model model) {
+        CSNoticeDTO qna = qnaService.getQnaview(id);
+
         model.addAttribute("qna", qna);
+
         return "customer_service/qna/qna_view";
     }
 
@@ -39,10 +48,4 @@ public class CSQnaController {
         return "redirect:/qna/list";
     }
 
-    /* 관리자 답변 등록 */
-    @PostMapping("/answer")
-    public String answer(@ModelAttribute CSNoticeDTO qna) {
-        qnaService.updateAnswer(qna);
-        return "redirect:/qna/detail/" + qna.getId();
-    }
 }

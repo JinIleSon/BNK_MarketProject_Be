@@ -13,19 +13,16 @@ public class CSQnaService {
 
     private final CSQnaMapper qnaMapper;
 
-    public List<CSNoticeDTO> getQnaList(String userId) {
-        return qnaMapper.selectQnaList(userId);
+    public List<CSNoticeDTO> getQnaList(String userid, int offset, int limit) {
+        return qnaMapper.selectQnaList(userid, offset, limit);
     }
 
-    public CSNoticeDTO getQnaDetail(Long id) {
-        return qnaMapper.selectQnaDetail(id);
+    public CSNoticeDTO getQnaview(Long id) {
+        return qnaMapper.selectQnaview(id);
     }
 
     public void insertQna(CSNoticeDTO qna) {
         qnaMapper.insertQna(qna);
     }
 
-    public void updateAnswer(CSNoticeDTO qna) {
-        qnaMapper.updateAnswer(qna);
-    }
 }
