@@ -1,164 +1,185 @@
 <!DOCTYPE html>
 <html lang="ko">
 <head>
-  <meta charset="UTF-8" />
-  <title>FAQ 상세 보기</title>
-  <link rel="stylesheet" th:href="@{/css/common.css}" />
-  <link rel="stylesheet" th:href="@{/css/faq.css}" />
+    <meta charset="UTF-8" />
+    <title>FAQ 상세 보기</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+    <link rel="stylesheet" th:href="@{/css/common.css}"/>
+    <link rel="stylesheet" th:href="@{/css/faq.css}"/>
 </head>
 <style>
 
-    .faq-item {
-        border-bottom: 1px solid #ccc;
-        padding: 10px 0;
-    }
-    .faq-item .faq-title {
-        width: 100%;
-        text-align: left;
-        padding: 15px;
-        background-color: #fff;
-        border: none;
-        font-size: 15px;
+    .faq-title {
+        font-size: 20px;
         font-weight: bold;
-        color: #333;
-        cursor: pointer;
-        position: relative;
+        color: #000;
+        margin: 10px;
+        border-top: 2px solid #ddd;
+        border-bottom: 1px solid #ddd;
+        padding-top: 20px;
+        padding-bottom: 20px;
+        line-height: 1.4;
     }
-    .faq-item .faq-content {
-        display: none;
-        padding: 20px 15px;
-        background-color: #f9f9f9;
-        font-size: 13px;
-        line-height: 1.6;
-        color: #555;
+    .faq-title::before {
+        content: "Q.";
+        color: #007bff;
+        font-weight: bold;
+        margin-right: 6px;
     }
 
+    /* 본문 내용 */
+    .faq-content {
+        font-size: 14px;
+        color: #444;
+        line-height: 1.8;
+        min-height: 150px;
+        white-space: pre-line;
+        border-bottom: 1px solid #ddd;
+        padding: 10px;
+        margin: 10px;
+    }
+
+    /* 버튼 영역 */
+    .btn_area {
+        text-align: center;
+        margin-top: 5px;
+    }
+    .btn_list {
+        display: inline-block;
+        background-color: #000;
+        color: #fff;
+        padding: 10px 25px;
+        border-radius: 4px;
+        text-decoration: none;
+        transition: background .25s ease;
+    }
+    
 </style>
 
 <body>
 <div th:replace="~{main/header.html}"></div>
 
-  <div class="cs_faq_list_wrap">
+<div class="cs_faq_list_wrap">
     <h1 id="category-title">FAQ</h1>
 
     <!-- FAQ 카테고리 -->
     <div class="cs_sub_nav">
-      <!-- 1차 카테고리 -->
-      <ul class="faq-category">
-          <li th:classappend="${boardType == '회원'} ? 'on'">
-              <a th:href="@{/cs/faq/list(boardType='회원')}">회원</a>
-          </li>
-          <li th:classappend="${boardType == '쿠폰/이벤트'} ? 'on'">
-              <a th:href="@{/cs/faq/list(boardType='쿠폰/이벤트')}">쿠폰/이벤트</a>
-          </li>
-          <li th:classappend="${boardType == '주문/결제'} ? 'on'">
-              <a th:href="@{/cs/faq/list(boardType='주문/결제')}">주문/결제</a>
-          </li>
-          <li th:classappend="${boardType == '배송'} ? 'on'">
-              <a th:href="@{/cs/faq/list(boardType='배송')}">배송</a>
-          </li>
-          <li th:classappend="${boardType == '취소/반품/교환'} ? 'on'">
-              <a th:href="@{/cs/faq/list(boardType='취소/반품/교환')}">취소/반품/교환</a>
-          </li>
-          <li th:classappend="${boardType == '여행/숙박/항공'} ? 'on'">
-              <a th:href="@{/cs/faq/list(boardType='여행/숙박/항공')}">여행/숙박/항공</a>
-          </li>
-          <li th:classappend="${boardType == '안전거래'} ? 'on'">
-              <a th:href="@{/cs/faq/list(boardType='안전거래')}">안전거래</a>
-          </li>
-      </ul>
+        <!-- 1차 카테고리 -->
+        <ul class="faq-category">
+            <li th:classappend="${boardType == '회원'} ? 'on'">
+                <a th:href="@{/cs/faq/list(boardType='회원')}">회원</a>
+            </li>
+            <li th:classappend="${boardType == '쿠폰/이벤트'} ? 'on'">
+                <a th:href="@{/cs/faq/list(boardType='쿠폰/이벤트')}">쿠폰/이벤트</a>
+            </li>
+            <li th:classappend="${boardType == '주문/결제'} ? 'on'">
+                <a th:href="@{/cs/faq/list(boardType='주문/결제')}">주문/결제</a>
+            </li>
+            <li th:classappend="${boardType == '배송'} ? 'on'">
+                <a th:href="@{/cs/faq/list(boardType='배송')}">배송</a>
+            </li>
+            <li th:classappend="${boardType == '취소/반품/교환'} ? 'on'">
+                <a th:href="@{/cs/faq/list(boardType='취소/반품/교환')}">취소/반품/교환</a>
+            </li>
+            <li th:classappend="${boardType == '여행/숙박/항공'} ? 'on'">
+                <a th:href="@{/cs/faq/list(boardType='여행/숙박/항공')}">여행/숙박/항공</a>
+            </li>
+            <li th:classappend="${boardType == '안전거래'} ? 'on'">
+                <a th:href="@{/cs/faq/list(boardType='안전거래')}">안전거래</a>
+            </li>
+        </ul>
 
-      <!-- 2차 카테고리: 회원 -->
-      <ul class="faq-subcategory" th:if="${boardType == '회원'}">
-          <li th:classappend="${subType == '로그인'} ? 'on'">
-              <a th:href="@{/cs/faq/list(boardType='회원', subType='로그인')}">로그인</a>
-          </li>
-          <li th:classappend="${subType == '가입'} ? 'on'">
-              <a th:href="@{/cs/faq/list(boardType='회원', subType='가입')}">가입</a>
-          </li>
-          <li th:classappend="${subType == '탈퇴'} ? 'on'">
-              <a th:href="@{/cs/faq/list(boardType='회원', subType='탈퇴')}">탈퇴</a>
-          </li>
-      </ul>
+        <!-- 2차 카테고리: 회원 -->
+        <ul class="faq-subcategory" th:if="${boardType == '회원'}">
+            <li th:classappend="${subType == '로그인'} ? 'on'">
+                <a th:href="@{/cs/faq/list(boardType='회원', subType='로그인')}">로그인</a>
+            </li>
+            <li th:classappend="${subType == '가입'} ? 'on'">
+                <a th:href="@{/cs/faq/list(boardType='회원', subType='가입')}">가입</a>
+            </li>
+            <li th:classappend="${subType == '탈퇴'} ? 'on'">
+                <a th:href="@{/cs/faq/list(boardType='회원', subType='탈퇴')}">탈퇴</a>
+            </li>
+        </ul>
 
-      <!-- 2차 카테고리: 쿠폰/이벤트 -->
-      <ul class="faq-subcategory" th:if="${boardType == '쿠폰/이벤트'}">
-          <li th:classappend="${subType == '쿠폰발급'} ? 'on'">
-              <a th:href="@{/cs/faq/list(boardType='쿠폰/이벤트', subType='쿠폰발급')}">쿠폰발급</a>
-          </li>
-          <li th:classappend="${subType == '쿠폰사용'} ? 'on'">
-              <a th:href="@{/cs/faq/list(boardType='쿠폰/이벤트', subType='쿠폰사용')}">쿠폰사용</a>
-          </li>
-          <li th:classappend="${subType == '이벤트참여'} ? 'on'">
-              <a th:href="@{/cs/faq/list(boardType='쿠폰/이벤트', subType='이벤트참여')}">이벤트참여</a>
-          </li>
-          <li th:classappend="${subType == '당첨확인'} ? 'on'">
-              <a th:href="@{/cs/faq/list(boardType='쿠폰/이벤트', subType='당첨확인')}">당첨확인</a>
-          </li>
-      </ul>
+        <!-- 2차 카테고리: 쿠폰/이벤트 -->
+        <ul class="faq-subcategory" th:if="${boardType == '쿠폰/이벤트'}">
+            <li th:classappend="${subType == '쿠폰발급'} ? 'on'">
+                <a th:href="@{/cs/faq/list(boardType='쿠폰/이벤트', subType='쿠폰발급')}">쿠폰발급</a>
+            </li>
+            <li th:classappend="${subType == '쿠폰사용'} ? 'on'">
+                <a th:href="@{/cs/faq/list(boardType='쿠폰/이벤트', subType='쿠폰사용')}">쿠폰사용</a>
+            </li>
+            <li th:classappend="${subType == '이벤트참여'} ? 'on'">
+                <a th:href="@{/cs/faq/list(boardType='쿠폰/이벤트', subType='이벤트참여')}">이벤트참여</a>
+            </li>
+            <li th:classappend="${subType == '당첨확인'} ? 'on'">
+                <a th:href="@{/cs/faq/list(boardType='쿠폰/이벤트', subType='당첨확인')}">당첨확인</a>
+            </li>
+        </ul>
 
-      <!-- 2차 카테고리: 주문/결제 -->
-      <ul class="faq-subcategory" th:if="${boardType == '주문/결제'}">
-          <li th:classappend="${subType == '주문방법'} ? 'on'">
-              <a th:href="@{/cs/faq/list(boardType='주문/결제', subType='주문방법')}">주문방법</a>
-          </li>
-          <li th:classappend="${subType == '결제수단'} ? 'on'">
-              <a th:href="@{/cs/faq/list(boardType='주문/결제', subType='결제수단')}">결제수단</a>
-          </li>
-          <li th:classappend="${subType == '결제오류'} ? 'on'">
-              <a th:href="@{/cs/faq/list(boardType='주문/결제', subType='결제오류')}">결제오류</a>
-          </li>
-      </ul>
+        <!-- 2차 카테고리: 주문/결제 -->
+        <ul class="faq-subcategory" th:if="${boardType == '주문/결제'}">
+            <li th:classappend="${subType == '주문방법'} ? 'on'">
+                <a th:href="@{/cs/faq/list(boardType='주문/결제', subType='주문방법')}">주문방법</a>
+            </li>
+            <li th:classappend="${subType == '결제수단'} ? 'on'">
+                <a th:href="@{/cs/faq/list(boardType='주문/결제', subType='결제수단')}">결제수단</a>
+            </li>
+            <li th:classappend="${subType == '결제오류'} ? 'on'">
+                <a th:href="@{/cs/faq/list(boardType='주문/결제', subType='결제오류')}">결제오류</a>
+            </li>
+        </ul>
 
-      <!-- 2차 카테고리: 배송 -->
-      <ul class="faq-subcategory" th:if="${boardType == '배송'}">
-          <li th:classappend="${subType == '배송조회'} ? 'on'">
-              <a th:href="@{/cs/faq/list(boardType='배송', subType='배송조회')}">배송조회</a>
-          </li>
-          <li th:classappend="${subType == '배송비'} ? 'on'">
-              <a th:href="@{/cs/faq/list(boardType='배송', subType='배송비')}">배송비</a>
-          </li>
-          <li th:classappend="${subType == '해외배송'} ? 'on'">
-              <a th:href="@{/cs/faq/list(boardType='배송', subType='해외배송')}">해외배송</a>
-          </li>
-      </ul>
+        <!-- 2차 카테고리: 배송 -->
+        <ul class="faq-subcategory" th:if="${boardType == '배송'}">
+            <li th:classappend="${subType == '배송조회'} ? 'on'">
+                <a th:href="@{/cs/faq/list(boardType='배송', subType='배송조회')}">배송조회</a>
+            </li>
+            <li th:classappend="${subType == '배송비'} ? 'on'">
+                <a th:href="@{/cs/faq/list(boardType='배송', subType='배송비')}">배송비</a>
+            </li>
+            <li th:classappend="${subType == '해외배송'} ? 'on'">
+                <a th:href="@{/cs/faq/list(boardType='배송', subType='해외배송')}">해외배송</a>
+            </li>
+        </ul>
 
-      <!-- 2차 카테고리: 취소/반품/교환 -->
-      <ul class="faq-subcategory" th:if="${boardType == '취소/반품/교환'}">
-          <li th:classappend="${subType == '주문취소'} ? 'on'">
-              <a th:href="@{/cs/faq/list(boardType='취소/반품/교환', subType='주문취소')}">주문취소</a>
-          </li>
-          <li th:classappend="${subType == '반품'} ? 'on'">
-              <a th:href="@{/cs/faq/list(boardType='취소/반품/교환', subType='반품')}">반품</a>
-          </li>
-          <li th:classappend="${subType == '교환'} ? 'on'">
-              <a th:href="@{/cs/faq/list(boardType='취소/반품/교환', subType='교환')}">교환</a>
-          </li>
-      </ul>
+        <!-- 2차 카테고리: 취소/반품/교환 -->
+        <ul class="faq-subcategory" th:if="${boardType == '취소/반품/교환'}">
+            <li th:classappend="${subType == '주문취소'} ? 'on'">
+                <a th:href="@{/cs/faq/list(boardType='취소/반품/교환', subType='주문취소')}">주문취소</a>
+            </li>
+            <li th:classappend="${subType == '반품'} ? 'on'">
+                <a th:href="@{/cs/faq/list(boardType='취소/반품/교환', subType='반품')}">반품</a>
+            </li>
+            <li th:classappend="${subType == '교환'} ? 'on'">
+                <a th:href="@{/cs/faq/list(boardType='취소/반품/교환', subType='교환')}">교환</a>
+            </li>
+        </ul>
 
-      <!-- 2차 카테고리: 여행/숙박/항공 -->
-      <ul class="faq-subcategory" th:if="${boardType == '여행/숙박/항공'}">
-          <li th:classappend="${subType == '이용안내'} ? 'on'">
-              <a th:href="@{/cs/faq/list(boardType='여행/숙박/항공', subType='이용안내')}">이용안내</a>
-          </li>
-          <li th:classappend="${subType == '예약'} ? 'on'">
-              <a th:href="@{/cs/faq/list(boardType='여행/숙박/항공', subType='예약')}">예약</a>
-          </li>
-          <li th:classappend="${subType == '변경/취소'} ? 'on'">
-              <a th:href="@{/cs/faq/list(boardType='여행/숙박/항공', subType='변경/취소')}">변경/취소</a>
-          </li>
-      </ul>
+        <!-- 2차 카테고리: 여행/숙박/항공 -->
+        <ul class="faq-subcategory" th:if="${boardType == '여행/숙박/항공'}">
+            <li th:classappend="${subType == '이용안내'} ? 'on'">
+                <a th:href="@{/cs/faq/list(boardType='여행/숙박/항공', subType='이용안내')}">이용안내</a>
+            </li>
+            <li th:classappend="${subType == '예약'} ? 'on'">
+                <a th:href="@{/cs/faq/list(boardType='여행/숙박/항공', subType='예약')}">예약</a>
+            </li>
+            <li th:classappend="${subType == '변경/취소'} ? 'on'">
+                <a th:href="@{/cs/faq/list(boardType='여행/숙박/항공', subType='변경/취소')}">변경/취소</a>
+            </li>
+        </ul>
 
-      <!-- 2차 카테고리: 안전거래 -->
-      <ul class="faq-subcategory" th:if="${boardType == '안전거래'}">
-          <li th:classappend="${subType == '안전결제'} ? 'on'">
-              <a th:href="@{/cs/faq/list(boardType='안전거래', subType='안전결제')}">안전결제</a>
-          </li>
-          <li th:classappend="${subType == '사기주의'} ? 'on'">
-              <a th:href="@{/cs/faq/list(boardType='안전거래', subType='사기주의')}">사기주의</a>
-          </li>
-      </ul>
-  </div>
+        <!-- 2차 카테고리: 안전거래 -->
+        <ul class="faq-subcategory" th:if="${boardType == '안전거래'}">
+            <li th:classappend="${subType == '안전결제'} ? 'on'">
+                <a th:href="@{/cs/faq/list(boardType='안전거래', subType='안전결제')}">안전결제</a>
+            </li>
+            <li th:classappend="${subType == '사기주의'} ? 'on'">
+                <a th:href="@{/cs/faq/list(boardType='안전거래', subType='사기주의')}">사기주의</a>
+            </li>
+        </ul>
+    </div>
 
     <!-- 제목 -->
     <h2 th:if="${subType != null and subType != ''}"
@@ -176,78 +197,82 @@
         <span th:case="'취소/반품/교환'">취소 · 반품 · 교환</span>
         <span th:case="'여행/숙박/항공'">여행 · 숙박 · 항공</span>
         <span th:case="'안전거래'">안전거래</span>
-        <span th:case="*">전체</span>
     </h2>
 
-      <div id="faq-container" class="faq_list_area">
-          <div class="faq-item">
-              <!-- 질문 (제목) -->
-              <div class="faq-title" th:text="${faq.title}"></div>
+    <div class="faq-title" th:text="${faq.title}"></div>
+    <div class="faq-content" th:utext="${faq.content}"></div>
 
-              <!-- 답변 (내용) -->
-              <div class="faq-content" th:utext="${faq.content}"></div>
-          </div>
-      </div>
-
-      <div class="btn_area">
-      <button class="btn_more" id="more-btn">목록</button>
+    <!-- 버튼 스리슬쩍 꼼수 넣기 -->
+    <div class="btn_area">
+        <button class="btn_list" onclick="history.back()">목록</button>
     </div>
-  </div>
 
-  <div id="footer"></div>
-  <!--슬라이드-->
-  <script>
-      document.querySelectorAll('.main-slider').forEach((slider) => {
-          const slides = slider.querySelector('.main-slides');
-          const viewport = slider.querySelector('.viewport');
+    <script>
+        function goBack() {
+            if (document.referrer) {
+                history.back();
+            } else {
+                window.location.href = '/cs/faq/list';
+            }
+        }
+    </script>
 
-          let index = 0;
-          const items = Array.from(slides.children); // <a> 단위를 슬라이드로
-          let prevBtn = slider.querySelector('.prev');
-          let nextBtn = slider.querySelector('.next');
-          const total = items.length;
+</div>
 
-          function update() {
-              const width = viewport.clientWidth;
-              slides.style.transform = `translateX(-${index * width}px)`;
-          }
+<div id="footer"></div>
+<!--슬라이드-->
+<script>
+    document.querySelectorAll('.main-slider').forEach((slider) => {
+        const slides = slider.querySelector('.main-slides');
+        const viewport = slider.querySelector('.viewport');
 
-          // 각 슬라이드 폭 고정
-          items.forEach(el => {
-              el.style.flex = '0 0 100%';
-          });
+        let index = 0;
+        const items = Array.from(slides.children); // <a> 단위를 슬라이드로
+        let prevBtn = slider.querySelector('.prev');
+        let nextBtn = slider.querySelector('.next');
+        const total = items.length;
 
-          nextBtn?.addEventListener('click', () => { index = (index + 1) % total; update(); });
-          prevBtn?.addEventListener('click', () => { index = (index - 1 + total) % total; update(); });
+        function update() {
+            const width = viewport.clientWidth;
+            slides.style.transform = `translateX(-${index * width}px)`;
+        }
 
-          window.addEventListener('resize', update);
-          update();
-      });
-  </script>
-  <script>
-      /* 탭으로 패널 전환 */
-      (() => {
-          const tabs   = [...document.querySelectorAll('.hero-tabs .tab')];
-          const panels = tabs
-              .map(t => document.querySelector(t.dataset.target))
-              .filter(Boolean);
+        // 각 슬라이드 폭 고정
+        items.forEach(el => {
+            el.style.flex = '0 0 100%';
+        });
 
-          function setActive(nextIdx){
-              tabs.forEach((t,i)=> t.classList.toggle('active', i===nextIdx));
-              panels.forEach((p,i)=> p.classList.toggle('active', i===nextIdx));
-          }
+        nextBtn?.addEventListener('click', () => { index = (index + 1) % total; update(); });
+        prevBtn?.addEventListener('click', () => { index = (index - 1 + total) % total; update(); });
 
-          tabs.forEach((tab,i)=>{
-              tab.addEventListener('click', () => setActive(i));
-              tab.addEventListener('keydown', (e) => {
-                  if(e.key==='Enter' || e.key===' '){ e.preventDefault(); setActive(i); }
-              });
-          });
+        window.addEventListener('resize', update);
+        update();
+    });
+</script>
+<script>
+    /* 탭으로 패널 전환 */
+    (() => {
+        const tabs   = [...document.querySelectorAll('.hero-tabs .tab')];
+        const panels = tabs
+            .map(t => document.querySelector(t.dataset.target))
+            .filter(Boolean);
 
-          /* 초기 상태 */
-          setActive(0);
-      })();
-  </script>
-  <div th:replace="~{main/footer.html}"></div>
+        function setActive(nextIdx){
+            tabs.forEach((t,i)=> t.classList.toggle('active', i===nextIdx));
+            panels.forEach((p,i)=> p.classList.toggle('active', i===nextIdx));
+        }
+
+        tabs.forEach((tab,i)=>{
+            tab.addEventListener('click', () => setActive(i));
+            tab.addEventListener('keydown', (e) => {
+                if(e.key==='Enter' || e.key===' '){ e.preventDefault(); setActive(i); }
+            });
+        });
+
+        /* 초기 상태 */
+        setActive(0);
+    })();
+</script>
+<div th:replace="~{main/footer.html}"></div>
 </body>
 </html>

@@ -17,7 +17,6 @@
         display:grid;
         place-items:center;
     }
-
     .title-didone{
         text-align:center;
         font-family: 'Bodoni Moda','Didot','Bodoni 72','Times New Roman',serif;
@@ -175,11 +174,6 @@
     .menu-grid li {
         list-style: none;
     }
-
-    #header {
-        display: contents;
-    }
-
 
     /* FAQ 전용 영역 스타일 */
     body {
@@ -405,9 +399,9 @@
             <div style="display:flex; margin-left:20%; margin-top:1%; width:100%;">
                 <nav class="overlay__menu" style="width:100%;">
                     <div>
-                        <b>자주묻는질문</b>
-                        <br><br>
-                        <a th:href="@{/cs/faq/list}">Home</a>
+                        <a th:href="@{/cs/notice/list}"><b>공지사항</b></a>
+                        <a th:href="@{/cs/faq/list}"><b>자주묻는질문</b></a>
+                        <a th:href="@{/cs/qna/list}"><b>QNA</b></a><br>
                         <a href="#" data-cat="member">회원</a>
                         <a href="#" data-cat="coupon">쿠폰/이벤트</a>
                         <a href="#" data-cat="order">주문/결제</a>
@@ -416,7 +410,6 @@
                         <a href="#" data-cat="travel">여행/숙박/항공</a>
                         <a href="#" data-cat="safe">안전거래</a>
                     </div>
-
                     <div id="subcol">
                         <!-- 회원 -->
                         <section class="panel" data-key="member">
@@ -473,7 +466,6 @@
                         <section class="panel" data-key="travel">
                             <a th:href="@{/cs/faq/list(boardType='여행/숙박/항공')}"><h3>여행/숙박/항공</h3></a>
                             <ul class="menu-grid">
-                                <li><a th:href="@{/cs/faq/list(boardType='여행/숙박/항공', subType='이용안내')}">이용안내</a></li>
                                 <li><a th:href="@{/cs/faq/list(boardType='여행/숙박/항공', subType='예약')}">예약</a></li>
                                 <li><a th:href="@{/cs/faq/list(boardType='여행/숙박/항공', subType='변경/취소')}">변경/취소</a></li>
                             </ul>
@@ -529,8 +521,8 @@
             <li th:classappend="${subType == '가입'} ? 'on'">
                 <a th:href="@{/cs/faq/list(boardType='회원', subType='가입')}">가입</a>
             </li>
-            <li th:classappend="${subType == '탈퇴'} ? 'on'">
-                <a th:href="@{/cs/faq/list(boardType='회원', subType='탈퇴')}">탈퇴</a>
+            <li th:classappend="${subType == '탈퇴 후'} ? 'on'">
+                <a th:href="@{/cs/faq/list(boardType='회원', subType='탈퇴 후')}">탈퇴</a>
             </li>
         </ul>
 
@@ -578,8 +570,8 @@
 
         <!-- 2차 카테고리: 취소/반품/교환 -->
         <ul class="faq-subcategory" th:if="${boardType == '취소/반품/교환'}">
-            <li th:classappend="${subType == '주문취소'} ? 'on'">
-                <a th:href="@{/cs/faq/list(boardType='취소/반품/교환', subType='주문취소')}">주문취소</a>
+            <li th:classappend="${subType == '주문 취소'} ? 'on'">
+                <a th:href="@{/cs/faq/list(boardType='취소/반품/교환', subType='주문 취소')}">주문취소</a>
             </li>
             <li th:classappend="${subType == '반품'} ? 'on'">
                 <a th:href="@{/cs/faq/list(boardType='취소/반품/교환', subType='반품')}">반품</a>
@@ -591,9 +583,6 @@
 
         <!-- 2차 카테고리: 여행/숙박/항공 -->
         <ul class="faq-subcategory" th:if="${boardType == '여행/숙박/항공'}">
-            <li th:classappend="${subType == '이용안내'} ? 'on'">
-                <a th:href="@{/cs/faq/list(boardType='여행/숙박/항공', subType='이용안내')}">이용안내</a>
-            </li>
             <li th:classappend="${subType == '예약'} ? 'on'">
                 <a th:href="@{/cs/faq/list(boardType='여행/숙박/항공', subType='예약')}">예약</a>
             </li>
