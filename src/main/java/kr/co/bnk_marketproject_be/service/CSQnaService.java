@@ -10,7 +10,7 @@ import java.util.List;
 @Service
 @RequiredArgsConstructor
 public class CSQnaService {
-
+    //
     private final CSQnaMapper qnaMapper;
 
     public List<CSNoticeDTO> getQnaList(String userId) {
