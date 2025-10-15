@@ -125,8 +125,8 @@
             <div style="margin-top:27px; margin-left:auto; margin-right:3%; flex:1; max-width:40%;">
                 <ul style="list-style-type: none; padding: 0; margin:0; display:flex; gap:40px;">
                     <li style="flex:1; min-width: 100px;">
-                        <form action="" method="" style="width:100%;">
-                            <input type="text" style="background: transparent;border:none; border-bottom:1px solid; padding-bottom:10px; width:80%;" value="검색"
+                        <form th:action="@{/product/header/search}" method="get" style="width:100%;">
+                            <input type="text" name="keyword" style="background: transparent;border:none; border-bottom:1px solid; padding-bottom:10px; width:80%;" placeholder="검색"
                             onfocus="this.style.outline='none';"
                             onblur="this.style.outline='none';">
                         </form>

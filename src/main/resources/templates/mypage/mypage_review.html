@@ -124,35 +124,9 @@
   </style>
 </head>
 <body>
-    <!--헤더푸터 연결-->
-    <script>
-        fetch("../main/header.html")
-          .then(res => res.text())
-          .then(data => {
-            document.getElementById("header").innerHTML = data;
 
-            // header.html 안의 스크립트 실행 강제
-            const scripts = document.getElementById("header").querySelectorAll("script");
-            scripts.forEach(oldScript => {
-            const newScript = document.createElement("script");
-            if (oldScript.src) {
-                newScript.src = oldScript.src;
-            } else {
-                newScript.textContent = oldScript.textContent;
-            }
-            document.body.appendChild(newScript);
-            });
-          });
-
-       
-        fetch("../main/footer.html")
-          .then(res => res.text())
-          .then(data => {
-            document.getElementById("footer").innerHTML = data;
-          });
-    </script>
     <main>
-        <div id="header"></div>
+        <div th:replace="~{main/header.html}"></div>
         <div style="background-color: #f6f5f5; border-bottom: 1px solid #dddddd;">
             <div style="display: flex; justify-content: center; align-items: center;">
                 <div style="width:1270px; font-size:15px; height:70px; display: flex; align-items: center; ">
@@ -181,17 +155,17 @@
         <div style="display: flex; justify-content: center; align-items: center;">
             <div style="width:1270px; font-size:15px; display: flex;">
                 <div style=" width:200px; padding-left:70px; padding-top:30px; border-right:1px solid #dddddd;">
-                    <div style="margin-bottom:15px;"><a href="#">전체주문내역</a></div>
-                    <div style="margin-bottom:15px;"><a href="#">포인트내역</a></div>
-                    <div style="margin-bottom:15px;"><a href="#">쿠폰</a></div>
-                    <div style="margin-bottom:15px; font-weight: 800;"><a href="#">나의리뷰</a></div>
-                    <div style="margin-bottom:15px;"><a href="#">문의하기</a></div>
-                    <div><a href="#">나의설정</a></div>
+                    <div style="margin-bottom:15px;"><a th:href="@{/mypage/mypage/allorder}">전체주문내역</a></div>
+                    <div style="margin-bottom:15px;"><a th:href="@{/mypage/mypage/point}">포인트내역</a></div>
+                    <div style="margin-bottom:15px;"><a th:href="@{/mypage/mypage/coupon}">쿠폰</a></div>
+                    <div style="margin-bottom:15px;font-weight: 800;"><a th:href="@{/mypage/mypage/review}">나의리뷰</a></div>
+                    <div style="margin-bottom:15px;"><a th:href="@{/mypage/mypage/ask}">문의하기</a></div>
+                    <div><a th:href="@{/mypage/mypage/setup}">나의설정</a></div>
                 </div>
                 <div style="width: 100%;">
                     <div style="margin-top:30px; display: flex; justify-content: center;">
                         <div>
-                          <img src="/images/mypage_mainBanner7.jpg" alt="" style="width:400px;">
+                          <img th:src="@{/images/mypage_mainBanner7.jpg}" alt="" style="width:400px;">
                           <div style="font-size:10px;">Image by <a href="https://www.freepik.com" target="_blank" style="color:inherit; text-decoration:none;">Freepik</a></div>
                         </div>
                     </div>
@@ -299,7 +273,7 @@
         </div>
         
         <div style="margin-top:100px;"></div>
-        <div id="footer"></div>
+        <div th:replace="~{main/footer.html}"></div>
     </main>
 </body>
 </html>
