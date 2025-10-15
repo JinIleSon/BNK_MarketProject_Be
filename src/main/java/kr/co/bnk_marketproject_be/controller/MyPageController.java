@@ -23,10 +23,6 @@ public class MyPageController {
     public String mainpage() {
         return "mypage/mypage_main";
     }
-    @GetMapping("/mypage/mypage/allorder")
-    public String allorderList(){
-        return "mypage/mypage_allorder";
-    }
     @GetMapping("/mypage/mypage/point")
     public String pointList(){
         return "mypage/mypage_point";

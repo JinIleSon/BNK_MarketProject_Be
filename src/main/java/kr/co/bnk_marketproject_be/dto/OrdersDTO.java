@@ -75,4 +75,9 @@ public class OrdersDTO {
     private String user_address;
     @Transient
     private String detail_address;
+    @Transient
+    private String company_name;
+
+
+
 }

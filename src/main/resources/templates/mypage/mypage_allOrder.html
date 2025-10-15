@@ -1,67 +1,62 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>mypage_allOrder</title>
-    <!-- 모달 전용 스타일 -->
-  <style>
+<div th:replace="~{admin/_header.html}"></div>
+<!-- 모달 전용 스타일 -->
+<style>
     /* 전체 오버레이 */
     .modal-backdrop {
-      position: fixed; inset: 0;
-      background: rgba(0,0,0,.45);
-      display: none;
-      z-index: 9998;
+        position: fixed; inset: 0;
+        background: rgba(0,0,0,.45);
+        display: none;
+        z-index: 9998;
     }
     .modal-backdrop.is-open { display: block; }
 
     /* 모달 박스 */
     .modal {
-      position: fixed; inset: 0;
-      display: none;
-      place-items: center;
-      z-index: 9999;
+        position: fixed; inset: 0;
+        display: none;
+        place-items: center;
+        z-index: 9999;
     }
     .modal.is-open { display: grid; }
 
     .modal-dialog {
-      width: 860px; max-width: calc(100% - 40px);
-      background: #fff; border-radius: 10px;
-      box-shadow: 0 20px 60px rgba(0,0,0,.25);
-      overflow: hidden;
-      font-family: sans-serif;
+        width: 860px; max-width: calc(100% - 40px);
+        background: #fff; border-radius: 10px;
+        box-shadow: 0 20px 60px rgba(0,0,0,.25);
+        overflow: hidden;
+        font-family: sans-serif;
     }
     /* 상단 바 */
     .modal-header {
-      background: #2f7ee6; color:#fff;
-      padding: 4px 16px; font-weight: 700;
-      display: flex; align-items: center; justify-content: space-between;
+        background: #2f7ee6; color:#fff;
+        padding: 4px 16px; font-weight: 700;
+        display: flex; align-items: center; justify-content: space-between;
     }
     .modal-header .date { font-weight: 400; opacity:.9; margin-left: 12px; }
     .modal-close {
-      appearance: none; border: 0; background: transparent;
-      color:#fff; font-size: 20px; cursor: pointer; padding: 4px 8px;
+        appearance: none; border: 0; background: transparent;
+        color:#fff; font-size: 20px; cursor: pointer; padding: 4px 8px;
     }
     /* 본문 */
     .modal-body { padding: 0; }
     .section {
-      padding: 14px 18px;
+        padding: 14px 18px;
     }
     .section-title {
-      font-weight: 700; margin-bottom: 8px;
+        font-weight: 700; margin-bottom: 8px;
     }
     table.order-info {
-      width: 100%; border-collapse: collapse; font-size: 14px;
+        width: 100%; border-collapse: collapse; font-size: 14px;
     }
     .order-info th, .order-info td {
-      border-bottom: 1px solid #eee; padding: 10px; vertical-align: middle;
+        border-bottom: 1px solid #eee; padding: 10px; vertical-align: middle;
     }
     .order-info thead th {
-      background: #dedede; color:#fff; font-size: 12px; height: 38px;
+        background: #dedede; color:#fff; font-size: 12px; height: 38px;
     }
     .thumb { width: 120px; }
     .price {
-      font-size: 18px; font-weight: 800; margin-top: 8px;
+        font-size: 18px; font-weight: 800; margin-top: 8px;
     }
     .right { text-align: right; white-space: nowrap; }
     /* 배송정보 표 */
@@ -77,11 +72,11 @@
     .review-grid td { border-bottom:1px solid #eee; padding:10px; }
     .review-grid td:first-child { width:120px; text-align:center; background:#f2f2f2; }
     .review-title {
-      border:none; border-bottom:1px solid gray; width:270px; outline:none;
-      height:34px; padding:6px 8px; box-sizing:border-box;
+        border:none; border-bottom:1px solid gray; width:270px; outline:none;
+        height:34px; padding:6px 8px; box-sizing:border-box;
     }
     .review-textarea {
-      width:100%; resize:none; outline:none; padding:8px; box-sizing:border-box; height:160px;
+        width:100%; resize:none; outline:none; padding:8px; box-sizing:border-box; height:160px;
     }
     .review-actions { display:flex; justify-content:center; gap:10px; margin-top:16px; }
     .char-count { font-size:12px; color:#666; text-align:right; margin-top:6px; }
@@ -101,207 +96,164 @@
     .rating label:hover::before,
     .rating label:hover ~ label::before { content: '★'; }
     /* 페이지네이션 */
-        /* 게시판 아래버튼 부분 */
-        .prev-page{
-            background-color: white;
-            border: none;
-            margin-right: 15px;
-            width: 50px;
-            height: 30px;
-            cursor: pointer;
-        }
-        .next-page{
-            background-color: white;
-            border: none;
-            margin-left: 15px;
-            width: 50px;
-            height: 30px;
-            margin-right:3px;
-            cursor: pointer;
-        }
-        
-        /* 게시판 아래버튼 부분 끝 */
-  </style>
-</head>
+    /* 게시판 아래버튼 부분 */
+    .prev-page{
+        background-color: white;
+        border: none;
+        margin-right: 15px;
+        width: 50px;
+        height: 30px;
+        cursor: pointer;
+    }
+    .next-page{
+        background-color: white;
+        border: none;
+        margin-left: 15px;
+        width: 50px;
+        height: 30px;
+        margin-right:3px;
+        cursor: pointer;
+    }
+
+    /* 게시판 아래버튼 부분 끝 */
+</style>
 <body>
-    <main>
-        <div th:replace="~{main/header.html}"></div>
-        <div style="background-color: #f6f5f5; border-bottom: 1px solid #dddddd;">
-            <div style="display: flex; justify-content: center; align-items: center;">
-                <div style="width:1270px; font-size:15px; height:70px; display: flex; align-items: center; ">
-                    <div style="font-weight: 800; margin-left:73px;">나의 쇼핑 정보</div>
-                    <div style="display: flex; margin-left:auto; margin-right:40px;">
-                        <div style="width:70px;border-right:1px solid #dddddd; display: flex; flex-direction: column; align-items: center; justify-content: center;">
-                            <div style="margin-bottom:8px;">주문</div>
-                            <div>2</div>
-                        </div>
-                        <div style="width:70px; border-right:1px solid #dddddd; display: flex; flex-direction: column; align-items: center; justify-content: center;">
-                            <div style="margin-bottom:8px;">쿠폰</div>
-                            <div>1</div>
-                        </div>
-                        <div style="width:70px;border-right:1px solid #dddddd; display: flex; flex-direction: column; align-items: center; justify-content: center;">
-                            <div style="margin-bottom:8px;">포인트</div>
-                            <div>1,000</div>
-                        </div>
-                        <div style="width:70px;display: flex; flex-direction: column; align-items: center; justify-content: center;">
-                            <div style="margin-bottom:8px;">문의</div>
-                            <div>1</div>
-                        </div>
+<main>
+    <div id="header"></div>
+    <div style="background-color: #f6f5f5; border-bottom: 1px solid #dddddd;">
+        <div style="display: flex; justify-content: center; align-items: center;">
+            <div style="width:1270px; font-size:15px; height:70px; display: flex; align-items: center; ">
+                <div style="font-weight: 800; margin-left:73px;">나의 쇼핑 정보</div>
+                <div style="display: flex; margin-left:auto; margin-right:40px;">
+                    <div style="width:70px;border-right:1px solid #dddddd; display: flex; flex-direction: column; align-items: center; justify-content: center;">
+                        <div style="margin-bottom:8px;">주문</div>
+                        <div>2</div>
+                    </div>
+                    <div style="width:70px; border-right:1px solid #dddddd; display: flex; flex-direction: column; align-items: center; justify-content: center;">
+                        <div style="margin-bottom:8px;">쿠폰</div>
+                        <div>1</div>
+                    </div>
+                    <div style="width:70px;border-right:1px solid #dddddd; display: flex; flex-direction: column; align-items: center; justify-content: center;">
+                        <div style="margin-bottom:8px;">포인트</div>
+                        <div>1,000</div>
+                    </div>
+                    <div style="width:70px;display: flex; flex-direction: column; align-items: center; justify-content: center;">
+                        <div style="margin-bottom:8px;">문의</div>
+                        <div>1</div>
                     </div>
                 </div>
             </div>
         </div>
-        <div style="display: flex; justify-content: center; align-items: center;">
-            <div style="width:1270px; font-size:15px; display: flex;">
-                <div style=" width:200px; padding-left:70px; padding-top:30px; border-right:1px solid #dddddd;">
-                    <div style="font-weight: 800;margin-bottom:15px;"><a th:href="@{/mypage/mypage/allorder}">전체주문내역</a></div>
-                    <div style="margin-bottom:15px;"><a th:href="@{/mypage/mypage/point}">포인트내역</a></div>
-                    <div style="margin-bottom:15px;"><a th:href="@{/mypage/mypage/coupon}">쿠폰</a></div>
-                    <div style="margin-bottom:15px;"><a th:href="@{/mypage/mypage/review}">나의리뷰</a></div>
-                    <div style="margin-bottom:15px;"><a th:href="@{/mypage/mypage/ask}">문의하기</a></div>
-                    <div><a th:href="@{/mypage/mypage/setup}">나의설정</a></div>
-                </div>
-                <div style="width: 100%;">
-                    <div style="margin-top:30px; display: flex; justify-content: center;">
-                        <div>
-                          <img th:src="@{/images/mypage_mainBanner5.jpg}" alt="" style="width:400px;">
-                          <div style="font-size:10px;">Image by <a href="https://www.freepik.com" target="_blank" style="color:inherit; text-decoration:none;">Freepik</a></div>
-                        </div>
+    </div>
+    <div style="display: flex; justify-content: center; align-items: center;">
+        <div style="width:1270px; font-size:15px; display: flex;">
+            <div style=" width:200px; padding-left:70px; padding-top:30px; border-right:1px solid #dddddd;">
+                <div style="margin-bottom:15px; font-weight: 800;"><a th:href="@{/mypage/mypage/allorder}">전체주문내역</a></div>
+                <div style="margin-bottom:15px;"><a th:href="@{/mypage/mypage/point}">포인트내역</a></div>
+                <div style="margin-bottom:15px;"><a th:href="@{/mypage/mypage/coupon}">쿠폰</a></div>
+                <div style="margin-bottom:15px;"><a th:href="@{/mypage/mypage/review}">나의리뷰</a></div>
+                <div style="margin-bottom:15px;"><a th:href="@{/mypage/mypage/ask}">문의하기</a></div>
+                <div style="margin-bottom:15px;"><a th:href="@{/mypage/mypage/setup}">나의설정</a></div>
+            </div>
+            <div style="width: 100%;">
+                <div style="margin-top:30px; display: flex; justify-content: center;">
+                    <div>
+                        <img th:src="@{/images/mypage_mainBanner5.jpg}" alt="" style="width:400px;">
+                        <div style="font-size:10px;">Image by <a href="https://www.freepik.com" target="_blank" style="color:inherit; text-decoration:none;">Freepik</a></div>
                     </div>
-                    <div style="display: flex; flex-direction: column; justify-content: center; align-items: center; margin-top:40px;">
-                        <div style="display: flex; margin-top:30px;">
-                            <div style="font-weight: 800; margin-right:813px; margin-bottom:10px;">전체주문내역</div>
-                        </div>
-                        <div style="display: flex; border:1px solid; width:900px; height:60px; align-items: center; justify-content: center; background-color: #222; border:none; margin-bottom:10px; color: white;">
-                            <div style="margin-right:10px;">기간별 조회</div>
-                            <!-- 빠른범위 -->
-                            <div id="quickRanges" style="display:flex; color:white; border:1px solid white; margin-right:15px;">
+                </div>
+                <div style="display: flex; flex-direction: column; justify-content: center; align-items: center; margin-top:40px;">
+                    <div style="display: flex; margin-top:30px;">
+                        <div style="font-weight: 800; margin-right:813px; margin-bottom:10px;">전체주문내역</div>
+                    </div>
+                    <div style="display: flex; border:1px solid; width:900px; height:60px; align-items: center; justify-content: center; background-color: #222; border:none; margin-bottom:10px; color: white;">
+                        <div style="margin-right:10px;">기간별 조회</div>
+                        <!-- 빠른범위 -->
+                        <div id="quickRanges" style="display:flex; color:white; border:1px solid white; margin-right:15px;">
                             <div class="range-btn" data-days="7"  style="margin:0 10px; cursor:pointer;">1주일</div> |
                             <div class="range-btn" data-days="15" style="margin:0 10px; cursor:pointer;">15일</div> |
                             <div class="range-btn" data-days="30" style="margin:0 10px; cursor:pointer;">1개월</div>
-                            </div>
+                        </div>
 
-                            <!-- 6~10월 (기존 그대로, id만 추가) -->
-                            <div id="fixedMonthRanges" style="display:flex; color:white; border:1px solid white; margin-right:15px;">
+                        <!-- 6~10월 (기존 그대로, id만 추가) -->
+                        <div id="fixedMonthRanges" style="display:flex; color:white; border:1px solid white; margin-right:15px;">
                             <div style="margin:0 10px; cursor:pointer;">6월</div> |
                             <div style="margin:0 10px; cursor:pointer;">7월</div> |
                             <div style="margin:0 10px; cursor:pointer;">8월</div> |
                             <div style="margin:0 10px; cursor:pointer;">9월</div> |
                             <div style="margin:0 10px; cursor:pointer;">10월</div>
-                            </div>
+                        </div>
 
-                            <!-- 사용자 지정 기간 (date 인풋) -->
-                            <div style="display:flex; color:white; border:1px solid white;">
+                        <!-- 사용자 지정 기간 (date 인풋) -->
+                        <div style="display:flex; color:white; border:1px solid white;">
                             <input id="startDate" type="date" style="background:transparent; border:0; color:#fff; margin:0 10px; width:110px;">
                             ~
                             <input id="endDate" type="date" style="background:transparent; border:0; color:#fff; margin:0 10px; width:110px;">
-                            </div>
-                            <div style="margin-left: 15px;">
-                                <button id="applyFilter" style="background:#000; border:none; color:#fff; font-weight:300; margin-left:15px; width:45px; height:26px;">조회</button>
-                            </div>
-                            <style>
-                                .range-active{text-decoration:underline}
-                                /* 날짜 인풋 내부 여백/너비 축소 → 달력 아이콘과 글자 간격 줄이기 */
-                                #startDate,
-                                #endDate{
-                                width: 118px;           /* 기존 130px → 살짝 축소 */
-                                padding: 0 6px;         /* 오른쪽 여백 줄이기 */
-                                margin: 0 6px;          /* 인풋 사이 간격도 조금 줄이기 */
-                                }
+                        </div>
+                        <div style="margin-left: 15px;">
+                            <button id="applyFilter" style="background:#000; border:none; color:#fff; font-weight:300; margin-left:15px; width:45px; height:26px;">조회</button>
+                        </div>
+                        <style>
+                            .range-active{text-decoration:underline}
+                            #startDate, #endDate{
+                                width:118px; padding:0 6px; margin:0 6px;
+                            }
+                            #startDate::-webkit-calendar-picker-indicator,
+                            #endDate::-webkit-calendar-picker-indicator{ margin-left:4px; }
+                            #applyFilter{ margin-left:0!important; }
+                        </style>
 
-                                /* 크롬/엣지(웹킷) 달력 아이콘과 텍스트 간격 추가 조정 */
-                                #startDate::-webkit-calendar-picker-indicator,
-                                #endDate::-webkit-calendar-picker-indicator{
-                                margin-left: 4px;       /* 필요시 0~6px 사이로 조절 */
-                                }
+                        <script>
+                            // ===== 기간별 조회 기능 =====
+                            const startOfDay = d => new Date(d.getFullYear(), d.getMonth(), d.getDate());
+                            const endOfDay   = d => new Date(d.getFullYear(), d.getMonth(), d.getDate(), 23,59,59,999);
+                            const fmt = d => `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
+                            const parse = s => { const m=/^(\d{4})-(\d{2})-(\d{2})$/.exec(s||''); return m?new Date(+m[1],+m[2]-1,+m[3]):new Date(NaN); };
 
-                                /* 조회 버튼은 왼쪽 여백 15px로 고정 */
-                                #applyFilter{
-                                margin-left: 0px !important;
-                                }
-                            </style>
-                            <script>
-                                // ===== 기간별 조회 (목록 표에만 적용) =====
-                                const startOfDay = d => new Date(d.getFullYear(), d.getMonth(), d.getDate());
-                                const endOfDay   = d => new Date(d.getFullYear(), d.getMonth(), d.getDate(), 23,59,59,999);
-
-                                // 로컬 기준 yyyy-mm-dd 포맷/파서 (UTC 안 씀)
-                                const fmt = d => {
-                                const y = d.getFullYear();
-                                const m = String(d.getMonth()+1).padStart(2,'0');
-                                const day = String(d.getDate()).padStart(2,'0');
-                                return `${y}-${m}-${day}`;
-                                };
-                                const parse = (str) => {
-                                // "YYYY-MM-DD"를 로컬 Date로 생성(UTC 파싱 금지)
-                                const m = /^(\d{4})-(\d{2})-(\d{2})$/.exec(str || '');
-                                return m ? new Date(+m[1], +m[2]-1, +m[3]) : new Date(NaN);
-                                };
-
-                                document.addEventListener('DOMContentLoaded', function(){
+                            document.addEventListener('DOMContentLoaded', function(){
                                 const listTable = document.getElementById('orderListTable');
                                 if(!listTable) return;
-
                                 const rows = Array.from(listTable.querySelectorAll('tr')).slice(1);
+
                                 function getRowDate(tr){
                                     const t = (tr.querySelector('td:first-child')?.textContent || '').trim();
-                                    const m = t.match(/^(\d{4})-(\d{2})-(\d{2})$/);
-                                    if(!m) return null;
-                                    return new Date(+m[1], +m[2]-1, +m[3]); // 로컬
+                                    // 날짜 + 시간(옵션) 모두 인식
+                                    const m = t.match(/^(\d{4})-(\d{2})-(\d{2})(?:\s+(\d{2}):(\d{2}):(\d{2}))?$/);
+                                    if (!m) return null;
+                                    // 시간 정보가 있으면 포함, 없으면 0시로 처리
+                                    return new Date(+m[1], +m[2]-1, +m[3], m[4] || 0, m[5] || 0, m[6] || 0);
                                 }
 
-                                const startInput = document.getElementById('startDate');
-                                const endInput   = document.getElementById('endDate');
-                                const applyBtn   = document.getElementById('applyFilter');
-                                const quickWrap  = document.getElementById('quickRanges');
-                                const monthWrap  = document.getElementById('fixedMonthRanges');
 
-                                // === 오늘/1년 전(로컬 자정 기준) ===
-                                const MS = 24*60*60*1000;
-                                const now = new Date();
-                                const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
-                                const yearAgo = new Date(today); yearAgo.setDate(today.getDate()-364); // 포함 365일
+                                const startInput=document.getElementById('startDate');
+                                const endInput=document.getElementById('endDate');
+                                const applyBtn=document.getElementById('applyFilter');
+                                const quickWrap=document.getElementById('quickRanges');
+                                const monthWrap=document.getElementById('fixedMonthRanges');
 
-                                // HTML date 인풋 제한(로컬 포맷)
-                                startInput.min = fmt(yearAgo);
-                                startInput.max = fmt(today);
-                                endInput.min   = fmt(yearAgo);
-                                endInput.max   = fmt(today);
+                                const MS=86400000;
+                                const now=new Date();
+                                const today=new Date(now.getFullYear(),now.getMonth(),now.getDate());
+                                const yearAgo=new Date(today); yearAgo.setDate(today.getDate()-364);
+
+                                startInput.min=fmt(yearAgo); startInput.max=fmt(today);
+                                endInput.min=fmt(yearAgo); endInput.max=fmt(today);
 
                                 function clampRange(){
-                                    let s = parse(startInput.value) || new Date(NaN);
-                                    let e = parse(endInput.value)   || new Date(NaN);
-
-                                    if (isNaN(+s)) s = new Date(yearAgo);
-                                    if (isNaN(+e)) e = new Date(today);
-
-                                    // 1차: 허용 범위 내로
-                                    if (s < yearAgo) s = new Date(yearAgo);
-                                    if (s > today)   s = new Date(today);
-                                    if (e < yearAgo) e = new Date(yearAgo);
-                                    if (e > today)   e = new Date(today);
-
-                                    // 시작<=종료
-                                    if (s > e) e = new Date(s);
-
-                                    // 365일 초과 금지(포함)
-                                    const diffDays = Math.floor((endOfDay(e) - startOfDay(s))/MS) + 1;
-                                    if (diffDays > 365){
-                                    const candStart = new Date(e); candStart.setDate(e.getDate()-364);
-                                    s = candStart < yearAgo ? new Date(yearAgo) : candStart;
-                                    }
-
-                                    startInput.value = fmt(s);
-                                    endInput.value   = fmt(e);
-                                    return {s, e};
+                                    let s=parse(startInput.value), e=parse(endInput.value);
+                                    if(isNaN(+s)) s=new Date(yearAgo); if(isNaN(+e)) e=new Date(today);
+                                    if(s<yearAgo)s=new Date(yearAgo); if(s>today)s=new Date(today);
+                                    if(e<yearAgo)e=new Date(yearAgo); if(e>today)e=new Date(today);
+                                    if(s>e)e=new Date(s);
+                                    const diff=Math.floor((endOfDay(e)-startOfDay(s))/MS)+1;
+                                    if(diff>365){ const candStart=new Date(e); candStart.setDate(e.getDate()-364); s=candStart<yearAgo?new Date(yearAgo):candStart; }
+                                    startInput.value=fmt(s); endInput.value=fmt(e);
+                                    return {s,e};
                                 }
 
-                                // 기본값: 최근 1주 (로컬)
                                 (function initDefault(){
-                                    const s = new Date(today); s.setDate(today.getDate()-6);
-                                    startInput.value = fmt(s);
-                                    endInput.value   = fmt(today);
-                                    clampRange();
+                                    const s=new Date(today); s.setDate(today.getDate()-6);
+                                    startInput.value=fmt(s); endInput.value=fmt(today); clampRange();
                                 })();
 
                                 function clearActive(){
@@ -309,768 +261,587 @@
                                     monthWrap?.querySelectorAll('div')?.forEach(el=>el.classList.remove('range-active'));
                                 }
 
-                                // 빠른범위(1주/15일/1개월)
                                 quickWrap?.addEventListener('click', e=>{
-                                    const btn = e.target.closest('.range-btn');
-                                    if(!btn) return;
-
+                                    const btn=e.target.closest('.range-btn'); if(!btn)return;
                                     clearActive(); btn.classList.add('range-active');
-
-                                    const base = today; // 로컬 자정 기준
-                                    let s, ed;
-                                    const days = Number(btn.dataset.days || 0);
-
-                                    if (days === 30) {
-                                    const prevSame = new Date(base.getFullYear(), base.getMonth()-1, base.getDate());
-                                    s  = startOfDay(new Date(prevSame.getFullYear(), prevSame.getMonth(), prevSame.getDate()-1));
-                                    ed = endOfDay(base);
-                                    } else {
-                                    s  = startOfDay(new Date(base.getFullYear(), base.getMonth(), base.getDate()-(days-1)));
-                                    ed = endOfDay(base);
-                                    }
-                                    filter(s, ed);
+                                    const days=Number(btn.dataset.days||0);
+                                    let s,ed;
+                                    if(days===30){ const prevSame=new Date(today.getFullYear(),today.getMonth()-1,today.getDate());
+                                        s=startOfDay(new Date(prevSame.getFullYear(),prevSame.getMonth(),prevSame.getDate()-1)); ed=endOfDay(today);
+                                    } else { s=startOfDay(new Date(today.getFullYear(),today.getMonth(),today.getDate()-(days-1))); ed=endOfDay(today);}
+                                    filter(s,ed);
                                 });
 
-                                // 6~10월 고정 월
                                 monthWrap?.addEventListener('click', e=>{
-                                    const el = e.target.closest('div');
-                                    if(!el) return;
-                                    const m = parseInt(el.textContent.replace(/[^\d]/g,''),10);
-                                    if(!(m>=1 && m<=12)) return;
-
+                                    const el=e.target.closest('div'); if(!el)return;
+                                    const m=parseInt(el.textContent.replace(/[^\d]/g,''),10);
+                                    if(!(m>=1&&m<=12))return;
                                     clearActive(); el.classList.add('range-active');
-
-                                    const y = today.getFullYear();
-                                    const s = new Date(y, m-1, 1);
-                                    const ed= new Date(y, m, 0);
-                                    filter(s, ed);
+                                    const y=today.getFullYear();
+                                    const s=new Date(y,m-1,1); const ed=new Date(y,m,0);
+                                    filter(s,ed);
                                 });
 
-                                // 인풋 변경 시 즉시 보정
-                                startInput.addEventListener('change', clampRange);
-                                endInput.addEventListener('change', clampRange);
+                                startInput.addEventListener('change',clampRange);
+                                endInput.addEventListener('change',clampRange);
 
                                 function validateRange(){
-                                    const {s, e} = clampRange();
-                                    const diff = Math.floor((endOfDay(e) - startOfDay(s))/MS) + 1;
-                                    if(diff>365){ alert('최대 1년(365일)까지만 조회 가능합니다.'); return null; }
-                                    return {s, e};
+                                    const {s,e}=clampRange();
+                                    const diff=Math.floor((endOfDay(e)-startOfDay(s))/MS)+1;
+                                    if(diff>365){ alert('최대 1년(365일)까지만 조회 가능합니다.'); return null;}
+                                    return {s,e};
                                 }
 
-                                function filter(s, e){
-                                    const S = startOfDay(s), E = endOfDay(e);
+                                function filter(s,e){
+                                    const S=startOfDay(s), E=endOfDay(e);
                                     rows.forEach(tr=>{
-                                    const d = getRowDate(tr);
-                                    tr.style.display = (d && d>=S && d<=E) ? '' : 'none';
+                                        const d=getRowDate(tr);
+                                        tr.style.display=(d&&d>=S&&d<=E)?'':'none';
                                     });
                                 }
-                                
-                                function showAll(){
-                                    rows.forEach(tr=> tr.style.display = '');
-                                }
+                                function showAll(){ rows.forEach(tr=>tr.style.display=''); }
 
-                                applyBtn.disabled = false;
-                                applyBtn.style.opacity = '1';
-                                applyBtn.style.cursor  = 'pointer';
                                 applyBtn.addEventListener('click', ()=>{
-                                  const rng = validateRange();
-                                  if(!rng) return;
-                                  clearActive();          // ← 조회 시 왼쪽 버튼 활성표시 초기화
-                                  filter(rng.s, rng.e);
+                                    const rng=validateRange(); if(!rng)return;
+                                    clearActive(); filter(rng.s,rng.e);
                                 });
 
                                 showAll();
-                            }); // DOMContentLoaded 끝
-                            </script>
-                        </div>
-                        <table id="orderListTable" style="text-align: center; border-collapse: collapse;border-top:1px solid; width:900px;">
-                            <tr style="background-color: #dedede; font-size:12px; color:white; font-weight: 800; height:40px;">
-                                <th style="width: 120px;">날짜</th>
-                                <th style="width:500px;">상품정보</th>
-                                <th style="width:90px;">상태</th>
-                                <th style="">확인 / 신청</th>
-                            </tr>
-                            <tr style="border-bottom: 1px solid #dddddd; height:180px;">
-                                <td>2022-12-13</td>
-                                <td style="text-align: left; padding-left:10px;">
-                                    <div style="display: flex; align-items: center;">
-                                        <div>
-                                            <img th:src="@{/images/product_list1.jpg}" alt="" style="height:121px;">
-                                        </div>
-                                        <div style="padding-left:30px; letter-spacing: -1px;">
-                                            <div style="margin-bottom:5px;"><a href="#" class="order-link" data-order-id="1012211341" style="color:gray;">주문번호 : 1012211341</a></div>
-                                            <div style="margin-bottom:5px;"><a href="#" class="seller-link" style="color:gray;">(주) 상호명</a></div>
-                                            <div style="margin-bottom:5px;"><a href="#" style="color:gray;">상품명</a></div>
-                                            <div style="margin-bottom:7px;">수량 : 1개</div>
-                                            <div style="margin-bottom:5px; font-size: 20px; font-weight: 800;">34,000원</div>
-                                        </div>
-                                    </div>
-                                </td>
-                                <td>배송완료</td>
-                                <td>
-                                    <div><button class="confirm-purchase" style="background-color: black; color: white; font-weight: 300; width:97px; height:34px; margin-bottom:5px; border:none;">구매확정</button></div>
-                                    <div><button class="review-btn" style="background-color: black; color: white; font-weight: 300; width:97px; height:34px; margin-bottom:5px; border:none;">상품평쓰기</button></div>
-                                    <div><button class="return-btn" style="background-color: white; color: black; border:1px solid #dddddd; font-weight: 300; width:97px; height:34px; margin-bottom:5px;">반품신청</button></div>
-                                    <div><button class="exchange-btn" style="background-color: white; color: black; border:1px solid #dddddd; font-weight: 300; width:97px; height:34px; margin-bottom:5px;">교환신청</button></div>
-                                </td>
-                            </tr>
-                            <tr style="border-bottom: 1px solid #dddddd; height:180px;">
-                                <td>2025-10-13</td>
-                                <td style="text-align: left; padding-left:10px;">
-                                    <div style="display: flex; align-items: center;">
-                                        <div>
-                                            <img th:src="@{/images/product_list1.jpg}" alt="" style="height:121px;">
-                                        </div>
-                                        <div style="padding-left:30px; letter-spacing: -1px;">
-                                            <div style="margin-bottom:5px;"><a href="#" class="order-link" data-order-id="1012211341" style="color:gray;">주문번호 : 1012211341</a></div>
-                                            <div style="margin-bottom:5px;"><a href="#" class="seller-link" style="color:gray;">(주) 상호명</a></div>
-                                            <div style="margin-bottom:5px;"><a href="#" style="color:gray;">상품명</a></div>
-                                            <div style="margin-bottom:7px;">수량 : 1개</div>
-                                            <div style="margin-bottom:5px; font-size: 20px; font-weight: 800;">34,000원</div>
-                                        </div>
-                                    </div>
-                                </td>
-                                <td>배송완료</td>
-                                <td>
-                                    <div><button class="confirm-purchase" style="background-color: black; color: white; font-weight: 300; width:97px; height:34px; margin-bottom:5px; border:none;">구매확정</button></div>
-                                    <div><button class="review-btn" style="background-color: black; color: white; font-weight: 300; width:97px; height:34px; margin-bottom:5px; border:none;">상품평쓰기</button></div>
-                                    <div><button class="return-btn" style="background-color: white; color: black; border:1px solid #dddddd; font-weight: 300; width:97px; height:34px; margin-bottom:5px;">반품신청</button></div>
-                                    <div><button class="exchange-btn" style="background-color: white; color: black; border:1px solid #dddddd; font-weight: 300; width:97px; height:34px; margin-bottom:5px;">교환신청</button></div>
-                                </td>
-                            </tr>
-                            <tr style="border-bottom: 1px solid #dddddd; height:180px;">
-                                <td>2025-09-13</td>
-                                <td style="text-align: left; padding-left:10px;">
-                                    <div style="display: flex; align-items: center;">
-                                        <div>
-                                            <img th:src="@{/images/product_list1.jpg}" alt="" style="height:121px;">
-                                        </div>
-                                        <div style="padding-left:30px; letter-spacing: -1px;">
-                                            <div style="margin-bottom:5px;"><a href="#" class="order-link" data-order-id="1012211341" style="color:gray;">주문번호 : 1012211341</a></div>
-                                            <div style="margin-bottom:5px;"><a href="#" class="seller-link" style="color:gray;">(주) 상호명</a></div>
-                                            <div style="margin-bottom:5px;"><a href="#" style="color:gray;">상품명</a></div>
-                                            <div style="margin-bottom:7px;">수량 : 1개</div>
-                                            <div style="margin-bottom:5px; font-size: 20px; font-weight: 800;">34,000원</div>
-                                        </div>
-                                    </div>
-                                </td>
-                                <td>배송완료</td>
-                                <td>
-                                    <div><button class="confirm-purchase" style="background-color: black; color: white; font-weight: 300; width:97px; height:34px; margin-bottom:5px; border:none;">구매확정</button></div>
-                                    <div><button class="review-btn" style="background-color: black; color: white; font-weight: 300; width:97px; height:34px; margin-bottom:5px; border:none;">상품평쓰기</button></div>
-                                    <div><button class="return-btn" style="background-color: white; color: black; border:1px solid #dddddd; font-weight: 300; width:97px; height:34px; margin-bottom:5px;">반품신청</button></div>
-                                    <div><button class="exchange-btn" style="background-color: white; color: black; border:1px solid #dddddd; font-weight: 300; width:97px; height:34px; margin-bottom:5px;">교환신청</button></div>
-                                </td>
-                            </tr>
-                            <tr style="border-bottom: 1px solid #dddddd; height:180px;">
-                                <td>2025-08-13</td>
-                                <td style="text-align: left; padding-left:10px;">
-                                    <div style="display: flex; align-items: center;">
-                                        <div>
-                                            <img th:src="@{/images/product_list1.jpg}" alt="" style="height:121px;">
-                                        </div>
-                                        <div style="padding-left:30px; letter-spacing: -1px;">
-                                            <div style="margin-bottom:5px;"><a href="#" class="order-link" data-order-id="1012211341" style="color:gray;">주문번호 : 1012211341</a></div>
-                                            <div style="margin-bottom:5px;"><a href="#" class="seller-link" style="color:gray;">(주) 상호명</a></div>
-                                            <div style="margin-bottom:5px;"><a href="#" style="color:gray;">상품명</a></div>
-                                            <div style="margin-bottom:7px;">수량 : 1개</div>
-                                            <div style="margin-bottom:5px; font-size: 20px; font-weight: 800;">34,000원</div>
-                                        </div>
-                                    </div>
-                                </td>
-                                <td>배송완료</td>
-                                <td>
-                                    <div><button class="confirm-purchase" style="background-color: black; color: white; font-weight: 300; width:97px; height:34px; margin-bottom:5px; border:none;">구매확정</button></div>
-                                    <div><button class="review-btn" style="background-color: black; color: white; font-weight: 300; width:97px; height:34px; margin-bottom:5px; border:none;">상품평쓰기</button></div>
-                                    <div><button class="return-btn" style="background-color: white; color: black; border:1px solid #dddddd; font-weight: 300; width:97px; height:34px; margin-bottom:5px;">반품신청</button></div>
-                                    <div><button class="exchange-btn" style="background-color: white; color: black; border:1px solid #dddddd; font-weight: 300; width:97px; height:34px; margin-bottom:5px;">교환신청</button></div>
-                                </td>
-                            </tr>
-                            <tr style="border-bottom: 1px solid #dddddd; height:180px;">
-                                <td>2025-07-13</td>
-                                <td style="text-align: left; padding-left:10px;">
-                                    <div style="display: flex; align-items: center;">
-                                        <div>
-                                            <img th:src="@{/images/product_list1.jpg}" alt="" style="height:121px;">
-                                        </div>
-                                        <div style="padding-left:30px; letter-spacing: -1px;">
-                                            <div style="margin-bottom:5px;"><a href="#" class="order-link" data-order-id="1012211341" style="color:gray;">주문번호 : 1012211341</a></div>
-                                            <div style="margin-bottom:5px;"><a href="#" class="seller-link" style="color:gray;">(주) 상호명</a></div>
-                                            <div style="margin-bottom:5px;"><a href="#" style="color:gray;">상품명</a></div>
-                                            <div style="margin-bottom:7px;">수량 : 1개</div>
-                                            <div style="margin-bottom:5px; font-size: 20px; font-weight: 800;">34,000원</div>
-                                        </div>
-                                    </div>
-                                </td>
-                                <td>배송완료</td>
-                                <td>
-                                    <div><button class="confirm-purchase" style="background-color: black; color: white; font-weight: 300; width:97px; height:34px; margin-bottom:5px; border:none;">구매확정</button></div>
-                                    <div><button class="review-btn" style="background-color: black; color: white; font-weight: 300; width:97px; height:34px; margin-bottom:5px; border:none;">상품평쓰기</button></div>
-                                    <div><button class="return-btn" style="background-color: white; color: black; border:1px solid #dddddd; font-weight: 300; width:97px; height:34px; margin-bottom:5px;">반품신청</button></div>
-                                    <div><button class="exchange-btn" style="background-color: white; color: black; border:1px solid #dddddd; font-weight: 300; width:97px; height:34px; margin-bottom:5px;">교환신청</button></div>
-                                </td>
-                            </tr>
-                            <tr style="border-bottom: 1px solid #dddddd; height:180px;">
-                                <td>2025-06-13</td>
-                                <td style="text-align: left; padding-left:10px;">
-                                    <div style="display: flex; align-items: center;">
-                                        <div>
-                                            <img th:src="@{/images/product_list1.jpg}" alt="" style="height:121px;">
-                                        </div>
-                                        <div style="padding-left:30px; letter-spacing: -1px;">
-                                            <div style="margin-bottom:5px;"><a href="#" class="order-link" data-order-id="1012211341" style="color:gray;">주문번호 : 1012211341</a></div>
-                                            <div style="margin-bottom:5px;"><a href="#" class="seller-link" style="color:gray;">(주) 상호명</a></div>
-                                            <div style="margin-bottom:5px;"><a href="#" style="color:gray;">상품명</a></div>
-                                            <div style="margin-bottom:7px;">수량 : 1개</div>
-                                            <div style="margin-bottom:5px; font-size: 20px; font-weight: 800;">34,000원</div>
-                                        </div>
-                                    </div>
-                                </td>
-                                <td>배송완료</td>
-                                <td>
-                                    <div><button class="confirm-purchase" style="background-color: black; color: white; font-weight: 300; width:97px; height:34px; margin-bottom:5px; border:none;">구매확정</button></div>
-                                    <div><button class="review-btn" style="background-color: black; color: white; font-weight: 300; width:97px; height:34px; margin-bottom:5px; border:none;">상품평쓰기</button></div>
-                                    <div><button class="return-btn" style="background-color: white; color: black; border:1px solid #dddddd; font-weight: 300; width:97px; height:34px; margin-bottom:5px;">반품신청</button></div>
-                                    <div><button class="exchange-btn" style="background-color: white; color: black; border:1px solid #dddddd; font-weight: 300; width:97px; height:34px; margin-bottom:5px;">교환신청</button></div>
-                                </td>
-                            </tr>
-                            <tr style="border-bottom: 1px solid #dddddd; height:180px;">
-                                <td>2025-09-20</td>
-                                <td style="text-align: left; padding-left:10px;">
-                                    <div style="display: flex; align-items: center;">
-                                        <div>
-                                            <img th:src="@{/images/product_list1.jpg}" alt="" style="height:121px;">
-                                        </div>
-                                        <div style="padding-left:30px; letter-spacing: -1px;">
-                                            <div style="margin-bottom:5px;"><a href="#" class="order-link" data-order-id="1012211341" style="color:gray;">주문번호 : 1012211341</a></div>
-                                            <div style="margin-bottom:5px;"><a href="#" class="seller-link" style="color:gray;">(주) 상호명</a></div>
-                                            <div style="margin-bottom:5px;"><a href="#" style="color:gray;">상품명</a></div>
-                                            <div style="margin-bottom:7px;">수량 : 1개</div>
-                                            <div style="margin-bottom:5px; font-size: 20px; font-weight: 800;">34,000원</div>
-                                        </div>
-                                    </div>
-                                </td>
-                                <td>배송완료</td>
-                                <td>
-                                    <div><button class="confirm-purchase" style="background-color: black; color: white; font-weight: 300; width:97px; height:34px; margin-bottom:5px; border:none;">구매확정</button></div>
-                                    <div><button class="review-btn" style="background-color: black; color: white; font-weight: 300; width:97px; height:34px; margin-bottom:5px; border:none;">상품평쓰기</button></div>
-                                    <div><button class="return-btn" style="background-color: white; color: black; border:1px solid #dddddd; font-weight: 300; width:97px; height:34px; margin-bottom:5px;">반품신청</button></div>
-                                    <div><button class="exchange-btn" style="background-color: white; color: black; border:1px solid #dddddd; font-weight: 300; width:97px; height:34px; margin-bottom:5px;">교환신청</button></div>
-                                </td>
-                            </tr>
-                            <tr style="border-bottom: 1px solid #dddddd; height:180px;">
-                                <td>2025-09-19</td>
-                                <td style="text-align: left; padding-left:10px;">
-                                    <div style="display: flex; align-items: center;">
-                                        <div>
-                                            <img th:src="@{/images/product_list1.jpg}" alt="" style="height:121px;">
-                                        </div>
-                                        <div style="padding-left:30px; letter-spacing: -1px;">
-                                            <div style="margin-bottom:5px;"><a href="#" class="order-link" data-order-id="1012211341" style="color:gray;">주문번호 : 1012211341</a></div>
-                                            <div style="margin-bottom:5px;"><a href="#" class="seller-link" style="color:gray;">(주) 상호명</a></div>
-                                            <div style="margin-bottom:5px;"><a href="#" style="color:gray;">상품명</a></div>
-                                            <div style="margin-bottom:7px;">수량 : 1개</div>
-                                            <div style="margin-bottom:5px; font-size: 20px; font-weight: 800;">34,000원</div>
-                                        </div>
-                                    </div>
-                                </td>
-                                <td>배송완료</td>
-                                <td>
-                                    <div><button class="confirm-purchase" style="background-color: black; color: white; font-weight: 300; width:97px; height:34px; margin-bottom:5px; border:none;">구매확정</button></div>
-                                    <div><button class="review-btn" style="background-color: black; color: white; font-weight: 300; width:97px; height:34px; margin-bottom:5px; border:none;">상품평쓰기</button></div>
-                                    <div><button class="return-btn" style="background-color: white; color: black; border:1px solid #dddddd; font-weight: 300; width:97px; height:34px; margin-bottom:5px;">반품신청</button></div>
-                                    <div><button class="exchange-btn" style="background-color: white; color: black; border:1px solid #dddddd; font-weight: 300; width:97px; height:34px; margin-bottom:5px;">교환신청</button></div>
-                                </td>
-                            </tr>
-                            <tr style="border-bottom: 1px solid #dddddd; height:180px;">
-                                <td>2025-08-20</td>
-                                <td style="text-align: left; padding-left:10px;">
-                                    <div style="display: flex; align-items: center;">
-                                        <div>
-                                            <img th:src="@{/images/product_list1.jpg}" alt="" style="height:121px;">
-                                        </div>
-                                        <div style="padding-left:30px; letter-spacing: -1px;">
-                                            <div style="margin-bottom:5px;"><a href="#" class="order-link" data-order-id="1012211341" style="color:gray;">주문번호 : 1012211341</a></div>
-                                            <div style="margin-bottom:5px;"><a href="#" class="seller-link" style="color:gray;">(주) 상호명</a></div>
-                                            <div style="margin-bottom:5px;"><a href="#" style="color:gray;">상품명</a></div>
-                                            <div style="margin-bottom:7px;">수량 : 1개</div>
-                                            <div style="margin-bottom:5px; font-size: 20px; font-weight: 800;">34,000원</div>
-                                        </div>
-                                    </div>
-                                </td>
-                                <td>배송완료</td>
-                                <td>
-                                    <div><button class="confirm-purchase" style="background-color: black; color: white; font-weight: 300; width:97px; height:34px; margin-bottom:5px; border:none;">구매확정</button></div>
-                                    <div><button class="review-btn" style="background-color: black; color: white; font-weight: 300; width:97px; height:34px; margin-bottom:5px; border:none;">상품평쓰기</button></div>
-                                    <div><button class="return-btn" style="background-color: white; color: black; border:1px solid #dddddd; font-weight: 300; width:97px; height:34px; margin-bottom:5px;">반품신청</button></div>
-                                    <div><button class="exchange-btn" style="background-color: white; color: black; border:1px solid #dddddd; font-weight: 300; width:97px; height:34px; margin-bottom:5px;">교환신청</button></div>
-                                </td>
-                            </tr>
-                            <tr style="border-bottom: 1px solid #dddddd; height:180px;">
-                                <td>2024-09-22</td>
-                                <td style="text-align: left; padding-left:10px;">
-                                    <div style="display: flex; align-items: center;">
-                                        <div>
-                                            <img th:src="@{/images/product_list1.jpg}" alt="" style="height:121px;">
-                                        </div>
-                                        <div style="padding-left:30px; letter-spacing: -1px;">
-                                            <div style="margin-bottom:5px;"><a href="#" class="order-link" data-order-id="1012211341" style="color:gray;">주문번호 : 1012211341</a></div>
-                                            <div style="margin-bottom:5px;"><a href="#" class="seller-link" style="color:gray;">(주) 상호명</a></div>
-                                            <div style="margin-bottom:5px;"><a href="#" style="color:gray;">상품명</a></div>
-                                            <div style="margin-bottom:7px;">수량 : 1개</div>
-                                            <div style="margin-bottom:5px; font-size: 20px; font-weight: 800;">34,000원</div>
-                                        </div>
-                                    </div>
-                                </td>
-                                <td>배송완료</td>
-                                <td>
-                                    <div><button class="confirm-purchase" style="background-color: black; color: white; font-weight: 300; width:97px; height:34px; margin-bottom:5px; border:none;">구매확정</button></div>
-                                    <div><button class="review-btn" style="background-color: black; color: white; font-weight: 300; width:97px; height:34px; margin-bottom:5px; border:none;">상품평쓰기</button></div>
-                                    <div><button class="return-btn" style="background-color: white; color: black; border:1px solid #dddddd; font-weight: 300; width:97px; height:34px; margin-bottom:5px;">반품신청</button></div>
-                                    <div><button class="exchange-btn" style="background-color: white; color: black; border:1px solid #dddddd; font-weight: 300; width:97px; height:34px; margin-bottom:5px;">교환신청</button></div>
-                                </td>
-                            </tr>
-                        </table>
-                        <div style=" height: 100px; margin-top:40px; display: flex; justify-content: center;">
-                            <form action="" method="" style="">
-                                <input type="button" class="prev-page" value="< 이전">
+                            });
+                        </script>
 
-                                <input type="button" value="1" style="border:1px solid #333; background-color: #333; color: white; height: 30px; width: 30px; margin-right:2px; line-height:1;">
-                                <input type="button" value="2" style="cursor: pointer; border:1px solid #ddd; color: #555; height: 30px; width: 30px; margin-right:2px; line-height:1;">
-                                <input type="button" value="3" style="cursor: pointer; border:1px solid #ddd; color: #555; height: 30px; width: 30px; line-height:1;">
-
-                                <input type="button" class="next-page" value="다음 >" style="">
-                            </form>
-                        </div>
                     </div>
-                            
-                    <div style="margin-bottom:50px;"></div>
+                    <table id="orderListTable" style="text-align: center; border-collapse: collapse;border-top:1px solid; width:900px;">
+                        <tr style="background-color: #dedede; font-size:12px; color:white; font-weight: 800; height:40px;">
+                            <th style="width: 120px;">날짜</th>
+                            <th style="width:500px;">상품정보</th>
+                            <th style="width:90px;">상태</th>
+                            <th style="">확인 / 신청</th>
+                        </tr>
+
+                        <!--주문 내역이 없을때-->
+                        <tr th:if="${#lists.isEmpty(orders)}" style="border-bottom: 1px solid #dddddd; height:180px;">
+                            <td colspan="4" style="padding: 50px; color: #888;">주문 내역이 없습니다.</td>
+                        </tr>
+
+                        <!-- 주문 목록 반복 -->
+                        <tr th:each="o : ${orders}" style="border-bottom: 1px solid #dddddd; height:180px;">
+                            <!-- 주문일자 -->
+                            <td th:text="${o.created_at}">2025-10-01</td>
+
+                            <!-- 상품정보 -->
+                            <td style="text-align: left; padding-left:10px;">
+                                <div style="display: flex; align-items: center;">
+                                    <div>
+                                        <!-- 상품 이미지 -->
+                                        <img th:src="@{${#strings.isEmpty(o.url) ? '/images/no_image.jpg' : '/images/' + o.url}}" alt="상품 이미지" style="height:121px;">
+                                    </div>
+
+                                    <div style="padding-left:30px; letter-spacing:-1px;">
+                                        <!-- 주문번호 -->
+                                        <div style="margin-bottom:5px;">
+                                            <a href="#" class="order-link" th:data-order-id="${o.order_code}" style="color:gray;">
+                                                주문번호 : <span th:text="${o.order_code}">1012211341</span>
+                                            </a>
+                                        </div>
+
+                                        <!-- 판매자명 -->
+                                        <div style="margin-bottom:5px;">
+                                            <a href="#" class="seller-link" style="color:gray;">
+                                                <span th:text="${o.company_name != null ? o.company_name : '(주) 상호명'}"></span>
+                                            </a>
+                                        </div>
+
+                                        <!-- 상품명 -->
+                                        <div style="margin-bottom:5px;">
+                                            <a href="#" style="color:gray;" th:text="${o.product_name}">상품명</a>
+                                        </div>
+
+                                        <!-- 수량 -->
+                                        <div style="margin-bottom:7px;">
+                                            수량 : <span th:text="${o.quantity}">1</span>개
+                                        </div>
+
+                                        <!-- 가격 -->
+                                        <div style="margin-bottom:5px; font-size:20px; font-weight:800;"
+                                             th:text="${#numbers.formatInteger(o.price, 0, 'COMMA') + '원'}">34,000원
+                                        </div>
+                                    </div>
+                                </div>
+                            </td>
+
+                            <!-- 상태 -->
+                            <td th:text="${o.status}">결제완료</td>
+
+                            <!-- 버튼 -->
+                            <td>
+                                <div>
+                                    <button class="confirm-purchase"
+                                            style="background-color: black; color: white; font-weight: 300; width:97px; height:34px; margin-bottom:5px; border:none;">
+                                        구매확정
+                                    </button>
+                                </div>
+                                <div>
+                                    <button class="review-btn"
+                                            style="background-color: black; color: white; font-weight: 300; width:97px; height:34px; margin-bottom:5px; border:none;">
+                                        상품평쓰기
+                                    </button>
+                                </div>
+                                <div>
+                                    <button class="return-btn"
+                                            style="background-color: white; color: black; border:1px solid #dddddd; font-weight: 300; width:97px; height:34px; margin-bottom:5px;">
+                                        반품신청
+                                    </button>
+                                </div>
+                                <div>
+                                    <button class="exchange-btn"
+                                            style="background-color: white; color: black; border:1px solid #dddddd; font-weight: 300; width:97px; height:34px; margin-bottom:5px;">
+                                        교환신청
+                                    </button>
+                                </div>
+                            </td>
+                        </tr>
+                    </table>
+                    <div style=" height: 100px; margin-top:40px; display: flex; justify-content: center;">
+                        <form action="" method="" style="">
+                            <input type="button" class="prev-page" value="< 이전">
+
+                            <input type="button" value="1" style="border:1px solid #333; background-color: #333; color: white; height: 30px; width: 30px; margin-right:2px; line-height:1;">
+                            <input type="button" value="2" style="cursor: pointer; border:1px solid #ddd; color: #555; height: 30px; width: 30px; margin-right:2px; line-height:1;">
+                            <input type="button" value="3" style="cursor: pointer; border:1px solid #ddd; color: #555; height: 30px; width: 30px; line-height:1;">
+
+                            <input type="button" class="next-page" value="다음 >" style="">
+                        </form>
+                    </div>
                 </div>
+
+                <div style="margin-bottom:50px;"></div>
             </div>
-            
-        </div>
-        
-        <div style="margin-top:100px;"></div>
-        <div th:replace="~{main/footer.html}"></div>
-    </main>
-    <!-- 주문 상세 마이페이지_메인#2-->
-    <!-- ===== 모달 마크업 ===== -->
-  <div class="modal-backdrop" id="orderModalBackdrop" aria-hidden="true"></div>
-  <div class="modal" id="orderModal" role="dialog}" aria-modal="true" aria-labelledby="orderModalTitle" aria-hidden="true">
-    <div class="modal-dialog}" tabindex="-1" style="border-radius: 0px !important;">
-      <div class="modal-header" style="border-radius: 0px !important;">
-        <div>
-          <span id="orderModalTitle">주문상세</span>
-          <span class="date" id="orderDate">2022-12-13</span>
-        </div>
-        <button class="modal-close" type="button" aria-label="닫기" id="orderModalClose">✕</button>
-      </div>
-
-      <div class="modal-body">
-        <!-- 주문정보 -->
-        <div class="section" style="padding-top:16px;">
-          <div class="section-title">주문정보</div>
-          <table class="order-info" style="border-top:1px solid; text-align: center; vertical-align: middle;">
-            <thead >
-              <tr style="background-color: #dedede !important;">
-                <th style="width:120px;">날짜</th>
-                <th style="width:400px">상품정보</th>
-                <th style="width:165px;">결제금액</th>
-                <th style="">상태</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr style="border-bottom: 1px solid #dddddd; height:180px; ">
-                    <td style="">
-                        2022-12-13
-                    </td>
-                    <td style="text-align: left; padding-left:10px;">
-                        <div style="display: flex; align-items: center;">
-                            <div>
-                                <img th:src="@{/images/product_list1.jpg}" alt="" style="height:121px;">
-                            </div>
-                            <div style="padding-left:30px; letter-spacing: -1px;">
-                                <div style="margin-bottom:5px;"><a href="#" class="order-link" data-order-id="1012211341" style="color:gray;">주문번호 : 1012211341</a></div>
-                                <div style="margin-bottom:5px;"><a href="#" style="color:gray;">(주) 상호명</a></div>
-                                <div style="margin-bottom:5px;"><a href="#" style="color:gray;">상품명</a></div>
-                                <div style="margin-bottom:7px;">수량 : 1개</div>
-                                <div style="margin-bottom:5px; font-size: 20px; font-weight: 800;">34,000원</div>
-                            </div>
-                        </div>
-                    </td>
-                    <td style="">
-                        <div style=" display: flex; margin-bottom: 5px;">
-                            <div>판매가</div>
-                            <div style="margin-left: auto;">34,000원</div>
-                        </div>
-                        <div style=" display: flex; margin-bottom: 28px;">
-                            <div>할인</div>
-                            <div style="margin-left: auto;">-3,000원</div>
-                        </div>
-                        <div style=" display: flex;">
-                            <div>결제금액</div>
-                            <div style="margin-left: auto; font-weight: 800;">31,000원</div>
-                        </div>
-                    </td>
-                    <td>
-                        배송완료
-                    </td>
-                </tr>
-            </tbody>
-          </table>
         </div>
 
-        <!-- 배송정보 -->
-        <div class="section" style="margin-bottom:45px; padding-top:2px;">
-          <div class="section-title">배송정보</div>
-          <table class="kv">
-            <tr style="border-top:1px solid #eee;"><td>이름</td><td id="shipName">홍길동</td></tr>
-            <tr><td>연락처</td><td id="shipPhone">010-1234-1001</td></tr>
-            <tr><td>주소</td><td id="shipAddr">[210**] 부산광역시 부**구 **동 121 10층 1004호</td></tr>
-            <tr><td>배송요청사항</td><td id="shipMemo">없음</td></tr>
-          </table>
-        </div>
-      </div>
-      <button class="sr-only" id="modalSentinel">끝</button>
     </div>
-  </div>
 
-  <!-- ===== 모달 동작 스크립트 ===== -->
-  <script>
+    <div style="margin-top:100px;"></div>
+    <div id="footer"></div>
+</main>
+<!-- 주문 상세 마이페이지_메인#2-->
+<!-- ===== 모달 마크업 ===== -->
+<div class="modal-backdrop" id="orderModalBackdrop" aria-hidden="true"></div>
+<div class="modal" id="orderModal" role="dialog" aria-modal="true" aria-labelledby="orderModalTitle" aria-hidden="true">
+    <div class="modal-dialog" tabindex="-1" style="border-radius: 0px !important;">
+        <div class="modal-header" style="border-radius: 0px !important;">
+            <div>
+                <span id="orderModalTitle">주문상세</span>
+                <span class="date" id="orderDate">2022-12-13</span>
+            </div>
+            <button class="modal-close" type="button" aria-label="닫기" id="orderModalClose">✕</button>
+        </div>
+
+        <div class="modal-body">
+            <!-- 주문정보 -->
+            <div class="section" style="padding-top:16px;">
+                <div class="section-title">주문정보</div>
+                <table class="order-info" style="border-top:1px solid; text-align: center; vertical-align: middle;">
+                    <thead >
+                    <tr style="background-color: #dedede !important;">
+                        <th style="width:120px;">날짜</th>
+                        <th style="width:400px">상품정보</th>
+                        <th style="width:165px;">결제금액</th>
+                        <th style="">상태</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr style="border-bottom: 1px solid #dddddd; height:180px; ">
+                        <td style="">
+                            2022-12-13
+                        </td>
+                        <td style="text-align: left; padding-left:10px;">
+                            <div style="display: flex; align-items: center;">
+                                <div>
+                                    <img src="/images/product_list1.jpg" alt="" style="height:121px;">
+                                </div>
+                                <div style="padding-left:30px; letter-spacing: -1px;">
+                                    <div style="margin-bottom:5px;"><a href="#" class="order-link" data-order-id="1012211341" style="color:gray;">주문번호 : 1012211341</a></div>
+                                    <div style="margin-bottom:5px;"><a href="#" style="color:gray;">(주) 상호명</a></div>
+                                    <div style="margin-bottom:5px;"><a href="#" style="color:gray;">상품명</a></div>
+                                    <div style="margin-bottom:7px;">수량 : 1개</div>
+                                    <div style="margin-bottom:5px; font-size: 20px; font-weight: 800;">34,000원</div>
+                                </div>
+                            </div>
+                        </td>
+                        <td style="">
+                            <div style=" display: flex; margin-bottom: 5px;">
+                                <div>판매가</div>
+                                <div style="margin-left: auto;">34,000원</div>
+                            </div>
+                            <div style=" display: flex; margin-bottom: 28px;">
+                                <div>할인</div>
+                                <div style="margin-left: auto;">-3,000원</div>
+                            </div>
+                            <div style=" display: flex;">
+                                <div>결제금액</div>
+                                <div style="margin-left: auto; font-weight: 800;">31,000원</div>
+                            </div>
+                        </td>
+                        <td>
+                            배송완료
+                        </td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- 배송정보 -->
+            <div class="section" style="margin-bottom:45px; padding-top:2px;">
+                <div class="section-title">배송정보</div>
+                <table class="kv">
+                    <tr style="border-top:1px solid #eee;"><td>이름</td><td id="shipName">홍길동</td></tr>
+                    <tr><td>연락처</td><td id="shipPhone">010-1234-1001</td></tr>
+                    <tr><td>주소</td><td id="shipAddr">[210**] 부산광역시 부**구 **동 121 10층 1004호</td></tr>
+                    <tr><td>배송요청사항</td><td id="shipMemo">없음</td></tr>
+                </table>
+            </div>
+        </div>
+        <button class="sr-only" id="modalSentinel">끝</button>
+    </div>
+</div>
+
+<!-- ===== 모달 동작 스크립트 ===== -->
+<script>
     const modal = document.getElementById('orderModal');
     const backdrop = document.getElementById('orderModalBackdrop');
     const btnClose = document.getElementById('orderModalClose');
     const sentinel = document.getElementById('modalSentinel');
 
     function setText(id, value){ const el=document.getElementById(id); if(el) el.textContent=value; }
-  function setSrc(id, value){ const el=document.getElementById(id); if(el) el.src=value; }
+    function setSrc(id, value){ const el=document.getElementById(id); if(el) el.src=value; }
 
-  function openOrderModal(data) {
-    // 존재하는 요소만 주입
-    setText('orderDate', data.headerDate || '20xx-12-13');
+    function openOrderModal(data) {
+        // 존재하는 요소만 주입
+        setText('orderDate', data.headerDate || '20xx-12-13');
 
-    setText('shipName',  data.shipName  || '홍길동');
-    setText('shipPhone', data.shipPhone || '010-1234-1001');
-    setText('shipAddr',  data.shipAddr  || '[210**] 부산광역시 부**구 **동 121 10층 1004호');
-    setText('shipMemo',  data.shipMemo  || '없음');
-    // setText('infoDate' …) 등 없는 ID 접근은 모두 삭제
-    // setSrc('infoThumb', data.thumb); // 현재는 해당 ID 없음 → 주석
+        setText('shipName',  data.shipName  || '홍길동');
+        setText('shipPhone', data.shipPhone || '010-1234-1001');
+        setText('shipAddr',  data.shipAddr  || '[210**] 부산광역시 부**구 **동 121 10층 1004호');
+        setText('shipMemo',  data.shipMemo  || '없음');
+        // setText('infoDate' …) 등 없는 ID 접근은 모두 삭제
+        // setSrc('infoThumb', data.thumb); // 현재는 해당 ID 없음 → 주석
 
-    modal.classList.add('is-open');
-    backdrop.classList.add('is-open');
-    modal.querySelector('.modal-dialog').focus();
-    document.body.style.overflow = 'hidden';
-  }
+        modal.classList.add('is-open');
+        backdrop.classList.add('is-open');
+        modal.querySelector('.modal-dialog').focus();
+        document.body.style.overflow = 'hidden';
+    }
 
     function closeOrderModal() {
-      modal.classList.remove('is-open');
-      backdrop.classList.remove('is-open');
-      document.body.style.overflow = '';
+        modal.classList.remove('is-open');
+        backdrop.classList.remove('is-open');
+        document.body.style.overflow = '';
     }
 
     // 주문번호 링크 클릭 -> 모달 오픈
     document.addEventListener('click', (e) => {
-      const a = e.target.closest('.order-link');
-      if (!a) return;
-      e.preventDefault();
+        const a = e.target.closest('.order-link');
+        if (!a) return;
+        e.preventDefault();
 
-      // 실제 서비스에선 여기에서 주문번호(a.dataset.orderId)로 API 호출해 데이터 채움
-      openOrderModal({
-        headerDate: '2022-12-13',
-        infoDate: '2022-12-13',
-        orderNo: a.dataset.orderId,
-        qty: '1',
-        pay: '34,000',
-        price: '34,000',
-        discount: '-3,000',
-        total: '34,000',
-        status: '배송완료',
-        thumb: '/images/product_list1.jpg',
-        shipName: '홍길동',
-        shipPhone: '010-1234-1001',
-        shipAddr: '[210**] 부산광역시 부**구 **동 121 10층 1004호',
-        shipMemo: '없음'
-      });
+        // 실제 서비스에선 여기에서 주문번호(a.dataset.orderId)로 API 호출해 데이터 채움
+        openOrderModal({
+            headerDate: '2022-12-13',
+            infoDate: '2022-12-13',
+            orderNo: a.dataset.orderId,
+            qty: '1',
+            pay: '34,000',
+            price: '34,000',
+            discount: '-3,000',
+            total: '34,000',
+            status: '배송완료',
+            thumb: '/images/product_list1.jpg',
+            shipName: '홍길동',
+            shipPhone: '010-1234-1001',
+            shipAddr: '[210**] 부산광역시 부**구 **동 121 10층 1004호',
+            shipMemo: '없음'
+        });
     });
 
     // 닫기(버튼/배경/Esc)
     btnClose.addEventListener('click', closeOrderModal);
     backdrop.addEventListener('click', closeOrderModal);
     document.addEventListener('keydown', (e) => {
-      if (e.key === 'Escape' && modal.classList.contains('is-open')) closeOrderModal();
-      // 포커스 트랩
-      if (e.key === 'Tab' && modal.classList.contains('is-open')) {
-        const focusables = modal.querySelectorAll('button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])');
-        const first = focusables[0], last = focusables[focusables.length - 1];
-        if (e.shiftKey && document.activeElement === first) { last.focus(); e.preventDefault(); }
-        else if (!e.shiftKey && document.activeElement === last) { first.focus(); e.preventDefault(); }
-      }
+        if (e.key === 'Escape' && modal.classList.contains('is-open')) closeOrderModal();
+        // 포커스 트랩
+        if (e.key === 'Tab' && modal.classList.contains('is-open')) {
+            const focusables = modal.querySelectorAll('button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])');
+            const first = focusables[0], last = focusables[focusables.length - 1];
+            if (e.shiftKey && document.activeElement === first) { last.focus(); e.preventDefault(); }
+            else if (!e.shiftKey && document.activeElement === last) { first.focus(); e.preventDefault(); }
+        }
     });
     sentinel.addEventListener('focus', () => modal.querySelector('.modal-close').focus());
-  </script>
-  <!-- 주문 상세 마이페이지_메인#2-->
-  <!-- 주문 상세 마이페이지_메인#3-->
-   <!-- ===== 판매자정보 모달 ===== -->
+</script>
+<!-- 주문 상세 마이페이지_메인#2-->
+<!-- 주문 상세 마이페이지_메인#3-->
+<!-- ===== 판매자정보 모달 ===== -->
 <div class="modal-backdrop" id="sellerModalBackdrop" aria-hidden="true"></div>
-<div class="modal" id="sellerModal" role="dialog}" aria-modal="true" aria-labelledby="sellerModalTitle" aria-hidden="true">
-  <div class="modal-dialog}" tabindex="-1" style="border-radius:0 !important;">
-    <div class="modal-header" style="border-radius:0 !important;">
-      <div>
-        <span id="sellerModalTitle">판매자정보</span>
-      </div>
-      <button class="modal-close" type="button" aria-label="닫기" id="sellerModalClose">✕</button>
-    </div>
+<div class="modal" id="sellerModal" role="dialog" aria-modal="true" aria-labelledby="sellerModalTitle" aria-hidden="true">
+    <div class="modal-dialog" tabindex="-1" style="border-radius:0 !important;">
+        <div class="modal-header" style="border-radius:0 !important;">
+            <div>
+                <span id="sellerModalTitle">판매자정보</span>
+            </div>
+            <button class="modal-close" type="button" aria-label="닫기" id="sellerModalClose">✕</button>
+        </div>
 
-    <div class="modal-body">
-      <div class="section" style="padding:25px;">
-        <table class="kv" style="border-top:1px solid #eee;">
-          <tr><td>판매자 등급</td><td>파워딜러</td></tr>
-          <tr><td>상호</td><td id="s-name"></td></tr>
-          <tr><td>대표자</td><td id="s-rep"></td></tr>
-          <tr><td>전화번호</td><td id="s-tel"></td></tr>
-          <tr><td>FAX</td><td id="s-fax"></td></tr>
-          <tr><td>Email</td><td id="s-email"></td></tr>
-          <tr><td>사업자번호</td><td id="s-bizno"></td></tr>
-          <tr><td>영업소재지</td><td id="s-addr"></td></tr>
-        </table>
-        <div style="font-size:12px; color:#666; margin-top:10px;">
-          ※ 위 정보는 전자상거래법 제20조 제2항 및 시행령 제25조 제2항에 의거하여 소비자보호에 의거 공개합니다.
+        <div class="modal-body">
+            <div class="section" style="padding:25px;">
+                <table class="kv" style="border-top:1px solid #eee;">
+                    <tr><td>판매자 등급</td><td>파워딜러</td></tr>
+                    <tr><td>상호</td><td id="s-name"></td></tr>
+                    <tr><td>대표자</td><td id="s-rep"></td></tr>
+                    <tr><td>전화번호</td><td id="s-tel"></td></tr>
+                    <tr><td>FAX</td><td id="s-fax"></td></tr>
+                    <tr><td>Email</td><td id="s-email"></td></tr>
+                    <tr><td>사업자번호</td><td id="s-bizno"></td></tr>
+                    <tr><td>영업소재지</td><td id="s-addr"></td></tr>
+                </table>
+                <div style="font-size:12px; color:#666; margin-top:10px;">
+                    ※ 위 정보는 전자상거래법 제20조 제2항 및 시행령 제25조 제2항에 의거하여 소비자보호에 의거 공개합니다.
+                </div>
+                <div style="display:flex; justify-content:center; margin-top:14px;">
+                    <button type="button" id="openInquiryBtn" style="width:120px; height:36px; border:0; background:#2f7ee6; color:#fff; font-weight:300;">문의하기</button>
+                </div>
+            </div>
         </div>
-        <div style="display:flex; justify-content:center; margin-top:14px;">
-          <button type="button" id="openInquiryBtn" style="width:120px; height:36px; border:0; background:#2f7ee6; color:#fff; font-weight:300;">문의하기</button>
-        </div>
-      </div>
+        <button class="sr-only" id="sellerSentinel"></button>
     </div>
-    <button class="sr-only" id="sellerSentinel"></button>
-  </div>
 </div>
 <script>
-  // ====== 판매자 모달 제어 ======
-  const sModal     = document.getElementById('sellerModal');
-  const sBackdrop  = document.getElementById('sellerModalBackdrop');
-  const sBtnClose  = document.getElementById('sellerModalClose');
-  const sSentinel  = document.getElementById('sellerSentinel');
+    // ====== 판매자 모달 제어 ======
+    const sModal     = document.getElementById('sellerModal');
+    const sBackdrop  = document.getElementById('sellerModalBackdrop');
+    const sBtnClose  = document.getElementById('sellerModalClose');
+    const sSentinel  = document.getElementById('sellerSentinel');
 
-  // 판매자모달 재오픈을 위해 마지막 데이터와 플래그 저장
-  let __lastSellerData = null;
-  let __sellerWasOpenBeforeInquiry = false;
+    // 판매자모달 재오픈을 위해 마지막 데이터와 플래그 저장
+    let __lastSellerData = null;
+    let __sellerWasOpenBeforeInquiry = false;
 
-  function sSet(id, v){ const el=document.getElementById(id); if(el) el.textContent = v || ''; }
+    function sSet(id, v){ const el=document.getElementById(id); if(el) el.textContent = v || ''; }
 
-  function openSellerModal(data){
-    __lastSellerData = data; // 마지막 판매자정보 기억
-    sSet('s-name',  data.name);
-    sSet('s-rep',   data.rep);
-    sSet('s-tel',   data.tel);
-    sSet('s-fax',   data.fax);
-    sSet('s-email', data.email);
-    sSet('s-bizno', data.bizno);
-    sSet('s-addr',  data.addr);
+    function openSellerModal(data){
+        __lastSellerData = data; // 마지막 판매자정보 기억
+        sSet('s-name',  data.name);
+        sSet('s-rep',   data.rep);
+        sSet('s-tel',   data.tel);
+        sSet('s-fax',   data.fax);
+        sSet('s-email', data.email);
+        sSet('s-bizno', data.bizno);
+        sSet('s-addr',  data.addr);
 
-    sModal.classList.add('is-open');
-    sBackdrop.classList.add('is-open');
-    sModal.querySelector('.modal-dialog').focus();
-    document.body.style.overflow = 'hidden';
-  }
-  function closeSellerModal(){
-    sModal.classList.remove('is-open');
-    sBackdrop.classList.remove('is-open');
-    document.body.style.overflow = '';
-  }
-
-  // “(주) 상호명” 클릭 → 판매자 모달 오픈
-  document.addEventListener('click', (e) => {
-    const a = e.target.closest('.seller-link');
-    if(!a) return;
-
-    e.preventDefault();
-    openSellerModal({
-      name:  a.dataset.sellerName  || '(주) 상호명',
-      rep:   a.dataset.sellerRep   || '홍길동',
-      tel:   a.dataset.sellerTel   || '051-123-1000',
-      fax:   a.dataset.sellerFax   || '051-123-1001',
-      email: a.dataset.sellerEmail || 'company@abc.com',
-      bizno: a.dataset.sellerBizno || '123-12-123457',
-      addr:  a.dataset.sellerAddr  || '[210**] 부산광역시 부산진구 대연동 121 10층 1004호'
-    });
-  });
-
-  // 닫기(버튼/배경/Esc) + 포커스 트랩
-  sBtnClose.addEventListener('click', closeSellerModal);
-  sBackdrop.addEventListener('click', closeSellerModal);
-  document.addEventListener('keydown', (e)=>{
-    if(e.key==='Escape' && sModal.classList.contains('is-open')) closeSellerModal();
-
-    if(e.key==='Tab' && sModal.classList.contains('is-open')){
-      const focusables = sModal.querySelectorAll('button,[href],input,select,textarea,[tabindex]:not([tabindex="-1"])');
-      const first = focusables[0], last = focusables[focusables.length-1];
-      if(e.shiftKey && document.activeElement===first){ last.focus(); e.preventDefault(); }
-      else if(!e.shiftKey && document.activeElement===last){ first.focus(); e.preventDefault(); }
+        sModal.classList.add('is-open');
+        sBackdrop.classList.add('is-open');
+        sModal.querySelector('.modal-dialog').focus();
+        document.body.style.overflow = 'hidden';
     }
-  });
-  sSentinel.addEventListener('focus', ()=> sModal.querySelector('.modal-close').focus());
+    function closeSellerModal(){
+        sModal.classList.remove('is-open');
+        sBackdrop.classList.remove('is-open');
+        document.body.style.overflow = '';
+    }
+
+    // “(주) 상호명” 클릭 → 판매자 모달 오픈
+    document.addEventListener('click', (e) => {
+        const a = e.target.closest('.seller-link');
+        if(!a) return;
+
+        e.preventDefault();
+        openSellerModal({
+            name:  a.dataset.sellerName  || '(주) 상호명',
+            rep:   a.dataset.sellerRep   || '홍길동',
+            tel:   a.dataset.sellerTel   || '051-123-1000',
+            fax:   a.dataset.sellerFax   || '051-123-1001',
+            email: a.dataset.sellerEmail || 'company@abc.com',
+            bizno: a.dataset.sellerBizno || '123-12-123457',
+            addr:  a.dataset.sellerAddr  || '[210**] 부산광역시 부산진구 대연동 121 10층 1004호'
+        });
+    });
+
+    // 닫기(버튼/배경/Esc) + 포커스 트랩
+    sBtnClose.addEventListener('click', closeSellerModal);
+    sBackdrop.addEventListener('click', closeSellerModal);
+    document.addEventListener('keydown', (e)=>{
+        if(e.key==='Escape' && sModal.classList.contains('is-open')) closeSellerModal();
+
+        if(e.key==='Tab' && sModal.classList.contains('is-open')){
+            const focusables = sModal.querySelectorAll('button,[href],input,select,textarea,[tabindex]:not([tabindex="-1"])');
+            const first = focusables[0], last = focusables[focusables.length-1];
+            if(e.shiftKey && document.activeElement===first){ last.focus(); e.preventDefault(); }
+            else if(!e.shiftKey && document.activeElement===last){ first.focus(); e.preventDefault(); }
+        }
+    });
+    sSentinel.addEventListener('focus', ()=> sModal.querySelector('.modal-close').focus());
 </script>
 
-  <!-- 주문 상세 마이페이지_메인#3-->
-  <!-- 주문 상세 마이페이지_메인#4-->
-   <!-- ===== 문의하기 모달 ===== -->
+<!-- 주문 상세 마이페이지_메인#3-->
+<!-- 주문 상세 마이페이지_메인#4-->
+<!-- ===== 문의하기 모달 ===== -->
 <div class="modal-backdrop" id="inquiryModalBackdrop" aria-hidden="true"></div>
-<div class="modal" id="inquiryModal" role="dialog}" aria-modal="true" aria-labelledby="inquiryModalTitle" aria-hidden="true">
-  <div class="modal-dialog}" tabindex="-1" style="border-radius:0 !important; width:720px; max-width:calc(100% - 40px);">
-    <div class="modal-header" style="border-radius:0 !important;">
-      <div><span id="inquiryModalTitle">문의하기</span></div>
-      <button class="modal-close" type="button" aria-label="닫기" id="inquiryModalClose">✕</button>
-    </div>
+<div class="modal" id="inquiryModal" role="dialog" aria-modal="true" aria-labelledby="inquiryModalTitle" aria-hidden="true">
+    <div class="modal-dialog" tabindex="-1" style="border-radius:0 !important; width:720px; max-width:calc(100% - 40px);">
+        <div class="modal-header" style="border-radius:0 !important;">
+            <div><span id="inquiryModalTitle">문의하기</span></div>
+            <button class="modal-close" type="button" aria-label="닫기" id="inquiryModalClose">✕</button>
+        </div>
 
-    <form id="inquiryForm" class="modal-body" style="padding:18px;">
-      <!-- 문의유형 -->
-      <div class="section" style="padding:0; margin-bottom:12px;">
-        <table class="kv" style="border-top:1px solid #eee;">
-          <tr>
-            <td style="width:100px; text-align:center; background:#f2f2f2;">문의종류</td>
-            <td>
-              <label style="margin-right:14px;"><input type="radio" name="qtype" value="상품" checked> 상품</label>
-              <label style="margin-right:14px;"><input type="radio" name="qtype" value="배송"> 배송</label>
-              <label style="margin-right:14px;"><input type="radio" name="qtype" value="반품/취소"> 반품/취소</label>
-              <label style="margin-right:14px;"><input type="radio" name="qtype" value="교환"> 교환</label>
-              <label><input type="radio" name="qtype" value="기타"> 기타</label>
-            </td>
-          </tr>
-          <tr>
-            <td style="text-align:center; background:#f2f2f2;">Email</td>
-            <td><input id="inqEmail" name="email" type="email" placeholder="you@example.com"
-                       style="border: none; border-bottom: 1px solid gray;width:270px; outline: none; height:34px; padding:6px 8px; box-sizing:border-box;"></td>
-          </tr>
-          <tr>
-            <td style="text-align:center; background:#f2f2f2;">제목</td>
-            <td><input id="inqSubject" name="subject" type="text"
-                       style="border: none; border-bottom: 1px solid gray; width:270px; outline: none; height:34px; padding:6px 8px; box-sizing:border-box;"></td>
-          </tr>
-          <tr>
-            <td style="text-align:center; background:#f2f2f2;">내용</td>
-            <td>
+        <form id="inquiryForm" class="modal-body" style="padding:18px;">
+            <!-- 문의유형 -->
+            <div class="section" style="padding:0; margin-bottom:12px;">
+                <table class="kv" style="border-top:1px solid #eee;">
+                    <tr>
+                        <td style="width:100px; text-align:center; background:#f2f2f2;">문의종류</td>
+                        <td>
+                            <label style="margin-right:14px;"><input type="radio" name="qtype" value="상품" checked> 상품</label>
+                            <label style="margin-right:14px;"><input type="radio" name="qtype" value="배송"> 배송</label>
+                            <label style="margin-right:14px;"><input type="radio" name="qtype" value="반품/취소"> 반품/취소</label>
+                            <label style="margin-right:14px;"><input type="radio" name="qtype" value="교환"> 교환</label>
+                            <label><input type="radio" name="qtype" value="기타"> 기타</label>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td style="text-align:center; background:#f2f2f2;">Email</td>
+                        <td><input id="inqEmail" name="email" type="email" placeholder="you@example.com"
+                                   style="border: none; border-bottom: 1px solid gray;width:270px; outline: none; height:34px; padding:6px 8px; box-sizing:border-box;"></td>
+                    </tr>
+                    <tr>
+                        <td style="text-align:center; background:#f2f2f2;">제목</td>
+                        <td><input id="inqSubject" name="subject" type="text"
+                                   style="border: none; border-bottom: 1px solid gray; width:270px; outline: none; height:34px; padding:6px 8px; box-sizing:border-box;"></td>
+                    </tr>
+                    <tr>
+                        <td style="text-align:center; background:#f2f2f2;">내용</td>
+                        <td>
               <textarea id="inqBody" name="body" rows="12"
                         style="outline: none; width:100%; resize: none; padding:8px; box-sizing:border-box;"></textarea>
-            </td>
-          </tr>
-        </table>
+                        </td>
+                    </tr>
+                </table>
 
-        <div style="display:flex; justify-content:center; gap:10px; margin-top:16px;">
-          <button type="submit"
-                  style="min-width:120px; height:38px; border:0; background:#2f7ee6; color:#fff; font-weight:300;">
-            등록하기
-          </button>
-          <button type="button" id="inquiryCancelBtn"
-                  style="min-width:120px; height:38px; border:0; background:#ccc; color:#fff;">
-            취소
-          </button>
-        </div>
-      </div>
-      <button class="sr-only" id="inquirySentinel">끝</button>
-    </form>
-  </div>
+                <div style="display:flex; justify-content:center; gap:10px; margin-top:16px;">
+                    <button type="submit"
+                            style="min-width:120px; height:38px; border:0; background:#2f7ee6; color:#fff; font-weight:300;">
+                        등록하기
+                    </button>
+                    <button type="button" id="inquiryCancelBtn"
+                            style="min-width:120px; height:38px; border:0; background:#ccc; color:#fff;">
+                        취소
+                    </button>
+                </div>
+            </div>
+            <button class="sr-only" id="inquirySentinel">끝</button>
+        </form>
+    </div>
 </div>
 <script>
-  // ===== 문의하기 모달 제어 =====
-  const iModal     = document.getElementById('inquiryModal');
-  const iBackdrop  = document.getElementById('inquiryModalBackdrop');
-  const iBtnClose  = document.getElementById('inquiryModalClose');
-  const iCancel    = document.getElementById('inquiryCancelBtn');
-  const iForm      = document.getElementById('inquiryForm');
-  const iSentinel  = document.getElementById('inquirySentinel');
+    // ===== 문의하기 모달 제어 =====
+    const iModal     = document.getElementById('inquiryModal');
+    const iBackdrop  = document.getElementById('inquiryModalBackdrop');
+    const iBtnClose  = document.getElementById('inquiryModalClose');
+    const iCancel    = document.getElementById('inquiryCancelBtn');
+    const iForm      = document.getElementById('inquiryForm');
+    const iSentinel  = document.getElementById('inquirySentinel');
 
-  function openInquiryModal(prefill){
-    // 이메일 자동 채움(판매자모달의 Email 셀에서 가져옴)
-    const emailInput = document.getElementById('inqEmail');
-    emailInput.value = (prefill && prefill.email) || document.getElementById('s-email')?.textContent?.trim() || '';
+    function openInquiryModal(prefill){
+        // 이메일 자동 채움(판매자모달의 Email 셀에서 가져옴)
+        const emailInput = document.getElementById('inqEmail');
+        emailInput.value = (prefill && prefill.email) || document.getElementById('s-email')?.textContent?.trim() || '';
 
-    iModal.classList.add('is-open');
-    iBackdrop.classList.add('is-open');
-    iModal.querySelector('.modal-dialog').focus();
-    document.body.style.overflow = 'hidden';
-  }
-  function closeInquiryModal(){
-    iModal.classList.remove('is-open');
-    iBackdrop.classList.remove('is-open');
-    document.body.style.overflow = '';
-  }
-
-  // 판매자모달의 [문의하기] 클릭 → 문의작성 모달 오픈
-  document.getElementById('openInquiryBtn')?.addEventListener('click', () => {
-    __sellerWasOpenBeforeInquiry = true;   // 문의창을 띄우기 직전 판매자모달이 열려있었음
-    // (선택) 판매자모달은 닫고 문의모달만 띄우고 싶다면 아래 두 줄을 유지
-    closeSellerModal && closeSellerModal();
-    openInquiryModal({});
-  });
-
-  // 닫기/취소/Esc/백드롭
-  iBtnClose.addEventListener('click', closeInquiryModal);
-  iCancel.addEventListener('click', () => {
-    closeInquiryModal();
-    // 바로 이전에 판매자모달에서 넘어온 경우에만 다시 열기
-    if (__sellerWasOpenBeforeInquiry && __lastSellerData) {
-      openSellerModal(__lastSellerData);
+        iModal.classList.add('is-open');
+        iBackdrop.classList.add('is-open');
+        iModal.querySelector('.modal-dialog').focus();
+        document.body.style.overflow = 'hidden';
     }
-    __sellerWasOpenBeforeInquiry = false; // 플래그 초기화
-  });
-  iBackdrop.addEventListener('click', closeInquiryModal);
-  document.addEventListener('keydown', (e)=>{
-    if(e.key==='Escape' && iModal.classList.contains('is-open')) closeInquiryModal();
-
-    // 포커스 트랩
-    if(e.key==='Tab' && iModal.classList.contains('is-open')){
-      const focusables = iModal.querySelectorAll('button,[href],input,select,textarea,[tabindex]:not([tabindex="-1"])');
-      const first = focusables[0], last = focusables[focusables.length-1];
-      if(e.shiftKey && document.activeElement===first){ last.focus(); e.preventDefault(); }
-      else if(!e.shiftKey && document.activeElement===last){ first.focus(); e.preventDefault(); }
+    function closeInquiryModal(){
+        iModal.classList.remove('is-open');
+        iBackdrop.classList.remove('is-open');
+        document.body.style.overflow = '';
     }
-  });
-  iSentinel.addEventListener('focus', ()=> iModal.querySelector('.modal-close').focus());
 
-  // 제출(데모) — 실제 연동 시 fetch로 서버에 전송
-  iForm.addEventListener('submit', (e)=>{
-    e.preventDefault();
-    const data = {
-      qtype:   iForm.qtype.value,
-      email:   iForm.email.value.trim(),
-      subject: iForm.subject.value.trim(),
-      body:    iForm.body.value.trim(),
-    };
-    console.log('문의 등록:', data); // TODO: fetch('/api/inquiry', {method:'POST', body:JSON.stringify(data)})
-    alert('문의가 등록되었습니다. (데모)');
-    closeInquiryModal();
-  });
+    // 판매자모달의 [문의하기] 클릭 → 문의작성 모달 오픈
+    document.getElementById('openInquiryBtn')?.addEventListener('click', () => {
+        __sellerWasOpenBeforeInquiry = true;   // 문의창을 띄우기 직전 판매자모달이 열려있었음
+        // (선택) 판매자모달은 닫고 문의모달만 띄우고 싶다면 아래 두 줄을 유지
+        closeSellerModal && closeSellerModal();
+        openInquiryModal({});
+    });
+
+    // 닫기/취소/Esc/백드롭
+    iBtnClose.addEventListener('click', closeInquiryModal);
+    iCancel.addEventListener('click', () => {
+        closeInquiryModal();
+        // 바로 이전에 판매자모달에서 넘어온 경우에만 다시 열기
+        if (__sellerWasOpenBeforeInquiry && __lastSellerData) {
+            openSellerModal(__lastSellerData);
+        }
+        __sellerWasOpenBeforeInquiry = false; // 플래그 초기화
+    });
+    iBackdrop.addEventListener('click', closeInquiryModal);
+    document.addEventListener('keydown', (e)=>{
+        if(e.key==='Escape' && iModal.classList.contains('is-open')) closeInquiryModal();
+
+        // 포커스 트랩
+        if(e.key==='Tab' && iModal.classList.contains('is-open')){
+            const focusables = iModal.querySelectorAll('button,[href],input,select,textarea,[tabindex]:not([tabindex="-1"])');
+            const first = focusables[0], last = focusables[focusables.length-1];
+            if(e.shiftKey && document.activeElement===first){ last.focus(); e.preventDefault(); }
+            else if(!e.shiftKey && document.activeElement===last){ first.focus(); e.preventDefault(); }
+        }
+    });
+    iSentinel.addEventListener('focus', ()=> iModal.querySelector('.modal-close').focus());
+
+    // 제출(데모) — 실제 연동 시 fetch로 서버에 전송
+    iForm.addEventListener('submit', (e)=>{
+        e.preventDefault();
+        const data = {
+            qtype:   iForm.qtype.value,
+            email:   iForm.email.value.trim(),
+            subject: iForm.subject.value.trim(),
+            body:    iForm.body.value.trim(),
+        };
+        console.log('문의 등록:', data); // TODO: fetch('/api/inquiry', {method:'POST', body:JSON.stringify(data)})
+        alert('문의가 등록되었습니다. (데모)');
+        closeInquiryModal();
+    });
 </script>
-  <!-- 주문 상세 마이페이지_메인#4-->
-  <!-- 주문 상세 마이페이지_메인#5-->
-  <!-- ===== 구매확정 모달 ===== -->
-  <div class="modal-backdrop" id="buyModalBackdrop" aria-hidden="true"></div>
-  <div class="modal" id="buyModal" role="dialog}" aria-modal="true" aria-labelledby="buyModalTitle" aria-hidden="true">
-    <div class="modal-dialog}" tabindex="-1" style="border-radius:0 !important; width:420px; max-width:calc(100% - 40px);">
-      <div class="modal-header" style="border-radius:0 !important;">
-        <div><span id="buyModalTitle">구매확정</span></div>
-        <button class="modal-close" type="button" aria-label="닫기" id="buyClose">✕</button>
-      </div>
-
-      <div class="modal-body" style="padding:57px 37px 30px">
-        <p style="margin:0 0 3px 0; font-size:16px; line-height:1.6;">상품을 받으셨나요?</p>
-        <p style="margin:0 0 55px 0; color:#555; line-height:1.6;">상품을 받으신 분만 구매확정을 해주세요.</p>
-
-        <div style="display:flex; justify-content:center; gap:10px; margin-top:18px;">
-          <button type="button" id="buyOk"
-                  style="min-width:120px; height:38px; border:0; background:#2f7ee6; color:#fff; font-weight:300;">
-            확인
-          </button>
-          <button type="button" id="buyCancel"
-                  style="min-width:120px; height:38px; border:0; background:#ccc; color:#fff;">
-            취소
-          </button>
+<!-- 주문 상세 마이페이지_메인#4-->
+<!-- 주문 상세 마이페이지_메인#5-->
+<!-- ===== 구매확정 모달 ===== -->
+<div class="modal-backdrop" id="buyModalBackdrop" aria-hidden="true"></div>
+<div class="modal" id="buyModal" role="dialog" aria-modal="true" aria-labelledby="buyModalTitle" aria-hidden="true">
+    <div class="modal-dialog" tabindex="-1" style="border-radius:0 !important; width:420px; max-width:calc(100% - 40px);">
+        <div class="modal-header" style="border-radius:0 !important;">
+            <div><span id="buyModalTitle">구매확정</span></div>
+            <button class="modal-close" type="button" aria-label="닫기" id="buyClose">✕</button>
         </div>
-        <button class="sr-only" id="buySentinel"></button>
-      </div>
+
+        <div class="modal-body" style="padding:57px 37px 30px">
+            <p style="margin:0 0 3px 0; font-size:16px; line-height:1.6;">상품을 받으셨나요?</p>
+            <p style="margin:0 0 55px 0; color:#555; line-height:1.6;">상품을 받으신 분만 구매확정을 해주세요.</p>
+
+            <div style="display:flex; justify-content:center; gap:10px; margin-top:18px;">
+                <button type="button" id="buyOk"
+                        style="min-width:120px; height:38px; border:0; background:#2f7ee6; color:#fff; font-weight:300;">
+                    확인
+                </button>
+                <button type="button" id="buyCancel"
+                        style="min-width:120px; height:38px; border:0; background:#ccc; color:#fff;">
+                    취소
+                </button>
+            </div>
+            <button class="sr-only" id="buySentinel"></button>
+        </div>
     </div>
-  </div>
-  <script>
+</div>
+<script>
     // ===== 구매확정 모달 제어 =====
     const buyModal     = document.getElementById('buyModal');
     const buyBackdrop  = document.getElementById('buyModalBackdrop');
@@ -1082,700 +853,765 @@
     let __currentOrderId = null;   // 어떤 주문을 확정하는지 보관
 
     function openBuyModal(orderId){
-      __currentOrderId = orderId || null;
-      buyModal.classList.add('is-open');
-      buyBackdrop.classList.add('is-open');
-      buyModal.querySelector('.modal-dialog').focus();
-      document.body.style.overflow = 'hidden';
+        __currentOrderId = orderId || null;
+        buyModal.classList.add('is-open');
+        buyBackdrop.classList.add('is-open');
+        buyModal.querySelector('.modal-dialog').focus();
+        document.body.style.overflow = 'hidden';
     }
     function closeBuyModal(){
-      buyModal.classList.remove('is-open');
-      buyBackdrop.classList.remove('is-open');
-      document.body.style.overflow = '';
+        buyModal.classList.remove('is-open');
+        buyBackdrop.classList.remove('is-open');
+        document.body.style.overflow = '';
     }
 
     // “구매확정” 버튼 클릭 → 모달 오픈 (이벤트 위임)
     document.addEventListener('click', (e)=>{
-      const btn = e.target.closest('.confirm-purchase');
-      if(!btn) return;
+        const btn = e.target.closest('.confirm-purchase');
+        if(!btn) return;
 
-      // 같은 행의 주문번호(주문번호 : xxxx)에서 id를 찾아봄
-      const row = btn.closest('tr');
-      const orderLink = row?.querySelector('.order-link');
-      const orderId = orderLink?.dataset.orderId || null;
+        // 같은 행의 주문번호(주문번호 : xxxx)에서 id를 찾아봄
+        const row = btn.closest('tr');
+        const orderLink = row?.querySelector('.order-link');
+        const orderId = orderLink?.dataset.orderId || null;
 
-      e.preventDefault();
-      openBuyModal(orderId);
+        e.preventDefault();
+        openBuyModal(orderId);
     });
 
     // 확인/취소/닫기/백드롭/Esc
     buyOk.addEventListener('click', ()=>{
-      // TODO: 실제 구매확정 API 호출(fetch) 위치
-      console.log('구매확정 처리 - 주문번호:', __currentOrderId);
+        // TODO: 실제 구매확정 API 호출(fetch) 위치
+        console.log('구매확정 처리 - 주문번호:', __currentOrderId);
 
-      // 데모로 버튼 상태만 변경
-      if (__currentOrderId){
-        const btn = document.querySelector(`.order-link[data-order-id="${__currentOrderId}"]`)
+        // 데모로 버튼 상태만 변경
+        if (__currentOrderId){
+            const btn = document.querySelector(`.order-link[data-order-id="${__currentOrderId}"]`)
+
                     ?.closest('tr')?.querySelector('.confirm-purchase');
-        if (btn){
-          btn.style.border = 'none';
-          btn.textContent = '구매확정완료';
-          btn.disabled = true;
-          btn.style.background = '#ccc';
-          btn.style.color = '#fff';
-          btn.style.cursor = 'default';
+            if (btn){
+                btn.style.border = 'none';
+                btn.textContent = '구매확정완료';
+                btn.disabled = true;
+                btn.style.background = '#ccc';
+                btn.style.color = '#fff';
+                btn.style.cursor = 'default';
+            }
         }
-      }
-      closeBuyModal();
+        closeBuyModal();
     });
     buyCancel.addEventListener('click', closeBuyModal);
     buyCloseBtn.addEventListener('click', closeBuyModal);
     buyBackdrop.addEventListener('click', closeBuyModal);
     document.addEventListener('keydown', (e)=>{
-      if (e.key === 'Escape' && buyModal.classList.contains('is-open')) closeBuyModal();
+        if (e.key === 'Escape' && buyModal.classList.contains('is-open')) closeBuyModal();
 
-      // 포커스 트랩
-      if (e.key === 'Tab' && buyModal.classList.contains('is-open')){
-        const focusables = buyModal.querySelectorAll('button,[href],input,select,textarea,[tabindex]:not([tabindex="-1"])');
-        const first = focusables[0], last = focusables[focusables.length-1];
-        if (e.shiftKey && document.activeElement===first) { last.focus(); e.preventDefault(); }
-        else if (!e.shiftKey && document.activeElement===last) { first.focus(); e.preventDefault(); }
-      }
+        // 포커스 트랩
+        if (e.key === 'Tab' && buyModal.classList.contains('is-open')){
+            const focusables = buyModal.querySelectorAll('button,[href],input,select,textarea,[tabindex]:not([tabindex="-1"])');
+            const first = focusables[0], last = focusables[focusables.length-1];
+            if (e.shiftKey && document.activeElement===first) { last.focus(); e.preventDefault(); }
+            else if (!e.shiftKey && document.activeElement===last) { first.focus(); e.preventDefault(); }
+        }
     });
     buySentinel.addEventListener('focus', ()=> buyModal.querySelector('.modal-close').focus());
-  </script>
-  <!-- 주문 상세 마이페이지_메인#5-->
-  <!-- 주문 상세 마이페이지_메인#6-->
-  <!-- ===== 상품평 모달 ===== -->
-  <div class="modal-backdrop" id="reviewModalBackdrop" aria-hidden="true"></div>
-  <div class="modal" id="reviewModal" role="dialog}" aria-modal="true"
-      aria-labelledby="reviewModalTitle" aria-hidden="true">
-    <div class="modal-dialog}" tabindex="-1" style="border-radius:0 !important; width:720px; max-width:calc(100% - 40px);">
-      <div class="modal-header" style="border-radius:0 !important;">
-        <div><span id="reviewModalTitle">상품평작성하기</span></div>
-        <button class="modal-close" type="button" aria-label="닫기" id="reviewClose">✕</button>
-      </div>
+</script>
+<!-- 주문 상세 마이페이지_메인#5-->
+<!-- 주문 상세 마이페이지_메인#6-->
+<!-- ===== 상품평 모달 ===== -->
+<div class="modal-backdrop" id="reviewModalBackdrop" aria-hidden="true"></div>
+<div class="modal" id="reviewModal" role="dialog" aria-modal="true"
+     aria-labelledby="reviewModalTitle" aria-hidden="true">
+    <div class="modal-dialog" tabindex="-1" style="border-radius:0 !important; width:720px; max-width:calc(100% - 40px);">
+        <div class="modal-header" style="border-radius:0 !important;">
+            <div><span id="reviewModalTitle">상품평작성하기</span></div>
+            <button class="modal-close" type="button" aria-label="닫기" id="reviewClose">✕</button>
+        </div>
 
-      <form id="reviewForm" class="modal-body review-form">
-        <table class="review-grid" style="border-top:1px solid #eee;">
-          <tr>
-            <td>상품명</td>
-            <td>
-              <span id="rvProductName">상품명 출력</span>
-            </td>
-          </tr>
-          <tr>
-            <td>만족도</td>
-            <td>
-              <div class="rating}" role="radiogroup" aria-label="만족도">
-                <input type="radio" id="star5" name="rating}" value="5"><label for="star5" title="5점"></label>
-                <input type="radio" id="star4" name="rating}" value="4"><label for="star4" title="4점"></label>
-                <input type="radio" id="star3" name="rating}" value="3"><label for="star3" title="3점"></label>
-                <input type="radio" id="star2" name="rating}" value="2"><label for="star2" title="2점"></label>
-                <input type="radio" id="star1" name="rating}" value="1"><label for="star1" title="1점"></label>
-              </div>
-            </td>
-          </tr>
-          <tr>
-            <td>내용</td>
-            <td>
+        <form id="reviewForm" class="modal-body review-form">
+            <table class="review-grid" style="border-top:1px solid #eee;">
+                <tr>
+                    <td>상품명</td>
+                    <td>
+                        <span id="rvProductName">상품명 출력</span>
+                    </td>
+                </tr>
+                <tr>
+                    <td>만족도</td>
+                    <td>
+                        <div class="rating" role="radiogroup" aria-label="만족도">
+                            <input type="radio" id="star5" name="rating" value="5"><label for="star5" title="5점"></label>
+                            <input type="radio" id="star4" name="rating" value="4"><label for="star4" title="4점"></label>
+                            <input type="radio" id="star3" name="rating" value="3"><label for="star3" title="3점"></label>
+                            <input type="radio" id="star2" name="rating" value="2"><label for="star2" title="2점"></label>
+                            <input type="radio" id="star1" name="rating" value="1"><label for="star1" title="1점"></label>
+                        </div>
+                    </td>
+                </tr>
+                <tr>
+                    <td>내용</td>
+                    <td>
               <textarea id="rvBody" name="body" class="review-textarea"
                         placeholder="최소 10자 이상, 200자 내외로 작성해주세요."></textarea>
-              <div class="char-count"><span id="rvCount">0</span>/200</div>
-            </td>
-          </tr>
-          <tr>
-            <td>사진</td>
-            <td>
-              <input type="file" name="photo1" accept="image/*" style="display:block; margin-bottom:8px;">
-              <input type="file" name="photo2" accept="image/*" style="display:block; margin-bottom:8px;">
-              <input type="file" name="photo3" accept="image/*" style="display:block;">
-            </td>
-          </tr>
-        </table>
+                        <div class="char-count"><span id="rvCount">0</span>/200</div>
+                    </td>
+                </tr>
+                <tr>
+                    <td>사진</td>
+                    <td>
+                        <input type="file" name="photo1" accept="image/*" style="display:block; margin-bottom:8px;">
+                        <input type="file" name="photo2" accept="image/*" style="display:block; margin-bottom:8px;">
+                        <input type="file" name="photo3" accept="image/*" style="display:block;">
+                    </td>
+                </tr>
+            </table>
 
-        <div class="review-actions">
-          <button type="submit"
-                  style="min-width:120px; height:38px; border:0; background:#2f7ee6; color:#fff; font-weight:300;">
-            작성완료
-          </button>
-          <button type="button" id="reviewCancel"
-                  style="min-width:120px; height:38px; border:0; background:#ccc; color:#fff;">
-            취소
-          </button>
-        </div>
+            <div class="review-actions">
+                <button type="submit"
+                        style="min-width:120px; height:38px; border:0; background:#2f7ee6; color:#fff; font-weight:300;">
+                    작성완료
+                </button>
+                <button type="button" id="reviewCancel"
+                        style="min-width:120px; height:38px; border:0; background:#ccc; color:#fff;">
+                    취소
+                </button>
+            </div>
 
-        <button class="sr-only" id="reviewSentinel">끝</button>
-      </form>
+            <button class="sr-only" id="reviewSentinel">끝</button>
+        </form>
     </div>
-  </div>
-  <script>
-  // ===== 상품평 모달 제어 =====
-const rModal    = document.getElementById('reviewModal');
-const rBackdrop = document.getElementById('reviewModalBackdrop');
-const rCloseBtn = document.getElementById('reviewClose');
-const rCancel   = document.getElementById('reviewCancel');
-const rForm     = document.getElementById('reviewForm');
-const rSentinel = document.getElementById('reviewSentinel');
+</div>
+<script>
+    // ===== 상품평 모달 제어 =====
+    const rModal    = document.getElementById('reviewModal');
+    const rBackdrop = document.getElementById('reviewModalBackdrop');
+    const rCloseBtn = document.getElementById('reviewClose');
+    const rCancel   = document.getElementById('reviewCancel');
+    const rForm     = document.getElementById('reviewForm');
+    const rSentinel = document.getElementById('reviewSentinel');
 
-// ✅ rvTitle 대신 상품명 출력용 span
-const rvProductName = document.getElementById('rvProductName');
+    // ✅ rvTitle 대신 상품명 출력용 span
+    const rvProductName = document.getElementById('rvProductName');
 
-const rvBody  = document.getElementById('rvBody');
-const rvCount = document.getElementById('rvCount');
+    const rvBody  = document.getElementById('rvBody');
+    const rvCount = document.getElementById('rvCount');
 
-// 행의 상품명 텍스트를 찾기
-function getRowProductName(btn){
-  const row = btn.closest('tr');
-  const nameEl = row?.querySelector('td:nth-child(2) a[href="#"]:not(.order-link):not(.seller-link)');
-  return nameEl?.textContent?.trim() || '상품명';
-}
+    // 행의 상품명 텍스트를 찾기
+    function getRowProductName(btn){
+        const row = btn.closest('tr');
+        const nameEl = row?.querySelector('td:nth-child(2) a[href="#"]:not(.order-link):not(.seller-link)');
+        return nameEl?.textContent?.trim() || '상품명';
+    }
 
-function openReviewModal(prefill){
-  // ✅ 상품명 세팅
-  if (rvProductName) rvProductName.textContent = prefill?.productName || '상품명';
+    function openReviewModal(prefill){
+        // ✅ 상품명 세팅
+        if (rvProductName) rvProductName.textContent = prefill?.productName || '상품명';
 
-  // 본문/별점 프리셋
-  rvBody.value  = prefill?.body || '';
+        // 본문/별점 프리셋
+        rvBody.value  = prefill?.body || '';
 
-  // 글자수 초기화
-  rvCount.textContent = String(rvBody.value.length);
+        // 글자수 초기화
+        rvCount.textContent = String(rvBody.value.length);
 
-  // 모달 오픈
-  rModal.classList.add('is-open');
-  rBackdrop.classList.add('is-open');
-  rModal.querySelector('.modal-dialog').focus();
-  document.body.style.overflow = 'hidden';
-}
+        // 모달 오픈
+        rModal.classList.add('is-open');
+        rBackdrop.classList.add('is-open');
+        rModal.querySelector('.modal-dialog').focus();
+        document.body.style.overflow = 'hidden';
+    }
 
-function closeReviewModal(){
-  rModal.classList.remove('is-open');
-  rBackdrop.classList.remove('is-open');
-  document.body.style.overflow = '';
-}
+    function closeReviewModal(){
+        rModal.classList.remove('is-open');
+        rBackdrop.classList.remove('is-open');
+        document.body.style.overflow = '';
+    }
 
-// 본문 200자 제한
-rvBody.addEventListener('input', () => {
-  if (rvBody.value.length > 200) rvBody.value = rvBody.value.slice(0,200);
-  rvCount.textContent = String(rvBody.value.length);
-});
+    // 본문 200자 제한
+    rvBody.addEventListener('input', () => {
+        if (rvBody.value.length > 200) rvBody.value = rvBody.value.slice(0,200);
+        rvCount.textContent = String(rvBody.value.length);
+    });
 
-// “상품평쓰기” 버튼 → 오픈
-document.addEventListener('click', (e)=>{
-  const btn = e.target.closest('.review-btn');
-  if(!btn) return;
-  e.preventDefault();
-  openReviewModal({ productName: getRowProductName(btn) });
-});
+    // “상품평쓰기” 버튼 → 오픈
+    document.addEventListener('click', (e)=>{
+        const btn = e.target.closest('.review-btn');
+        if(!btn) return;
+        e.preventDefault();
+        openReviewModal({ productName: getRowProductName(btn) });
+    });
 
-// 닫기/취소/백드롭/Esc
-rCloseBtn.addEventListener('click', closeReviewModal);
-rCancel.addEventListener('click', closeReviewModal);
-rBackdrop.addEventListener('click', closeReviewModal);
-document.addEventListener('keydown', (e)=>{
-  if(e.key==='Escape' && rModal.classList.contains('is-open')) closeReviewModal();
+    // 닫기/취소/백드롭/Esc
+    rCloseBtn.addEventListener('click', closeReviewModal);
+    rCancel.addEventListener('click', closeReviewModal);
+    rBackdrop.addEventListener('click', closeReviewModal);
+    document.addEventListener('keydown', (e)=>{
+        if(e.key==='Escape' && rModal.classList.contains('is-open')) closeReviewModal();
 
-  // 포커스 트랩
-  if(e.key==='Tab' && rModal.classList.contains('is-open')){
-    const focusables = rModal.querySelectorAll('button,[href],input,select,textarea,[tabindex]:not([tabindex="-1"])');
-    const first = focusables[0], last = focusables[focusables.length-1];
-    if(e.shiftKey && document.activeElement===first){ last.focus(); e.preventDefault(); }
-    else if(!e.shiftKey && document.activeElement===last){ first.focus(); e.preventDefault(); }
-  }
-});
-rSentinel.addEventListener('focus', ()=> rModal.querySelector('.modal-close').focus());
+        // 포커스 트랩
+        if(e.key==='Tab' && rModal.classList.contains('is-open')){
+            const focusables = rModal.querySelectorAll('button,[href],input,select,textarea,[tabindex]:not([tabindex="-1"])');
+            const first = focusables[0], last = focusables[focusables.length-1];
+            if(e.shiftKey && document.activeElement===first){ last.focus(); e.preventDefault(); }
+            else if(!e.shiftKey && document.activeElement===last){ first.focus(); e.preventDefault(); }
+        }
+    });
+    rSentinel.addEventListener('focus', ()=> rModal.querySelector('.modal-close').focus());
 
-  // 제출
-  rForm.addEventListener('submit', (e)=>{
-    e.preventDefault();
-    const selected = rForm.querySelector('input[name="rating}"]:checked');
-    const rating = selected ? Number(selected.value) : 0;
+    // 제출
+    rForm.addEventListener('submit', (e)=>{
+        e.preventDefault();
+        const selected = rForm.querySelector('input[name="rating"]:checked');
+        const rating = selected ? Number(selected.value) : 0;
 
-    if (rating === 0) { alert('만족도를 선택해주세요.'); return; }
-    if (rForm.body.value.trim().length < 10) { alert('내용은 최소 10자 이상 입력해주세요.'); return; }
+        if (rating === 0) { alert('만족도를 선택해주세요.'); return; }
+        if (rForm.body.value.trim().length < 10) { alert('내용은 최소 10자 이상 입력해주세요.'); return; }
 
-    console.log('상품평 제출:', { rating, body: rForm.body.value.trim() });
-    alert('상품평이 등록되었습니다.');
-    closeReviewModal();
-  });
+        console.log('상품평 제출:', { rating, body: rForm.body.value.trim() });
+        alert('상품평이 등록되었습니다.');
+        closeReviewModal();
+    });
 
 </script>
-  <!-- 주문 상세 마이페이지_메인#6-->
-  <!-- 주문 상세 마이페이지_메인#7-->
-   <!-- ===== 반품신청 모달 ===== -->
+<!-- 주문 상세 마이페이지_메인#6-->
+<!-- 주문 상세 마이페이지_메인#7-->
+<!-- ===== 반품신청 모달 ===== -->
 <div class="modal-backdrop" id="returnModalBackdrop" aria-hidden="true"></div>
-<div class="modal" id="returnModal" role="dialog}" aria-modal="true" aria-labelledby="returnModalTitle" aria-hidden="true">
-  <div class="modal-dialog}" tabindex="-1" style="border-radius:0 !important; width:860px; max-width:calc(100% - 40px);">
-    <div class="modal-header" style="border-radius:0 !important;">
-      <div>
-        <span id="returnModalTitle">반품신청</span>
-      </div>
-      <button class="modal-close" type="button" aria-label="닫기" id="returnClose">✕</button>
-    </div>
+<div class="modal" id="returnModal" role="dialog" aria-modal="true" aria-labelledby="returnModalTitle" aria-hidden="true">
+    <div class="modal-dialog" tabindex="-1" style="border-radius:0 !important; width:860px; max-width:calc(100% - 40px);">
+        <div class="modal-header" style="border-radius:0 !important;">
+            <div>
+                <span id="returnModalTitle">반품신청</span>
+            </div>
+            <button class="modal-close" type="button" aria-label="닫기" id="returnClose">✕</button>
+        </div>
 
-    <div class="modal-body">
-      <!-- 상품정보(요약) -->
-      <div class="section" style="padding-top:16px;">
-        <div class="section-title">상품정보</div>
-        <table class="order-info" style="border-top:1px solid; text-align:center; vertical-align:middle;">
-          <thead>
-            <tr style="background:#dedede !important;">
-              <th style="width:120px;">날짜</th>
-              <th style="width:400px;">상품정보</th>
-              <th style="width:165px;">결제금액</th>
-              <th>상태</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr style="border-bottom:1px solid #ddd; height:160px;">
-              <td id="rtDate">0000-00-00</td>
-              <td style="text-align:left; padding-left:10px;">
-                <div style="display:flex; align-items:center;">
-                  <div><img id="rtThumb" th:src="@{/images/product_list1.jpg}" alt="" style="height:100px;"></div>
-                  <div style="padding-left:20px; letter-spacing:-1px;">
-                    <div style="margin-bottom:4px; color:gray;">주문번호 : <span id="rtOrderNo">-</span></div>
-                    <div style="margin-bottom:4px; color:gray;" id="rtSeller">(주) 상호명</div>
-                    <div style="margin-bottom:6px; color:gray;" id="rtName">상품명</div>
-                    <div style="margin-bottom:6px;" id="rtQty">수량 : 1개</div>
-                    <div style="font-size:18px; font-weight:800;" id="rtPrice">34,000원</div>
-                  </div>
-                </div>
-              </td>
-              <td id="rtPay">
-                <div style=" display: flex; margin-bottom: 5px;">
-                    <div>판매가</div>
-                    <div style="margin-left: auto;">34,000원</div>
-                </div>
-                <div style=" display: flex; margin-bottom: 28px;">
-                    <div>할인</div>
-                    <div style="margin-left: auto;">-3,000원</div>
-                </div>
-                <div style=" display: flex;">
-                    <div>결제금액</div>
-                    <div style="margin-left: auto; font-weight: 800;">31,000원</div>
-                </div>
-              </td>
-              <td id="rtStatus">배송완료</td>
-            </tr>
-          </tbody>
-        </table>
-      </div>
+        <div class="modal-body">
+            <!-- 상품정보(요약) -->
+            <div class="section" style="padding-top:16px;">
+                <div class="section-title">상품정보</div>
+                <table class="order-info" style="border-top:1px solid; text-align:center; vertical-align:middle;">
+                    <thead>
+                    <tr style="background:#dedede !important;">
+                        <th style="width:120px;">날짜</th>
+                        <th style="width:400px;">상품정보</th>
+                        <th style="width:165px;">결제금액</th>
+                        <th>상태</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr style="border-bottom:1px solid #ddd; height:160px;">
+                        <td id="rtDate">0000-00-00</td>
+                        <td style="text-align:left; padding-left:10px;">
+                            <div style="display:flex; align-items:center;">
+                                <div><img id="rtThumb" src="/images/product_list1.jpg" alt="" style="height:100px;"></div>
+                                <div style="padding-left:20px; letter-spacing:-1px;">
+                                    <div style="margin-bottom:4px; color:gray;">주문번호 : <span id="rtOrderNo">-</span></div>
+                                    <div style="margin-bottom:4px; color:gray;" id="rtSeller">(주) 상호명</div>
+                                    <div style="margin-bottom:6px; color:gray;" id="rtName">상품명</div>
+                                    <div style="margin-bottom:6px;" id="rtQty">수량 : 1개</div>
+                                    <div style="font-size:18px; font-weight:800;" id="rtPrice">34,000원</div>
+                                </div>
+                            </div>
+                        </td>
+                        <td id="rtPay">
+                            <div style=" display: flex; margin-bottom: 5px;">
+                                <div>판매가</div>
+                                <div style="margin-left: auto;">34,000원</div>
+                            </div>
+                            <div style=" display: flex; margin-bottom: 28px;">
+                                <div>할인</div>
+                                <div style="margin-left: auto;">-3,000원</div>
+                            </div>
+                            <div style=" display: flex;">
+                                <div>결제금액</div>
+                                <div style="margin-left: auto; font-weight: 800;">31,000원</div>
+                            </div>
+                        </td>
+                        <td id="rtStatus">배송완료</td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
 
-      <!-- 반품정보 입력 -->
-      <div class="section" style="padding-top:2px;">
-        <div class="section-title">반품정보 입력</div>
-        <table class="kv" style="border-top:1px solid #eee;">
-          <tr>
-            <td>반품유형</td>
-            <td>
-              <label style="margin-right:14px;"><input type="radio" name="rtType" value="단순 변심"> 단순 변심</label>
-              <label style="margin-right:14px;"><input type="radio" name="rtType" value="파손 및 불량"> 파손 및 불량</label>
-              <label style="margin-right:14px;"><input type="radio" name="rtType" value="주문 실수"> 주문 실수</label>
-              <label><input type="radio" name="rtType" value="기타"> 기타</label>
-            </td>
-          </tr>
-          <tr>
-            <td>사유입력</td>
-            <td>
+            <!-- 반품정보 입력 -->
+            <div class="section" style="padding-top:2px;">
+                <div class="section-title">반품정보 입력</div>
+                <table class="kv" style="border-top:1px solid #eee;">
+                    <tr>
+                        <td>반품유형</td>
+                        <td>
+                            <label style="margin-right:14px;"><input type="radio" name="rtType" value="단순 변심"> 단순 변심</label>
+                            <label style="margin-right:14px;"><input type="radio" name="rtType" value="파손 및 불량"> 파손 및 불량</label>
+                            <label style="margin-right:14px;"><input type="radio" name="rtType" value="주문 실수"> 주문 실수</label>
+                            <label><input type="radio" name="rtType" value="기타"> 기타</label>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>사유입력</td>
+                        <td>
               <textarea id="rtReason" rows="7" style="width:100%; resize:none; outline:none; padding:8px; box-sizing:border-box;"
                         placeholder="반품 사유를 입력해 주세요. (최소 10자)"></textarea>
-            </td>
-          </tr>
-          <tr>
-            <td>사진첨부(선택)</td>
-            <td >
-              <input type="file" id="rtFile1" class="visually-hidden">
-              <label for="rtFile1" class="btn-file">파일 선택</label>
-              <span id="rtFile1Name">선택된 파일 없음</span>
-            </td>
-          </tr>
-          <style>
-            /* 화면에서만 숨김(접근성 OK) */
-            .visually-hidden{
-              position:absolute; width:1px; height:1px; padding:0; margin:-1px;
-              overflow:hidden; clip:rect(0,0,0,0); white-space:nowrap; border:0;
-            }
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>사진첨부(선택)</td>
+                        <td >
+                            <input type="file" id="rtFile1" class="visually-hidden">
+                            <label for="rtFile1" class="btn-file">파일 선택</label>
+                            <span id="rtFile1Name">선택된 파일 없음</span>
+                        </td>
+                    </tr>
+                    <style>
+                        /* 화면에서만 숨김(접근성 OK) */
+                        .visually-hidden{
+                            position:absolute; width:1px; height:1px; padding:0; margin:-1px;
+                            overflow:hidden; clip:rect(0,0,0,0); white-space:nowrap; border:0;
+                        }
 
-            /* 우리 사이트 버튼 스타일 */
-            .btn-file{
-              display:inline-block;
-              min-width:96px;
-              padding:8px 14px;
-              background:#dedede;
-              color:#fff;
-              border:0;
-              font-weight:300;
-              text-align:center;
-              cursor:pointer;
-            }
+                        /* 우리 사이트 버튼 스타일 */
+                        .btn-file{
+                            display:inline-block;
+                            min-width:96px;
+                            padding:8px 14px;
+                            background:#dedede;
+                            color:#fff;
+                            border:0;
+                            font-weight:300;
+                            text-align:center;
+                            cursor:pointer;
+                        }
 
-            .btn-file:hover{ filter:brightness(0.95); }
-            .btn-file:focus-visible{ outline:2px solid #2f7ee6; outline-offset:2px; }
+                        .btn-file:hover{ filter:brightness(0.95); }
+                        .btn-file:focus-visible{ outline:2px solid #2f7ee6; outline-offset:2px; }
 
-            #rtFile1Name{ margin-left:8px; color:#666; }
+                        #rtFile1Name{ margin-left:8px; color:#666; }
 
-          </style>
-          <script>
-            // 파일명 표시
-            document.getElementById('rtFile1').addEventListener('change', function(){
-              const nameSpan = document.getElementById('rtFile1Name');
-              nameSpan.textContent = this.files?.length ? this.files[0].name : '선택된 파일 없음';
-            });
-          </script>
-        </table>
+                    </style>
+                    <script>
+                        // 파일명 표시
+                        document.getElementById('rtFile1').addEventListener('change', function(){
+                            const nameSpan = document.getElementById('rtFile1Name');
+                            nameSpan.textContent = this.files?.length ? this.files[0].name : '선택된 파일 없음';
+                        });
+                    </script>
+                </table>
 
-        <div style="display:flex; justify-content:center; gap:10px; margin-top:16px;">
-          <button type="button" id="rtSubmit"
-                  style="min-width:120px; height:38px; border:0; background:#2f7ee6; color:#fff; font-weight:300;">반품신청</button>
-          <button type="button" id="rtCancel"
-                  style="min-width:120px; height:38px; border:0; background:#ccc; color:#fff;">취소</button>
+                <div style="display:flex; justify-content:center; gap:10px; margin-top:16px;">
+                    <button type="button" id="rtSubmit"
+                            style="min-width:120px; height:38px; border:0; background:#2f7ee6; color:#fff; font-weight:300;">반품신청</button>
+                    <button type="button" id="rtCancel"
+                            style="min-width:120px; height:38px; border:0; background:#ccc; color:#fff;">취소</button>
+                </div>
+            </div>
         </div>
-      </div>
-    </div>
 
-    <button class="sr-only" id="returnSentinel"></button>
-  </div>
+        <button class="sr-only" id="returnSentinel"></button>
+    </div>
 </div>
-<script>
-  // ===== 반품신청 모달 제어 =====
-  const rtModal     = document.getElementById('returnModal');
-  const rtBackdrop  = document.getElementById('returnModalBackdrop');
-  const rtClose     = document.getElementById('returnClose');
-  const rtCancel    = document.getElementById('rtCancel');
-  const rtSubmit    = document.getElementById('rtSubmit');
-  const rtSentinel  = document.getElementById('returnSentinel');
 
-  // 요약 채우기용 헬퍼
-  function setText(id, v){ const el=document.getElementById(id); if(el) el.textContent = v; }
-  function setSrc(id, v){ const el=document.getElementById(id); if(el) el.src = v; }
-
-  function openReturnModal(fromBtn){
-  const row = fromBtn.closest('tr');
-
-  const date   = row?.querySelector('td:first-child')?.textContent?.trim() || '0000-00-00';
-  const orderA = row?.querySelector('.order-link');
-  const seller = row?.querySelector('.seller-link')?.textContent?.trim() || '(주) 상호명';
-  const nameA  = row?.querySelector('td:nth-child(2) a[href="#"]:not(.order-link):not(.seller-link)');
-  const name   = nameA?.textContent?.trim() || '상품명';
-  const qtyTxt = row?.querySelector('td:nth-child(2) div:nth-child(4)')?.textContent?.trim() || '수량 : 1개';
-  const price  = row?.querySelector('td:nth-child(2) div[style*="font-size"]')?.textContent?.trim() || '0원';
-  const status = row?.querySelector('td:nth-child(3)')?.textContent?.trim() || '-';
-  const thumb  = row?.querySelector('img')?.getAttribute('src') || '/images/product_list1.jpg';
-
-  // 데모용 할인/총액(실제는 API 값으로 교체)
-  const discount = '-3,000원';
-  const total    = '31,000원';
-
-  setText('rtDate', date);
-  setText('rtOrderNo', orderA?.dataset.orderId || '-');
-  setText('rtSeller', seller);
-  setText('rtName', name);
-  setText('rtQty', qtyTxt);
-  setText('rtPrice', price);
-  setText('rtStatus', status);
-  setSrc('rtThumb', thumb);
-
-  // ✅ rtPay는 구조 그대로 주입 (textContent로 덮어쓰지 않음)
-  const rtPayEl = document.getElementById('rtPay');
-  rtPayEl.innerHTML = `
-    <div style="display:flex; margin-bottom:5px;">
-      <div>판매가</div>
-      <div style="margin-left:auto;">${price}</div>
-    </div>
-    <div style="display:flex; margin-bottom:28px;">
-      <div>할인</div>
-      <div style="margin-left:auto;">${discount}</div>
-    </div>
-    <div style="display:flex;">
-      <div>결제금액</div>
-      <div style="margin-left:auto; font-weight:800;">${total}</div>
-    </div>
-  `;
-
-  // 입력 초기화
-  document.querySelectorAll('input[name="rtType"]').forEach(r=> r.checked=false);
-  document.getElementById('rtReason').value = '';
-
-  // 모달 오픈
-  rtModal.classList.add('is-open');
-  rtBackdrop.classList.add('is-open');
-  rtModal.querySelector('.modal-dialog').focus();
-  document.body.style.overflow = 'hidden';
-}
-
-
-  function closeReturnModal(){
-    rtModal.classList.remove('is-open');
-    rtBackdrop.classList.remove('is-open');
-    document.body.style.overflow = '';
-  }
-
-  // 이벤트 위임: “반품신청” 버튼 클릭 → 모달 오픈
-  document.addEventListener('click', (e)=>{
-    const btn = e.target.closest('.return-btn');
-    if(!btn) return;
-    e.preventDefault();
-    openReturnModal(btn);
-  });
-
-  // 닫기/취소/백드롭/Esc
-  rtClose.addEventListener('click', closeReturnModal);
-  rtCancel.addEventListener('click', closeReturnModal);
-  rtBackdrop.addEventListener('click', closeReturnModal);
-  document.addEventListener('keydown', (e)=>{
-    if (e.key === 'Escape' && rtModal.classList.contains('is-open')) closeReturnModal();
-
-    // 포커스 트랩
-    if (e.key === 'Tab' && rtModal.classList.contains('is-open')){
-      const focusables = rtModal.querySelectorAll('button,[href],input,select,textarea,[tabindex]:not([tabindex="-1"])');
-      const first = focusables[0], last = focusables[focusables.length-1];
-      if (e.shiftKey && document.activeElement===first){ last.focus(); e.preventDefault(); }
-      else if (!e.shiftKey && document.activeElement===last){ first.focus(); e.preventDefault(); }
-    }
-  });
-  rtSentinel.addEventListener('focus', ()=> rtModal.querySelector('.modal-close').focus());
-
-  // 제출— 실제 연동 시 서버로 전송
-  rtSubmit.addEventListener('click', ()=>{
-    const type = document.querySelector('input[name="rtType"]:checked')?.value || '';
-    const reason = document.getElementById('rtReason').value.trim();
-
-    if (!type){ alert('반품유형을 선택해주세요.'); return; }
-    if (reason.length < 10){ alert('사유를 최소 10자 이상 입력해주세요.'); return; }
-
-    const payload = {
-      orderNo: document.getElementById('rtOrderNo').textContent.trim(),
-      type, reason
-      // 파일은 document.getElementById('rtFile1').files[0] 등으로 수집
-    };
-    console.log('반품신청:', payload); // TODO: fetch('/api/return', {method:'POST', body:...})
-    alert('반품신청이 접수되었습니다.');
-    closeReturnModal();
-  });
-  
-</script>
-
-  <!-- 주문 상세 마이페이지_메인#7-->
-  <!-- 주문 상세 마이페이지_메인#8-->
-  <!-- ===== 교환신청 모달 ===== -->
+<!-- ===== 교환신청 모달 ===== -->
 <div class="modal-backdrop" id="exchangeModalBackdrop" aria-hidden="true"></div>
-<div class="modal" id="exchangeModal" role="dialog}" aria-modal="true" aria-labelledby="exchangeModalTitle" aria-hidden="true">
-  <div class="modal-dialog}" tabindex="-1" style="border-radius:0 !important; width:860px; max-width:calc(100% - 40px);">
-    <div class="modal-header" style="border-radius:0 !important;">
-      <div><span id="exchangeModalTitle">교환신청</span></div>
-      <button class="modal-close" type="button" aria-label="닫기" id="exClose">✕</button>
-    </div>
+<div class="modal" id="exchangeModal" role="dialog" aria-modal="true" aria-labelledby="exchangeModalTitle" aria-hidden="true">
+    <div class="modal-dialog" tabindex="-1" style="border-radius:0 !important; width:860px; max-width:calc(100% - 40px);">
+        <div class="modal-header" style="border-radius:0 !important;">
+            <div><span id="exchangeModalTitle">교환신청</span></div>
+            <button class="modal-close" type="button" aria-label="닫기" id="exClose">✕</button>
+        </div>
 
-    <div class="modal-body">
-      <!-- 상품정보(요약) -->
-      <div class="section" style="padding-top:16px;">
-        <div class="section-title">상품정보</div>
-        <table class="order-info" style="border-top:1px solid; text-align:center; vertical-align:middle;">
-          <thead>
-            <tr style="background:#dedede !important;">
-              <th style="width:120px;">날짜</th>
-              <th style="width:400px;">상품정보</th>
-              <th style="width:165px;">결제금액</th>
-              <th>상태</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr style="border-bottom:1px solid #ddd; height:160px;">
-              <td id="exDate">0000-00-00</td>
-              <td style="text-align:left; padding-left:10px;">
-                <div style="display:flex; align-items:center;">
-                  <div><img id="exThumb" th:src="@{/images/product_list1.jpg}" alt="" style="height:100px;"></div>
-                  <div style="padding-left:20px; letter-spacing:-1px;">
-                    <div style="margin-bottom:4px; color:gray;">주문번호 : <span id="exOrderNo">-</span></div>
-                    <div style="margin-bottom:4px; color:gray;" id="exSeller">(주) 상호명</div>
-                    <div style="margin-bottom:6px; color:gray;" id="exName">상품명</div>
-                    <div style="margin-bottom:6px;" id="exQty">수량 : 1개</div>
-                    <div style="font-size:18px; font-weight:800;" id="exPrice">34,000원</div>
-                  </div>
-                </div>
-              </td>
-              <td id="exPay">
-                <div style="display:flex; margin-bottom:5px;">
-                  <div>판매가</div>
-                  <div style="margin-left:auto;">34,000원</div>
-                </div>
-                <div style="display:flex; margin-bottom:28px;">
-                  <div>할인</div>
-                  <div style="margin-left:auto;">-3,000원</div>
-                </div>
-                <div style="display:flex;">
-                  <div>결제금액</div>
-                  <div style="margin-left:auto; font-weight:800;">31,000원</div>
-                </div>
-              </td>
-              <td id="exStatus">배송완료</td>
-            </tr>
-          </tbody>
-        </table>
-      </div>
+        <div class="modal-body">
+            <!-- 상품정보(요약) -->
+            <div class="section" style="padding-top:16px;">
+                <div class="section-title">상품정보</div>
+                <table class="order-info" style="border-top:1px solid; text-align:center; vertical-align:middle;">
+                    <thead>
+                    <tr style="background:#dedede !important;">
+                        <th style="width:120px;">날짜</th>
+                        <th style="width:400px;">상품정보</th>
+                        <th style="width:165px;">결제금액</th>
+                        <th>상태</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr style="border-bottom:1px solid #ddd; height:160px;">
+                        <td id="exDate">0000-00-00</td>
+                        <td style="text-align:left; padding-left:10px;">
+                            <div style="display:flex; align-items:center;">
+                                <div><img id="exThumb" src="/images/product_list1.jpg" alt="" style="height:100px;"></div>
+                                <div style="padding-left:20px; letter-spacing:-1px;">
+                                    <div style="margin-bottom:4px; color:gray;">주문번호 : <span id="exOrderNo">-</span></div>
+                                    <div style="margin-bottom:4px; color:gray;" id="exSeller">(주) 상호명</div>
+                                    <div style="margin-bottom:6px; color:gray;" id="exName">상품명</div>
+                                    <div style="margin-bottom:6px;" id="exQty">수량 : 1개</div>
+                                    <div style="font-size:18px; font-weight:800;" id="exPrice">34,000원</div>
+                                </div>
+                            </div>
+                        </td>
+                        <td id="exPay">
+                            <div style="display:flex; margin-bottom:5px;">
+                                <div>판매가</div>
+                                <div style="margin-left:auto;">34,000원</div>
+                            </div>
+                            <div style="display:flex; margin-bottom:28px;">
+                                <div>할인</div>
+                                <div style="margin-left:auto;">-3,000원</div>
+                            </div>
+                            <div style="display:flex;">
+                                <div>결제금액</div>
+                                <div style="margin-left:auto; font-weight:800;">31,000원</div>
+                            </div>
+                        </td>
+                        <td id="exStatus">배송완료</td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
 
-      <!-- 교환정보 입력 -->
-      <div class="section" style="padding-top:2px;">
-        <div class="section-title">교환정보 입력</div>
-        <table class="kv" style="border-top:1px solid #eee;">
-          <tr>
-            <td>교환유형</td>
-            <td>
-              <label style="margin-right:14px;"><input type="radio" name="exType" value="단순 교환"> 단순 교환</label>
-              <label style="margin-right:14px;"><input type="radio" name="exType" value="파손 및 불량"> 파손 및 불량</label>
-              <label style="margin-right:14px;"><input type="radio" name="exType" value="주문 실수"> 주문 실수</label>
-              <label><input type="radio" name="exType" value="기타"> 기타</label>
-            </td>
-          </tr>
-          <tr>
-            <td>사유입력</td>
-            <td>
+            <!-- 교환정보 입력 -->
+            <div class="section" style="padding-top:2px;">
+                <div class="section-title">교환정보 입력</div>
+                <table class="kv" style="border-top:1px solid #eee;">
+                    <tr>
+                        <td>교환유형</td>
+                        <td>
+                            <label style="margin-right:14px;"><input type="radio" name="exType" value="단순 교환"> 단순 교환</label>
+                            <label style="margin-right:14px;"><input type="radio" name="exType" value="파손 및 불량"> 파손 및 불량</label>
+                            <label style="margin-right:14px;"><input type="radio" name="exType" value="주문 실수"> 주문 실수</label>
+                            <label><input type="radio" name="exType" value="기타"> 기타</label>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>사유입력</td>
+                        <td>
               <textarea id="exReason" rows="7" style="width:100%; resize:none; outline:none; padding:8px; box-sizing:border-box;"
                         placeholder="교환 사유를 입력해 주세요. (최소 10자)"></textarea>
-            </td>
-          </tr>
-          <tr>
-            <td>사진첨부(선택)</td>
-            <td style="vertical-align:middle;">
-              <input type="file" id="exFile1" class="visually-hidden" accept="image/*">
-              <label for="exFile1" class="btn-file">파일 선택</label>
-              <span id="exFile1Name">선택된 파일 없음</span>
-            </td>
-          </tr>
-        </table>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>사진첨부(선택)</td>
+                        <td style="vertical-align:middle;">
+                            <input type="file" id="exFile1" class="visually-hidden" accept="image/*">
+                            <label for="exFile1" class="btn-file">파일 선택</label>
+                            <span id="exFile1Name">선택된 파일 없음</span>
+                        </td>
+                    </tr>
+                </table>
 
-        <div style="display:flex; justify-content:center; gap:10px; margin-top:16px;">
-          <button type="button" id="exSubmit"
-                  style="min-width:120px; height:38px; border:0; background:#2f7ee6; color:#fff; font-weight:300;">교환신청</button>
-          <button type="button" id="exCancel"
-                  style="min-width:120px; height:38px; border:0; background:#ccc; color:#fff;">취소</button>
+                <div style="display:flex; justify-content:center; gap:10px; margin-top:16px;">
+                    <button type="button" id="exSubmit"
+                            style="min-width:120px; height:38px; border:0; background:#2f7ee6; color:#fff; font-weight:300;">교환신청</button>
+                    <button type="button" id="exCancel"
+                            style="min-width:120px; height:38px; border:0; background:#ccc; color:#fff;">취소</button>
+                </div>
+            </div>
         </div>
-      </div>
+
+        <button class="sr-only" id="exchangeSentinel">끝</button>
     </div>
-
-    <button class="sr-only" id="exchangeSentinel">끝</button>
-  </div>
 </div>
+</body>
 <script>
-  // ===== 교환신청 모달 제어 =====
-  const exModal     = document.getElementById('exchangeModal');
-  const exBackdrop  = document.getElementById('exchangeModalBackdrop');
-  const exClose     = document.getElementById('exClose');
-  const exCancel    = document.getElementById('exCancel');
-  const exSubmit    = document.getElementById('exSubmit');
-  const exSentinel  = document.getElementById('exchangeSentinel');
+    // ===== 반품신청 모달 제어 =====
+    const rtModal     = document.getElementById('returnModal');
+    const rtBackdrop  = document.getElementById('returnModalBackdrop');
+    const rtClose     = document.getElementById('returnClose');
+    const rtCancel    = document.getElementById('rtCancel');
+    const rtSubmit    = document.getElementById('rtSubmit');
+    const rtSentinel  = document.getElementById('returnSentinel');
 
-  function exSetText(id, v){ const el=document.getElementById(id); if(el) el.textContent=v; }
-  function exSetSrc(id, v){ const el=document.getElementById(id); if(el) el.src=v; }
+    // 요약 채우기용 헬퍼
+    function setText(id, v){ const el=document.getElementById(id); if(el) el.textContent = v; }
+    function setSrc(id, v){ const el=document.getElementById(id); if(el) el.src = v; }
 
-  function openExchangeModal(fromBtn){
-    const row = fromBtn.closest('tr');
+    function openReturnModal(fromBtn){
+        const row = fromBtn.closest('tr');
 
-    const date   = row?.querySelector('td:first-child')?.textContent?.trim() || '0000-00-00';
-    const orderA = row?.querySelector('.order-link');
-    const seller = row?.querySelector('.seller-link')?.textContent?.trim() || '(주) 상호명';
-    const nameA  = row?.querySelector('td:nth-child(2) a[href="#"]:not(.order-link):not(.seller-link)');
-    const name   = nameA?.textContent?.trim() || '상품명';
-    const qtyTxt = row?.querySelector('td:nth-child(2) div:nth-child(4)')?.textContent?.trim() || '수량 : 1개';
-    const price  = row?.querySelector('td:nth-child(2) div[style*="font-size"]')?.textContent?.trim() || '0원';
-    const status = row?.querySelector('td:nth-child(3)')?.textContent?.trim() || '-';
-    const thumb  = row?.querySelector('img')?.getAttribute('src') || '/images/product_list1.jpg';
+        const date   = row?.querySelector('td:first-child')?.textContent?.trim() || '0000-00-00';
+        const orderA = row?.querySelector('.order-link');
+        const seller = row?.querySelector('.seller-link')?.textContent?.trim() || '(주) 상호명';
+        const nameA  = row?.querySelector('td:nth-child(2) a[href="#"]:not(.order-link):not(.seller-link)');
+        const name   = nameA?.textContent?.trim() || '상품명';
+        const qtyTxt = row?.querySelector('td:nth-child(2) div:nth-child(4)')?.textContent?.trim() || '수량 : 1개';
+        const price  = row?.querySelector('td:nth-child(2) div[style*="font-size"]')?.textContent?.trim() || '0원';
+        const status = row?.querySelector('td:nth-child(3)')?.textContent?.trim() || '-';
+        const thumb  = row?.querySelector('img')?.getAttribute('src') || '/images/product_list1.jpg';
 
-    const discount = '-3,000원'; // 데모
-    const total    = '31,000원'; // 데모
+        // 데모용 할인/총액(실제는 API 값으로 교체)
+        const discount = '-3,000원';
+        const total    = '31,000원';
 
-    exSetText('exDate', date);
-    exSetText('exOrderNo', orderA?.dataset.orderId || '-');
-    exSetText('exSeller', seller);
-    exSetText('exName', name);
-    exSetText('exQty', qtyTxt);
-    exSetText('exPrice', price);
-    exSetText('exStatus', status);
-    exSetSrc('exThumb', thumb);
+        setText('rtDate', date);
+        setText('rtOrderNo', orderA?.dataset.orderId || '-');
+        setText('rtSeller', seller);
+        setText('rtName', name);
+        setText('rtQty', qtyTxt);
+        setText('rtPrice', price);
+        setText('rtStatus', status);
+        setSrc('rtThumb', thumb);
 
-    const exPayEl = document.getElementById('exPay');
-    exPayEl.innerHTML = `
-      <div style="display:flex; margin-bottom:5px;">
+        // ✅ rtPay는 구조 그대로 주입 (textContent로 덮어쓰지 않음)
+        const rtPayEl = document.getElementById('rtPay');
+        rtPayEl.innerHTML = `
+    <div style="display:flex; margin-bottom:5px;">
         <div>판매가</div>
         <div style="margin-left:auto;">${price}</div>
-      </div>
-      <div style="display:flex; margin-bottom:28px;">
+    </div>
+    <div style="display:flex; margin-bottom:28px;">
         <div>할인</div>
         <div style="margin-left:auto;">${discount}</div>
-      </div>
-      <div style="display:flex;">
+    </div>
+    <div style="display:flex;">
         <div>결제금액</div>
         <div style="margin-left:auto; font-weight:800;">${total}</div>
-      </div>
-    `;
+    </div>
+`;
 
-    // 입력 초기화
-    document.querySelectorAll('input[name="exType"]').forEach(r=> r.checked=false);
-    document.getElementById('exReason').value = '';
-    document.getElementById('exFile1').value = '';
-    document.getElementById('exFile1Name').textContent = '선택된 파일 없음';
 
-    // 오픈
-    exModal.classList.add('is-open');
-    exBackdrop.classList.add('is-open');
-    exModal.querySelector('.modal-dialog').focus();
-    document.body.style.overflow = 'hidden';
-  }
 
-  function closeExchangeModal(){
-    exModal.classList.remove('is-open');
-    exBackdrop.classList.remove('is-open');
-    document.body.style.overflow = '';
-  }
+        // 입력 초기화
+        document.querySelectorAll('input[name="rtType"]').forEach(r=> r.checked=false);
+        document.getElementById('rtReason').value = '';
 
-  // 버튼 클릭 → 모달 오픈 (이벤트 위임)
-  document.addEventListener('click', (e)=>{
-    const btn = e.target.closest('.exchange-btn');
-    if(!btn) return;
-    e.preventDefault();
-    openExchangeModal(btn);
-  });
-
-  // 닫기/취소/백드롭/Esc + 포커스 트랩
-  exClose.addEventListener('click', closeExchangeModal);
-  exCancel.addEventListener('click', closeExchangeModal);
-  exBackdrop.addEventListener('click', closeExchangeModal);
-  document.addEventListener('keydown', (e)=>{
-    if (e.key === 'Escape' && exModal.classList.contains('is-open')) closeExchangeModal();
-
-    if (e.key === 'Tab' && exModal.classList.contains('is-open')){
-      const focusables = exModal.querySelectorAll('button,[href],input,select,textarea,[tabindex]:not([tabindex="-1"])');
-      const first = focusables[0], last = focusables[focusables.length-1];
-      if (e.shiftKey && document.activeElement===first){ last.focus(); e.preventDefault(); }
-      else if (!e.shiftKey && document.activeElement===last){ first.focus(); e.preventDefault(); }
+        // 모달 오픈
+        rtModal.classList.add('is-open');
+        rtBackdrop.classList.add('is-open');
+        rtModal.querySelector('.modal-dialog').focus();
+        document.body.style.overflow = 'hidden';
     }
-  });
-  exSentinel.addEventListener('focus', ()=> exModal.querySelector('.modal-close').focus());
 
-  // 파일명 표시
-  document.getElementById('exFile1').addEventListener('change', function(){
-    const nameSpan = document.getElementById('exFile1Name');
-    nameSpan.textContent = this.files?.length ? this.files[0].name : '선택된 파일 없음';
-  });
 
-  // 제출 — 실제 연동 시 서버로 전송
-  exSubmit.addEventListener('click', ()=>{
-    const type = document.querySelector('input[name="exType"]:checked')?.value || '';
-    const reason = document.getElementById('exReason').value.trim();
+    function closeReturnModal(){
+        rtModal.classList.remove('is-open');
+        rtBackdrop.classList.remove('is-open');
+        document.body.style.overflow = '';
+    }
 
-    if (!type){ alert('교환유형을 선택해주세요.'); return; }
-    if (reason.length < 10){ alert('사유를 최소 10자 이상 입력해주세요.'); return; }
+    // 이벤트 위임: “반품신청” 버튼 클릭 → 모달 오픈
+    document.addEventListener('click', (e)=>{
+        const btn = e.target.closest('.return-btn');
+        if(!btn) return;
+        e.preventDefault();
+        openReturnModal(btn);
+    });
 
-    const payload = {
-      orderNo: document.getElementById('exOrderNo').textContent.trim(),
-      type, reason
-      // 파일: document.getElementById('exFile1').files[0]
-    };
-    console.log('교환신청:', payload); // TODO: fetch('/api/exchange', {...})
-    alert('교환신청이 접수되었습니다.');
-    closeExchangeModal();
-  });
+    // 닫기/취소/백드롭/Esc
+    rtClose.addEventListener('click', closeReturnModal);
+    rtCancel.addEventListener('click', closeReturnModal);
+    rtBackdrop.addEventListener('click', closeReturnModal);
+    document.addEventListener('keydown', (e)=>{
+        if (e.key === 'Escape' && rtModal.classList.contains('is-open')) closeReturnModal();
+
+        // 포커스 트랩
+        if (e.key === 'Tab' && rtModal.classList.contains('is-open')){
+            const focusables = rtModal.querySelectorAll('button,[href],input,select,textarea,[tabindex]:not([tabindex="-1"])');
+            const first = focusables[0], last = focusables[focusables.length-1];
+            if (e.shiftKey && document.activeElement===first){ last.focus(); e.preventDefault(); }
+            else if (!e.shiftKey && document.activeElement===last){ first.focus(); e.preventDefault(); }
+        }
+    });
+    rtSentinel.addEventListener('focus', ()=> rtModal.querySelector('.modal-close').focus());
+
+    // 제출— 실제 연동 시 서버로 전송
+    rtSubmit.addEventListener('click', ()=>{
+        const type = document.querySelector('input[name="rtType"]:checked')?.value || '';
+        const reason = document.getElementById('rtReason').value.trim();
+
+        if (!type){ alert('반품유형을 선택해주세요.'); return; }
+        if (reason.length < 10){ alert('사유를 최소 10자 이상 입력해주세요.'); return; }
+
+        const payload = {
+            orderNo: document.getElementById('rtOrderNo').textContent.trim(),
+            type, reason
+            // 파일은 document.getElementById('rtFile1').files[0] 등으로 수집
+        };
+        console.log('반품신청:', payload); // TODO: fetch('/api/return', {method:'POST', body:...})
+        alert('반품신청이 접수되었습니다.');
+        closeReturnModal();
+    });
+
 </script>
-  <!-- 주문 상세 마이페이지_메인#8-->
-</body>
-</html>
+<script>
+    // ===== 교환신청 모달 제어 =====
+    const exModal     = document.getElementById('exchangeModal');
+    const exBackdrop  = document.getElementById('exchangeModalBackdrop');
+    const exClose     = document.getElementById('exClose');
+    const exCancel    = document.getElementById('exCancel');
+    const exSubmit    = document.getElementById('exSubmit');
+    const exSentinel  = document.getElementById('exchangeSentinel');
+
+    function exSetText(id, v){ const el=document.getElementById(id); if(el) el.textContent=v; }
+    function exSetSrc(id, v){ const el=document.getElementById(id); if(el) el.src=v; }
+
+    function openExchangeModal(fromBtn){
+        const row = fromBtn.closest('tr');
+
+        const date   = row?.querySelector('td:first-child')?.textContent?.trim() || '0000-00-00';
+        const orderA = row?.querySelector('.order-link');
+        const seller = row?.querySelector('.seller-link')?.textContent?.trim() || '(주) 상호명';
+        const nameA  = row?.querySelector('td:nth-child(2) a[href="#"]:not(.order-link):not(.seller-link)');
+        const name   = nameA?.textContent?.trim() || '상품명';
+        const qtyTxt = row?.querySelector('td:nth-child(2) div:nth-child(4)')?.textContent?.trim() || '수량 : 1개';
+        const price  = row?.querySelector('td:nth-child(2) div[style*="font-size"]')?.textContent?.trim() || '0원';
+        const status = row?.querySelector('td:nth-child(3)')?.textContent?.trim() || '-';
+        const thumb  = row?.querySelector('img')?.getAttribute('src') || '/images/product_list1.jpg';
+
+        const discount = '-3,000원'; // 데모
+        const total    = '31,000원'; // 데모
+
+        exSetText('exDate', date);
+        exSetText('exOrderNo', orderA?.dataset.orderId || '-');
+        exSetText('exSeller', seller);
+        exSetText('exName', name);
+        exSetText('exQty', qtyTxt);
+        exSetText('exPrice', price);
+        exSetText('exStatus', status);
+        exSetSrc('exThumb', thumb);
+
+        const exPayEl = document.getElementById('exPay');
+        exPayEl.innerHTML = `
+    <div style="display:flex; margin-bottom:5px;">
+        <div>판매가</div>
+        <div style="margin-left:auto;">${price}</div>
+    </div>
+    <div style="display:flex; margin-bottom:28px;">
+        <div>할인</div>
+        <div style="margin-left:auto;">${discount}</div>
+    </div>
+    <div style="display:flex;">
+        <div>결제금액</div>
+        <div style="margin-left:auto; font-weight:800;">${total}</div>
+    </div>
+`;
+
+
+        // 입력 초기화
+        document.querySelectorAll('input[name="exType"]').forEach(r=> r.checked=false);
+        document.getElementById('exReason').value = '';
+        document.getElementById('exFile1').value = '';
+        document.getElementById('exFile1Name').textContent = '선택된 파일 없음';
+
+        // 오픈
+        exModal.classList.add('is-open');
+        exBackdrop.classList.add('is-open');
+        exModal.querySelector('.modal-dialog').focus();
+        document.body.style.overflow = 'hidden';
+    }
+
+    function closeExchangeModal(){
+        exModal.classList.remove('is-open');
+        exBackdrop.classList.remove('is-open');
+        document.body.style.overflow = '';
+    }
+
+    // 버튼 클릭 → 모달 오픈 (이벤트 위임)
+    document.addEventListener('click', (e)=>{
+        const btn = e.target.closest('.exchange-btn');
+        if(!btn) return;
+        e.preventDefault();
+        openExchangeModal(btn);
+    });
+
+    // 닫기/취소/백드롭/Esc + 포커스 트랩
+    exClose.addEventListener('click', closeExchangeModal);
+    exCancel.addEventListener('click', closeExchangeModal);
+    exBackdrop.addEventListener('click', closeExchangeModal);
+    document.addEventListener('keydown', (e)=>{
+        if (e.key === 'Escape' && exModal.classList.contains('is-open')) closeExchangeModal();
+
+        if (e.key === 'Tab' && exModal.classList.contains('is-open')){
+            const focusables = exModal.querySelectorAll('button,[href],input,select,textarea,[tabindex]:not([tabindex="-1"])');
+            const first = focusables[0], last = focusables[focusables.length-1];
+            if (e.shiftKey && document.activeElement===first){ last.focus(); e.preventDefault(); }
+            else if (!e.shiftKey && document.activeElement===last){ first.focus(); e.preventDefault(); }
+        }
+    });
+    exSentinel.addEventListener('focus', ()=> exModal.querySelector('.modal-close').focus());
+
+    // 파일명 표시
+    document.getElementById('exFile1').addEventListener('change', function(){
+        const nameSpan = document.getElementById('exFile1Name');
+        nameSpan.textContent = this.files?.length ? this.files[0].name : '선택된 파일 없음';
+    });
+
+    // 제출 — 실제 연동 시 서버로 전송
+    exSubmit.addEventListener('click', ()=>{
+        const type = document.querySelector('input[name="exType"]:checked')?.value || '';
+        const reason = document.getElementById('exReason').value.trim();
+
+        if (!type){ alert('교환유형을 선택해주세요.'); return; }
+        if (reason.length < 10){ alert('사유를 최소 10자 이상 입력해주세요.'); return; }
+
+        const payload = {
+            orderNo: document.getElementById('exOrderNo').textContent.trim(),
+            type, reason
+            // 파일: document.getElementById('exFile1').files[0]
+        };
+        console.log('교환신청:', payload); // TODO: fetch('/api/exchange', {...})
+        alert('교환신청이 접수되었습니다.');
+        closeExchangeModal();
+    });
+</script>
+<script>
+    document.addEventListener("DOMContentLoaded", () => {
+        const rowsPerPage = 5; // 한 페이지당 보여줄 주문 수
+        const table = document.getElementById("orderListTable");
+        if (!table) return;
+
+        const rows = Array.from(table.querySelectorAll("tr")).slice(1); // 헤더 제외
+        const totalRows = rows.length;
+        const totalPages = Math.ceil(totalRows / rowsPerPage);
+
+        // 페이지 표시 버튼들 (form 안의 input[type=button])
+        const prevBtn = document.querySelector(".prev-page");
+        const nextBtn = document.querySelector(".next-page");
+        const pageBtns = Array.from(document.querySelectorAll('input[type="button"]'))
+            .filter(btn => !btn.classList.contains("prev-page") && !btn.classList.contains("next-page"));
+
+        let currentPage = 1;
+
+        // 현재 페이지에 해당하는 행만 표시
+        function showPage(page) {
+            const start = (page - 1) * rowsPerPage;
+            const end = start + rowsPerPage;
+
+            rows.forEach((row, idx) => {
+                row.style.display = idx >= start && idx < end ? "" : "none";
+            });
+
+            // 버튼 스타일 업데이트
+            pageBtns.forEach((btn, i) => {
+                if (i + 1 === page) {
+                    btn.style.backgroundColor = "#333";
+                    btn.style.color = "white";
+                    btn.style.border = "1px solid #333";
+                } else {
+                    btn.style.backgroundColor = "white";
+                    btn.style.color = "#555";
+                    btn.style.border = "1px solid #ddd";
+                }
+            });
+
+            // 이전/다음 버튼 활성/비활성
+            prevBtn.disabled = page === 1;
+            nextBtn.disabled = page === totalPages;
+            currentPage = page;
+        }
+
+        // 페이지 버튼 클릭
+        pageBtns.forEach((btn, i) => {
+            btn.addEventListener("click", () => showPage(i + 1));
+        });
+
+        // 이전/다음 버튼 클릭
+        prevBtn.addEventListener("click", () => {
+            if (currentPage > 1) showPage(currentPage - 1);
+        });
+        nextBtn.addEventListener("click", () => {
+            if (currentPage < totalPages) showPage(currentPage + 1);
+        });
+
+        // 초기 표시
+        showPage(1);
+    });
+</script>
+
+<div th:replace="~{admin/_footer.html}"></div>
