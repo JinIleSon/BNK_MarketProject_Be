@@ -14,6 +14,7 @@ import java.time.LocalDateTime;
 @Where(clause = "UPPER(BOARD_TYPE) = 'NOTICE'")
 public class CSNotice {
 
+    // CSNoticeDTO랑 연동 "_"를 없애기 위해서 불러오기용
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "SEQ_BOARD")
     private Long id;
@@ -30,8 +31,8 @@ public class CSNotice {
     @Column(name = "CREATED_AT")
     private LocalDateTime createdAt;
 
-    @Column(name = "UPDATED_AT")
-    private LocalDateTime updatedAt;
+    @Column(name = "USER_ID")
+    private String userid;
 
     @PrePersist
     public void prePersist() {
