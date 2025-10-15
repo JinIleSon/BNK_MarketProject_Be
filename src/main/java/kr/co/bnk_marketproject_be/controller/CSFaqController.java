@@ -48,5 +48,6 @@ public class CSFaqController {
         CSNoticeDTO faq = faqService.getFaqView(id);
         model.addAttribute("faq", faq);
         return "customer_service/faq/faq_view";
+
     }
 }
