@@ -12,6 +12,7 @@ import lombok.*;
 public class UserDTO {
 
     private int id;
+    @Column(name = "user_id")
     private String userId;
     private String password;
     private String name;
