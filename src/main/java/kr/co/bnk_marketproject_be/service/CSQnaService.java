@@ -10,11 +10,11 @@ import java.util.List;
 @Service
 @RequiredArgsConstructor
 public class CSQnaService {
-    //
+
     private final CSQnaMapper qnaMapper;
 
-    public List<CSNoticeDTO> getQnaList(String userId) {
-        return qnaMapper.selectQnaList(userId);
+    public List<CSNoticeDTO> getQnaList(String userid, int offset, int limit) {
+        return qnaMapper.selectQnaList(userid, offset, limit);
     }
 
     public CSNoticeDTO getQnaview(Long id) {
