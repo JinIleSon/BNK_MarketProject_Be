@@ -214,7 +214,9 @@
     <!-- Daum 주소 API -->
     <script src="//t1.daumcdn.net/mapjsapi/bundle/postcode/prod/postcode.v2.js"></script>
 
-    <script>
+<script th:inline="javascript">
+    // 컨텍스트 패스 얻기
+    const ctx = /*[[@{/}]]*/ '';
 
 
         // ===== DOM 참조 =====
@@ -244,13 +246,36 @@
         const addrResult = document.getElementById("addrResult");
 
         // ===== 유효성 검사 =====
-        function validateUserId() {
-            const v = elUserId.value.trim();
-            const ok = /^[A-Za-z0-9]{4,16}$/.test(v);
-            if (!v) { idResult.textContent = "아이디는 필수입니다."; idResult.className = "error"; return false; }
-            if (!ok) { idResult.textContent = "아이디는 영문/숫자 4~16자여야 합니다."; idResult.className = "error"; return false; }
-            idResult.textContent = "사용 가능한 형식입니다."; idResult.className = "success"; return true;
+        // function validateUserId() {
+        //     const v = elUserId.value.trim();
+        //     const ok = /^[A-Za-z0-9]{4,16}$/.test(v);
+        //     if (!v) { idResult.textContent = "아이디는 필수입니다."; idResult.className = "error"; return false; }
+        //     if (!ok) { idResult.textContent = "아이디는 영문/숫자 4~16자여야 합니다."; idResult.className = "error"; return false; }
+        //     idResult.textContent = "사용 가능한 형식입니다."; idResult.className = "success"; return true;
+        // }
+        // 1) '형식' 검사는 UI를 건드리지 않는 순수 함수로 분리
+        function isUserIdFormatValid(v) {
+            return /^[A-Za-z0-9]{4,16}$/.test(v.trim());
         }
+
+        // 필요할 때만 형식 메시지를 보여주는 함수
+        function showUserIdFormatMessage() {
+            const ok = isUserIdFormatValid(elUserId.value);
+            if (!elUserId.value.trim()) {
+                idResult.textContent = "아이디는 필수입니다.";
+                idResult.className = "error";
+            } else if (!ok) {
+                idResult.textContent = "아이디는 영문/숫자 4~16자여야 합니다.";
+                idResult.className = "error";
+            } else {
+                // 형식 OK일 때는 굳이 success 메시지로 덮지 말고 비워두기
+                idResult.textContent = "";
+                idResult.className = "";
+            }
+            return ok;
+        }
+
+
 
         function validatePassword() {
             const p1 = elPw.value;
@@ -357,14 +382,41 @@
         }
 
         // ===== 아이디 중복 체크 검사 =====
+        // document.getElementById("btnCheckId").addEventListener("click", async () => {
+        //     if (!validateUserId()) return;
+        //
+        //     const userId = elUserId.value.trim();
+        //
+        //     try {
+        //         // 서버에 아이디 중복 체크 요청
+        //         const res = await fetch(`${ctx}seller/check-id?userId=${encodeURIComponent(userId)}`);
+        //         const data = await res.json();
+        //
+        //         if (data.exists) {
+        //             idResult.textContent = "이미 사용 중인 아이디입니다.";
+        //             idResult.className = "error";
+        //         } else {
+        //             idResult.textContent = "사용 가능한 아이디입니다 ✅";
+        //             idResult.className = "success";
+        //         }
+        //     } catch (err) {
+        //         console.error(err);
+        //         idResult.textContent = "서버 오류로 확인 실패";
+        //         idResult.className = "error";
+        //     }
+        //
+        //     updateSubmitState();
+        // });
+        // 중복확인 버튼
         document.getElementById("btnCheckId").addEventListener("click", async () => {
-            if (!validateUserId()) return;
+            if (!showUserIdFormatMessage()) return;
 
             const userId = elUserId.value.trim();
-
             try {
-                // 서버에 아이디 중복 체크 요청
-                const res = await fetch(`/seller/check-id?userId=${encodeURIComponent(userId)}`);
+                idResult.textContent = "중복 확인 중…";
+                idResult.className = "";
+
+                const res = await fetch(`${ctx}seller/check-id?userId=${encodeURIComponent(userId)}`);
                 const data = await res.json();
 
                 if (data.exists) {
@@ -374,14 +426,28 @@
                     idResult.textContent = "사용 가능한 아이디입니다 ✅";
                     idResult.className = "success";
                 }
-            } catch (err) {
-                console.error(err);
+            } catch (e) {
+                console.error(e);
                 idResult.textContent = "서버 오류로 확인 실패";
                 idResult.className = "error";
             }
 
+            // ❌ 여기서 형식검사로 메시지를 다시 덮지 않도록!
             updateSubmitState();
         });
+
+        // 제출 가능여부 계산은 '형식만' 확인 (UI 메시지 변경 금지)
+        function updateSubmitState() {
+            const allValid =
+                isUserIdFormatValid(elUserId.value) &&
+                /* ... 나머지 유효성 ... */ true;
+
+            btnSubmit.disabled = !allValid;
+        }
+
+        // 입력 중엔 형식 메시지만 갱신
+        elUserId.addEventListener("input", showUserIdFormatMessage);
+
 
         elUserId.addEventListener("input", updateSubmitState);
         elPw.addEventListener("input", updateSubmitState);
@@ -442,7 +508,7 @@
             };
 
             try {
-                const res = await fetch("/seller/register", {
+                const res = await fetch(`${ctx}seller/register`, {
                     method: "POST",
                     headers: { "Content-Type": "application/json" },
                     body: JSON.stringify(payload)
@@ -454,9 +520,9 @@
                     alert("판매자 회원가입이 완료되었습니다!");
 
                     if (confirm("로그인 페이지로 이동하시겠습니까?")) {
-                        location.href = "/member/login";
+                        location.href = `${ctx}member/login`;
                     } else {
-                        location.href = "/member/join";
+                        location.href = `${ctx}member/join`;
                     }
                 } else {
                     alert("회원가입 실패: " + (result.error || "알 수 없는 오류"));
