@@ -42,4 +42,11 @@ public class User{
     @UpdateTimestamp
     private String updated_at;
 
+    // 구글 로그인
+    // provider : google이 들어감
+    private String provider;
+
+    // providerId : 구굴 로그인 한 유저의 고유 ID가 들어감
+    private String providerId;
+
 }

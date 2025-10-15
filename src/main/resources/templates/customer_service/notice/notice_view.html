@@ -190,7 +190,6 @@
             color: white;
         }
 
-
         /* 본문 */
         .title_area {
             border-top: 3px solid #ddd;
@@ -339,9 +338,10 @@
         <div style="display: flex; margin-left:20%; margin-top:1%; width:100%;">
             <nav class="overlay__menu" style="width:100%;">
                 <div style="">
-<!--                    <a href="#"><b>공지사항</b></a>-->
-                    <b>공지사항</b>
-                    <br><br>
+                    <a th:href="@{/cs/notice/list}"><b>공지사항</b></a>
+                    <a th:href="@{/cs/faq/list}"><b>자주묻는질문</b></a>
+                    <a th:href="@{/cs/qna/list}"><b>Qna</b></a>
+                    <br>
                     <a th:href="@{/cs/notice/list}">전체</a>
                     <a th:href="@{/cs/notice/list(boardType='서비스')}">고객서비스</a>
                     <a th:href="@{/cs/notice/list(boardType='안전거래')}">안전거래</a>

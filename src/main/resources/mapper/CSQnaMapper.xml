@@ -7,35 +7,28 @@
 
     <!-- QnA 목록 -->
     <select id="selectQnaList" resultType="kr.co.bnk_marketproject_be.dto.CSNoticeDTO">
-        SELECT *
-        FROM BOARD
-        WHERE BOARD_TYPE = 'QNA'
-        <if test="userId != null and userId != ''">
-            AND USER_ID = #{userId}
+        SELECT
+        b.id,
+        b.board_type AS boardType,
+        b.board_type2 AS boardType2,
+        b.board_type3 AS boardType3,
+        b.title,
+        b.user_id AS userid,
+        b.created_at AS createdAt,
+        CASE
+        WHEN c.bid IS NOT NULL OR b.look = 1 THEN '답변완료'
+        ELSE '검토중'
+        END AS look
+        FROM board b
+        LEFT JOIN comments c ON b.id = c.bid
+        WHERE b.board_type = 'inquiry'
+        <if test="userid != null and userid != ''">
+            AND b.user_id = #{userid}
         </if>
-        ORDER BY CREATED_AT DESC
+        ORDER BY b.id DESC
+        OFFSET #{offset} ROWS FETCH NEXT #{limit} ROWS ONLY
     </select>
 
-    <!-- QnA 상세 -->
-    <select id="selectQnaDetail" resultType="kr.co.bnk_marketproject_be.dto.CSNoticeDTO">
-        SELECT * FROM BOARD
-        WHERE BOARD_TYPE = 'QNA' AND ID = #{id}
-    </select>
 
-    <!-- QnA 등록 -->
-    <insert id="insertQna" parameterType="kr.co.bnk_marketproject_be.dto.CSNoticeDTO">
-        INSERT INTO BOARD (BOARD_TYPE, USER_ID, TITLE, CONTENT, STATUS, CREATED_AT)
-        VALUES ('QNA', #{userId}, #{title}, #{content}, '대기', SYSDATE)
-    </insert>
-
-    <!-- 관리자 답변 등록 -->
-    <update id="updateAnswer" parameterType="kr.co.bnk_marketproject_be.dto.CSNoticeDTO">
-        UPDATE BOARD
-        SET ANSWER = #{answer},
-            STATUS = '완료',
-            ANSWERED_AT = SYSDATE
-        WHERE ID = #{id}
-          AND BOARD_TYPE = 'QNA'
-    </update>
 
 </mapper>

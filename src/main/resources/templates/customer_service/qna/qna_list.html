@@ -1,12 +1,13 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="ko">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
+    <title>ASK NICHIYA</title>
 
-    <link rel="stylesheet" href="../../../static/css/common.css">
-    <link rel="stylesheet" href="../../../static/css/qna.css">
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+    <link rel="stylesheet" th:href="@{/css/common.css}">
+    <link rel="stylesheet" th:href="@{/css/qna.css}">
 
     <style>
         /* 페이지네이션 */
@@ -31,35 +32,36 @@
     </style>
 </head>
 <body>
+<div th:replace="~{main/header.html}"></div>
+
+<table border="1">
+    <thead>
+    <tr>
+        <th>유형</th>
+        <th>제목</th>
+        <th>상태</th>
+        <th>작성자</th>
+        <th>작성일</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr th:each="qna : ${qnaList}">
+        <td th:text="${qna.boardType3 == 'withdraw' ? '[탈퇴]' :
+                        (qna.boardType3 == 'login' ? '[로그인]' :
+                        (qna.boardType3 == 'account' ? '[회원정보]' :
+                        (qna.boardType3 == 'couponissue' ? '[쿠폰]' : '[미정]'
+                        )))}"></td>
+
+        <td th:text="${qna.title}"></td>
+        <td th:text="${qna.look}"></td>
+        <td th:text="${qna.userid}"></td>
+        <td th:text="${#temporals.format(qna.createdAt, 'yyyy-MM-dd')}"></td>
+    </tr>
+    </tbody>
+</table>
+
 <!--헤더푸터 연결-->
-    <script>
-        fetch("../../main/header.html")
-          .then(res => res.text())
-          .then(data => {
-            document.getElementById("header").innerHTML = data;
-
-            // header.html 안의 스크립트 실행 강제
-            const scripts = document.getElementById("header").querySelectorAll("script");
-            scripts.forEach(oldScript => {
-            const newScript = document.createElement("script");
-            if (oldScript.src) {
-                newScript.src = oldScript.src;
-            } else {
-                newScript.textContent = oldScript.textContent;
-            }
-            document.body.appendChild(newScript);
-            });
-          });
-
-       
-        fetch("../../main/footer.html")
-          .then(res => res.text())
-          .then(data => {
-            document.getElementById("footer").innerHTML = data;
-          });
-    </script>
     <div id="header"></div>
-
     <div id="content" class="cs_qna_list_wrap">
         <h1>ASK NICHIYA</h1>
         <div class="cs_sub_nav">
@@ -209,6 +211,7 @@
             </div>
         </div>
     </div>
-<div id="footer"></div>    
+<div id="footer"></div>
+<div th:replace="~{main/footer.html}"></div>
 </body>
 </html>

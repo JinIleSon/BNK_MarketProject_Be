@@ -14,27 +14,28 @@ import java.time.LocalDateTime;
 @Where(clause = "UPPER(BOARD_TYPE) = 'NOTICE'")
 public class CSNotice {
 
+    // CSNoticeDTO랑 연동 "_"를 없애기 위해서 불러오기용.
     @Id
-    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "SEQ_BOARD")
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name = "BOARD_TYPE", length = 100)
+    @Column(name = "BOARD_TYPE")
     private String boardType;
 
-    @Column(name = "TITLE", length = 200)
-    private String title;
+    @Column(name = "BOARD_TYPE2")
+    private String boardType2;
 
-    @Column(name = "CONTENT")
-    private String content;
+    @Column(name = "BOARD_TYPE3")
+    private String boardType3;
 
     @Column(name = "CREATED_AT")
     private LocalDateTime createdAt;
 
-    @Column(name = "UPDATED_AT")
-    private LocalDateTime updatedAt;
+    @Column(name = "USER_ID")
+    private String userid;
 
-    @PrePersist
-    public void prePersist() {
-        if (this.boardType == null) this.boardType = "NOTICE";
-    }
+    private String title;
+    private String content;
+    private int look;
+
 }

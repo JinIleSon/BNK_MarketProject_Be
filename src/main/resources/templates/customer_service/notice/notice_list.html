@@ -473,8 +473,10 @@
             <div style="display: flex; margin-left:20%; margin-top:1%; width:100%;">
                 <nav class="overlay__menu" style="width:100%;">
                     <div style="">
-                        <b>공지사항</b>
-                        <br><br>
+                        <a th:href="@{/cs/notice/list}"><b>공지사항</b></a>
+                        <a th:href="@{/cs/faq/list}"><b>자주묻는질문</b></a>
+                        <a th:href="@{/cs/qna/list}"><b>Qna</b></a>
+                        <br>
                         <a th:href="@{/cs/notice/list}">전체</a>
                         <a th:href="@{/cs/notice/list(boardType='서비스')}">고객서비스</a>
                         <a th:href="@{/cs/notice/list(boardType='안전거래')}">안전거래</a>
@@ -509,15 +511,17 @@
     </div>
 
     <!-- 제목  -->
-    <h2 style="font-size:23px; font-weight:bold; margin: 20px"  th:text="${
-                boardType == '서비스' ? '고객서비스' :
-                boardType == '안전거래' ? '안전거래' :
-                boardType == '판매중지' ? '위해상품' :
-                boardType == '당첨자' ? '이벤트당첨' :
-    '전체'}"></h2>
+    <h2 style="font-size:23px; font-weight:bold; margin:20px"
+        th:switch="${boardType}">
+        <span th:case="'서비스'">고객서비스</span>
+        <span th:case="'안전거래'">안전거래</span>
+        <span th:case="'판매중지'">위해상품</span>
+        <span th:case="'당첨자'">이벤트당첨</span>
+        <span th:case="*">전체</span>
+    </h2>
 
 
-    <div class="cs_list_table" style="margin-left: 20px; margin-right: 20px; margin-bottom: 20px">
+<div class="cs_list_table" style="margin-left: 20px; margin-right: 20px; margin-bottom: 20px">
             <p class="total_count">
                 총 <span class="count" th:text="${totalCount}"></span>건
             </p>
