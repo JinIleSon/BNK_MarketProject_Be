@@ -59,7 +59,6 @@ spring:
     properties:
       hibernate.format_sql: true
 
-
   mail:
     host: smtp.gmail.com
     port: 587
