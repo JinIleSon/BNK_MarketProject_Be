@@ -17,15 +17,12 @@ public class CSQnaService {
         return qnaMapper.selectQnaList(userId);
     }
 
-    public CSNoticeDTO getQnaDetail(Long id) {
-        return qnaMapper.selectQnaDetail(id);
+    public CSNoticeDTO getQnaview(Long id) {
+        return qnaMapper.selectQnaview(id);
     }
 
     public void insertQna(CSNoticeDTO qna) {
         qnaMapper.insertQna(qna);
     }
 
-    public void updateAnswer(CSNoticeDTO qna) {
-        qnaMapper.updateAnswer(qna);
-    }
 }
