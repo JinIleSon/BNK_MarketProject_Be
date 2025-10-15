@@ -208,12 +208,16 @@
                                                id="emailLocal"
                                                name="firstEmail"
                                                style="padding-right:5px;padding-left:5px; padding-bottom:4px; border:none; border-bottom:1px solid #dddddd; outline: none; width:130px; margin-right: 10px;"
-                                        th:value="${#strings.arraySplit(userDTO.email, '@')[0]}">@<input
+                                               th:value="${userDTO.email != null and #strings.contains(userDTO.email,'@')
+                                                            ? #strings.arraySplit(userDTO.email,'@')[0] : ''}">@<input
                                             type="text"
                                             id="emailDomain"
                                             name="secondEmail"
                                             style="padding-right:5px;padding-left:5px; padding-bottom:4px;margin-left:10px; width:100px; border:none; border-bottom:1px solid #dddddd; outline: none; margin-right: 10px;"
-                                    th:value="${#strings.arraySplit(userDTO.email, '@')[1]}">
+                                            th:value="${userDTO.email != null and #strings.contains(userDTO.email,'@')
+                                                          ? (#strings.arraySplit(userDTO.email,'@').length > 1
+                                                                ? #strings.arraySplit(userDTO.email,'@')[1] : '')
+                                                          : ''}">
 
                                         <select name="email" id="emailSelect"  style="border:none; border-bottom:1px solid #dddddd; outline: none; margin-right: 10px; padding-right:5px;padding-left:5px; padding-bottom:4px;">
                                             <option value="select">직접 입력</option>
@@ -228,9 +232,16 @@
                                 <tr><td>휴대폰</td>
                                     <td>
                                         <input type="text" id="phone1" name="firstPhone" style="border:none; border-bottom:1px solid #dddddd; outline: none; width:55px;margin-right: 10px; padding-right:5px;padding-left:16px; padding-bottom:4px;"
-                                        th:value="${#strings.arraySplit(userDTO.phone, '-')[0]}"> - <input type="text" id="phone2" name="secondPhone" style="margin-left: 10px;outline: none;border:none; border-bottom:1px solid #dddddd;width:55px;margin-right: 10px; padding-right:5px;padding-left:13px; padding-bottom:4px;"
-                                                                                                           th:value="${#strings.arraySplit(userDTO.phone, '-')[1]}"> - <input id="phone3" type="text" name="thirdPhone" style="margin-left: 10px;border:none; border-bottom:1px solid #dddddd;outline: none;width:55px;margin-right: 10px; padding-right:5px;padding-left:13px; padding-bottom:4px;"
-                                                                                                                                                                              th:value="${#strings.arraySplit(userDTO.phone, '-')[2]}">
+                                               th:value="${userDTO.phone != null and #strings.contains(userDTO.phone,'-')
+                                                            ? #strings.arraySplit(userDTO.phone,'-')[0] : ''}"> - <input type="text" id="phone2" name="secondPhone" style="margin-left: 10px;outline: none;border:none; border-bottom:1px solid #dddddd;width:55px;margin-right: 10px; padding-right:5px;padding-left:13px; padding-bottom:4px;"
+                                                                                                                         th:value="${userDTO.phone != null and #strings.contains(userDTO.phone,'-')
+                                                                                                                                      ? (#strings.arraySplit(userDTO.phone,'-').length > 1
+                                                                                                                                            ? #strings.arraySplit(userDTO.phone,'-')[1] : '')
+                                                                                                                                      : ''}"> - <input id="phone3" type="text" name="thirdPhone" style="margin-left: 10px;border:none; border-bottom:1px solid #dddddd;outline: none;width:55px;margin-right: 10px; padding-right:5px;padding-left:13px; padding-bottom:4px;"
+                                                                                                                                                       th:value="${userDTO.phone != null and #strings.contains(userDTO.phone,'-')
+                                                                                                                                                              ? (#strings.arraySplit(userDTO.phone,'-').length > 2
+                                                                                                                                                                    ? #strings.arraySplit(userDTO.phone,'-')[2] : '')
+                                                                                                                                                              : ''}">
                                         <button type="button" id="phoneEditBtn" style="cursor:pointer;width: 70px;height: 30px;border:none; background-color: black; color:white;outline: none;">수정하기</button>
                                     </td>
                                 </tr>
