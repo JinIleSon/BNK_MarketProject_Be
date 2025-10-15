@@ -16,7 +16,8 @@ public class CSNoticeDTO {
     private String content;
     private LocalDateTime createdAt;
 
-    // qna 전용
+    // qna 전용.
     private String look;
     private String user_id;
+
 }

@@ -14,7 +14,7 @@ import java.time.LocalDateTime;
 @Where(clause = "UPPER(BOARD_TYPE) = 'NOTICE'")
 public class CSNotice {
 
-    // CSNoticeDTO랑 연동 "_"를 없애기 위해서 불러오기용
+    // CSNoticeDTO랑 연동 "_"를 없애기 위해서 불러오기용.
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "SEQ_BOARD")
     private Long id;
