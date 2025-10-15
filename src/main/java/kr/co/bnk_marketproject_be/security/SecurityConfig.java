@@ -1,5 +1,7 @@
 package kr.co.bnk_marketproject_be.security;
 
+import kr.co.bnk_marketproject_be.service.CustomOAuth2UserService;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -15,6 +17,7 @@ import org.springframework.security.web.csrf.CookieCsrfTokenRepository;
 // import org.springframework.security.core.userdetails.UserDetails;
 // import org.springframework.security.provisioning.InMemoryUserDetailsManager;
 
+@Slf4j
 @Configuration
 public class SecurityConfig {
 
@@ -23,7 +26,9 @@ public class SecurityConfig {
 
 
     @Bean
-    public SecurityFilterChain filterChain(HttpSecurity http, CustomAuthenticationProvider customAuthenticationProvider) throws Exception {
+    public SecurityFilterChain filterChain(HttpSecurity http,
+                                           CustomAuthenticationProvider customAuthenticationProvider,
+                                           CustomOAuth2UserService customOAuth2UserService) throws Exception {
 
         // ✅ DB 기반 인증 (CustomAuthenticationProvider)
         http.authenticationProvider(customAuthenticationProvider);
@@ -63,11 +68,19 @@ public class SecurityConfig {
         // ✅ 접근 권한 설정
         http.authorizeHttpRequests(auth -> auth
 
-                // 🔹 정적 리소스 및 공개 페이지는 누구나 접근 가능
+                // 접근 권한 변경 시 이 순서대로 안하면 스프링 자체 run 오류납니다!
+                // 1) 완전 공개(정적/공용)
                 .requestMatchers(
                         "/", "/index",
                         "/css/**", "/js/**", "/images/**", "/fonts/**",
-                        "/favicon.ico", "/error",
+                        "/favicon.ico", "/error"
+                ).permitAll()
+
+                // 2) OAuth2 엔드포인트 공개
+                .requestMatchers("/oauth2/**", "/login/oauth2/**", "/oauth2/authorization/**").permitAll()
+
+                // 3) 사이트 공개 페이지
+                .requestMatchers(
                         "/user/**",
                         "/email/**",
                         "/member/**",
@@ -76,20 +89,38 @@ public class SecurityConfig {
                         "/compinfo/**",
                         "/main/**",
                         "/product/**",
-                        "/cs/**",
-                        "/member/**",
-                        "/mypage/**"
-
+                        "/cs/**"
                 ).permitAll()
 
+                // 4) 인증/권한 필요한 구간 (구체 → 덜 구체 순서)
                 // 🔹 일반 회원, 셀러 접근 허용
-                .requestMatchers("/article/**").hasAnyRole("user", "seller", "admin")
-                .requestMatchers("/mypage/**").hasAnyRole("user", "seller", "admin")
-                .requestMatchers("/admin/**").hasAnyRole( "admin")
+                .requestMatchers("/article/**").hasAnyAuthority("user", "seller", "admin")
+                .requestMatchers("/mypage/**").hasAnyAuthority("user", "seller", "admin")
+                .requestMatchers("/admin/**").hasAnyAuthority( "admin")
 
+                // 5) 마지막에 anyRequest
                 // 🔹 관리자(admin)는 모든 페이지 접근 가능
-                .anyRequest().hasAnyRole("admin")
+                .anyRequest().hasAnyAuthority("admin")
+                //.anyRequest().authenticated()
         );
+
+        // 구글 로그인
+        // ✅ OAuth2 로그인 활성화 (필수)
+        http.oauth2Login(oauth -> oauth
+                .loginPage("/member/login") // 같은 로그인 페이지 사용
+                .userInfoEndpoint(u -> u.userService(customOAuth2UserService)) // 우리의 매핑 로직
+                        .successHandler((req, res, auth) -> {
+                            Object p = auth.getPrincipal();
+                            if (p instanceof MyUserDetails mud) {
+                                log.info("✅ OAuth2 로그인 성공 : userId={}, role={}", mud.getUsername(), mud.getAuthorities());
+                            } else {
+                                log.info("✅ OAuth2 로그인 성공 : principal={}", p);
+                            }
+                            res.sendRedirect(req.getContextPath() + "/main/main/page");
+                        })
+                //.defaultSuccessUrl("/main/main/page", true)
+        );
+
 
         // ✅ CSRF (쿠키 기반) 너무 복잡하고 어려워서 안함
 //        http.csrf(csrf -> csrf

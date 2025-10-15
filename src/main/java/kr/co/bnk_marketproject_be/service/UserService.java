@@ -9,8 +9,11 @@ import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Map;
 import java.util.List;
+import java.util.UUID;
 import java.util.Optional;
 
 @Slf4j
@@ -209,6 +212,85 @@ public class UserService {
         log.info("비밀번호 재설정 대상 userId={}, role={}", user.getUserId(), user.getRole());
 
     }
+
+    // 구글 로그인을 위한
+    @Transactional
+    public User upsertGoogleUser(String email, Map<String, Object> attrs) {
+        if (email == null || email.isBlank()) {
+            // 드물게 이메일 비공개 계정일 수 있으니 방어
+            throw new IllegalStateException("Google 프로필에 email이 없습니다.");
+        }
+
+        // 1) 기존 유저 있으면 업데이트
+        Optional<User> opt = userRepository.findByEmail(email);
+        if (opt.isPresent()) {
+            User user = opt.get();
+
+            // 이름/프로필 등 보정(필요하면)
+            Object name = attrs.get("name");
+            if ((user.getName() == null || user.getName().isBlank()) && name instanceof String) {
+                user.setName((String) name);
+            }
+            Object picture = attrs.get("picture");
+            if (picture instanceof String) {
+                // 엔티티에 맞는 필드명으로 바꿔줘 (예: setProfileImage / setAvatarUrl 등)
+                // user.setProfileImage((String) picture);
+            }
+
+            // provider/role 보정
+            user.setProvider("google");
+            if (user.getRole() == null || user.getRole().isBlank()) {
+                user.setRole("user");
+            }
+
+            return userRepository.save(user);
+        }
+
+        // 2) 없으면 신규 생성
+        User user = new User();
+        user.setEmail(email);
+
+        // userId 생성: 이메일 앞부분을 기본으로, 중복이면 숫자 붙이기
+        String base = baseFromEmail(email);
+        user.setUserId(makeUniqueUserId(base));
+
+        Object name = attrs.get("name");
+        if (name instanceof String) user.setName((String) name);
+
+        Object picture = attrs.get("picture");
+        if (picture instanceof String) {
+            // user.setProfileImage((String) picture);
+        }
+
+        user.setProvider("google");
+        user.setRole("user");
+
+        // 비밀번호 제약(널 금지)이 있으면 랜덤값 인코딩
+        String randomPwd = "oauth2:" + UUID.randomUUID();
+        user.setPassword(passwordEncoder.encode(randomPwd));
+
+        // 필요하면 활성화 상태 등 기본값도 세팅
+        // user.setEnabled(true);
+
+        return userRepository.save(user);
+    }
+
+    private String baseFromEmail(String email) {
+        int at = email.indexOf('@');
+        return (at > 0) ? email.substring(0, at) : email;
+    }
+
+    private String makeUniqueUserId(String base) {
+        String candidate = base;
+        int i = 1;
+        while (userRepository.existsByUserId(candidate)) {
+            candidate = base + i;
+            i++;
+        }
+        return candidate;
+    }
+
+
 
 
 }
