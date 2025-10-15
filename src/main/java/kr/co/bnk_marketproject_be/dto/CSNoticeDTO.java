@@ -12,12 +12,12 @@ import java.time.LocalDateTime;
 public class CSNoticeDTO {
     private Long id;
     private String boardType;
+    private String boardType2;
+    private String boardType3;
     private String title;
     private String content;
     private LocalDateTime createdAt;
-
-    // qna 전용.
     private String look;
-    private String user_id;
+    private String userid;
 
 }

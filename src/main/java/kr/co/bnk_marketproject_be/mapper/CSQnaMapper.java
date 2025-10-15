@@ -10,7 +10,11 @@ import java.util.List;
 public interface CSQnaMapper {
 
     // QnA 목록
-    List<CSNoticeDTO> selectQnaList(@Param("userId") String userId);
+    List<CSNoticeDTO> selectQnaList(
+            @Param("userid") String userId,
+            @Param("offset") int offset,
+            @Param("limit") int limit
+    );
 
     // QnA 상세
     CSNoticeDTO selectQnaview(@Param("id") Long id);
