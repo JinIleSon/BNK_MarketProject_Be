@@ -124,35 +124,8 @@
   </style>
 </head>
 <body>
-    <!--헤더푸터 연결-->
-    <script>
-        fetch("../main/header.html")
-          .then(res => res.text())
-          .then(data => {
-            document.getElementById("header").innerHTML = data;
-
-            // header.html 안의 스크립트 실행 강제
-            const scripts = document.getElementById("header").querySelectorAll("script");
-            scripts.forEach(oldScript => {
-            const newScript = document.createElement("script");
-            if (oldScript.src) {
-                newScript.src = oldScript.src;
-            } else {
-                newScript.textContent = oldScript.textContent;
-            }
-            document.body.appendChild(newScript);
-            });
-          });
-
-       
-        fetch("../main/footer.html")
-          .then(res => res.text())
-          .then(data => {
-            document.getElementById("footer").innerHTML = data;
-          });
-    </script>
     <main>
-        <div id="header"></div>
+        <div th:replace="~{main/header.html}"></div>
         <div style="background-color: #f6f5f5; border-bottom: 1px solid #dddddd;">
             <div style="display: flex; justify-content: center; align-items: center;">
                 <div style="width:1270px; font-size:15px; height:70px; display: flex; align-items: center; ">
@@ -678,7 +651,7 @@
         </div>
         
         <div style="margin-top:100px;"></div>
-        <div id="footer"></div>
+        <div th:replace="~{main/footer.html}"></div>
     </main>
     <!-- 주문 상세 마이페이지_메인#2-->
     <!-- ===== 모달 마크업 ===== -->
