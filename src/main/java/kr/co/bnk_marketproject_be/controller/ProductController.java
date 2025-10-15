@@ -211,7 +211,7 @@ public class ProductController {
     }
 
     /* 상품 검색*/
-    @GetMapping("/product/search")
+    @GetMapping("/product/header/search")
     public String productSearch(
             @RequestParam(required = false) String keyword,
             @RequestParam(required = false) String searchType,
@@ -223,25 +223,42 @@ public class ProductController {
             @RequestParam(required = false) Integer categoryId, // 손진일 - 추가
             Model model) {
 
+        // 실제 조회용: 미선택(null/blank)이면 name 으로 처리
+        String effectiveSearchType = (searchType == null || searchType.isBlank()) ? "name" : searchType;
+
+        // 가격 검색인 경우, keyword는 상품명 기준으로 사용하도록 설정
+        // (mapper 쿼리에서 price + name 조건을 함께 사용)
         PageRequestProductDTO req = PageRequestProductDTO.builder()
                 .keyword(keyword)
-                .searchType(searchType)
+                .searchType(effectiveSearchType)
                 .minPrice(minPrice)
                 .maxPrice(maxPrice)
                 .sort(sort)
                 .pg(pg)
                 .size(size)
+                .categoryId(categoryId)
                 .build();
 
-        var list  = productsMapper.selectProductSearch(req);
+        // Mapper 호출 (통합 쿼리만 사용)
+        List<ProductsDTO> list = productsMapper.selectProductSearch(req);
         int total = productsMapper.selectProductSearchTotal(req);
 
         var page = new PageResponseProductDTO<>(req, list, total);
 
         model.addAttribute("pageResponseProductDTO", page);
         model.addAttribute("sort", sort);
-        model.addAttribute("query", req); // 뷰에서 기존 값 유지용
-        model.addAttribute("categoryId", categoryId);     // 손진일 - 추가
+        // 화면 표시는 사용자가 넘긴 원래 값 그대로(null이면 null)
+        model.addAttribute("query", PageRequestProductDTO.builder()
+                .keyword(keyword)
+                .searchType(searchType)       // ← null 그대로 넘김: 라디오 미선택으로 보임
+                .minPrice(minPrice)
+                .maxPrice(maxPrice)
+                .sort(sort)
+                .pg(pg)
+                .size(size)
+                .categoryId(categoryId)
+                .build());
+        model.addAttribute("categoryId", categoryId);
         return "product/product_search";
     }
 

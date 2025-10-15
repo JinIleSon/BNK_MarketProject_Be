@@ -126,27 +126,27 @@
     GROUP BY products_id
     ) r ON r.products_id = p.id
     <where>
+        <!-- 키워드: 미선택/blank → name, price → name, explain → 설명 -->
         <if test="req.keyword != null and req.keyword != ''">
             <choose>
-                <when test="req.searchType == 'name'">
-                    AND LOWER(p.product_name) LIKE LOWER('%' || #{req.keyword} || '%')
-                </when>
                 <when test="req.searchType == 'explain'">
                     AND LOWER(p.sub_description) LIKE LOWER('%' || #{req.keyword} || '%')
                 </when>
                 <otherwise>
-                    AND (LOWER(p.product_name) LIKE LOWER('%' || #{req.keyword} || '%')
-                    OR  LOWER(p.sub_description) LIKE LOWER('%' || #{req.keyword} || '%'))
+                    <!-- name 또는 price 또는 미선택(null/blank) -->
+                    AND LOWER(p.product_name) LIKE LOWER('%' || #{req.keyword} || '%')
                 </otherwise>
             </choose>
         </if>
 
-        <!-- 가격 범위 (할인가격 기준) -->
-        <if test="req.minPrice != null">
-            AND (p.price - NVL(p.discount,0)) &gt;= #{req.minPrice}
-        </if>
-        <if test="req.maxPrice != null">
-            AND (p.price - NVL(p.discount,0)) &lt;= #{req.maxPrice}
+        <!-- 가격범위: price 모드일 때만 적용 -->
+        <if test="req.searchType == 'price'">
+            <if test="req.minPrice != null">
+                AND (p.price - NVL(p.discount,0)) &gt;= #{req.minPrice}
+            </if>
+            <if test="req.maxPrice != null">
+                AND (p.price - NVL(p.discount,0)) &lt;= #{req.maxPrice}
+            </if>
         </if>
         <!-- ★ 카테고리 한정 - 손진일 추가 -->
         <if test="req.categoryId != null">
@@ -183,15 +183,25 @@
     SELECT COUNT(*)
     FROM products p
     <where>
+        <!-- 키워드: 미선택/blank → name, price → name, explain → 설명 -->
         <if test="req.keyword != null and req.keyword != ''">
-            AND (LOWER(p.product_name)   LIKE LOWER('%' || #{req.keyword} || '%')
-            OR  LOWER(p.sub_description)LIKE LOWER('%' || #{req.keyword} || '%'))
+            <choose>
+                <when test="req.searchType == 'explain'">
+                    AND LOWER(p.sub_description) LIKE LOWER('%' || #{req.keyword} || '%')
+                </when>
+                <otherwise>
+                    AND LOWER(p.product_name) LIKE LOWER('%' || #{req.keyword} || '%')
+                </otherwise>
+            </choose>
         </if>
-        <if test="req.minPrice != null">
-            AND (p.price - NVL(p.discount,0)) &gt;= #{req.minPrice}
-        </if>
-        <if test="req.maxPrice != null">
-            AND (p.price - NVL(p.discount,0)) &lt;= #{req.maxPrice}
+        <!-- 가격범위: price 모드일 때만 적용 -->
+        <if test="req.searchType == 'price'">
+            <if test="req.minPrice != null">
+                AND (p.price - NVL(p.discount,0)) &gt;= #{req.minPrice}
+            </if>
+            <if test="req.maxPrice != null">
+                AND (p.price - NVL(p.discount,0)) &lt;= #{req.maxPrice}
+            </if>
         </if>
         <!-- ★ 동일하게 - 손진일 추가 -->
         <if test="req.categoryId != null">

@@ -25,7 +25,7 @@ public class ProductsDTO {
     private int discount;
     private int hits;
     private int point;
-    private int sub_description;
+    private String sub_description;
     private Integer delichar;
 
     // 뷰에서 쓰는 필드 추가
