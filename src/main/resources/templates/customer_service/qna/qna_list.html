@@ -5,7 +5,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>ASK NICHIYA</title>
 
-    <link rel="stylesheet" th:href="@{/css/style.css}">
     <link rel="stylesheet" th:href="@{/css/common.css}">
     <link rel="stylesheet" th:href="@{/css/qna.css}">
 
@@ -27,190 +26,523 @@
             margin-right:3px;
             cursor: pointer;
         }
-        
-        /* 게시판 아래버튼 부분 끝 */
+
+        .icon-btn {
+            background:none;
+            border:1px solid #000;
+            cursor:pointer;
+            width:40px;
+            height:40px;
+            display:grid;
+            place-items:center;
+        }
+        .title-didone{
+            text-align:center;
+            font-family: 'Bodoni Moda','Didot','Bodoni 72','Times New Roman',serif;
+            margin-left:45px;
+            font-weight:400;
+            letter-spacing:.02em;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+        }
+        .title-didone.ko{font-family: 'Noto Serif KR','Bodoni Moda',serif; font-weight:300;}
+
+        /* 1) 스크림(배경) - 화면 전체 덮음 + 블러 */
+        .overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(255,255,255,0.28);
+            backdrop-filter: blur(1px);
+            -webkit-backdrop-filter: blur(1px);
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity .25s ease;
+            z-index: 1000;
+        }
+        .overlay.open {
+            opacity: 1;
+            pointer-events: auto;
+        }
+
+        /* 2) 왼쪽에서 나오는 패널 */
+        .overlay__panel {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 50vw;
+            max-width: 900px;
+            height: 100%;
+            background: white;
+            transform: translateX(-100%);
+            transition: transform .35s ease;
+            will-change: transform;
+            display: flex;
+            flex-direction: column;
+        }
+        .overlay.open .overlay__panel {
+            transform: translateX(0);
+        }
+
+        /* 상단 닫기 버튼과 로고 영역 */
+        .overlay__top {
+            display:flex;
+            align-items:center;
+            gap:24px;
+            padding:20px;
+        }
+        .overlay__close {
+            background:none;
+            border:none;
+            width:100px;
+            height:50px;
+            cursor:pointer;
+            position:relative;
+            margin-left:0.3%;
+        }
+        .overlay__close::before,
+        .overlay__close::after {
+            content:"";
+            position:absolute;
+            left:15px;
+            right:10px;
+            top:25px;
+            height:2px;
+            background:#000;
+        }
+        .overlay__close::before {
+            transform:rotate(45deg);
+        }
+        .overlay__close::after {
+            transform:rotate(-45deg);
+        }
+
+        /* 메뉴 그리드 */
+        .overlay__menu {
+            display:grid;
+            grid-template-columns: 180px auto;
+            gap:24px;
+            padding:40px 20px;
+            font-size:16px;
+        }
+        .overlay__menu a {
+            text-decoration:none;
+            color:#000;
+            display:block;
+            padding:8px 0;
+        }
+        .overlay__menu strong {
+            font-weight:700;
+        }
+        .overlay__menu a[data-cat].is-active {
+            font-weight:700;
+            text-decoration: underline;
+        }
+
+        /* 메뉴 오른쪽 서브패널 관련 */
+        .sub {
+            opacity: 0;
+            transform: translateY(6px);
+            pointer-events: none;
+            transition: opacity .28s ease, transform .28s ease;
+            display: none;
+        }
+        .sub.show {
+            display: block;
+            opacity: 1;
+            transform: translateY(0);
+            pointer-events: auto;
+        }
+
+        #subcol {
+            grid-row: span 2;
+            height:900px;
+            position: relative;
+            padding: 0;
+        }
+        #subcol .sub {
+            padding:0;
+            margin:0;
+        }
+        #subcol .panel {
+            position: absolute;
+            inset: 0;
+            padding: 20px;
+            overflow: auto;
+            opacity: 0;
+            transform: translateY(6px);
+            transition: opacity .35s ease, transform .35s ease;
+            visibility: hidden;
+            pointer-events: none;
+        }
+        #subcol .panel.show {
+            opacity: 1;
+            transform: none;
+            visibility: visible;
+            pointer-events: auto;
+        }
+
+        .menu-grid {
+            display: grid;
+            grid-template-columns: repeat(2, auto);
+            column-gap: 50px;
+            row-gap: 6px;
+            padding: 0;
+            margin: 0;
+            justify-content: start;
+        }
+        .menu-grid li {
+            list-style: none;
+        }
+
+        /* Pagination */
+        /* Pagination (notice 스타일 그대로) */
+        .pagination {
+            text-align: center;
+            margin-top: 20px;
+        }
+
+        .pagination a {
+            display: inline-block;
+            min-width: 40px;
+            height: 35px;
+            line-height: 35px;
+            border: 1px solid #ddd;
+            color: #555;
+            text-decoration: none;
+            margin: 0 2px;
+            text-align: center;
+            box-sizing: border-box;
+            font-size: 14px;
+        }
+
+        .pagination a.on {
+            background-color: #333;
+            color: #fff;
+            border-color: #333;
+        }
+
+
     </style>
 </head>
 <body>
-<div th:replace="~{main/header.html}"></div>
+<header th:replace="~{main/header :: header}"></header>
 
-<table border="1">
-    <thead>
-    <tr>
-        <th>유형</th>
-        <th>제목</th>
-        <th>상태</th>
-        <th>작성자</th>
-        <th>작성일</th>
-    </tr>
-    </thead>
-    <tbody>
-    <tr th:each="qna : ${qnaList}">
-        <td th:text="${qna.boardType3 == 'withdraw' ? '[탈퇴]' :
-                        (qna.boardType3 == 'login' ? '[로그인]' :
-                        (qna.boardType3 == 'account' ? '[회원정보]' :
-                        (qna.boardType3 == 'couponissue' ? '[쿠폰]' : '[미정]'
-                        )))}"></td>
+<aside id="menuOverlay" class="overlay" aria-hidden="true">
+    <div class="overlay__panel">
+        <div class="overlay__top">
+            <button id="closeBtn" class="overlay__close" aria-label="메뉴 닫기"></button>
+            <div style="font-size:72px; font-weight:800; letter-spacing:-10px; "class="title-didone">NICHIYA</div>
+        </div>
 
-        <td th:text="${qna.title}"></td>
-        <td th:text="${qna.look}"></td>
-        <td th:text="${qna.userid}"></td>
-        <td th:text="${#temporals.format(qna.createdAt, 'yyyy-MM-dd')}"></td>
-    </tr>
-    </tbody>
-</table>
+        <style>
+            .overlay__menu a[data-cat].is-active { font-weight: 700; text-decoration: underline; }
+
+            #subcol .panel {
+                position: absolute; inset: 0;
+                padding: 20px;
+                overflow: auto;
+                opacity: 0;
+                transform: translateY(6px);
+                transition: opacity .35s ease, transform .35s ease;
+                visibility: hidden;
+                pointer-events: none;
+            }
+            #subcol .panel.show {
+                opacity: 1;
+                transform: none;
+                visibility: visible;
+                pointer-events: auto;
+            }
+            .menu-grid {
+                display: grid;
+                grid-template-columns: repeat(2, auto);
+                column-gap: 50px;
+                row-gap: 6px;
+                padding: 0;
+                margin: 0;
+                justify-content: start;
+            }
+            .menu-grid li { list-style: none; }
+        </style>
+
+        <div style="display:flex; margin-left:20%; margin-top:1%; width:100%;">
+            <nav class="overlay__menu" style="width:100%;">
+                <div>
+                    <a th:href="@{/cs/notice/list}"><b>공지사항</b></a>
+                    <a th:href="@{/cs/faq/list}"><b>자주묻는질문</b></a>
+                    <a th:href="@{/cs/qna/list}"><b>QNA</b></a><br>
+                    <a href="#" data-cat="member">회원</a>
+                    <a href="#" data-cat="coupon">쿠폰/이벤트</a>
+                    <a href="#" data-cat="order">주문/결제</a>
+                    <a href="#" data-cat="delivery">배송</a>
+                    <a href="#" data-cat="return">취소/반품/교환</a>
+                    <a href="#" data-cat="travel">여행/숙박/항공</a>
+                    <a href="#" data-cat="safe">안전거래</a>
+                </div>
+                <div id="subcol">
+                    <!-- 회원 -->
+                    <section class="panel" data-key="member">
+                        <a th:href="@{/cs/faq/list(boardType='회원')}"><h3>회원</h3></a>
+                        <ul class="menu-grid">
+                            <li><a th:href="@{/cs/faq/list(boardType='회원', subType='로그인')}">로그인</a></li>
+                            <li><a th:href="@{/cs/faq/list(boardType='회원', subType='가입')}">가입</a></li>
+                            <li><a th:href="@{/cs/faq/list(boardType='회원', subType='탈퇴')}">탈퇴</a></li>
+                        </ul>
+                    </section>
+
+                    <!-- 쿠폰/이벤트 -->
+                    <section class="panel" data-key="coupon">
+                        <a th:href="@{/cs/faq/list(boardType='쿠폰/이벤트')}"><h3>쿠폰/이벤트</h3></a>
+                        <ul class="menu-grid">
+                            <li><a th:href="@{/cs/faq/list(boardType='쿠폰/이벤트', subType='쿠폰발급')}">쿠폰발급</a></li>
+                            <li><a th:href="@{/cs/faq/list(boardType='쿠폰/이벤트', subType='쿠폰사용')}">쿠폰사용</a></li>
+                            <li><a th:href="@{/cs/faq/list(boardType='쿠폰/이벤트', subType='이벤트참여')}">이벤트참여</a></li>
+                            <li><a th:href="@{/cs/faq/list(boardType='쿠폰/이벤트', subType='당첨확인')}">당첨확인</a></li>
+                        </ul>
+                    </section>
+
+                    <!-- 주문/결제 -->
+                    <section class="panel" data-key="order">
+                        <a th:href="@{/cs/faq/list(boardType='주문/결제')}"><h3>주문/결제</h3></a>
+                        <ul class="menu-grid">
+                            <li><a th:href="@{/cs/faq/list(boardType='주문/결제', subType='주문방법')}">주문방법</a></li>
+                            <li><a th:href="@{/cs/faq/list(boardType='주문/결제', subType='결제수단')}">결제수단</a></li>
+                            <li><a th:href="@{/cs/faq/list(boardType='주문/결제', subType='결제오류')}">결제오류</a></li>
+                        </ul>
+                    </section>
+
+                    <!-- 배송 -->
+                    <section class="panel" data-key="delivery">
+                        <a th:href="@{/cs/faq/list(boardType='배송')}"><h3>배송</h3></a>
+                        <ul class="menu-grid">
+                            <li><a th:href="@{/cs/faq/list(boardType='배송', subType='배송조회')}">배송조회</a></li>
+                            <li><a th:href="@{/cs/faq/list(boardType='배송', subType='배송비')}">배송비</a></li>
+                            <li><a th:href="@{/cs/faq/list(boardType='배송', subType='해외배송')}">해외배송</a></li>
+                        </ul>
+                    </section>
+
+                    <!-- 취소/반품/교환 -->
+                    <section class="panel" data-key="return">
+                        <a th:href="@{/cs/faq/list(boardType='취소/반품/교환')}"><h3>취소/반품/교환</h3></a>
+                        <ul class="menu-grid">
+                            <li><a th:href="@{/cs/faq/list(boardType='취소/반품/교환', subType='주문취소')}">주문취소</a></li>
+                            <li><a th:href="@{/cs/faq/list(boardType='취소/반품/교환', subType='반품')}">반품</a></li>
+                            <li><a th:href="@{/cs/faq/list(boardType='취소/반품/교환', subType='교환')}">교환</a></li>
+                        </ul>
+                    </section>
+
+                    <!-- 여행/숙박/항공 -->
+                    <section class="panel" data-key="travel">
+                        <a th:href="@{/cs/faq/list(boardType='여행/숙박/항공')}"><h3>여행/숙박/항공</h3></a>
+                        <ul class="menu-grid">
+                            <li><a th:href="@{/cs/faq/list(boardType='여행/숙박/항공', subType='예약')}">예약</a></li>
+                            <li><a th:href="@{/cs/faq/list(boardType='여행/숙박/항공', subType='변경/취소')}">변경/취소</a></li>
+                        </ul>
+                    </section>
+
+                    <!-- 안전거래 -->
+                    <section class="panel" data-key="safe">
+                        <a th:href="@{/cs/faq/list(boardType='안전거래')}"><h3>안전거래</h3></a>
+                        <ul class="menu-grid">
+                            <li><a th:href="@{/cs/faq/list(boardType='안전거래', subType='안전결제')}">안전결제</a></li>
+                            <li><a th:href="@{/cs/faq/list(boardType='안전거래', subType='사기주의')}">사기주의</a></li>
+                        </ul>
+                    </section>
+                </div>
+            </nav>
+        </div>
+    </div>
+</aside>
 
 <!--헤더푸터 연결-->
     <div id="header"></div>
     <div id="content" class="cs_qna_list_wrap">
         <h1>ASK NICHIYA</h1>
         <div class="cs_sub_nav">
-            <ul>
-                <li class="on"><a href="#">회원</a></li>
-                <li><a href="#">쿠폰/이벤트</a></li>
-                <li><a href="#">주문/결제</a></li>
-                <li><a href="#">배송</a></li>
-                <li><a href="#">취소/반품/교환</a></li>
-                <li><a href="#">여행/숙박/항공</a></li>
-                <li><a href="#">안전거래</a></li>
-            </ul>
+            <div class="cs_sub_nav" style="margin: 10px;">
+                <ul>
+                    <li th:classappend="${boardType2 == null or boardType2 == '' or boardType2 == '회원'} ? 'on'">
+                        <a th:href="@{/cs/qna/list(boardType2='회원')}">회원</a>
+                    </li>
+                    <li th:classappend="${boardType2 == '쿠폰/이벤트'} ? 'on'">
+                        <a th:href="@{/cs/qna/list(boardType2='쿠폰/이벤트')}">쿠폰/이벤트</a>
+                    </li>
+                    <li th:classappend="${boardType2 == '주문/결제'} ? 'on'">
+                        <a th:href="@{/cs/qna/list(boardType2='주문/결제')}">주문/결제</a>
+                    </li>
+                    <li th:classappend="${boardType2 == '배송'} ? 'on'">
+                        <a th:href="@{/cs/qna/list(boardType2='배송')}">배송</a>
+                    </li>
+                    <li th:classappend="${boardType2 == '취소/반품/교환'} ? 'on'">
+                        <a th:href="@{/cs/qna/list(boardType2='취소/반품/교환')}">취소/반품/교환</a>
+                    </li>
+                    <li th:classappend="${boardType2 == '여행/숙박/항공'} ? 'on'">
+                        <a th:href="@{/cs/qna/list(boardType2='여행/숙박/항공')}">여행/숙박/항공</a>
+                    </li>
+                    <li th:classappend="${boardType2 == '안전거래'} ? 'on'">
+                        <a th:href="@{/cs/qna/list(boardType2='안전거래')}">안전거래</a>
+                    </li>
+                </ul>
+            </div>
         </div>
         <div class="qna_list_area">
             <div class="qna_section">
-                <h2>회원</h2>
+
+                <!-- 제목이 카테고리 별로 이름이 바뀔 수 있도록 설정 예정 -->
+
                 <table>
-                    <colgroup>
-                        <col style="width: 10%;">   <!-- 유형 -->
-                        <col style="width: auto;">  <!-- 제목 -->
-                        <col style="width: 15%;">   <!-- 상태 -->
-                        <col style="width: 15%;">   <!-- 작성자 -->
-                        <col style="width: 15%;">   <!-- 작성일 -->
-                    </colgroup>
                     <thead>
-                        <tr>
-                            <th>유형</th>
-                            <th>제목</th>
-                            <th>상태</th>
-                            <th>작성자</th>
-                            <th>작성일</th>
+                        <tr th:each="qna : ${qnaList}">
+                            <!-- 유형분류 -->
+                            <td th:text="${qna.boardType3 == 'signup' ? '[가입]' :
+                                          (qna.boardType3 == 'withdraw' ? '[탈퇴]' :
+                                          (qna.boardType3 == 'account' ? '[회원정보]' :
+                                          (qna.boardType3 == 'login' ? '[로그인]' :
+                                          (qna.boardType3 == 'couponissue' ? '[쿠폰발급]' :
+                                          (qna.boardType3 == 'couponuse' ? '[쿠폰사용]' :
+                                          (qna.boardType3 == 'eventjoin' ? '[이벤트참여]' :
+                                          (qna.boardType3 == 'winnercheck' ? '[당첨확인]' :
+                                          (qna.boardType3 == 'orderguide' ? '[주문방법]' :
+                                          (qna.boardType3 == 'paymentmethod' ? '[결제수단]' :
+                                          (qna.boardType3 == 'paymenterror' ? '[결제오류]' :
+                                          (qna.boardType3 == 'receipt' ? '[영수증/증빙]' :
+                                          (qna.boardType3 == 'tracking' ? '[배송조회]' :
+                                          (qna.boardType3 == 'deliverytime' ? '[배송기간]' :
+                                          (qna.boardType3 == 'deliveryfee' ? '[배송비]' :
+                                          (qna.boardType3 == 'globalshipping' ? '[해외배송]' :
+                                          (qna.boardType3 == 'ordercancel' ? '[주문취소]' :
+                                          (qna.boardType3 == 'refund' ? '[반품]' :
+                                          (qna.boardType3 == 'exchange' ? '[교환]' :
+                                          (qna.boardType3 == 'refundprocess' ? '[환불처리]' :
+                                          (qna.boardType3 == 'reservation' ? '[예약]' :
+                                          (qna.boardType3 == 'payment' ? '[결제]' :
+                                          (qna.boardType3 == 'changecancel' ? '[변경/취소]' :
+                                          (qna.boardType3 == 'guide' ? '[이용안내]' :
+                                          (qna.boardType3 == 'security' ? '[보안공지]' :
+                                          (qna.boardType3 == 'alert' ? '[사기주의]' :
+                                          (qna.boardType3 == 'safepayment' ? '[안전결제]' :
+                                          (qna.boardType3 == 'privacy' ? '[개인정보보호]' : '[내용]')))))))))))))))))))))))))))}">가입</td>
+
+                            <td th:text="${qna.title}"></td>
+                            <td th:text="${qna.look}"></td>
+                            <td th:text="${qna.userid}"></td>
+                            <td th:text="${#temporals.format(qna.createdAt, 'yyyy-MM-dd')}"></td>
                         </tr>
                     </thead>
-                    <script>
-                    // ★ 원본 작성자 아이디(예: 서버에서 받아온 값)
-                        const AUTHOR_ID = "chkha";
-
-                        // ★ 마스킹 규칙: 앞 3글자 + '**'
-                        function maskId(id) {
-                          if (!id) return "";
-                          return id.length <= 3 ? id : id.slice(0, 3) + "**";
-                        }
-
-                        const qnaData = {
-                          "회원": [
-                            { type: "[가입]", title: "가입 문의내용", status: "검토 중", date: "22.10.31", author: AUTHOR_ID },
-                            { type: "[탈퇴]", title: "탈퇴 문의내용", status: "검토 중", date: "22.10.31", author: AUTHOR_ID },
-                            { type: "[회원정보]", title: "회원정보 문의내용", status: "답변완료", date: "22.10.31", author: AUTHOR_ID },
-                          ],
-                          "쿠폰/이벤트": [
-                            { type: "[쿠폰]", title: "쿠폰 사용 문의", status: "검토 중", date: "22.11.01", author: AUTHOR_ID },
-                            { type: "[이벤트]", title: "이벤트 응모 문의", status: "답변완료", date: "22.11.02", author: AUTHOR_ID },
-                          ],
-                          "주문/결제": [
-                            { type: "[결제]", title: "결제 오류 발생", status: "검토 중", date: "22.11.03", author: AUTHOR_ID },
-                            { type: "[주문]", title: "주문 내역 문의", status: "답변완료", date: "22.11.04", author: AUTHOR_ID },
-                          ],
-                          "배송": [
-                            { type: "[배송]", title: "배송 지연 문의", status: "검토 중", date: "22.11.05", author: AUTHOR_ID },
-                          ],
-                          "취소/반품/교환": [
-                            { type: "[반품]", title: "반품 신청 방법", status: "검토 중", date: "22.11.06", author: AUTHOR_ID },
-                          ],
-                          "여행/숙박/항공": [
-                            { type: "[숙박]", title: "숙박 예약 취소", status: "답변완료", date: "22.11.07", author: AUTHOR_ID },
-                          ],
-                          "안전거래": [
-                            { type: "[보안]", title: "보안 관련 문의", status: "검토 중", date: "22.11.08", author: AUTHOR_ID },
-                          ]
-                        };
-
-                        function renderQnA(category) {
-                          const qnaList = qnaData[category] || [];
-                          const tableBody = document.querySelector(".qna_section tbody");
-                          const sectionTitle = document.querySelector(".qna_section h2");
-
-                          // 테이블 내용 초기화
-                          tableBody.innerHTML = "";
-                          sectionTitle.textContent = category;
-
-                          // 항목 채우기 (thead와 td 순서 일치: 유형 | 제목 | 상태 | 작성자 | 작성일)
-                          qnaList.forEach(qna => {
-                            const tr = document.createElement("tr");
-                            const masked = maskId(qna.author);
-                            tr.innerHTML = `
-                              <td>${qna.type}</td>
-                              <td><a href="qna_view.html">${qna.title}</a></td>
-                              <td class="${qna.status === '답변완료' ? 'status_complete' : 'status_pending'}">${qna.status}</td>
-                              <td>${masked}</td>
-                              <td>${qna.date}</td>
-                            `;
-                            tableBody.appendChild(tr);
-                          });
-                        }
-
-                        // 메뉴 클릭 이벤트 등록
-                        document.addEventListener("DOMContentLoaded", () => {
-                          const menuItems = document.querySelectorAll(".cs_sub_nav li");
-
-                          menuItems.forEach(item => {
-                            item.addEventListener("click", e => {
-                              e.preventDefault();
-
-                              // 선택된 카테고리 이름
-                              const category = item.textContent.trim();
-
-                              // 메뉴 on 클래스 처리
-                              menuItems.forEach(i => i.classList.remove("on"));
-                              item.classList.add("on");
-
-                              // Q&A 목록 렌더링
-                              renderQnA(category);
-                            });
-                          });
-
-                          // 초기 로딩 시 "회원" 항목 표시
-                          renderQnA("회원");
-                        });
-                    </script>
-
-                    <tbody>
-                        <!-- JavaScript가 동적으로 채움 -->
-                    </tbody>
                 </table>
             </div>
+
             <!-- 페이지네이션 -->
-            <div style=" height: 100px; margin-top:40px; display: flex; justify-content: center;">
-                <form action="" method="" style="">
-                    <div style="display: flex;">
-                        <div style="">
-                            <input type="button" class="prev-page" value="< 이전" style="border:1px solid #ddd;">
-                        </div>
-                        <div style="">
-                            <input type="button" value="1" style="border:1px solid #333; background-color: #333; color: white; height: 30px; width: 30px; margin-right:2px; line-height:1;">
-                            <input type="button" value="2" style="cursor: pointer; border:1px solid #ddd; color: #555; height: 30px; width: 30px; margin-right:2px; line-height:1;">
-                            <input type="button" value="3" style="cursor: pointer; border:1px solid #ddd; color: #555; height: 30px; width: 30px; line-height:1;">
-                        </div>
-                        <div>
-                            <input type="button" class="next-page" value="다음 >" style="border:1px solid #ddd;">
-                        </div>
-                    </div>
-                </form>
-                
+            <!-- 페이지네이션 -->
+            <div class="pagination"
+                 th:with="
+                    start=${T(java.lang.Math).floor(currentPage / 5) * 5},
+                    end=${(start + 4) < (totalPages - 1) ? (start + 4) : (totalPages - 1)}">
+
+                <!-- 이전 버튼 -->
+                <a th:href="@{/cs/qna/list(
+                    userid=${userid},
+                    offset=${(currentPage > 0) ? (currentPage - 1) * limit : 0},
+                    limit=${limit}
+                 )}">
+                    이전
+                </a>
+
+                <!-- 페이지 번호 (5개씩 출력) -->
+                <span th:each="i : ${#numbers.sequence(start, end)}">
+                    <a th:href="@{/cs/qna/list(
+                                    userid=${userid},
+                                    offset=${i * limit},
+                                    limit=${limit}
+                                 )}"
+                       th:text="${i + 1}"
+                       th:classappend="${i == currentPage} ? 'on'"></a>
+                </span>
+
+                <!-- 다음 버튼 -->
+                <a th:href="@{/cs/qna/list(
+                    userid=${userid},
+                    offset=${(currentPage < totalPages - 1) ? (currentPage + 1) * limit : currentPage * limit},
+                    limit=${limit}
+                 )}">
+                    다음
+                </a>
             </div>
+
+
             <div class="btn_area">
                 <a href="qna_write.html" class="btn_write">문의하기</a>
             </div>
         </div>
     </div>
+
+<script>
+    // --- 요소 가져오기 ---
+    const body     = document.body;
+    const menuBtn  = document.getElementById('menuBtn');   // 왼쪽 상단 버튼
+    const closeBtn = document.getElementById('closeBtn');  // X 버튼
+    const overlay  = document.getElementById('menuOverlay'); // 전체 오버레이
+
+    // --- 메뉴 열기 ---
+    function openMenu(){
+        overlay.classList.add('open');  // CSS .open 적용 → 왼쪽에서 패널 슬라이드
+        overlay.setAttribute('aria-hidden', 'false');
+        menuBtn.setAttribute('aria-expanded', 'true');
+        body.style.overflow = 'hidden'; // 배경 스크롤 막음
+    }
+
+    // --- 메뉴 닫기 ---
+    function closeMenu(){
+        overlay.classList.remove('open');
+        overlay.setAttribute('aria-hidden', 'true');
+        menuBtn.setAttribute('aria-expanded', 'false');
+        body.style.overflow = ''; // 스크롤 다시 가능
+    }
+
+    // --- 이벤트 연결 ---
+    if(menuBtn && closeBtn && overlay){
+        menuBtn.addEventListener('click', openMenu); // 버튼 클릭 시 열기
+        closeBtn.addEventListener('click', closeMenu); // X 버튼 클릭 시 닫기
+
+        // 배경 클릭 시 닫기
+        overlay.addEventListener('click', (e) => {
+            if(e.target === overlay) closeMenu();
+        });
+
+        // ESC 키 눌렀을 때 닫기
+        window.addEventListener('keydown', (e)=>{
+            if(e.key === 'Escape' && overlay.classList.contains('open')) closeMenu();
+        });
+    }
+</script>
+
+<script>
+    // --- 왼쪽 카테고리 클릭 시 오른쪽 패널 열기 ---
+    const menuLinks = document.querySelectorAll('.overlay__menu a[data-cat]');
+    const panels    = document.querySelectorAll('#subcol .panel');
+
+    menuLinks.forEach(link => {
+        link.addEventListener('click', (e) => {
+            e.preventDefault();
+
+            // 1. 모든 패널 숨기기
+            panels.forEach(p => p.classList.remove('show'));
+
+            // 2. 클릭한 카테고리 가져오기
+            const key = link.getAttribute('data-cat');
+            const panel = document.querySelector(`#subcol .panel[data-key="${key}"]`);
+
+            // 3. 해당 패널만 보이기
+            if (panel) {
+                panel.classList.add('show');
+            }
+
+            // 4. 왼쪽 메뉴 active 처리 (선택사항)
+            menuLinks.forEach(l => l.classList.remove('is-active'));
+            link.classList.add('is-active');
+        });
+    });
+</script>
 <div id="footer"></div>
 <div th:replace="~{main/footer.html}"></div>
 </body>

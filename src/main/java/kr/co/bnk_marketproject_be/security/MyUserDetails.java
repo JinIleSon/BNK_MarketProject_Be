@@ -21,7 +21,7 @@ public class MyUserDetails implements UserDetails, OAuth2User {
     @Builder.Default
     private Map<String, Object> attributes =  Collections.emptyMap();
 
-//    @Override
+    //    @Override
 //    public Collection<? extends GrantedAuthority> getAuthorities() {
 //        // 계정 목록 리스트 생성, 인가 처리에 사용
 //        List<GrantedAuthority> authorities = new ArrayList<>();
@@ -29,12 +29,12 @@ public class MyUserDetails implements UserDetails, OAuth2User {
 //        authorities.add(new SimpleGrantedAuthority(user.getRole())); // "admin" / "seller" / "user"
 //        return authorities;
 //    }
-        @Override
-        public Collection<? extends GrantedAuthority> getAuthorities() {
-            // DB에 null이 올 수도 있으니 기본값 보정
-            String role = (user.getRole() != null && !user.getRole().isBlank()) ? user.getRole() : "user";
-            return List.of(new SimpleGrantedAuthority(role)); // "admin" / "seller" / "user"
-        }
+    @Override
+    public Collection<? extends GrantedAuthority> getAuthorities() {
+        // DB에 null이 올 수도 있으니 기본값 보정
+        String role = (user.getRole() != null && !user.getRole().isBlank()) ? user.getRole() : "user";
+        return List.of(new SimpleGrantedAuthority(role)); // "admin" / "seller" / "user"
+    }
 
 
 

@@ -22,11 +22,27 @@
         FROM board b
         LEFT JOIN comments c ON b.id = c.bid
         WHERE b.board_type = 'inquiry'
+        <if test="boardType2 != null and boardType2 != ''">
+            AND b.board_type2 = #{boardType2}
+        </if>
         <if test="userid != null and userid != ''">
             AND b.user_id = #{userid}
         </if>
         ORDER BY b.id DESC
         OFFSET #{offset} ROWS FETCH NEXT #{limit} ROWS ONLY
+    </select>
+
+    <!-- List 페이지네이션용 -->
+    <select id="selectTotalCount" resultType="int">
+        SELECT COUNT(*)
+        FROM board b
+        WHERE b.board_type = 'inquiry'
+        <if test="boardType2 != null and boardType2 != ''">
+            AND b.board_type2 = #{boardType2}
+        </if>
+        <if test="userid != null and userid != ''">
+            AND b.user_id = #{userid}
+        </if>
     </select>
 
 
