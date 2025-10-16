@@ -13,12 +13,14 @@ public interface CSQnaMapper {
     List<CSNoticeDTO> selectQnaList(
             @Param("userid") String userId,
             @Param("boardType2") String boardType2,
+            @Param("boardType3") String boardType3,
             @Param("offset") int offset,
             @Param("limit") int limit);
 
     int selectTotalCount(
             @Param("userid") String userid,
-            @Param("boardType2") String boardType2
+            @Param("boardType2") String boardType2,
+            @Param("boardType3") String boardType3
     );
 
     // QnA 상세

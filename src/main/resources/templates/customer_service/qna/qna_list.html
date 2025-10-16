@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="ko">
+<html xmlns:th="http://www.thymeleaf.org" lang="ko">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -7,9 +7,8 @@
 
     <link rel="stylesheet" th:href="@{/css/common.css}">
     <link rel="stylesheet" th:href="@{/css/qna.css}">
-
+</head>
     <style>
-        /* 페이지네이션 */
         /* 게시판 아래버튼 부분 */
         .prev-page{
             border: none;
@@ -26,7 +25,6 @@
             margin-right:3px;
             cursor: pointer;
         }
-
         .icon-btn {
             background:none;
             border:1px solid #000;
@@ -195,10 +193,8 @@
         }
 
         /* Pagination */
-        /* Pagination (notice 스타일 그대로) */
         .pagination {
             text-align: center;
-            margin-top: 20px;
         }
 
         .pagination a {
@@ -221,9 +217,7 @@
             border-color: #333;
         }
 
-
     </style>
-</head>
 <body>
 <header th:replace="~{main/header :: header}"></header>
 
@@ -233,37 +227,6 @@
             <button id="closeBtn" class="overlay__close" aria-label="메뉴 닫기"></button>
             <div style="font-size:72px; font-weight:800; letter-spacing:-10px; "class="title-didone">NICHIYA</div>
         </div>
-
-        <style>
-            .overlay__menu a[data-cat].is-active { font-weight: 700; text-decoration: underline; }
-
-            #subcol .panel {
-                position: absolute; inset: 0;
-                padding: 20px;
-                overflow: auto;
-                opacity: 0;
-                transform: translateY(6px);
-                transition: opacity .35s ease, transform .35s ease;
-                visibility: hidden;
-                pointer-events: none;
-            }
-            #subcol .panel.show {
-                opacity: 1;
-                transform: none;
-                visibility: visible;
-                pointer-events: auto;
-            }
-            .menu-grid {
-                display: grid;
-                grid-template-columns: repeat(2, auto);
-                column-gap: 50px;
-                row-gap: 6px;
-                padding: 0;
-                margin: 0;
-                justify-content: start;
-            }
-            .menu-grid li { list-style: none; }
-        </style>
 
         <div style="display:flex; margin-left:20%; margin-top:1%; width:100%;">
             <nav class="overlay__menu" style="width:100%;">
@@ -358,99 +321,213 @@
     <div id="header"></div>
     <div id="content" class="cs_qna_list_wrap">
         <h1>ASK NICHIYA</h1>
-        <div class="cs_sub_nav">
-            <div class="cs_sub_nav" style="margin: 10px;">
-                <ul>
-                    <li th:classappend="${boardType2 == null or boardType2 == '' or boardType2 == '회원'} ? 'on'">
-                        <a th:href="@{/cs/qna/list(boardType2='회원')}">회원</a>
-                    </li>
-                    <li th:classappend="${boardType2 == '쿠폰/이벤트'} ? 'on'">
-                        <a th:href="@{/cs/qna/list(boardType2='쿠폰/이벤트')}">쿠폰/이벤트</a>
-                    </li>
-                    <li th:classappend="${boardType2 == '주문/결제'} ? 'on'">
-                        <a th:href="@{/cs/qna/list(boardType2='주문/결제')}">주문/결제</a>
-                    </li>
-                    <li th:classappend="${boardType2 == '배송'} ? 'on'">
-                        <a th:href="@{/cs/qna/list(boardType2='배송')}">배송</a>
-                    </li>
-                    <li th:classappend="${boardType2 == '취소/반품/교환'} ? 'on'">
-                        <a th:href="@{/cs/qna/list(boardType2='취소/반품/교환')}">취소/반품/교환</a>
-                    </li>
-                    <li th:classappend="${boardType2 == '여행/숙박/항공'} ? 'on'">
-                        <a th:href="@{/cs/qna/list(boardType2='여행/숙박/항공')}">여행/숙박/항공</a>
-                    </li>
-                    <li th:classappend="${boardType2 == '안전거래'} ? 'on'">
-                        <a th:href="@{/cs/qna/list(boardType2='안전거래')}">안전거래</a>
-                    </li>
-                </ul>
-            </div>
-        </div>
-        <div class="qna_list_area">
-            <div class="qna_section">
 
-                <!-- 제목이 카테고리 별로 이름이 바뀔 수 있도록 설정 예정 -->
+        <!-- 1, 2차 카테고리 -->
+        <div class="cs_sub_nav">
+            <!-- 1차 카테고리 -->
+            <ul>
+                <li th:classappend="${boardType2 == 'member'} ? 'on'">
+                    <a th:href="@{/cs/qna/list(boardType2='member')}">회원</a>
+                </li>
+                <li th:classappend="${boardType2 == 'event'} ? 'on'">
+                    <a th:href="@{/cs/qna/list(boardType2='event')}">쿠폰/이벤트</a>
+                </li>
+                <li th:classappend="${boardType2 == 'pay'} ? 'on'">
+                    <a th:href="@{/cs/qna/list(boardType2='pay')}">주문/결제</a>
+                </li>
+                <li th:classappend="${boardType2 == 'delivery'} ? 'on'">
+                    <a th:href="@{/cs/qna/list(boardType2='delivery')}">배송</a>
+                </li>
+                <li th:classappend="${boardType2 == 'cancel'} ? 'on'">
+                    <a th:href="@{/cs/qna/list(boardType2='cancel')}">취소/반품/교환</a>
+                </li>
+                <li th:classappend="${boardType2 == 'trip'} ? 'on'">
+                    <a th:href="@{/cs/qna/list(boardType2='trip')}">여행/숙박/항공</a>
+                </li>
+                <li th:classappend="${boardType2 == 'safe'} ? 'on'">
+                    <a th:href="@{/cs/qna/list(boardType2='safe')}">안전거래</a>
+                </li>
+            </ul>
+
+            <!-- 2차 카테고리 -->
+            <ul th:if="${boardType2 == 'member'}">
+                <li th:classappend="${boardType3 == 'login'} ? 'on'">
+                    <a th:href="@{/cs/qna/list(boardType2='member', boardType3='login')}">로그인</a>
+                </li>
+                <li th:classappend="${boardType3 == 'signup'} ? 'on'">
+                    <a th:href="@{/cs/qna/list(boardType2='member', boardType3='signup')}">가입</a>
+                </li>
+                <li th:classappend="${boardType3 == 'withdraw'} ? 'on'">
+                    <a th:href="@{/cs/qna/list(boardType2='member', boardType3='withdraw')}">탈퇴</a>
+                </li>
+                <li th:classappend="${boardType3 == 'account'} ? 'on'">
+                    <a th:href="@{/cs/qna/list(boardType2='member', boardType3='account')}">회원정보</a>
+                </li>
+            </ul>
+
+            <ul th:if="${boardType2 == 'event'}">
+                <li th:classappend="${boardType3 == 'couponissue'} ? 'on'">
+                    <a th:href="@{/cs/qna/list(boardType2='event', boardType3='couponissue')}">쿠폰발급</a>
+                </li>
+                <li th:classappend="${boardType3 == 'couponuse'} ? 'on'">
+                    <a th:href="@{/cs/qna/list(boardType2='event', boardType3='couponuse')}">쿠폰사용</a>
+                </li>
+                <li th:classappend="${boardType3 == 'eventjoin'} ? 'on'">
+                    <a th:href="@{/cs/qna/list(boardType2='event', boardType3='eventjoin')}">이벤트참여</a>
+                </li>
+                <li th:classappend="${boardType3 == 'winnercheck'} ? 'on'">
+                    <a th:href="@{/cs/qna/list(boardType2='event', boardType3='winnercheck')}">당첨확인</a>
+                </li>
+            </ul>
+
+            <ul th:if="${boardType2 == 'pay'}">
+                <li th:classappend="${boardType3 == 'orderguide'} ? 'on'">
+                    <a th:href="@{/cs/qna/list(boardType2='pay', boardType3='orderguide')}">주문방법</a>
+                </li>
+                <li th:classappend="${boardType3 == 'paymentmethod'} ? 'on'">
+                    <a th:href="@{/cs/qna/list(boardType2='pay', boardType3='paymentmethod')}">결제수단</a>
+                </li>
+                <li th:classappend="${boardType3 == 'paymenterror'} ? 'on'">
+                    <a th:href="@{/cs/qna/list(boardType2='pay', boardType3='paymenterror')}">결제오류</a>
+                </li>
+                <li th:classappend="${boardType3 == 'receipt'} ? 'on'">
+                    <a th:href="@{/cs/qna/list(boardType2='pay', boardType3='receipt')}">영수증/증빙</a>
+                </li>
+            </ul>
+
+            <ul th:if="${boardType2 == 'delivery'}">
+                <li th:classappend="${boardType3 == 'tracking'} ? 'on'">
+                    <a th:href="@{/cs/qna/list(boardType2='delivery', boardType3='tracking')}">배송조회</a>
+                </li>
+                <li th:classappend="${boardType3 == 'deliverytime'} ? 'on'">
+                    <a th:href="@{/cs/qna/list(boardType2='delivery', boardType3='deliverytime')}">배송기간</a>
+                </li>
+                <li th:classappend="${boardType3 == 'deliveryfee'} ? 'on'">
+                    <a th:href="@{/cs/qna/list(boardType2='delivery', boardType3='deliveryfee')}">배송비</a>
+                </li>
+                <li th:classappend="${boardType3 == 'globalshipping'} ? 'on'">
+                    <a th:href="@{/cs/qna/list(boardType2='delivery', boardType3='globalshipping')}">해외배송</a>
+                </li>
+            </ul>
+
+            <ul th:if="${boardType2 == 'cancel'}">
+                <li th:classappend="${boardType3 == 'ordercancel'} ? 'on'">
+                    <a th:href="@{/cs/qna/list(boardType2='cancel', boardType3='ordercancel')}">주문취소</a>
+                </li>
+                <li th:classappend="${boardType3 == 'refund'} ? 'on'">
+                    <a th:href="@{/cs/qna/list(boardType2='cancel', boardType3='refund')}">반품</a>
+                </li>
+                <li th:classappend="${boardType3 == 'exchange'} ? 'on'">
+                    <a th:href="@{/cs/qna/list(boardType2='cancel', boardType3='exchange')}">교환</a>
+                </li>
+                <li th:classappend="${boardType3 == 'refundprocess'} ? 'on'">
+                    <a th:href="@{/cs/qna/list(boardType2='cancel', boardType3='refundprocess')}">환불처리</a>
+                </li>
+            </ul>
+
+            <ul th:if="${boardType2 == 'trip'}">
+                <li th:classappend="${boardType3 == 'reservation'} ? 'on'">
+                    <a th:href="@{/cs/qna/list(boardType2='trip', boardType3='reservation')}">예약</a>
+                </li>
+                <li th:classappend="${boardType3 == 'payment'} ? 'on'">
+                    <a th:href="@{/cs/qna/list(boardType2='trip', boardType3='payment')}">결제</a>
+                </li>
+                <li th:classappend="${boardType3 == 'changecancel'} ? 'on'">
+                    <a th:href="@{/cs/qna/list(boardType2='trip', boardType3='changecancel')}">변경/취소</a>
+                </li>
+            </ul>
+
+            <ul th:if="${boardType2 == 'safe'}">
+                <li th:classappend="${boardType3 == 'security'} ? 'on'">
+                    <a th:href="@{/cs/qna/list(boardType2='safe', boardType3='security')}">보안공지</a>
+                </li>
+                <li th:classappend="${boardType3 == 'alert'} ? 'on'">
+                    <a th:href="@{/cs/qna/list(boardType2='safe', boardType3='alert')}">사기주의</a>
+                </li>
+                <li th:classappend="${boardType3 == 'safepayment'} ? 'on'">
+                    <a th:href="@{/cs/qna/list(boardType2='safe', boardType3='safepayment')}">안전결제</a>
+                </li>
+                <li th:classappend="${boardType3 == 'privacy'} ? 'on'">
+                    <a th:href="@{/cs/qna/list(boardType2='safe', boardType3='privacy')}">개인정보보호</a>
+                </li>
+            </ul>
+        </div>
 
                 <table>
                     <thead>
+                        <tr style="border-top: solid 2px #ddd">
+                            <th style="width:80px;">유형</th>
+                            <th style="width:300px;">제목</th>
+                            <th style="width:65px;">상태</th>
+                            <th style="width:62px;">작성자</th>
+                            <th style="width:62px;">작성일</th>
+                        </tr>
+                    </thead>
+                    <tbody>
                         <tr th:each="qna : ${qnaList}">
-                            <!-- 유형분류 -->
-                            <td th:text="${qna.boardType3 == 'signup' ? '[가입]' :
-                                          (qna.boardType3 == 'withdraw' ? '[탈퇴]' :
-                                          (qna.boardType3 == 'account' ? '[회원정보]' :
-                                          (qna.boardType3 == 'login' ? '[로그인]' :
-                                          (qna.boardType3 == 'couponissue' ? '[쿠폰발급]' :
-                                          (qna.boardType3 == 'couponuse' ? '[쿠폰사용]' :
-                                          (qna.boardType3 == 'eventjoin' ? '[이벤트참여]' :
-                                          (qna.boardType3 == 'winnercheck' ? '[당첨확인]' :
-                                          (qna.boardType3 == 'orderguide' ? '[주문방법]' :
-                                          (qna.boardType3 == 'paymentmethod' ? '[결제수단]' :
-                                          (qna.boardType3 == 'paymenterror' ? '[결제오류]' :
-                                          (qna.boardType3 == 'receipt' ? '[영수증/증빙]' :
-                                          (qna.boardType3 == 'tracking' ? '[배송조회]' :
-                                          (qna.boardType3 == 'deliverytime' ? '[배송기간]' :
-                                          (qna.boardType3 == 'deliveryfee' ? '[배송비]' :
-                                          (qna.boardType3 == 'globalshipping' ? '[해외배송]' :
-                                          (qna.boardType3 == 'ordercancel' ? '[주문취소]' :
-                                          (qna.boardType3 == 'refund' ? '[반품]' :
-                                          (qna.boardType3 == 'exchange' ? '[교환]' :
-                                          (qna.boardType3 == 'refundprocess' ? '[환불처리]' :
-                                          (qna.boardType3 == 'reservation' ? '[예약]' :
-                                          (qna.boardType3 == 'payment' ? '[결제]' :
-                                          (qna.boardType3 == 'changecancel' ? '[변경/취소]' :
-                                          (qna.boardType3 == 'guide' ? '[이용안내]' :
-                                          (qna.boardType3 == 'security' ? '[보안공지]' :
-                                          (qna.boardType3 == 'alert' ? '[사기주의]' :
-                                          (qna.boardType3 == 'safepayment' ? '[안전결제]' :
-                                          (qna.boardType3 == 'privacy' ? '[개인정보보호]' : '[내용]')))))))))))))))))))))))))))}">가입</td>
-
+                            <td th:switch="${qna.boardType3}">
+                                <span th:case="'signup'">가입</span>
+                                <span th:case="'withdraw'">탈퇴</span>
+                                <span th:case="'account'">회원정보</span>
+                                <span th:case="'login'">로그인</span>
+                                <span th:case="'couponissue'">쿠폰발급</span>
+                                <span th:case="'couponuse'">쿠폰사용</span>
+                                <span th:case="'eventjoin'">이벤트참여</span>
+                                <span th:case="'winnercheck'">당첨확인</span>
+                                <span th:case="'orderguide'">주문방법</span>
+                                <span th:case="'paymentmethod'">결제수단</span>
+                                <span th:case="'paymenterror'">결제오류</span>
+                                <span th:case="'receipt'">영수증/증빙</span>
+                                <span th:case="'tracking'">배송조회</span>
+                                <span th:case="'deliverytime'">배송기간</span>
+                                <span th:case="'deliveryfee'">배송비</span>
+                                <span th:case="'globalshipping'">해외배송</span>
+                                <span th:case="'ordercancel'">주문취소</span>
+                                <span th:case="'refund'">반품</span>
+                                <span th:case="'exchange'">교환</span>
+                                <span th:case="'refundprocess'">환불처리</span>
+                                <span th:case="'reservation'">예약</span>
+                                <span th:case="'payment'">결제</span>
+                                <span th:case="'changecancel'">변경/취소</span>
+                                <span th:case="'security'">보안공지</span>
+                                <span th:case="'alert'">사기주의</span>
+                                <span th:case="'safepayment'">안전결제</span>
+                                <span th:case="'privacy'">개인정보보호</span>
+                                <span th:case="*">내용</span>
+                            </td>
                             <td th:text="${qna.title}"></td>
-                            <td th:text="${qna.look}"></td>
+                            <td th:switch="${qna.look}">
+                                <span th:case="0" style="color: gray">검토 중</span>
+                                <span th:case="1" style="color: blue">답변 완료</span>
+                            </td>
                             <td th:text="${qna.userid}"></td>
                             <td th:text="${#temporals.format(qna.createdAt, 'yyyy-MM-dd')}"></td>
                         </tr>
-                    </thead>
+                    </tbody>
                 </table>
             </div>
 
             <!-- 페이지네이션 -->
-            <!-- 페이지네이션 -->
             <div class="pagination"
                  th:with="
-                    start=${T(java.lang.Math).floor(currentPage / 5) * 5},
-                    end=${(start + 4) < (totalPages - 1) ? (start + 4) : (totalPages - 1)}">
+        start=${T(java.lang.Math).floor(currentPage / 5) * 5},
+        end=${(start + 4) < (totalPages - 1) ? (start + 4) : (totalPages - 1)}">
 
                 <!-- 이전 버튼 -->
                 <a th:href="@{/cs/qna/list(
+                    boardType2=${boardType2},
+                    boardType3=${boardType3},
                     userid=${userid},
                     offset=${(currentPage > 0) ? (currentPage - 1) * limit : 0},
                     limit=${limit}
-                 )}">
-                    이전
+                 )}">이전
                 </a>
 
                 <!-- 페이지 번호 (5개씩 출력) -->
                 <span th:each="i : ${#numbers.sequence(start, end)}">
                     <a th:href="@{/cs/qna/list(
+                                    boardType2=${boardType2},
+                                    boardType3=${boardType3},
                                     userid=${userid},
                                     offset=${i * limit},
                                     limit=${limit}
@@ -461,20 +538,19 @@
 
                 <!-- 다음 버튼 -->
                 <a th:href="@{/cs/qna/list(
+                    boardType2=${boardType2},
+                    boardType3=${boardType3},
                     userid=${userid},
                     offset=${(currentPage < totalPages - 1) ? (currentPage + 1) * limit : currentPage * limit},
                     limit=${limit}
-                 )}">
-                    다음
+                 )}">다음
                 </a>
             </div>
-
 
             <div class="btn_area">
                 <a href="qna_write.html" class="btn_write">문의하기</a>
             </div>
-        </div>
-    </div>
+
 
 <script>
     // --- 요소 가져오기 ---
