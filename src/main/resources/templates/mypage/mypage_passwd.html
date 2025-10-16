@@ -5,6 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>비밀번호 확인</title>
   <style>
+      /*푸시용*/
     .inner{width:1270px; background:#fff;}
     .title-row{display:flex; justify-content:center; margin-top:40px;}
     .sec-title{font-weight:800; margin-right:auto; margin-left:73px; margin-bottom:10px;}
@@ -89,13 +90,23 @@
                         </tr>
                         <tr>
                             <td>사용자 ID</td>
-                            <td id="masked-id">chh****</td>
+                            <td id="masked-id"></td>
                         </tr>
                         <tr>
                             <td>현재 비밀번호</td>
-                            <td style="padding-top:20px;">
-                            <input id="password" type="password" class="pw-input" placeholder="현재 비밀번호 입력" autocomplete="current-password">
-                            <button type="button" id="toggle" class="btn" style="width:70px; height:30px; margin-left:6px;">보기</button>
+                            <td style="padding-top:20px; display:flex;padding-bottom: 20px;">
+                                <form id="pwForm" th:action="@{/mypage/mypage/passwd}" method="post">
+                                    <input type="hidden" id="code" name="code" th:value="${code}">
+                                    <input type="hidden" name="email" th:value="${userDTO.email}">
+                                    <input type="hidden" name="phone" th:value="${userDTO.phone}">
+                                    <input type="hidden" name="postcode" th:value="${userDTO.postcode}">
+                                    <input type="hidden" name="address" th:value="${userDTO.address}">
+                                    <input type="hidden" name="detailAddress" th:value="${userDTO.detailAddress}">
+                                    <input id="password" type="password" class="pw-input" placeholder="현재 비밀번호 입력" autocomplete="current-password">
+                                </form>
+                                <div>
+                                    <button type="button" id="toggle" class="btn" style="width:70px; height:30px; margin-left:6px;">보기</button>
+                                </div>
                             <div class="error" id="err"></div>
                             </td>
                         </tr>
@@ -107,7 +118,7 @@
                         <div class="right" style="margin-top:20px; display: flex; flex-direction: column; margin-left: 515px;">
                             <div>
                                 <button type="button" class="btn btn-wide" id="btn-confirm-bottom">확인</button>
-                                <button type="button" onclick="location.href='./mypage_setUp.html'" class="btn btn-wide" id="btn-cancel" style=" background:#666; border:none;">취소</button>
+                                <button type="button" th:onclick="|location.href='@{/mypage/mypage/setUp}'|" class="btn btn-wide" id="btn-cancel" style=" background:#666; border:none;">취소</button>
                             </div>
                         </div>
                     </div>
@@ -118,73 +129,101 @@
         </div>
     </main>
 
-    <script>
-    // ===== 파라미터별 문구/경로 =====
-    const params = new URLSearchParams(location.search);
-    const action = params.get('action') || 'edit'; // edit | pw | withdraw
-    const FLOW = {
-        edit     : { title:'정보 수정 전 확인', desc:'수정 내용을 저장하기 전에 본인 확인을 위해 현재 비밀번호를 입력해 주세요.', next:'/mypage/complete-edit.html' },
-        pw       : { title:'비밀번호 변경 전 확인', desc:'현재 비밀번호 확인 후 변경 페이지로 이동합니다.', next:'/mypage/change-password.html' },
-        withdraw : { title:'회원 탈퇴 전 확인',   desc:'탈퇴 진행 전 본인 확인을 위해 비밀번호를 입력해 주세요.', next:'/mypage/withdraw-confirm.html' }
-    };
-    const f = FLOW[action] || FLOW.edit;
+  <script th:inline="javascript">
+      (() => {
+          // ---- 앱 컨텍스트 (절대경로 보장) ----
+          const APP_CTX = /*[[@{/}]]*/ ''; // 예: "/NICHIYA/"
 
-    document.getElementById('action-title').textContent = f.title;
-    document.getElementById('action-desc').textContent  = f.desc;
+          // ---- querystring / code 값 ----
+          const qs = new URLSearchParams(location.search);    // <-- 전역 'params' 안 씀
+          const codeFromUrl   = qs.get('code');
+          const codeFromInput = document.getElementById('code')?.value || null;
+          const CODE = Number(codeFromUrl ?? codeFromInput ?? NaN);
 
-    // ===== 사용자 ID 마스킹 (프로젝트에서 실제 ID로 치환) =====
-    (function(){
-        const realId = 'chh03ab'; // TODO: 서버에서 주입
-        const masked = realId.length>3 ? realId.slice(0,3) + '*'.repeat(realId.length-3) : realId.replace(/.(?=.)/g,'*');
-        document.getElementById('masked-id').textContent = masked;
-    })();
+          // ---- action 결정 (code=2면 강제 withdraw) ----
+          const actionFromUrl = qs.get('action') || 'edit';
+          const action = (CODE === 2) ? 'withdraw' : actionFromUrl;
 
-    // ===== 비밀번호 보기/숨기기 =====
-    const pw = document.getElementById('password');
-    document.getElementById('toggle')?.addEventListener('click', function(){
-        const isPw = pw.type === 'password';
-        pw.type = isPw ? 'text' : 'password';
-        this.textContent = isPw ? '숨기기' : '보기';
-        pw.focus();
-    });
+          const FLOW = {
+              edit     : { title:'정보 수정 전 확인', desc:'수정 내용을 저장하기 전에 본인 확인을 위해 현재 비밀번호를 입력해 주세요.' },
+              pw       : { title:'비밀번호 변경 전 확인', desc:'현재 비밀번호 확인 후 변경 페이지로 이동합니다.' },
+              withdraw : { title:'회원 탈퇴 전 확인',   desc:'탈퇴 진행 전 본인 확인을 위해 비밀번호를 입력해 주세요.' }
+          };
+          const f = FLOW[action] || FLOW.edit;
+          document.getElementById('action-title').textContent = f.title;
+          document.getElementById('action-desc').textContent  = f.desc;
 
-    const err = document.getElementById('err');
-    const showErr = (m='') => err.textContent = m;
+          // ---- 사용자 ID 마스킹 (null 안전) ----
+          const realId = /*[[${userDTO.userId}]]*/ null;
+          const masked =
+              (typeof realId === 'string' && realId.length)
+                  ? (realId.length > 3 ? realId.slice(0,3) + '*'.repeat(realId.length-3) : realId.replace(/.(?=.)/g,'*'))
+                  : '';
+          document.getElementById('masked-id').textContent = masked;
 
-    // ===== 서버 검증 자리 (샘플) =====
-    async function verifyPassword(p){
-        // 실제 서비스에서는 서버 검증으로 교체
-        await new Promise(r=>setTimeout(r,200));
-        return p === '1234'; // 데모: 제거 필수
-    }
+          // ---- 비밀번호 보기/숨기기 ----
+          const pw = document.getElementById('password');
+          document.getElementById('toggle')?.addEventListener('click', function(){
+              const isPw = pw.type === 'password';
+              pw.type = isPw ? 'text' : 'password';
+              this.textContent = isPw ? '숨기기' : '보기';
+              pw.focus();
+          });
 
-    async function submit(){
-        const v = pw.value.trim();
-        showErr('');
-        if(!v){ showErr('비밀번호를 입력해 주세요.'); pw.focus(); return; }
-        if(v.length < 4){ showErr('비밀번호가 너무 짧습니다.'); pw.focus(); return; }
+          // ---- 에러 표시 ----
+          const err = document.getElementById('err');
+          const showErr = (m='') => { if (err) err.textContent = m; };
 
-        // 존재하는 확인 버튼만 수집
-        const btns = Array.from(document.querySelectorAll('#btn-confirm, #btn-confirm-bottom'));
-        btns.forEach(b => { b.disabled = true; b.textContent = '확인 중...'; });
+          // ---- 서버 검증 ----
+          async function verifyPassword(pwVal) {
+              const url = APP_CTX + 'mypage/mypage/passwd-check?password=' + encodeURIComponent(pwVal);
+              const res = await fetch(url, { method: 'GET' });
+              if (!res.ok) throw new Error('HTTP ' + res.status);
+              const ok = await res.json();
+              return ok === true;
+          }
 
-        try{
-        const ok = await verifyPassword(v);
-        if(!ok){ showErr('비밀번호가 일치하지 않습니다.'); return; }
-        location.href = f.next;
-        }catch(e){
-        showErr('일시적인 오류가 발생했습니다. 잠시 후 다시 시도해 주세요.');
-        }finally{
-        btns.forEach(b => { b.disabled = false; b.textContent = '확인'; });
-        }
-    }
+          // ---- 제출 ----
+          async function onSubmit(){
+              const v = pw.value.trim();
+              showErr('');
+              if(!v){ showErr('비밀번호를 입력해 주세요.'); pw.focus(); return; }
+              if(v.length < 4){ showErr('비밀번호가 너무 짧습니다.'); pw.focus(); return; }
 
-    // 이벤트 바인딩도 "있을 때만"
-    document.getElementById('btn-confirm-bottom')?.addEventListener('click', submit);
-    document.getElementById('btn-confirm')?.addEventListener('click', submit); // 상단 버튼이 다시 생기면 작동
-    document.getElementById('btn-cancel')?.addEventListener('click', () => history.back());
-    pw.addEventListener('keydown', e => { if(e.key === 'Enter') submit(); });
-    </script>
+              const btns = Array.from(document.querySelectorAll('#btn-confirm, #btn-confirm-bottom'));
+              btns.forEach(b => { b.disabled = true; b.textContent = '확인 중...'; });
+
+              try{
+                  const ok = await verifyPassword(v);
+                  if(!ok){ showErr('비밀번호가 일치하지 않습니다.'); return; }
+
+                  if (CODE === 2) {
+                      const go = confirm('정말로 탈퇴하시겠습니까?\n탈퇴 시 보유 포인트/쿠폰이 소멸되며, 복구가 불가합니다.');
+                      if (!go) return;
+                  }else if (CODE === 3) {
+                      const go = confirm('정말로 수정하시겠습니까?');
+                      if (!go) return;
+                  }
+
+                  const form = document.getElementById('pwForm');
+                  if(!form) throw new Error('pwForm not found');
+                  form.submit(); // POST /mypage/mypage/passwd
+              }catch(e){
+                  showErr('일시적인 오류가 발생했습니다. 잠시 후 다시 시도해 주세요.');
+                  console.error(e);
+              }finally{
+                  btns.forEach(b => { b.disabled = false; b.textContent = '확인'; });
+              }
+          }
+
+          // ---- 이벤트 바인딩 ----
+          document.getElementById('btn-confirm-bottom')?.addEventListener('click', onSubmit);
+          document.getElementById('btn-confirm')?.addEventListener('click', onSubmit);
+          document.getElementById('btn-cancel')?.addEventListener('click', () => history.back());
+          pw.addEventListener('keydown', e => { if(e.key === 'Enter') onSubmit(); });
+
+      })();
+  </script>
     <div style="margin-top:100px;"></div>
   <div th:replace="~{main/footer.html}"></div>
 </body>
