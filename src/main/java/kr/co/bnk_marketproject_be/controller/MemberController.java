@@ -52,7 +52,7 @@ public class MemberController {
         log.info("userDTO = {}", userDTO);
         return "member/member_change_password";
     }
-    // 푸시용 주석
+    // 푸시용
     @PostMapping("/member/changepassword")
     public String member_changepassword(Model model, UserDTO userDTO){
         User user = userRepository.findByUserId(userDTO.getUserId());

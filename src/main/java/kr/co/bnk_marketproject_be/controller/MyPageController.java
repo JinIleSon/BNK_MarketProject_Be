@@ -44,7 +44,7 @@ public class MyPageController {
     public String askList(){
         return "mypage/mypage_ask";
     }
-    // 푸시용 주석
+    // 푸시용
     @GetMapping("/mypage/mypage/setup")
     public String setupList(Model  model, Principal principal){
 
