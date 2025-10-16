@@ -5,7 +5,7 @@
 
 <mapper namespace="kr.co.bnk_marketproject_be.mapper.CSQnaMapper">
 
-    <!-- QnA 목록 -->
+    <!-- ✅ QnA 목록 -->
     <select id="selectQnaList" resultType="kr.co.bnk_marketproject_be.dto.CSNoticeDTO">
         SELECT
         b.id,
@@ -15,36 +15,99 @@
         b.title,
         b.user_id AS userid,
         b.created_at AS createdAt,
-        CASE
-        WHEN c.bid IS NOT NULL OR b.look = 1 THEN '답변완료'
-        ELSE '검토중'
-        END AS look
+        CASE WHEN c.bid IS NOT NULL OR b.look = 1 THEN 1 ELSE 0 END AS look
         FROM board b
         LEFT JOIN comments c ON b.id = c.bid
         WHERE b.board_type = 'inquiry'
+
+        <!-- ✅ 1차 카테고리 필터 -->
         <if test="boardType2 != null and boardType2 != ''">
             AND b.board_type2 = #{boardType2}
         </if>
-        <if test="userid != null and userid != ''">
-            AND b.user_id = #{userid}
-        </if>
+
+        <!-- ✅ 2차 카테고리 필터 -->
+        <choose>
+            <when test="boardType3 != null and boardType3 != ''">
+                AND b.board_type3 = #{boardType3}
+            </when>
+            <otherwise>
+                <if test="boardType2 != null and boardType2 != ''">
+                    <choose>
+                        <when test="boardType2 == 'member'">
+                            AND b.board_type3 IN ('login','signup','withdraw','account')
+                        </when>
+                        <when test="boardType2 == 'event'">
+                            AND b.board_type3 IN ('couponissue','couponuse','eventjoin','winnercheck')
+                        </when>
+                        <when test="boardType2 == 'pay'">
+                            AND b.board_type3 IN ('orderguide','paymentmethod','paymenterror','receipt')
+                        </when>
+                        <when test="boardType2 == 'delivery'">
+                            AND b.board_type3 IN ('tracking','deliverytime','deliveryfee','globalshipping')
+                        </when>
+                        <when test="boardType2 == 'cancel'">
+                            AND b.board_type3 IN ('ordercancel','refund','exchange','refundprocess')
+                        </when>
+                        <when test="boardType2 == 'trip'">
+                            AND b.board_type3 IN ('reservation','payment','changecancel')
+                        </when>
+                        <when test="boardType2 == 'safe'">
+                            AND b.board_type3 IN ('guide','security','alert','safepayment','privacy')
+                        </when>
+                    </choose>
+                </if>
+            </otherwise>
+        </choose>
+
         ORDER BY b.id DESC
         OFFSET #{offset} ROWS FETCH NEXT #{limit} ROWS ONLY
     </select>
 
-    <!-- List 페이지네이션용 -->
+
+    <!-- ✅ QnA 총 개수 (페이지네이션용) -->
     <select id="selectTotalCount" resultType="int">
         SELECT COUNT(*)
         FROM board b
         WHERE b.board_type = 'inquiry'
+
+        <!-- ✅ 1차 카테고리 필터 -->
         <if test="boardType2 != null and boardType2 != ''">
             AND b.board_type2 = #{boardType2}
         </if>
-        <if test="userid != null and userid != ''">
-            AND b.user_id = #{userid}
-        </if>
+
+        <!-- ✅ 2차 카테고리 필터 -->
+        <choose>
+            <when test="boardType3 != null and boardType3 != ''">
+                AND b.board_type3 = #{boardType3}
+            </when>
+            <otherwise>
+                <if test="boardType2 != null and boardType2 != ''">
+                    <choose>
+                        <when test="boardType2 == 'member'">
+                            AND b.board_type3 IN ('login','signup','withdraw','account')
+                        </when>
+                        <when test="boardType2 == 'event'">
+                            AND b.board_type3 IN ('couponissue','couponuse','eventjoin','winnercheck')
+                        </when>
+                        <when test="boardType2 == 'pay'">
+                            AND b.board_type3 IN ('orderguide','paymentmethod','paymenterror','receipt')
+                        </when>
+                        <when test="boardType2 == 'delivery'">
+                            AND b.board_type3 IN ('tracking','deliverytime','deliveryfee','globalshipping')
+                        </when>
+                        <when test="boardType2 == 'cancel'">
+                            AND b.board_type3 IN ('ordercancel','refund','exchange','refundprocess')
+                        </when>
+                        <when test="boardType2 == 'trip'">
+                            AND b.board_type3 IN ('reservation','payment','changecancel')
+                        </when>
+                        <when test="boardType2 == 'safe'">
+                            AND b.board_type3 IN ('security','alert','safepayment','privacy')
+                        </when>
+                    </choose>
+                </if>
+            </otherwise>
+        </choose>
     </select>
-
-
 
 </mapper>
