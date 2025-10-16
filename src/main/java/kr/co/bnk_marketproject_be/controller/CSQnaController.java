@@ -40,7 +40,6 @@ public class CSQnaController {
         model.addAttribute("limit", limit);
         model.addAttribute("userid", userid);
 
-
         return "customer_service/qna/qna_list";
     }
 
@@ -50,6 +49,7 @@ public class CSQnaController {
         CSNoticeDTO qna = qnaService.getQnaview(id);
 
         model.addAttribute("qna", qna);
+        model.addAttribute("boardType2", qna.getBoardType2());
 
         return "customer_service/qna/qna_view";
     }
@@ -57,8 +57,11 @@ public class CSQnaController {
     /* QnA 등록 */
     @PostMapping("/write")
     public String write(@ModelAttribute CSNoticeDTO qna) {
+
         qnaService.insertQna(qna);
+
         return "redirect:/qna/list";
     }
+
 
 }

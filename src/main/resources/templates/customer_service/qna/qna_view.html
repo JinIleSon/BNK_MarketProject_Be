@@ -4,72 +4,94 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Document</title>
-
-    <link rel="stylesheet" href="../../../static/css/common.css">
-    <link rel="stylesheet" href="../../../static/css/qnadetail.css">>
+    <link rel="stylesheet" th:href="@{/css/common.css}">
+    <link rel="stylesheet" th:href="@{/css/qnadetail.css}">
 </head>
 <body>
-<!--헤더푸터 연결-->
-    <script>
-        fetch("../../main/header.html")
-          .then(res => res.text())
-          .then(data => {
-            document.getElementById("header").innerHTML = data;
 
-            // header.html 안의 스크립트 실행 강제
-            const scripts = document.getElementById("header").querySelectorAll("script");
-            scripts.forEach(oldScript => {
-            const newScript = document.createElement("script");
-            if (oldScript.src) {
-                newScript.src = oldScript.src;
-            } else {
-                newScript.textContent = oldScript.textContent;
-            }
-            document.body.appendChild(newScript);
-            });
-          });
-
-       
-        fetch("../../main/footer.html")
-          .then(res => res.text())
-          .then(data => {
-            document.getElementById("footer").innerHTML = data;
-          });
-    </script>
+<div th:replace="~{main/header.html}"></div>
     <div id="header"></div>
 
     <div id="content" class="cs_qna_view_wrap">
         <h1>ASK NICHIYA</h1>
         <div class="cs_sub_nav">
             <ul>
-                <li class="on"><a href="#">회원</a></li>
-                <li><a href="#">쿠폰/이벤트</a></li>
-                <li><a href="#">주문/결제</a></li>
-                <li><a href="#">배송</a></li>
-                <li><a href="#">취소/반품/교환</a></li>
-                <li><a href="#">여행/숙박/항공</a></li>
-                <li><a href="#">안전거래</a></li>
+                <li th:classappend="${boardType2 == 'member'} ? 'on'">
+                    <a th:href="@{/cs/qna/list(boardType2='member')}">회원</a>
+                </li>
+                <li th:classappend="${boardType2 == 'event'} ? 'on'">
+                    <a th:href="@{/cs/qna/list(boardType2='event')}">쿠폰/이벤트</a>
+                </li>
+                <li th:classappend="${boardType2 == 'pay'} ? 'on'">
+                    <a th:href="@{/cs/qna/list(boardType2='pay')}">주문/결제</a>
+                </li>
+                <li th:classappend="${boardType2 == 'delivery'} ? 'on'">
+                    <a th:href="@{/cs/qna/list(boardType2='delivery')}">배송</a>
+                </li>
+                <li th:classappend="${boardType2 == 'cancel'} ? 'on'">
+                    <a th:href="@{/cs/qna/list(boardType2='cancel')}">취소/반품/교환</a>
+                </li>
+                <li th:classappend="${boardType2 == 'trip'} ? 'on'">
+                    <a th:href="@{/cs/qna/list(boardType2='trip')}">여행/숙박/항공</a>
+                </li>
+                <li th:classappend="${boardType2 == 'safe'} ? 'on'">
+                    <a th:href="@{/cs/qna/list(boardType2='safe')}">안전거래</a>
+                </li>
             </ul>
         </div>
-        <div class="qna_view_area">
-            <div class="qna_section question">
-                <h3>[가입] 가입 문의내용</h3>
-                <p class="date">chb** 22.11.21</p>
-                <div class="content">
-                    <p>회원가입하고 싶어요. 어떻게해야하나요?</p>
-                </div>
-            </div>
-            <div class="qna_section answer">
-                <h3>답변 문의내용</h3>
-                <div class="content">
-                    <p>안녕하세요, 회원님 회원가입하시려면 ...</p>
-                </div>
-            </div>
-            <div class="btn_area">
-                <a href="qna_list.html" class="btn_list">목록</a>
-            </div>
+
+        <div class="qna_section question">
+            <table>
+                <tr>
+                    <td style="border-top: 2px solid #ccc">
+                        <h2 th:text="${qna.title}"></h2>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <p th:text="${qna.content}"></p>
+                    </td>
+                </tr>
+            </table>
+        </div>
+
+        <div class="qna_section answer">
+            <table>
+                <!-- look이 1일 때만 아래 부분 표시 수정 필요-->
+                <tr th:if="${qna.look == 1}">
+                    <td>
+                        <p><strong>관리자 답변</strong></p>
+                        <p th:text="${qna.bid}">답변 내용</p>
+                    </td>
+                </tr>
+            </table>
+        </div>
+
+        <div class="btn_area">
+            <a th:href="@{/cs/qna/list}" class="btn_list">목록</a>
         </div>
     </div>
+
+        <!-- 목록 버튼 작동(page 1개 전으로 되돌아가기) -->
+        <script>
+            // 페이지가 로드되면 btn_list 클릭 시 뒤로가기 기능 추가
+            document.addEventListener('DOMContentLoaded', function () {
+                const btn = document.querySelector('.btn_list');
+                if (btn) {
+                    btn.addEventListener('click', function (e) {
+                        e.preventDefault(); // 원래 href 이동 막기
+                        if (document.referrer) {
+                            history.back(); // 이전 페이지로 이동
+                        } else {
+                            // referrer가 없을 경우 기본 목록 페이지로 이동
+                            window.location.href = '/cs/qna/list';
+                        }
+                    });
+                }
+            });
+        </script>
+
 <div id="footer"></div>
+<div th:replace="~{main/footer.html}"></div>
 </body>
 </html>
