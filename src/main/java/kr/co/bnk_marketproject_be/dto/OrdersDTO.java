@@ -7,6 +7,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.math.BigDecimal;
+import java.util.List;
 
 @Data
 @NoArgsConstructor
@@ -77,6 +78,8 @@ public class OrdersDTO {
     private String detail_address;
     @Transient
     private String company_name;
+
+    private List<OrderItemsDTO> orderItems;
 
 
 
