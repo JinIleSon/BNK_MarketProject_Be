@@ -17,16 +17,26 @@ public class CSQnaController {
     private final CSQnaService qnaService;
 
     /* QnA 목록 */
-    /* QnA 목록 */
     @GetMapping("/list")
     public String list(
             @RequestParam(required = false) String userid,
+            @RequestParam(required = false) String boardType2,
             @RequestParam(defaultValue = "0") int offset,
             @RequestParam(defaultValue = "10") int limit,
             Model model) {
 
-        List<CSNoticeDTO> qnaList = qnaService.getQnaList(userid, offset, limit);
+        List<CSNoticeDTO> qnaList = qnaService.getQnaList(userid, boardType2, offset, limit);
+        int totalCount = qnaService.getTotalCount(userid, boardType2);
+        int currentPage = offset / limit;
+        int totalPages = (int) Math.ceil((double) totalCount / limit);
+
         model.addAttribute("qnaList", qnaList);
+        model.addAttribute("totalCount", totalCount);
+        model.addAttribute("currentPage", currentPage);
+        model.addAttribute("totalPages", totalPages);
+        model.addAttribute("limit", limit);
+        model.addAttribute("userid", userid);
+        model.addAttribute("boardType2", boardType2);
 
         return "customer_service/qna/qna_list";
     }

@@ -13,8 +13,14 @@ public class CSQnaService {
 
     private final CSQnaMapper qnaMapper;
 
-    public List<CSNoticeDTO> getQnaList(String userid, int offset, int limit) {
-        return qnaMapper.selectQnaList(userid, offset, limit);
+    // 페이징된 데이터
+    public List<CSNoticeDTO> getQnaList(String userid, String boardType2,int offset, int limit) {
+        return qnaMapper.selectQnaList(userid, boardType2,offset, limit);
+    }
+
+    // 전체 게시물 수
+    public int getTotalCount(String userid, String boardType2) {
+        return qnaMapper.selectTotalCount(userid, boardType2);
     }
 
     public CSNoticeDTO getQnaview(Long id) {
