@@ -21,6 +21,7 @@ import java.util.List;
 @RequiredArgsConstructor
 public class MyPageController {
 
+    // 푸시용 주석
     private final MyPageService myPageService;
 
     @GetMapping("/mypage/mypage/main")

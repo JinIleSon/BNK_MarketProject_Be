@@ -17,7 +17,7 @@ import java.util.UUID;
 @Slf4j
 @RequiredArgsConstructor
 public class MyPageService {
-    // 푸시용
+    // 푸시용 주석
     private final MyPageMapper myPageMapper;
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;

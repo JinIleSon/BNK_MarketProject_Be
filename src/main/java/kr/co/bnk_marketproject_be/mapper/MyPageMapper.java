@@ -9,7 +9,7 @@ import java.util.List;
 @Mapper
 public interface MyPageMapper {
 
-    // 푸시용
+    // 푸시용 주석
     // 마이페이지/나의설정 - 손진일 추가
     public UserDTO selectUser(@Param("user_id") String user_id);
 

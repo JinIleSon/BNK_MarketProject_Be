@@ -51,6 +51,7 @@
         WHERE user_id = #{user_id}
     </select>
 
+<!--    푸시용 주석-->
     <select id="selectUserReview" resultType="kr.co.bnk_marketproject_be.dto.MyPageReviewDTO">
         SELECT
         pb.id,

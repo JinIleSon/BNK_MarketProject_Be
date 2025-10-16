@@ -10,6 +10,7 @@ import java.util.List;
 @AllArgsConstructor
 public class PageResponseUserReviewDTO {
 
+    // 푸시용 주석
     private List<MyPageReviewDTO> dtoList;
 
     private String boardType; // 게시판 종류
