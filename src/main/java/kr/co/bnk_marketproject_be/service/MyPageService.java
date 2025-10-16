@@ -65,6 +65,25 @@ public class MyPageService {
 
 
     }
+    // 마이페이지/포인트내역
+
+    public PageResponseUserPointDTO selectUserPoint(PageRequestDTO pageRequestDTO, String userId) {
+        // MyBatis 처리
+        List<AdminPointDTO> dtoList = myPageMapper.selectUserPoint(pageRequestDTO, userId);
+
+        int total = myPageMapper.selectCountTotalUserPoint(pageRequestDTO, userId);
+
+        return PageResponseUserPointDTO.builder()
+                .pageRequestDTO(pageRequestDTO)
+                .dtoList(dtoList)
+                .total(total)
+                .build();
+    }
+
+    public int selectCountTotalUserPoint(PageRequestDTO pageRequestDTO, String userId) {
+        return myPageMapper.selectCountTotalUserPoint(pageRequestDTO, userId);
+    }
+
     // 마이페이지/쿠폰
 
     public PageResponseUserCouponsNowDTO selectUserCouponsNow(PageRequestDTO pageRequestDTO, String userId) {

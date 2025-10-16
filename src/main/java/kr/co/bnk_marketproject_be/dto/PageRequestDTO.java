@@ -8,6 +8,8 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 
+import java.time.LocalDate;
+
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
@@ -28,6 +30,11 @@ public class PageRequestDTO {
 
     private String board_type2;
     private String board_type3;
+
+    // 기간 필터 (로컬 날짜 기준)
+    private LocalDate startDate; // inclusive
+    private LocalDate endDate;   // inclusive
+    private LocalDate endExclusive;
 
     private String searchType;
     private String keyword;

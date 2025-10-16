@@ -75,4 +75,43 @@
         WHERE A.user_id = #{userId}
     </select>
 
+    <select id="selectUserPoint" resultType="kr.co.bnk_marketproject_be.dto.AdminPointDTO">
+    SELECT
+    id,
+    users_id      AS user_id,
+    created_at,
+    SUM(change_amount) OVER (
+    PARTITION BY users_id
+    ORDER BY created_at, id        -- 동일 시각일 때 정렬 보정
+    ROWS BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW
+    ) AS sum_point,
+    -- "현재 포인트" = 전체 합(모든 행에서 동일한 값)
+    SUM(change_amount) OVER (PARTITION BY users_id) AS total_point,
+    change_amount,
+    description
+    FROM point_ledgers
+    WHERE users_id = #{user_id}
+        <!-- 기간 필터 -->
+        <if test="pageRequestDTO.startDate != null">
+            AND created_at &gt;= #{pageRequestDTO.startDate}
+        </if>
+        <if test="pageRequestDTO.endDate != null">
+            AND created_at &lt; #{pageRequestDTO.endExclusive}
+        </if>
+    ORDER BY created_at DESC, id DESC
+    OFFSET #{pageRequestDTO.offset} ROWS
+    FETCH NEXT #{pageRequestDTO.size} ROWS ONLY
+    </select>
+
+    <select id="selectCountTotalUserPoint" resultType="int">
+        SELECT COUNT(*) FROM point_ledgers
+        WHERE users_id = #{user_id}
+        <if test="pageRequestDTO.startDate != null">
+            AND created_at &gt;= #{pageRequestDTO.startDate}
+        </if>
+        <if test="pageRequestDTO.endDate != null">
+            AND created_at &lt; #{pageRequestDTO.endExclusive}
+        </if>
+    </select>
+
 </mapper>

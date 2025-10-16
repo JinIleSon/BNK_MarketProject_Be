@@ -1,9 +1,6 @@
 package kr.co.bnk_marketproject_be.mapper;
 
-import kr.co.bnk_marketproject_be.dto.AdminInquiryDTO;
-import kr.co.bnk_marketproject_be.dto.MyPageCouponsNowDTO;
-import kr.co.bnk_marketproject_be.dto.PageRequestDTO;
-import kr.co.bnk_marketproject_be.dto.UserDTO;
+import kr.co.bnk_marketproject_be.dto.*;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 
@@ -15,6 +12,10 @@ public interface MyPageMapper {
     // 푸시용
     // 마이페이지/나의설정 - 손진일 추가
     public UserDTO selectUser(@Param("user_id") String user_id);
+
+    // 마이페이지/포인트내역 - 손진일 추가
+    public List<AdminPointDTO> selectUserPoint(@Param("pageRequestDTO") PageRequestDTO pageRequestDTO, @Param("user_id") String userId);
+    public int selectCountTotalUserPoint(@Param("pageRequestDTO") PageRequestDTO pageRequestDTO, @Param("user_id") String userId);
 
     // 마이페이지/쿠폰 - 손진일 추가
     public List<MyPageCouponsNowDTO> selectUserCouponsNow(@Param("pageRequestDTO") PageRequestDTO pageRequestDTO, @Param("user_id") String userId);
