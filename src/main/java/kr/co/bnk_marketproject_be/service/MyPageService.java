@@ -1,7 +1,11 @@
 package kr.co.bnk_marketproject_be.service;
 
 import jakarta.transaction.Transactional;
+import kr.co.bnk_marketproject_be.dto.AdminInquiryDTO;
+import kr.co.bnk_marketproject_be.dto.PageRequestDTO;
+import kr.co.bnk_marketproject_be.dto.PageResponseAdminInquiryDTO;
 import kr.co.bnk_marketproject_be.dto.UserDTO;
+import kr.co.bnk_marketproject_be.mapper.AdminMapper;
 import kr.co.bnk_marketproject_be.mapper.MyPageMapper;
 import kr.co.bnk_marketproject_be.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
@@ -9,6 +13,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.UUID;
 
 @Service
@@ -62,5 +67,22 @@ public class MyPageService {
         user.setProviderId(null);
 
 
+    }
+
+    public PageResponseAdminInquiryDTO selectAllInquiry(PageRequestDTO pageRequestDTO, String userId) {
+        // MyBatis 처리
+        List<AdminInquiryDTO> dtoList = myPageMapper.selectAllInquiry(pageRequestDTO, userId);
+
+        int total = myPageMapper.selectCountTotalInquiry(pageRequestDTO, userId);
+
+        return PageResponseAdminInquiryDTO.builder()
+                .pageRequestDTO(pageRequestDTO)
+                .dtoList(dtoList)
+                .total(total)
+                .build();
+    }
+
+    public int selectCountTotalInquiry(PageRequestDTO pageRequestDTO, String userId) {
+        return myPageMapper.selectCountTotalInquiry(pageRequestDTO, userId);
     }
 }

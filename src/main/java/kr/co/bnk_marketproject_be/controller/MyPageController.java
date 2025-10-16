@@ -1,5 +1,7 @@
 package kr.co.bnk_marketproject_be.controller;
 
+import kr.co.bnk_marketproject_be.dto.PageRequestDTO;
+import kr.co.bnk_marketproject_be.dto.PageResponseAdminInquiryDTO;
 import kr.co.bnk_marketproject_be.dto.UserDTO;
 import kr.co.bnk_marketproject_be.service.MyPageService;
 import lombok.RequiredArgsConstructor;
@@ -37,7 +39,13 @@ public class MyPageController {
         return "mypage/mypage_review";
     }
     @GetMapping("/mypage/mypage/ask")
-    public String askList(){
+    public String askList(Model model, PageRequestDTO pageRequestDTO, Principal principal){
+        String userId = principal.getName();
+        PageResponseAdminInquiryDTO pageResponseInquiryDTO = myPageService.selectAllInquiry(pageRequestDTO, userId);
+
+        log.info("pageResponseInquiryDTO={}", pageResponseInquiryDTO);
+        model.addAttribute("pageResponseDTO", pageResponseInquiryDTO);
+
         return "mypage/mypage_ask";
     }
     // 푸시용

@@ -23,4 +23,28 @@
         WHERE user_id = #{user_id}
     </select>
 
+    <select id="selectAllInquiry" resultType="kr.co.bnk_marketproject_be.dto.AdminInquiryDTO">
+        SELECT
+        A.id                    AS id,
+        A.board_type            AS board_type,
+        A.board_type2           AS board_type2,
+        A.board_type3           AS board_type3,
+        A.title                 AS title,
+        A.user_id               AS userId,
+        A.content               AS content,
+        A.hits                  AS hits,
+        A.look                  AS look,
+        A.created_at            AS createdAt
+        FROM board A
+        WHERE A.user_id = #{userId}
+        ORDER BY A.created_at DESC
+        OFFSET #{pageRequestDTO.offset} ROWS
+        FETCH NEXT #{pageRequestDTO.size} ROWS ONLY
+    </select>
+
+    <select id="selectCountTotalInquiry" resultType="int">
+        SELECT COUNT(*) FROM board A
+        WHERE A.user_id = #{userId}
+    </select>
+
 </mapper>
