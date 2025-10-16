@@ -71,12 +71,11 @@ spring:
             # redirect-uri는 기본값이 {baseUrl}/login/oauth2/code/{registrationId}
             # 필요하면 아래처럼 명시 가능:
             # redirect-uri: "{baseUrl}/login/oauth2/code/{registrationId}"
-
   mail:
     host: smtp.gmail.com
     port: 587
-    username: machinemayou@gmail.com
-    password: xpdgopkyeyxqotpz
+    username: ${MAIL_USERNAME}
+    password: ${MAIL_PASSWORD}
     properties:
       mail:
         smtp:
