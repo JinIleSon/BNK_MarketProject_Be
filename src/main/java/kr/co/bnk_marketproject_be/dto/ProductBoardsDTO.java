@@ -11,6 +11,7 @@ import lombok.NoArgsConstructor;
 @Builder
 public class ProductBoardsDTO {
 
+    // 푸시용 주석
     private int id;
     private int products_id;
     private int users_id;
