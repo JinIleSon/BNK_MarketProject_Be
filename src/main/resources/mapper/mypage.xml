@@ -107,6 +107,11 @@
         WHERE A.user_id = #{userId}
     </select>
 
+    <select id="selectCountTotalInquiryAround" resultType="int">
+        SELECT COUNT(*) FROM board A
+        WHERE A.user_id = #{user_id}
+    </select>
+
     <select id="selectUserPoint" resultType="kr.co.bnk_marketproject_be.dto.AdminPointDTO">
     SELECT
     id,
@@ -145,5 +150,7 @@
             AND created_at &lt; #{pageRequestDTO.endExclusive}
         </if>
     </select>
+
+
 
 </mapper>

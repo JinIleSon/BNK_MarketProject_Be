@@ -140,4 +140,8 @@ public class MyPageService {
     public int selectCountTotalInquiry(PageRequestDTO pageRequestDTO, String userId) {
         return myPageMapper.selectCountTotalInquiry(pageRequestDTO, userId);
     }
+
+    public int selectCountTotalInquiryAround(String user_id){
+        return myPageMapper.selectCountTotalInquiryAround(user_id);
+    }
 }

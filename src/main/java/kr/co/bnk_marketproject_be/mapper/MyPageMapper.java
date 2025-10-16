@@ -29,5 +29,5 @@ public interface MyPageMapper {
     public List<AdminInquiryDTO> selectAllInquiry(@Param("pageRequestDTO") PageRequestDTO pageRequestDTO, @Param("userId") String userId);
     public int selectCountTotalInquiry(@Param("pageRequestDTO") PageRequestDTO pageRequestDTO, @Param("userId") String userId);
 
-
+    public int selectCountTotalInquiryAround(@Param("user_id") String user_id);
 }
