@@ -21,22 +21,25 @@ public class CSQnaController {
     public String list(
             @RequestParam(required = false) String userid,
             @RequestParam(required = false) String boardType2,
+            @RequestParam(required = false) String boardType3,
             @RequestParam(defaultValue = "0") int offset,
             @RequestParam(defaultValue = "10") int limit,
             Model model) {
 
-        List<CSNoticeDTO> qnaList = qnaService.getQnaList(userid, boardType2, offset, limit);
-        int totalCount = qnaService.getTotalCount(userid, boardType2);
+        List<CSNoticeDTO> qnaList = qnaService.getQnaList(userid, boardType2, boardType3, offset, limit);
+        int totalCount = qnaService.getTotalCount(userid, boardType2, boardType3);
         int currentPage = offset / limit;
         int totalPages = (int) Math.ceil((double) totalCount / limit);
 
         model.addAttribute("qnaList", qnaList);
         model.addAttribute("totalCount", totalCount);
+        model.addAttribute("boardType2", boardType2);
+        model.addAttribute("boardType3", boardType3);
         model.addAttribute("currentPage", currentPage);
         model.addAttribute("totalPages", totalPages);
         model.addAttribute("limit", limit);
         model.addAttribute("userid", userid);
-        model.addAttribute("boardType2", boardType2);
+
 
         return "customer_service/qna/qna_list";
     }
