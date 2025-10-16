@@ -5,6 +5,34 @@
 
 <mapper namespace="kr.co.bnk_marketproject_be.mapper.MyPageMapper">
 
+    <select id="selectUserCouponsNow" resultType="kr.co.bnk_marketproject_be.dto.MyPageCouponsNowDTO">
+        SELECT
+        cn.id,
+        c.COUPON_NAME AS coupon_name,
+        c.discount_value AS discount_value,
+        c.NOTE,
+        cn.STATUS,
+        c.VALID_TO AS valid_to,
+        u.USER_ID AS user_id
+        FROM coupons c
+        JOIN coupons_now cn
+        ON cn.COUPONS_ID = c.id
+        JOIN users u
+        ON cn.users_id = u.id
+        WHERE u.USER_ID = #{user_id}
+        ORDER BY c.VALID_TO desc
+    </select>
+
+    <select id="selectCountTotalUserCouponsNow" resultType="int">
+        SELECT COUNT(*)
+        FROM coupons c
+        JOIN coupons_now cn
+        ON cn.COUPONS_ID = c.id
+        JOIN users u
+        ON cn.users_id = u.id
+        WHERE u.USER_ID = #{user_id}
+    </select>
+
 <!--    푸시용 주석-->
     <select id="selectUser" resultType="kr.co.bnk_marketproject_be.dto.UserDTO">
         SELECT

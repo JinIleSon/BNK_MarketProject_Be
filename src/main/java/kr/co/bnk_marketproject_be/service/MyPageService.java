@@ -1,10 +1,7 @@
 package kr.co.bnk_marketproject_be.service;
 
 import jakarta.transaction.Transactional;
-import kr.co.bnk_marketproject_be.dto.AdminInquiryDTO;
-import kr.co.bnk_marketproject_be.dto.PageRequestDTO;
-import kr.co.bnk_marketproject_be.dto.PageResponseAdminInquiryDTO;
-import kr.co.bnk_marketproject_be.dto.UserDTO;
+import kr.co.bnk_marketproject_be.dto.*;
 import kr.co.bnk_marketproject_be.mapper.AdminMapper;
 import kr.co.bnk_marketproject_be.mapper.MyPageMapper;
 import kr.co.bnk_marketproject_be.repository.UserRepository;
@@ -68,6 +65,26 @@ public class MyPageService {
 
 
     }
+    // 마이페이지/쿠폰
+
+    public PageResponseUserCouponsNowDTO selectUserCouponsNow(PageRequestDTO pageRequestDTO, String userId) {
+        // MyBatis 처리
+        List<MyPageCouponsNowDTO> dtoList = myPageMapper.selectUserCouponsNow(pageRequestDTO, userId);
+
+        int total = myPageMapper.selectCountTotalUserCouponsNow(pageRequestDTO, userId);
+
+        return PageResponseUserCouponsNowDTO.builder()
+                .pageRequestDTO(pageRequestDTO)
+                .dtoList(dtoList)
+                .total(total)
+                .build();
+    }
+
+    public int selectCountTotalUserCouponsNow(PageRequestDTO pageRequestDTO, String userId) {
+        return myPageMapper.selectCountTotalUserCouponsNow(pageRequestDTO, userId);
+    }
+
+    // 마이페이지/문의하기
 
     public PageResponseAdminInquiryDTO selectAllInquiry(PageRequestDTO pageRequestDTO, String userId) {
         // MyBatis 처리
