@@ -75,21 +75,6 @@
         ul{ margin:0; padding:0; list-style:none; }
 
         /* ===== 헤더 (처음엔 투명, hover 시 반투명) ===== */
-        .site-header{
-            top: 0;
-            z-index: 900;          /* 오버레이(1000)보다 낮게 */
-        }
-        .site-header::before{
-            content:"";
-            position:absolute; inset:0;
-            background: rgba(255,255,255,0);            /* 기본 완전 투명 */
-            transition: background 0.4s ease;
-            z-index: -1;
-            pointer-events: none;                        /* 클릭 방해 금지 */
-        }
-        .site-header:hover::before{
-            background: rgba(255,255,255,0.7);                /* 마우스 올리면 반투명 */
-        }
         .site-header .inner{
             position: relative; z-index: 1;             /* ::before 아래로 깔리게 */
             display:flex; align-items:center; gap:24px;
@@ -115,14 +100,6 @@
         .cs_sub_nav ul li a {
             cursor: pointer;
         }
-        /* 페이지네이션 스타일 */
-        .prev-page, .next-page {
-            border: none;
-            width: 50px;
-            height: 30px;
-            cursor: pointer;
-            margin: 0 10px;
-        }
 
         body {
             font-family: 'Malgun Gothic', '맑은 고딕', sans-serif;
@@ -130,18 +107,6 @@
             color: #333;
             line-height: 1.5;
             background-color: #f8f8f8;
-        }
-
-        #wrap {
-            width: 1200px;
-            margin: 0 auto;
-            background-color: #fff;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-        }
-
-        #content {
-            padding: 30px;
-            min-height: 600px;
         }
 
         h1 {
@@ -169,34 +134,6 @@
         table a {
             text-decoration: none;
         }
-        .btn_area {
-            text-align: right;
-            margin-top: 20px;
-        }
-
-        .btn_area .btn_write, .btn_area .btn_cancel, .btn_area .btn_submit, .btn_area .btn_list, .btn_area .btn_more {
-            display: inline-block;
-            padding: 10px 20px;
-            font-size: 14px;
-            text-decoration: none;
-            border: 1px solid #ccc;
-            background-color: #eee;
-            color: #333;
-            cursor: pointer;
-        }
-
-        .btn_area .btn_write {
-            background-color: #555;
-            color: #fff;
-            border-color: #555;
-        }
-
-        .btn_area .btn_submit {
-            background-color: #007bff;
-            color: #fff;
-            border-color: #007bff;
-        }
-
 
         .cs_sub_nav li.on a,
         .cs_sub_nav li a:hover {
@@ -228,127 +165,6 @@
             background-color: #333;
             color: #fff;
             border-color: #333;
-        }
-
-        /* cs/index.jsp 스타일 */
-        .cs_main_wrap {
-            text-align: center;
-        }
-
-        .cs_main_wrap h1 {
-            font-size: 32px;
-            font-weight: bold;
-            margin-bottom: 50px;
-            color: #444;
-        }
-
-        .cs_main_wrap .cs_section {
-            max-width: 900px;
-            margin: 0 auto 40px;
-        }
-
-        .cs_main_wrap .section_title {
-            font-size: 20px;
-            font-weight: bold;
-            border-bottom: 2px solid #555;
-            padding-bottom: 10px;
-            margin-bottom: 20px;
-            position: relative;
-            text-align: left;
-        }
-
-        .cs_main_wrap .section_title .more_link {
-            font-size: 16px;
-            position: absolute;
-            right: 0;
-            top: 0;
-            text-decoration: none;
-            color: #0f71d3;
-            font-weight: bold;
-        }
-
-        .cs_main_wrap .section_list ul {
-            list-style: none;
-            padding: 0;
-            margin: 0;
-        }
-
-        .cs_main_wrap .section_list li {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 12px 0;
-            border-bottom: 1px dotted #ccc;
-        }
-
-        .cs_main_wrap .section_list a {
-            text-decoration: none;
-            color: #333;
-            flex-grow: 1;
-            text-align: left;
-            white-space: nowrap;
-            overflow: hidden;
-            text-overflow: ellipsis;
-        }
-
-        .cs_main_wrap .section_list .date,
-        .cs_main_wrap .section_list .writer {
-            font-size: 13px;
-            color: #999;
-            flex-shrink: 0;
-            margin-left: 15px;
-        }
-
-        /* 자주하는 질문 아이콘 섹션 */
-        .cs_main_wrap .faq_category {
-            display: flex;
-            justify-content: space-between;
-            gap: 15px;
-        }
-
-        .cs_main_wrap .faq_category a {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            text-align: center;
-            text-decoration: none;
-            color: #555;
-            flex: 1;
-            padding: 20px 10px;
-            /* index의 faq border 제거
-            border: 1px solid #ddd;*/
-            border-radius: 5px;
-            transition: background-color 0.2s;
-        }
-
-        .cs_main_wrap .faq_category a:hover {
-            background-color: #f5f5f5;
-        }
-
-        .cs_main_wrap .faq_category img {
-            width: 50px;
-            height: 50px;
-            margin-bottom: 8px;
-        }
-
-        .cs_main_wrap .faq_category span {
-            font-size: 13px;
-            line-height: 1.2;
-        }
-
-        .cs_main_wrap .qna_section .btn_area {
-            text-align: right;
-            margin-top: 15px;
-        }
-
-        .cs_main_wrap .qna_section .btn_write {
-            display: inline-block;
-            padding: 10px 20px;
-            background-color: #555;
-            color: #fff;
-            text-decoration: none;
-            border-radius: 5px;
-            font-weight: bold;
         }
 
         .cs_sub_nav {
@@ -473,8 +289,10 @@
             <div style="display: flex; margin-left:20%; margin-top:1%; width:100%;">
                 <nav class="overlay__menu" style="width:100%;">
                     <div style="">
-                        <b>공지사항</b>
-                        <br><br>
+                        <a th:href="@{/cs/notice/list}"><b>공지사항</b></a>
+                        <a th:href="@{/cs/faq/list}"><b>자주묻는질문</b></a>
+                        <a th:href="@{/cs/qna/list}"><b>Qna</b></a>
+                        <br>
                         <a th:href="@{/cs/notice/list}">전체</a>
                         <a th:href="@{/cs/notice/list(boardType='서비스')}">고객서비스</a>
                         <a th:href="@{/cs/notice/list(boardType='안전거래')}">안전거래</a>
@@ -509,15 +327,17 @@
     </div>
 
     <!-- 제목  -->
-    <h2 style="font-size:23px; font-weight:bold; margin: 20px"  th:text="${
-                boardType == '서비스' ? '고객서비스' :
-                boardType == '안전거래' ? '안전거래' :
-                boardType == '판매중지' ? '위해상품' :
-                boardType == '당첨자' ? '이벤트당첨' :
-    '전체'}"></h2>
+    <h2 style="font-size:23px; font-weight:bold; margin:20px"
+        th:switch="${boardType}">
+        <span th:case="'서비스'">고객서비스</span>
+        <span th:case="'안전거래'">안전거래</span>
+        <span th:case="'판매중지'">위해상품</span>
+        <span th:case="'당첨자'">이벤트당첨</span>
+        <span th:case="*">전체</span>
+    </h2>
 
 
-    <div class="cs_list_table" style="margin-left: 20px; margin-right: 20px; margin-bottom: 20px">
+<div class="cs_list_table" style="margin-left: 20px; margin-right: 20px; margin-bottom: 20px">
             <p class="total_count">
                 총 <span class="count" th:text="${totalCount}"></span>건
             </p>

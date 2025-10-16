@@ -1,9 +1,9 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org" lang="ko">
 <head>
-  <meta charset="UTF-8" />
-  <title>자주하는 질문 (FAQ)</title>
-  <link rel="stylesheet" th:href="@{/css/common.css}" />
+    <meta charset="UTF-8" />
+    <title>자주하는 질문 (FAQ)</title>
+    <link rel="stylesheet" th:href="@{/css/common.css}" />
 </head>
 
 <style>
@@ -287,14 +287,12 @@
         border-color: #007bff;
     }
 
-
     .faq_section h2 {
         font-size: 20px;
         font-weight: bold;
         color: #555;
         margin-bottom: 15px;
     }
-
 
     .faq_item .faq_q {
         width: 100%;
@@ -356,397 +354,365 @@
     }
 </style>
 <body>
-    <header th:replace="~{main/header :: header}"></header>
+<header th:replace="~{main/header :: header}"></header>
 
-    <aside id="menuOverlay" class="overlay" aria-hidden="true">
-        <div class="overlay__panel">
-            <div class="overlay__top">
-                <button id="closeBtn" class="overlay__close" aria-label="메뉴 닫기"></button>
-                <div style="font-size:72px; font-weight:800; letter-spacing:-10px; "class="title-didone">NICHIYA</div>
-            </div>
-
-            <style>
-                .overlay__menu a[data-cat].is-active { font-weight: 700; text-decoration: underline; }
-
-                #subcol .panel {
-                    position: absolute; inset: 0;
-                    padding: 20px;
-                    overflow: auto;
-                    opacity: 0;
-                    transform: translateY(6px);
-                    transition: opacity .35s ease, transform .35s ease;
-                    visibility: hidden;
-                    pointer-events: none;
-                }
-                #subcol .panel.show {
-                    opacity: 1;
-                    transform: none;
-                    visibility: visible;
-                    pointer-events: auto;
-                }
-                .menu-grid {
-                    display: grid;
-                    grid-template-columns: repeat(2, auto);
-                    column-gap: 50px;
-                    row-gap: 6px;
-                    padding: 0;
-                    margin: 0;
-                    justify-content: start;
-                }
-                .menu-grid li { list-style: none; }
-            </style>
-
-            <div style="display:flex; margin-left:20%; margin-top:1%; width:100%;">
-                <nav class="overlay__menu" style="width:100%;">
-                    <div>
-                        <a th:href="@{/cs/notice/list}"><b>공지사항</b></a>
-                        <a th:href="@{/cs/faq/list}"><b>자주묻는질문</b></a>
-                        <a th:href="@{/cs/qna/list}"><b>QNA</b></a><br>
-                        <a href="#" data-cat="member">회원</a>
-                        <a href="#" data-cat="coupon">쿠폰/이벤트</a>
-                        <a href="#" data-cat="order">주문/결제</a>
-                        <a href="#" data-cat="delivery">배송</a>
-                        <a href="#" data-cat="return">취소/반품/교환</a>
-                        <a href="#" data-cat="travel">여행/숙박/항공</a>
-                        <a href="#" data-cat="safe">안전거래</a>
-                    </div>
-                    <div id="subcol">
-                        <!-- 회원 -->
-                        <section class="panel" data-key="member">
-                                <a th:href="@{/cs/faq/list(boardType='회원')}"><h3>회원</h3></a>
-                            <ul class="menu-grid">
-                                <li><a th:href="@{/cs/faq/list(boardType='회원', subType='로그인')}">로그인</a></li>
-                                <li><a th:href="@{/cs/faq/list(boardType='회원', subType='가입')}">가입</a></li>
-                                <li><a th:href="@{/cs/faq/list(boardType='회원', subType='탈퇴')}">탈퇴</a></li>
-                            </ul>
-                        </section>
-
-                        <!-- 쿠폰/이벤트 -->
-                        <section class="panel" data-key="coupon">
-                            <a th:href="@{/cs/faq/list(boardType='쿠폰/이벤트')}"><h3>쿠폰/이벤트</h3></a>
-                            <ul class="menu-grid">
-                                <li><a th:href="@{/cs/faq/list(boardType='쿠폰/이벤트', subType='쿠폰발급')}">쿠폰발급</a></li>
-                                <li><a th:href="@{/cs/faq/list(boardType='쿠폰/이벤트', subType='쿠폰사용')}">쿠폰사용</a></li>
-                                <li><a th:href="@{/cs/faq/list(boardType='쿠폰/이벤트', subType='이벤트참여')}">이벤트참여</a></li>
-                                <li><a th:href="@{/cs/faq/list(boardType='쿠폰/이벤트', subType='당첨확인')}">당첨확인</a></li>
-                            </ul>
-                        </section>
-
-                        <!-- 주문/결제 -->
-                        <section class="panel" data-key="order">
-                            <a th:href="@{/cs/faq/list(boardType='주문/결제')}"><h3>주문/결제</h3></a>
-                            <ul class="menu-grid">
-                                <li><a th:href="@{/cs/faq/list(boardType='주문/결제', subType='주문방법')}">주문방법</a></li>
-                                <li><a th:href="@{/cs/faq/list(boardType='주문/결제', subType='결제수단')}">결제수단</a></li>
-                                <li><a th:href="@{/cs/faq/list(boardType='주문/결제', subType='결제오류')}">결제오류</a></li>
-                            </ul>
-                        </section>
-
-                        <!-- 배송 -->
-                        <section class="panel" data-key="delivery">
-                            <a th:href="@{/cs/faq/list(boardType='배송')}"><h3>배송</h3></a>
-                            <ul class="menu-grid">
-                                <li><a th:href="@{/cs/faq/list(boardType='배송', subType='배송조회')}">배송조회</a></li>
-                                <li><a th:href="@{/cs/faq/list(boardType='배송', subType='배송비')}">배송비</a></li>
-                                <li><a th:href="@{/cs/faq/list(boardType='배송', subType='해외배송')}">해외배송</a></li>
-                            </ul>
-                        </section>
-
-                        <!-- 취소/반품/교환 -->
-                        <section class="panel" data-key="return">
-                            <a th:href="@{/cs/faq/list(boardType='취소/반품/교환')}"><h3>취소/반품/교환</h3></a>
-                            <ul class="menu-grid">
-                                <li><a th:href="@{/cs/faq/list(boardType='취소/반품/교환', subType='주문취소')}">주문취소</a></li>
-                                <li><a th:href="@{/cs/faq/list(boardType='취소/반품/교환', subType='반품')}">반품</a></li>
-                                <li><a th:href="@{/cs/faq/list(boardType='취소/반품/교환', subType='교환')}">교환</a></li>
-                            </ul>
-                        </section>
-
-                        <!-- 여행/숙박/항공 -->
-                        <section class="panel" data-key="travel">
-                            <a th:href="@{/cs/faq/list(boardType='여행/숙박/항공')}"><h3>여행/숙박/항공</h3></a>
-                            <ul class="menu-grid">
-                                <li><a th:href="@{/cs/faq/list(boardType='여행/숙박/항공', subType='예약')}">예약</a></li>
-                                <li><a th:href="@{/cs/faq/list(boardType='여행/숙박/항공', subType='변경/취소')}">변경/취소</a></li>
-                            </ul>
-                        </section>
-
-                        <!-- 안전거래 -->
-                        <section class="panel" data-key="safe">
-                            <a th:href="@{/cs/faq/list(boardType='안전거래')}"><h3>안전거래</h3></a>
-                            <ul class="menu-grid">
-                                <li><a th:href="@{/cs/faq/list(boardType='안전거래', subType='안전결제')}">안전결제</a></li>
-                                <li><a th:href="@{/cs/faq/list(boardType='안전거래', subType='사기주의')}">사기주의</a></li>
-                            </ul>
-                        </section>
-                    </div>
-                </nav>
-            </div>
+<aside id="menuOverlay" class="overlay" aria-hidden="true">
+    <div class="overlay__panel">
+        <div class="overlay__top">
+            <button id="closeBtn" class="overlay__close" aria-label="메뉴 닫기"></button>
+            <div style="font-size:72px; font-weight:800; letter-spacing:-10px; "class="title-didone">NICHIYA</div>
         </div>
-    </aside>
 
+        <div style="display:flex; margin-left:20%; margin-top:1%; width:100%;">
+            <nav class="overlay__menu" style="width:100%;">
+                <div>
+                    <a th:href="@{/cs/notice/list}"><b>공지사항</b></a>
+                    <a th:href="@{/cs/faq/list}"><b>자주묻는질문</b></a>
+                    <a th:href="@{/cs/qna/list}"><b>QNA</b></a><br>
+                    <a href="#" data-cat="member">회원</a>
+                    <a href="#" data-cat="coupon">쿠폰/이벤트</a>
+                    <a href="#" data-cat="order">주문/결제</a>
+                    <a href="#" data-cat="delivery">배송</a>
+                    <a href="#" data-cat="return">취소/반품/교환</a>
+                    <a href="#" data-cat="travel">여행/숙박/항공</a>
+                    <a href="#" data-cat="safe">안전거래</a>
+                </div>
+                <div id="subcol">
+                    <!-- 회원 -->
+                    <section class="panel" data-key="member">
+                        <a th:href="@{/cs/faq/list(boardType='회원')}"><h3>회원</h3></a>
+                        <ul class="menu-grid">
+                            <li><a th:href="@{/cs/faq/list(boardType='회원', subType='로그인')}">로그인</a></li>
+                            <li><a th:href="@{/cs/faq/list(boardType='회원', subType='가입')}">가입</a></li>
+                            <li><a th:href="@{/cs/faq/list(boardType='회원', subType='탈퇴')}">탈퇴</a></li>
+                        </ul>
+                    </section>
 
-    <!-- FAQ 카테고리 -->
-    <div class="cs_sub_nav">
-        <!-- 1차 카테고리 -->
-        <ul class="faq-category">
-            <li th:classappend="${boardType == '회원'} ? 'on'">
-                <a th:href="@{/cs/faq/list(boardType='회원')}">회원</a>
-            </li>
-            <li th:classappend="${boardType == '쿠폰/이벤트'} ? 'on'">
-                <a th:href="@{/cs/faq/list(boardType='쿠폰/이벤트')}">쿠폰/이벤트</a>
-            </li>
-            <li th:classappend="${boardType == '주문/결제'} ? 'on'">
-                <a th:href="@{/cs/faq/list(boardType='주문/결제')}">주문/결제</a>
-            </li>
-            <li th:classappend="${boardType == '배송'} ? 'on'">
-                <a th:href="@{/cs/faq/list(boardType='배송')}">배송</a>
-            </li>
-            <li th:classappend="${boardType == '취소/반품/교환'} ? 'on'">
-                <a th:href="@{/cs/faq/list(boardType='취소/반품/교환')}">취소/반품/교환</a>
-            </li>
-            <li th:classappend="${boardType == '여행/숙박/항공'} ? 'on'">
-                <a th:href="@{/cs/faq/list(boardType='여행/숙박/항공')}">여행/숙박/항공</a>
-            </li>
-            <li th:classappend="${boardType == '안전거래'} ? 'on'">
-                <a th:href="@{/cs/faq/list(boardType='안전거래')}">안전거래</a>
-            </li>
-        </ul>
+                    <!-- 쿠폰/이벤트 -->
+                    <section class="panel" data-key="coupon">
+                        <a th:href="@{/cs/faq/list(boardType='쿠폰/이벤트')}"><h3>쿠폰/이벤트</h3></a>
+                        <ul class="menu-grid">
+                            <li><a th:href="@{/cs/faq/list(boardType='쿠폰/이벤트', subType='쿠폰발급')}">쿠폰발급</a></li>
+                            <li><a th:href="@{/cs/faq/list(boardType='쿠폰/이벤트', subType='쿠폰사용')}">쿠폰사용</a></li>
+                            <li><a th:href="@{/cs/faq/list(boardType='쿠폰/이벤트', subType='이벤트참여')}">이벤트참여</a></li>
+                            <li><a th:href="@{/cs/faq/list(boardType='쿠폰/이벤트', subType='당첨확인')}">당첨확인</a></li>
+                        </ul>
+                    </section>
 
-        <!-- 2차 카테고리: 회원 -->
-        <ul class="faq-subcategory" th:if="${boardType == '회원'}">
-            <li th:classappend="${subType == '로그인'} ? 'on'">
-                <a th:href="@{/cs/faq/list(boardType='회원', subType='로그인')}">로그인</a>
-            </li>
-            <li th:classappend="${subType == '가입'} ? 'on'">
-                <a th:href="@{/cs/faq/list(boardType='회원', subType='가입')}">가입</a>
-            </li>
-            <li th:classappend="${subType == '탈퇴 후'} ? 'on'">
-                <a th:href="@{/cs/faq/list(boardType='회원', subType='탈퇴 후')}">탈퇴</a>
-            </li>
-        </ul>
+                    <!-- 주문/결제 -->
+                    <section class="panel" data-key="order">
+                        <a th:href="@{/cs/faq/list(boardType='주문/결제')}"><h3>주문/결제</h3></a>
+                        <ul class="menu-grid">
+                            <li><a th:href="@{/cs/faq/list(boardType='주문/결제', subType='주문방법')}">주문방법</a></li>
+                            <li><a th:href="@{/cs/faq/list(boardType='주문/결제', subType='결제수단')}">결제수단</a></li>
+                            <li><a th:href="@{/cs/faq/list(boardType='주문/결제', subType='결제오류')}">결제오류</a></li>
+                        </ul>
+                    </section>
 
-        <!-- 2차 카테고리: 쿠폰/이벤트 -->
-        <ul class="faq-subcategory" th:if="${boardType == '쿠폰/이벤트'}">
-            <li th:classappend="${subType == '쿠폰발급'} ? 'on'">
-                <a th:href="@{/cs/faq/list(boardType='쿠폰/이벤트', subType='쿠폰발급')}">쿠폰발급</a>
-            </li>
-            <li th:classappend="${subType == '쿠폰사용'} ? 'on'">
-                <a th:href="@{/cs/faq/list(boardType='쿠폰/이벤트', subType='쿠폰사용')}">쿠폰사용</a>
-            </li>
-            <li th:classappend="${subType == '이벤트참여'} ? 'on'">
-                <a th:href="@{/cs/faq/list(boardType='쿠폰/이벤트', subType='이벤트참여')}">이벤트참여</a>
-            </li>
-            <li th:classappend="${subType == '당첨확인'} ? 'on'">
-                <a th:href="@{/cs/faq/list(boardType='쿠폰/이벤트', subType='당첨확인')}">당첨확인</a>
-            </li>
-        </ul>
+                    <!-- 배송 -->
+                    <section class="panel" data-key="delivery">
+                        <a th:href="@{/cs/faq/list(boardType='배송')}"><h3>배송</h3></a>
+                        <ul class="menu-grid">
+                            <li><a th:href="@{/cs/faq/list(boardType='배송', subType='배송조회')}">배송조회</a></li>
+                            <li><a th:href="@{/cs/faq/list(boardType='배송', subType='배송비')}">배송비</a></li>
+                            <li><a th:href="@{/cs/faq/list(boardType='배송', subType='해외배송')}">해외배송</a></li>
+                        </ul>
+                    </section>
 
-        <!-- 2차 카테고리: 주문/결제 -->
-        <ul class="faq-subcategory" th:if="${boardType == '주문/결제'}">
-            <li th:classappend="${subType == '주문방법'} ? 'on'">
-                <a th:href="@{/cs/faq/list(boardType='주문/결제', subType='주문방법')}">주문방법</a>
-            </li>
-            <li th:classappend="${subType == '결제수단'} ? 'on'">
-                <a th:href="@{/cs/faq/list(boardType='주문/결제', subType='결제수단')}">결제수단</a>
-            </li>
-            <li th:classappend="${subType == '결제오류'} ? 'on'">
-                <a th:href="@{/cs/faq/list(boardType='주문/결제', subType='결제오류')}">결제오류</a>
-            </li>
-        </ul>
+                    <!-- 취소/반품/교환 -->
+                    <section class="panel" data-key="return">
+                        <a th:href="@{/cs/faq/list(boardType='취소/반품/교환')}"><h3>취소/반품/교환</h3></a>
+                        <ul class="menu-grid">
+                            <li><a th:href="@{/cs/faq/list(boardType='취소/반품/교환', subType='주문취소')}">주문취소</a></li>
+                            <li><a th:href="@{/cs/faq/list(boardType='취소/반품/교환', subType='반품')}">반품</a></li>
+                            <li><a th:href="@{/cs/faq/list(boardType='취소/반품/교환', subType='교환')}">교환</a></li>
+                        </ul>
+                    </section>
 
-        <!-- 2차 카테고리: 배송 -->
-        <ul class="faq-subcategory" th:if="${boardType == '배송'}">
-            <li th:classappend="${subType == '배송조회'} ? 'on'">
-                <a th:href="@{/cs/faq/list(boardType='배송', subType='배송조회')}">배송조회</a>
-            </li>
-            <li th:classappend="${subType == '배송비'} ? 'on'">
-                <a th:href="@{/cs/faq/list(boardType='배송', subType='배송비')}">배송비</a>
-            </li>
-            <li th:classappend="${subType == '해외배송'} ? 'on'">
-                <a th:href="@{/cs/faq/list(boardType='배송', subType='해외배송')}">해외배송</a>
-            </li>
-        </ul>
+                    <!-- 여행/숙박/항공 -->
+                    <section class="panel" data-key="travel">
+                        <a th:href="@{/cs/faq/list(boardType='여행/숙박/항공')}"><h3>여행/숙박/항공</h3></a>
+                        <ul class="menu-grid">
+                            <li><a th:href="@{/cs/faq/list(boardType='여행/숙박/항공', subType='예약')}">예약</a></li>
+                            <li><a th:href="@{/cs/faq/list(boardType='여행/숙박/항공', subType='변경/취소')}">변경/취소</a></li>
+                        </ul>
+                    </section>
 
-        <!-- 2차 카테고리: 취소/반품/교환 -->
-        <ul class="faq-subcategory" th:if="${boardType == '취소/반품/교환'}">
-            <li th:classappend="${subType == '주문 취소'} ? 'on'">
-                <a th:href="@{/cs/faq/list(boardType='취소/반품/교환', subType='주문 취소')}">주문취소</a>
-            </li>
-            <li th:classappend="${subType == '반품'} ? 'on'">
-                <a th:href="@{/cs/faq/list(boardType='취소/반품/교환', subType='반품')}">반품</a>
-            </li>
-            <li th:classappend="${subType == '교환'} ? 'on'">
-                <a th:href="@{/cs/faq/list(boardType='취소/반품/교환', subType='교환')}">교환</a>
-            </li>
-        </ul>
-
-        <!-- 2차 카테고리: 여행/숙박/항공 -->
-        <ul class="faq-subcategory" th:if="${boardType == '여행/숙박/항공'}">
-            <li th:classappend="${subType == '예약'} ? 'on'">
-                <a th:href="@{/cs/faq/list(boardType='여행/숙박/항공', subType='예약')}">예약</a>
-            </li>
-            <li th:classappend="${subType == '변경/취소'} ? 'on'">
-                <a th:href="@{/cs/faq/list(boardType='여행/숙박/항공', subType='변경/취소')}">변경/취소</a>
-            </li>
-        </ul>
-
-        <!-- 2차 카테고리: 안전거래 -->
-        <ul class="faq-subcategory" th:if="${boardType == '안전거래'}">
-            <li th:classappend="${subType == '안전결제'} ? 'on'">
-                <a th:href="@{/cs/faq/list(boardType='안전거래', subType='안전결제')}">안전결제</a>
-            </li>
-            <li th:classappend="${subType == '사기주의'} ? 'on'">
-                <a th:href="@{/cs/faq/list(boardType='안전거래', subType='사기주의')}">사기주의</a>
-            </li>
-        </ul>
-    </div>
-
-    <!-- 제목 -->
-    <h2 th:if="${subType != null and subType != ''}"
-        th:text="${boardType + ' · ' + subType}"
-        style="font-size:23px; font-weight:bold; margin: 0; margin-top: 10px; margin-left: 20px">
-    </h2>
-
-    <h2 th:unless="${subType != null and subType != ''}"
-        th:switch="${boardType}"
-        style="font-size:23px; font-weight:bold; margin: 0; margin-top: 10px; margin-left: 20px">
-        <span th:case="'회원'">회원</span>
-        <span th:case="'쿠폰/이벤트'">쿠폰 · 이벤트</span>
-        <span th:case="'주문/결제'">주문 · 결제</span>
-        <span th:case="'배송'">배송</span>
-        <span th:case="'취소/반품/교환'">취소 · 반품 · 교환</span>
-        <span th:case="'여행/숙박/항공'">여행 · 숙박 · 항공</span>
-        <span th:case="'안전거래'">안전거래</span>
-        <span th:case="*">전체</span>
-    </h2>
-
-
-    <!-- FAQ 리스트 -->
-    <div class="faq-container" style="margin: 20px">
-        <div th:each="faq : ${faqList}" class="faq-item">
-            <a th:href="@{/cs/faq/view(id=${faq.id})}"
-               th:text="${faq.title}"
-               class="faq-title"
-               style="display:block; padding:10px 0; text-decoration:none; color:#333;">
-            </a>
+                    <!-- 안전거래 -->
+                    <section class="panel" data-key="safe">
+                        <a th:href="@{/cs/faq/list(boardType='안전거래')}"><h3>안전거래</h3></a>
+                        <ul class="menu-grid">
+                            <li><a th:href="@{/cs/faq/list(boardType='안전거래', subType='안전결제')}">안전결제</a></li>
+                            <li><a th:href="@{/cs/faq/list(boardType='안전거래', subType='사기주의')}">사기주의</a></li>
+                        </ul>
+                    </section>
+                </div>
+            </nav>
         </div>
     </div>
+</aside>
 
-    <!-- 더보기 버튼 -->
-    <div class="btn_area">
-        <button class="btn_more" id="btn-more" style="border-radius:0 !important; height:45px;">더보기</button>
-        <button class="btn_less" id="btn-less" style="display:none; height:45px; border-radius:0; padding:10px 20px; font-size:14px; border:1px solid #ccc; background-color:#eee; color:#333; cursor:pointer;">간단히보기</button>
+<!-- FAQ 카테고리 -->
+<div class="cs_sub_nav">
+    <!-- 1차 카테고리 -->
+    <ul class="faq-category">
+        <li th:classappend="${boardType == '회원'} ? 'on'">
+            <a th:href="@{/cs/faq/list(boardType='회원')}">회원</a>
+        </li>
+        <li th:classappend="${boardType == '쿠폰/이벤트'} ? 'on'">
+            <a th:href="@{/cs/faq/list(boardType='쿠폰/이벤트')}">쿠폰/이벤트</a>
+        </li>
+        <li th:classappend="${boardType == '주문/결제'} ? 'on'">
+            <a th:href="@{/cs/faq/list(boardType='주문/결제')}">주문/결제</a>
+        </li>
+        <li th:classappend="${boardType == '배송'} ? 'on'">
+            <a th:href="@{/cs/faq/list(boardType='배송')}">배송</a>
+        </li>
+        <li th:classappend="${boardType == '취소/반품/교환'} ? 'on'">
+            <a th:href="@{/cs/faq/list(boardType='취소/반품/교환')}">취소/반품/교환</a>
+        </li>
+        <li th:classappend="${boardType == '여행/숙박/항공'} ? 'on'">
+            <a th:href="@{/cs/faq/list(boardType='여행/숙박/항공')}">여행/숙박/항공</a>
+        </li>
+        <li th:classappend="${boardType == '안전거래'} ? 'on'">
+            <a th:href="@{/cs/faq/list(boardType='안전거래')}">안전거래</a>
+        </li>
+    </ul>
+
+    <!-- 2차 카테고리: 회원 -->
+    <ul class="faq-subcategory" th:if="${boardType == '회원'}">
+        <li th:classappend="${subType == '로그인'} ? 'on'">
+            <a th:href="@{/cs/faq/list(boardType='회원', subType='로그인')}">로그인</a>
+        </li>
+        <li th:classappend="${subType == '가입'} ? 'on'">
+            <a th:href="@{/cs/faq/list(boardType='회원', subType='가입')}">가입</a>
+        </li>
+        <li th:classappend="${subType == '탈퇴 후'} ? 'on'">
+            <a th:href="@{/cs/faq/list(boardType='회원', subType='탈퇴 후')}">탈퇴</a>
+        </li>
+    </ul>
+
+    <!-- 2차 카테고리: 쿠폰/이벤트 -->
+    <ul class="faq-subcategory" th:if="${boardType == '쿠폰/이벤트'}">
+        <li th:classappend="${subType == '쿠폰발급'} ? 'on'">
+            <a th:href="@{/cs/faq/list(boardType='쿠폰/이벤트', subType='쿠폰발급')}">쿠폰발급</a>
+        </li>
+        <li th:classappend="${subType == '쿠폰사용'} ? 'on'">
+            <a th:href="@{/cs/faq/list(boardType='쿠폰/이벤트', subType='쿠폰사용')}">쿠폰사용</a>
+        </li>
+        <li th:classappend="${subType == '이벤트참여'} ? 'on'">
+            <a th:href="@{/cs/faq/list(boardType='쿠폰/이벤트', subType='이벤트참여')}">이벤트참여</a>
+        </li>
+        <li th:classappend="${subType == '당첨확인'} ? 'on'">
+            <a th:href="@{/cs/faq/list(boardType='쿠폰/이벤트', subType='당첨확인')}">당첨확인</a>
+        </li>
+    </ul>
+
+    <!-- 2차 카테고리: 주문/결제 -->
+    <ul class="faq-subcategory" th:if="${boardType == '주문/결제'}">
+        <li th:classappend="${subType == '주문방법'} ? 'on'">
+            <a th:href="@{/cs/faq/list(boardType='주문/결제', subType='주문방법')}">주문방법</a>
+        </li>
+        <li th:classappend="${subType == '결제수단'} ? 'on'">
+            <a th:href="@{/cs/faq/list(boardType='주문/결제', subType='결제수단')}">결제수단</a>
+        </li>
+        <li th:classappend="${subType == '결제오류'} ? 'on'">
+            <a th:href="@{/cs/faq/list(boardType='주문/결제', subType='결제오류')}">결제오류</a>
+        </li>
+    </ul>
+
+    <!-- 2차 카테고리: 배송 -->
+    <ul class="faq-subcategory" th:if="${boardType == '배송'}">
+        <li th:classappend="${subType == '배송조회'} ? 'on'">
+            <a th:href="@{/cs/faq/list(boardType='배송', subType='배송조회')}">배송조회</a>
+        </li>
+        <li th:classappend="${subType == '배송비'} ? 'on'">
+            <a th:href="@{/cs/faq/list(boardType='배송', subType='배송비')}">배송비</a>
+        </li>
+        <li th:classappend="${subType == '해외배송'} ? 'on'">
+            <a th:href="@{/cs/faq/list(boardType='배송', subType='해외배송')}">해외배송</a>
+        </li>
+    </ul>
+
+    <!-- 2차 카테고리: 취소/반품/교환 -->
+    <ul class="faq-subcategory" th:if="${boardType == '취소/반품/교환'}">
+        <li th:classappend="${subType == '주문 취소'} ? 'on'">
+            <a th:href="@{/cs/faq/list(boardType='취소/반품/교환', subType='주문 취소')}">주문취소</a>
+        </li>
+        <li th:classappend="${subType == '반품'} ? 'on'">
+            <a th:href="@{/cs/faq/list(boardType='취소/반품/교환', subType='반품')}">반품</a>
+        </li>
+        <li th:classappend="${subType == '교환'} ? 'on'">
+            <a th:href="@{/cs/faq/list(boardType='취소/반품/교환', subType='교환')}">교환</a>
+        </li>
+    </ul>
+
+    <!-- 2차 카테고리: 여행/숙박/항공 -->
+    <ul class="faq-subcategory" th:if="${boardType == '여행/숙박/항공'}">
+        <li th:classappend="${subType == '예약'} ? 'on'">
+            <a th:href="@{/cs/faq/list(boardType='여행/숙박/항공', subType='예약')}">예약</a>
+        </li>
+        <li th:classappend="${subType == '변경/취소'} ? 'on'">
+            <a th:href="@{/cs/faq/list(boardType='여행/숙박/항공', subType='변경/취소')}">변경/취소</a>
+        </li>
+    </ul>
+
+    <!-- 2차 카테고리: 안전거래 -->
+    <ul class="faq-subcategory" th:if="${boardType == '안전거래'}">
+        <li th:classappend="${subType == '안전결제'} ? 'on'">
+            <a th:href="@{/cs/faq/list(boardType='안전거래', subType='안전결제')}">안전결제</a>
+        </li>
+        <li th:classappend="${subType == '사기주의'} ? 'on'">
+            <a th:href="@{/cs/faq/list(boardType='안전거래', subType='사기주의')}">사기주의</a>
+        </li>
+    </ul>
+</div>
+
+<!-- 제목 -->
+<h2 th:if="${subType != null and subType != ''}"
+    th:text="${boardType + ' · ' + subType}"
+    style="font-size:23px; font-weight:bold; margin: 0; margin-top: 10px; margin-left: 20px">
+</h2>
+
+<h2 th:unless="${subType != null and subType != ''}"
+    th:switch="${boardType}"
+    style="font-size:23px; font-weight:bold; margin: 0; margin-top: 10px; margin-left: 20px">
+    <span th:case="'회원'">회원</span>
+    <span th:case="'쿠폰/이벤트'">쿠폰 · 이벤트</span>
+    <span th:case="'주문/결제'">주문 · 결제</span>
+    <span th:case="'배송'">배송</span>
+    <span th:case="'취소/반품/교환'">취소 · 반품 · 교환</span>
+    <span th:case="'여행/숙박/항공'">여행 · 숙박 · 항공</span>
+    <span th:case="'안전거래'">안전거래</span>
+    <span th:case="*">전체</span>
+</h2>
+
+
+<!-- FAQ 리스트 -->
+<div class="faq-container" style="margin: 20px">
+    <div th:each="faq : ${faqList}" class="faq-item">
+        <a th:href="@{/cs/faq/view(id=${faq.id})}"
+           th:text="${faq.title}"
+           class="faq-title"
+           style="display:block; padding:10px 0; text-decoration:none; color:#333;">
+        </a>
     </div>
+</div>
 
-    <script>
-        document.addEventListener("DOMContentLoaded", () => {
-            const items = document.querySelectorAll(".faq-item");
-            const moreBtn = document.getElementById("btn-more");
-            const lessBtn = document.getElementById("btn-less");
+<!-- 더보기 버튼 -->
+<div class="btn_area">
+    <button class="btn_more" id="btn-more" style="border-radius:0 !important; height:45px;">더보기</button>
+    <button class="btn_less" id="btn-less" style="display:none; height:45px; border-radius:0; padding:10px 20px; font-size:14px; border:1px solid #ccc; background-color:#eee; color:#333; cursor:pointer;">간단히보기</button>
+</div>
 
-            let visible = 3;
-            const step = 3;
-            const max = 10;
+<script>
+    document.addEventListener("DOMContentLoaded", () => {
+        const items = document.querySelectorAll(".faq-item");
+        const moreBtn = document.getElementById("btn-more");
+        const lessBtn = document.getElementById("btn-less");
 
-            function render() {
-                items.forEach((item, i) => {
-                    item.style.display = i < visible ? "block" : "none";
-                });
-                moreBtn.style.display = visible < Math.min(items.length, max) ? "inline-block" : "none";
-                lessBtn.style.display = visible >= Math.min(items.length, max) ? "inline-block" : "none";
-            }
+        let visible = 3;
+        const step = 3;
+        const max = 10;
 
-            moreBtn.addEventListener("click", () => {
-                visible = Math.min(visible + step, max, items.length);
-                render();
+        function render() {
+            items.forEach((item, i) => {
+                item.style.display = i < visible ? "block" : "none";
             });
+            moreBtn.style.display = visible < Math.min(items.length, max) ? "inline-block" : "none";
+            lessBtn.style.display = visible >= Math.min(items.length, max) ? "inline-block" : "none";
+        }
 
-            lessBtn.addEventListener("click", () => {
-                visible = 3;
-                render();
-                window.scrollTo({ top: 0, behavior: "smooth" });
-            });
-
+        moreBtn.addEventListener("click", () => {
+            visible = Math.min(visible + step, max, items.length);
             render();
         });
 
-        // Q/A 토글 기능
-        function toggleContent(btn) {
-            const content = btn.nextElementSibling;
-            content.style.display = content.style.display === "block" ? "none" : "block";
-        }
-    </script>
-
-    <!-- 구분선 -->
-    <script>
-        // --- 요소 가져오기 ---
-        const body     = document.body;
-        const menuBtn  = document.getElementById('menuBtn');   // 왼쪽 상단 버튼
-        const closeBtn = document.getElementById('closeBtn');  // X 버튼
-        const overlay  = document.getElementById('menuOverlay'); // 전체 오버레이
-
-        // --- 메뉴 열기 ---
-        function openMenu(){
-            overlay.classList.add('open');  // CSS .open 적용 → 왼쪽에서 패널 슬라이드
-            overlay.setAttribute('aria-hidden', 'false');
-            menuBtn.setAttribute('aria-expanded', 'true');
-            body.style.overflow = 'hidden'; // 배경 스크롤 막음
-        }
-
-        // --- 메뉴 닫기 ---
-        function closeMenu(){
-            overlay.classList.remove('open');
-            overlay.setAttribute('aria-hidden', 'true');
-            menuBtn.setAttribute('aria-expanded', 'false');
-            body.style.overflow = ''; // 스크롤 다시 가능
-        }
-
-        // --- 이벤트 연결 ---
-        if(menuBtn && closeBtn && overlay){
-            menuBtn.addEventListener('click', openMenu); // 버튼 클릭 시 열기
-            closeBtn.addEventListener('click', closeMenu); // X 버튼 클릭 시 닫기
-
-            // 배경 클릭 시 닫기
-            overlay.addEventListener('click', (e) => {
-                if(e.target === overlay) closeMenu();
-            });
-
-            // ESC 키 눌렀을 때 닫기
-            window.addEventListener('keydown', (e)=>{
-                if(e.key === 'Escape' && overlay.classList.contains('open')) closeMenu();
-            });
-        }
-    </script>
-
-    <script>
-        // --- 왼쪽 카테고리 클릭 시 오른쪽 패널 열기 ---
-        const menuLinks = document.querySelectorAll('.overlay__menu a[data-cat]');
-        const panels    = document.querySelectorAll('#subcol .panel');
-
-        menuLinks.forEach(link => {
-            link.addEventListener('click', (e) => {
-                e.preventDefault();
-
-                // 1. 모든 패널 숨기기
-                panels.forEach(p => p.classList.remove('show'));
-
-                // 2. 클릭한 카테고리 가져오기
-                const key = link.getAttribute('data-cat');
-                const panel = document.querySelector(`#subcol .panel[data-key="${key}"]`);
-
-                // 3. 해당 패널만 보이기
-                if (panel) {
-                    panel.classList.add('show');
-                }
-
-                // 4. 왼쪽 메뉴 active 처리 (선택사항)
-                menuLinks.forEach(l => l.classList.remove('is-active'));
-                link.classList.add('is-active');
-            });
+        lessBtn.addEventListener("click", () => {
+            visible = 3;
+            render();
+            window.scrollTo({ top: 0, behavior: "smooth" });
         });
-    </script>
 
-    <div th:replace="~{main/footer :: footer}"></div>
+        render();
+    });
+
+    // Q/A 토글 기능
+    function toggleContent(btn) {
+        const content = btn.nextElementSibling;
+        content.style.display = content.style.display === "block" ? "none" : "block";
+    }
+</script>
+
+<!-- 구분선 -->
+<script>
+    // --- 요소 가져오기 ---
+    const body     = document.body;
+    const menuBtn  = document.getElementById('menuBtn');   // 왼쪽 상단 버튼
+    const closeBtn = document.getElementById('closeBtn');  // X 버튼
+    const overlay  = document.getElementById('menuOverlay'); // 전체 오버레이
+
+    // --- 메뉴 열기 ---
+    function openMenu(){
+        overlay.classList.add('open');  // CSS .open 적용 → 왼쪽에서 패널 슬라이드
+        overlay.setAttribute('aria-hidden', 'false');
+        menuBtn.setAttribute('aria-expanded', 'true');
+        body.style.overflow = 'hidden'; // 배경 스크롤 막음
+    }
+
+    // --- 메뉴 닫기 ---
+    function closeMenu(){
+        overlay.classList.remove('open');
+        overlay.setAttribute('aria-hidden', 'true');
+        menuBtn.setAttribute('aria-expanded', 'false');
+        body.style.overflow = ''; // 스크롤 다시 가능
+    }
+
+    // --- 이벤트 연결 ---
+    if(menuBtn && closeBtn && overlay){
+        menuBtn.addEventListener('click', openMenu); // 버튼 클릭 시 열기
+        closeBtn.addEventListener('click', closeMenu); // X 버튼 클릭 시 닫기
+
+        // 배경 클릭 시 닫기
+        overlay.addEventListener('click', (e) => {
+            if(e.target === overlay) closeMenu();
+        });
+
+        // ESC 키 눌렀을 때 닫기
+        window.addEventListener('keydown', (e)=>{
+            if(e.key === 'Escape' && overlay.classList.contains('open')) closeMenu();
+        });
+    }
+</script>
+
+<script>
+    // --- 왼쪽 카테고리 클릭 시 오른쪽 패널 열기 ---
+    const menuLinks = document.querySelectorAll('.overlay__menu a[data-cat]');
+    const panels    = document.querySelectorAll('#subcol .panel');
+
+    menuLinks.forEach(link => {
+        link.addEventListener('click', (e) => {
+            e.preventDefault();
+
+            // 1. 모든 패널 숨기기
+            panels.forEach(p => p.classList.remove('show'));
+
+            // 2. 클릭한 카테고리 가져오기
+            const key = link.getAttribute('data-cat');
+            const panel = document.querySelector(`#subcol .panel[data-key="${key}"]`);
+
+            // 3. 해당 패널만 보이기
+            if (panel) {
+                panel.classList.add('show');
+            }
+
+            // 4. 왼쪽 메뉴 active 처리 (선택사항)
+            menuLinks.forEach(l => l.classList.remove('is-active'));
+            link.classList.add('is-active');
+        });
+    });
+</script>
+
+<div th:replace="~{main/footer :: footer}"></div>
 </body>
 </html>

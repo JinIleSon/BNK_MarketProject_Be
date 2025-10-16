@@ -11,38 +11,57 @@ import java.util.List;
 
 @Controller
 @RequiredArgsConstructor
-@RequestMapping("/qna")
+@RequestMapping("/cs/qna")
 public class CSQnaController {
 
     private final CSQnaService qnaService;
 
     /* QnA 목록 */
     @GetMapping("/list")
-    public String list(@RequestParam(required = false) String userId, Model model) {
-        List<CSNoticeDTO> qnaList = qnaService.getQnaList(userId);
+    public String list(
+            @RequestParam(required = false) String userid,
+            @RequestParam(required = false) String boardType2,
+            @RequestParam(required = false) String boardType3,
+            @RequestParam(defaultValue = "0") int offset,
+            @RequestParam(defaultValue = "10") int limit,
+            Model model) {
+
+        List<CSNoticeDTO> qnaList = qnaService.getQnaList(userid, boardType2, boardType3, offset, limit);
+        int totalCount = qnaService.getTotalCount(userid, boardType2, boardType3);
+        int currentPage = offset / limit;
+        int totalPages = (int) Math.ceil((double) totalCount / limit);
+
         model.addAttribute("qnaList", qnaList);
+        model.addAttribute("totalCount", totalCount);
+        model.addAttribute("boardType2", boardType2);
+        model.addAttribute("boardType3", boardType3);
+        model.addAttribute("currentPage", currentPage);
+        model.addAttribute("totalPages", totalPages);
+        model.addAttribute("limit", limit);
+        model.addAttribute("userid", userid);
+
         return "customer_service/qna/qna_list";
     }
 
     /* QnA 상세 */
-    @GetMapping("/detail/{id}")
-    public String detail(@PathVariable Long id, Model model) {
-        CSNoticeDTO qna = qnaService.getQnaDetail(id);
+    @GetMapping("/view/{id}")
+    public String view(@PathVariable Long id, Model model) {
+        CSNoticeDTO qna = qnaService.getQnaview(id);
+
         model.addAttribute("qna", qna);
+        model.addAttribute("boardType2", qna.getBoardType2());
+
         return "customer_service/qna/qna_view";
     }
 
     /* QnA 등록 */
     @PostMapping("/write")
     public String write(@ModelAttribute CSNoticeDTO qna) {
+
         qnaService.insertQna(qna);
+
         return "redirect:/qna/list";
     }
 
-    /* 관리자 답변 등록 */
-    @PostMapping("/answer")
-    public String answer(@ModelAttribute CSNoticeDTO qna) {
-        qnaService.updateAnswer(qna);
-        return "redirect:/qna/detail/" + qna.getId();
-    }
+
 }

@@ -137,15 +137,15 @@
                         </div>
                         <div style="width:70px; border-right:1px solid #dddddd; display: flex; flex-direction: column; align-items: center; justify-content: center;">
                             <div style="margin-bottom:8px;">쿠폰</div>
-                            <div>1</div>
+                            <div><span th:text="${couponCount}"></span></div>
                         </div>
                         <div style="width:70px;border-right:1px solid #dddddd; display: flex; flex-direction: column; align-items: center; justify-content: center;">
                             <div style="margin-bottom:8px;">포인트</div>
-                            <div>1,000</div>
+                            <div><span th:text="${#numbers.formatInteger(balance, 3, 'COMMA')} + 'P'">0P</span></div>
                         </div>
                         <div style="width:70px;display: flex; flex-direction: column; align-items: center; justify-content: center;">
                             <div style="margin-bottom:8px;">문의</div>
-                            <div>1</div>
+                            <div><span th:text="${count}"></span></div>
                         </div>
                     </div>
                 </div>
@@ -192,9 +192,13 @@
 
                             <!-- 사용자 지정 기간 (date 인풋) -->
                             <div style="display:flex; color:white; border:1px solid white;">
-                            <input id="startDate" type="date" style="background:transparent; border:0; color:#fff; margin:0 10px; width:110px;">
-                            ~
-                            <input id="endDate" type="date" style="background:transparent; border:0; color:#fff; margin:0 10px; width:110px;">
+                                <input id="startDate" type="date"
+                                       th:value="${s}"
+                                style="background:transparent; border:0; color:#fff; margin:0 10px; width:110px;">
+                                ~
+                                <input id="endDate" type="date"
+                                       th:value="${e}"
+                                style="background:transparent; border:0; color:#fff; margin:0 10px; width:110px;">
                             </div>
                             <div style="margin-left: 15px;">
                                 <button id="applyFilter" style="background:#000; border:none; color:#fff; font-weight:300; margin-left:15px; width:45px; height:26px;">조회</button>
@@ -221,268 +225,139 @@
                                 }
                             </style>
                             <script>
-                                // ===== 기간별 조회 (목록 표에만 적용) =====
-                                const startOfDay = d => new Date(d.getFullYear(), d.getMonth(), d.getDate());
-                                const endOfDay   = d => new Date(d.getFullYear(), d.getMonth(), d.getDate(), 23,59,59,999);
-
-                                // 로컬 기준 yyyy-mm-dd 포맷/파서 (UTC 안 씀)
+                                // yyyy-mm-dd
                                 const fmt = d => {
-                                const y = d.getFullYear();
-                                const m = String(d.getMonth()+1).padStart(2,'0');
-                                const day = String(d.getDate()).padStart(2,'0');
-                                return `${y}-${m}-${day}`;
+                                    const y = d.getFullYear();
+                                    const m = String(d.getMonth()+1).padStart(2,'0');
+                                    const day = String(d.getDate()).padStart(2,'0');
+                                    return `${y}-${m}-${day}`;
                                 };
                                 const parse = (str) => {
-                                // "YYYY-MM-DD"를 로컬 Date로 생성(UTC 파싱 금지)
-                                const m = /^(\d{4})-(\d{2})-(\d{2})$/.exec(str || '');
-                                return m ? new Date(+m[1], +m[2]-1, +m[3]) : new Date(NaN);
+                                    const m = /^(\d{4})-(\d{2})-(\d{2})$/.exec(str || '');
+                                    return m ? new Date(+m[1], +m[2]-1, +m[3]) : null;
                                 };
 
-                                document.addEventListener('DOMContentLoaded', function(){
-                                const listTable = document.getElementById('orderListTable');
-                                if(!listTable) return;
-
-                                const rows = Array.from(listTable.querySelectorAll('tr')).slice(1);
-                                function getRowDate(tr){
-                                    const t = (tr.querySelector('td:first-child')?.textContent || '').trim();
-                                    const m = t.match(/^(\d{4})-(\d{2})-(\d{2})$/);
-                                    if(!m) return null;
-                                    return new Date(+m[1], +m[2]-1, +m[3]); // 로컬
+                                function goWithRange(s, e, pg = 1){
+                                    const url = new URL(location.href);
+                                    url.searchParams.set('s', s);
+                                    url.searchParams.set('e', e);
+                                    url.searchParams.set('pg', pg);
+                                    location.href = url.toString();
                                 }
 
-                                const startInput = document.getElementById('startDate');
-                                const endInput   = document.getElementById('endDate');
-                                const applyBtn   = document.getElementById('applyFilter');
-                                const quickWrap  = document.getElementById('quickRanges');
-                                const monthWrap  = document.getElementById('fixedMonthRanges');
+                                document.addEventListener('DOMContentLoaded', () => {
+                                    const startInput = document.getElementById('startDate');
+                                    const endInput   = document.getElementById('endDate');
+                                    const applyBtn   = document.getElementById('applyFilter');
+                                    const quickWrap  = document.getElementById('quickRanges');
+                                    const monthWrap  = document.getElementById('fixedMonthRanges');
 
-                                // === 오늘/1년 전(로컬 자정 기준) ===
-                                const MS = 24*60*60*1000;
-                                const now = new Date();
-                                const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
-                                const yearAgo = new Date(today); yearAgo.setDate(today.getDate()-364); // 포함 365일
+                                    // 인풋 min/max (최근 1년)
+                                    const now = new Date();
+                                    const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+                                    const yearAgo = new Date(today); yearAgo.setDate(today.getDate() - 364);
+                                    startInput.min = fmt(yearAgo); startInput.max = fmt(today);
+                                    endInput.min   = fmt(yearAgo); endInput.max   = fmt(today);
 
-                                // HTML date 인풋 제한(로컬 포맷)
-                                startInput.min = fmt(yearAgo);
-                                startInput.max = fmt(today);
-                                endInput.min   = fmt(yearAgo);
-                                endInput.max   = fmt(today);
-
-                                function clampRange(){
-                                    let s = parse(startInput.value) || new Date(NaN);
-                                    let e = parse(endInput.value)   || new Date(NaN);
-
-                                    if (isNaN(+s)) s = new Date(yearAgo);
-                                    if (isNaN(+e)) e = new Date(today);
-
-                                    // 1차: 허용 범위 내로
-                                    if (s < yearAgo) s = new Date(yearAgo);
-                                    if (s > today)   s = new Date(today);
-                                    if (e < yearAgo) e = new Date(yearAgo);
-                                    if (e > today)   e = new Date(today);
-
-                                    // 시작<=종료
-                                    if (s > e) e = new Date(s);
-
-                                    // 365일 초과 금지(포함)
-                                    const diffDays = Math.floor((endOfDay(e) - startOfDay(s))/MS) + 1;
-                                    if (diffDays > 365){
-                                    const candStart = new Date(e); candStart.setDate(e.getDate()-364);
-                                    s = candStart < yearAgo ? new Date(yearAgo) : candStart;
-                                    }
-
-                                    startInput.value = fmt(s);
-                                    endInput.value   = fmt(e);
-                                    return {s, e};
-                                }
-
-                                // 기본값: 최근 1주 (로컬)
-                                (function initDefault(){
-                                    const s = new Date(today); s.setDate(today.getDate()-6);
-                                    startInput.value = fmt(s);
-                                    endInput.value   = fmt(today);
-                                    clampRange();
-                                })();
-
-                                function clearActive(){
-                                    quickWrap?.querySelectorAll('.range-btn')?.forEach(el=>el.classList.remove('range-active'));
-                                    monthWrap?.querySelectorAll('div')?.forEach(el=>el.classList.remove('range-active'));
-                                }
-
-                                // 빠른범위(1주/15일/1개월)
-                                quickWrap?.addEventListener('click', e=>{
-                                    const btn = e.target.closest('.range-btn');
-                                    if(!btn) return;
-
-                                    clearActive(); btn.classList.add('range-active');
-
-                                    const base = today; // 로컬 자정 기준
-                                    let s, ed;
-                                    const days = Number(btn.dataset.days || 0);
-
-                                    if (days === 30) {
-                                    const prevSame = new Date(base.getFullYear(), base.getMonth()-1, base.getDate());
-                                    s  = startOfDay(new Date(prevSame.getFullYear(), prevSame.getMonth(), prevSame.getDate()-1));
-                                    ed = endOfDay(base);
-                                    } else {
-                                    s  = startOfDay(new Date(base.getFullYear(), base.getMonth(), base.getDate()-(days-1)));
-                                    ed = endOfDay(base);
-                                    }
-                                    filter(s, ed);
-                                });
-
-                                // 6~10월 고정 월
-                                monthWrap?.addEventListener('click', e=>{
-                                    const el = e.target.closest('div');
-                                    if(!el) return;
-                                    const m = parseInt(el.textContent.replace(/[^\d]/g,''),10);
-                                    if(!(m>=1 && m<=12)) return;
-
-                                    clearActive(); el.classList.add('range-active');
-
-                                    const y = today.getFullYear();
-                                    const s = new Date(y, m-1, 1);
-                                    const ed= new Date(y, m, 0);
-                                    filter(s, ed);
-                                });
-
-                                // 인풋 변경 시 즉시 보정
-                                startInput.addEventListener('change', clampRange);
-                                endInput.addEventListener('change', clampRange);
-
-                                function validateRange(){
-                                    const {s, e} = clampRange();
-                                    const diff = Math.floor((endOfDay(e) - startOfDay(s))/MS) + 1;
-                                    if(diff>365){ alert('최대 1년(365일)까지만 조회 가능합니다.'); return null; }
-                                    return {s, e};
-                                }
-
-                                function filter(s, e){
-                                    const S = startOfDay(s), E = endOfDay(e);
-                                    rows.forEach(tr=>{
-                                    const d = getRowDate(tr);
-                                    tr.style.display = (d && d>=S && d<=E) ? '' : 'none';
+                                    // 조회 버튼
+                                    applyBtn.addEventListener('click', () => {
+                                        let s = startInput.value, e = endInput.value;
+                                        if(!s || !e) return;
+                                        const sd = parse(s), ed = parse(e);
+                                        if(!sd || !ed) return;
+                                        // 365일 제한 및 s<=e 보정(선택)
+                                        if (sd > ed) s = fmt(ed);
+                                        const msPerDay = 24*60*60*1000;
+                                        const days = Math.floor((ed - sd)/msPerDay) + 1;
+                                        if (days > 365) {
+                                            const fixedStart = new Date(ed); fixedStart.setDate(ed.getDate() - 364);
+                                            s = fmt(fixedStart);
+                                        }
+                                        goWithRange(s, e, 1); // 새 조회는 1페이지부터
                                     });
-                                }
-                                
-                                function showAll(){
-                                    rows.forEach(tr=> tr.style.display = '');
-                                }
 
-                                applyBtn.disabled = false;
-                                applyBtn.style.opacity = '1';
-                                applyBtn.style.cursor  = 'pointer';
-                                applyBtn.addEventListener('click', ()=>{
-                                const rng = validateRange();
-                                if(!rng) return;
-                                clearActive();          // ← 조회 시 왼쪽 버튼 활성표시 초기화
-                                filter(rng.s, rng.e);
+                                    // 빠른범위 (1주/15일/1개월)
+                                    quickWrap?.addEventListener('click', (e) => {
+                                        const btn = e.target.closest('.range-btn');
+                                        if(!btn) return;
+                                        const days = Number(btn.dataset.days || 0);
+                                        const end = fmt(today);
+                                        let start;
+                                        if (days === 30) {
+                                            const prevSame = new Date(today.getFullYear(), today.getMonth()-1, today.getDate());
+                                            const s = new Date(prevSame.getFullYear(), prevSame.getMonth(), prevSame.getDate()-1);
+                                            start = fmt(s);
+                                        } else {
+                                            const s = new Date(today.getFullYear(), today.getMonth(), today.getDate()-(days-1));
+                                            start = fmt(s);
+                                        }
+                                        goWithRange(start, end, 1);
+                                    });
+
+                                    // 고정 월(6~10월)
+                                    monthWrap?.addEventListener('click', (e) => {
+                                        const el = e.target.closest('div');
+                                        if(!el) return;
+                                        const m = parseInt(el.textContent.replace(/[^\d]/g,''),10);
+                                        if(!(m>=1 && m<=12)) return;
+                                        const y = today.getFullYear();
+                                        const s = fmt(new Date(y, m-1, 1));
+                                        const ed= fmt(new Date(y, m, 0));
+                                        goWithRange(s, ed, 1);
+                                    });
                                 });
-
-                                showAll();
-                            }); // DOMContentLoaded 끝
                             </script>
+
                         </div>
                         <table id="orderListTable" style="text-align: center; border-collapse: collapse;border-top:1px solid; width:900px;">
                             <tr style="background-color: #dedede; font-size:12px; color:white; font-weight: 800; height:40px;">
                                 <th style="width:120px;">날짜</th>
-                                <th style="">구분</th>
-                                <th style="">주문번호</th>
-                                <th style="">적립금액</th>
-                                <th style="">비고</th>
+                                <th style="width:59px;">구분</th>
+                                <th style="width:151px;">주문번호</th>
+                                <th style="width:92px;">적립금액</th>
+                                <th style="width:351px;">비고</th>
                                 <th style="width:125px;">유효기간</th>
                             </tr>
-                            <tr style="border-bottom: 1px solid #dddddd; height:65px;">
-                                <td>2025-09-16</td>
-                                <td style="">적립</td>
-                                <td style="letter-spacing: -1px;">2022121001</td>
-                                <td>340</td>
-                                <td>상품 구매확정</td>
-                                <td>2024-12-10</td>
-                            </tr>
-                            <tr style="border-bottom: 1px solid #dddddd; height:65px;">
-                                <td>2025-09-21</td>
-                                <td style="">적립</td>
-                                <td style="letter-spacing: -1px;">2022121001</td>
-                                <td>340</td>
-                                <td>상품 구매확정</td>
-                                <td>2024-12-10</td>
-                            </tr>
-                            <tr style="border-bottom: 1px solid #dddddd; height:65px;">
-                                <td>2025-08-20</td>
-                                <td style="">적립</td>
-                                <td style="letter-spacing: -1px;">2022121001</td>
-                                <td>340</td>
-                                <td>상품 구매확정</td>
-                                <td>2024-12-10</td>
-                            </tr>
-                            <tr style="border-bottom: 1px solid #dddddd; height:65px;">
-                                <td>2025-09-10</td>
-                                <td style="">적립</td>
-                                <td style="letter-spacing: -1px;">2022121001</td>
-                                <td>340</td>
-                                <td>상품 구매확정</td>
-                                <td>2024-12-10</td>
-                            </tr>
-                            <tr style="border-bottom: 1px solid #dddddd; height:65px;">
-                                <td>2025-06-10</td>
-                                <td style="">적립</td>
-                                <td style="letter-spacing: -1px;">2022121001</td>
-                                <td>340</td>
-                                <td>상품 구매확정</td>
-                                <td>2024-12-10</td>
-                            </tr>
-                            <tr style="border-bottom: 1px solid #dddddd; height:65px;">
-                                <td>2025-07-10</td>
-                                <td style="">적립</td>
-                                <td style="letter-spacing: -1px;">2022121001</td>
-                                <td>340</td>
-                                <td>상품 구매확정</td>
-                                <td>2024-12-10</td>
-                            </tr>
-                            <tr style="border-bottom: 1px solid #dddddd; height:65px;">
-                                <td>2025-08-10</td>
-                                <td style="">적립</td>
-                                <td style="letter-spacing: -1px;">2022121001</td>
-                                <td>340</td>
-                                <td>상품 구매확정</td>
-                                <td>2024-12-10</td>
-                            </tr>
-                            <tr style="border-bottom: 1px solid #dddddd; height:65px;">
-                                <td>2025-10-10</td>
-                                <td style="">적립</td>
-                                <td style="letter-spacing: -1px;">2022121001</td>
-                                <td>340</td>
-                                <td>상품 구매확정</td>
-                                <td>2024-12-10</td>
-                            </tr>
-                            <tr style="border-bottom: 1px solid #dddddd; height:65px;">
-                                <td>2025-09-10</td>
-                                <td style="">적립</td>
-                                <td style="letter-spacing: -1px;">2022121001</td>
-                                <td>340</td>
-                                <td>상품 구매확정</td>
-                                <td>2024-12-10</td>
-                            </tr>
-                            <tr style="border-bottom: 1px solid #dddddd; height:65px;">
-                                <td>2024-09-22</td>
-                                <td style="">적립</td>
-                                <td style="letter-spacing: -1px;">2022121001</td>
-                                <td>340</td>
-                                <td>상품 구매확정</td>
-                                <td>2024-12-10</td>
+                            <tr style="border-bottom: 1px solid #dddddd; height:65px;"
+                                th:each="point, stat:${pageResponseDTO.dtoList}">
+                                <td><span
+                                        th:text="${#strings.substring(point.created_at, 0, 10)}"></span></td>
+                                <td style=""><span
+                                th:text="${point.change_amount >= 0 ? '적립' : '사용'}"></span></td>
+                                <td style="letter-spacing: -1px;"
+                                    th:text="${point.description == '상품 구매 완료'
+                                      ? (10121211362L
+                                         + pageResponseDTO.dtoList.subList(0, stat.index + 1).?[description == '상품 구매 완료'].size()
+                                         - 1)
+                                      : '-'}">
+                                </td>
+                                <td><span
+                                th:text="${point.change_amount}"></span></td>
+                                <td><span
+                                th:text="${point.description}"></span></td>
+                                <td><span th:text="${ T(java.time.LocalDate)
+                                                     .parse(#strings.substring(point.created_at, 0, 10))
+                                                     .plusYears(2)
+                                                     .format(T(java.time.format.DateTimeFormatter).ofPattern('yyyy-MM-dd')) }">
+                                  </span>
+                                </td>
                             </tr>
                         </table>
                         <div style=" height: 100px; margin-top:40px; display: flex; justify-content: center;">
-                            <form action="" method="" style="">
-                                <input type="button" class="prev-page" value="< 이전">
+                            <input th:if="${pageResponseDTO.prev}"
+                                   th:onclick="|location.href='@{/mypage/mypage/point(pg=${pageResponseDTO.start - 1}, s=${s}, e=${e})}'|"
+                                   type="button" class="prev-page" value="< 이전">
 
-                                <input type="button" value="1" style="border:1px solid #333; background-color: #333; color: white; height: 30px; width: 30px; margin-right:2px; line-height:1;">
-                                <input type="button" value="2" style="cursor: pointer; border:1px solid #ddd; color: #555; height: 30px; width: 30px; margin-right:2px; line-height:1;">
-                                <input type="button" value="3" style="cursor: pointer; border:1px solid #ddd; color: #555; height: 30px; width: 30px; line-height:1;">
+                            <th:block th:each="num:${#numbers.sequence(pageResponseDTO.start, pageResponseDTO.end)}">
+                                <input th:onclick="|location.href='@{/mypage/mypage/point(pg=${num}, s=${s}, e=${e})}'|"
+                                       th:class="${num == pageResponseDTO.pg ? 'current' : 'num'}"
+                                       type="button"
+                                       th:value="${num}" />
+                            </th:block>
 
-                                <input type="button" class="next-page" value="다음 >" style="">
-                            </form>
+                            <input th:if="${pageResponseDTO.next}"
+                                   th:onclick="|location.href='@{/mypage/mypage/point(pg=${pageResponseDTO.end + 1}, s=${s}, e=${e})}'|"
+                                   type="button" class="next-page" value="다음 >">
                         </div>
                     </div>
                     <div style="margin-bottom:50px;"></div>
@@ -493,5 +368,25 @@
         <div style="margin-top:100px;"></div>
         <div th:replace="~{main/footer.html}"></div>
     </main>
+    <style>
+        .current{
+            border:1px solid #333;
+            background-color: #333;
+            color: white;
+            height: 30px;
+            width: 30px;
+            margin-right:7px;
+            line-height:1;
+        }
+        .num {
+            cursor: pointer;
+            border:1px solid #ddd;
+            color: #555;
+            height: 30px;
+            width: 30px;
+            margin-right:7px;
+            line-height:1;
+        }
+    </style>
 </body>
 </html>

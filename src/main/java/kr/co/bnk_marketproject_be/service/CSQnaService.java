@@ -13,19 +13,22 @@ public class CSQnaService {
 
     private final CSQnaMapper qnaMapper;
 
-    public List<CSNoticeDTO> getQnaList(String userId) {
-        return qnaMapper.selectQnaList(userId);
+    // 페이징된 데이터
+    public List<CSNoticeDTO> getQnaList(String userid, String boardType2, String boardType3, int offset, int limit) {
+        return qnaMapper.selectQnaList(userid, boardType2, boardType3, offset, limit);
     }
 
-    public CSNoticeDTO getQnaDetail(Long id) {
-        return qnaMapper.selectQnaDetail(id);
+    // 전체 게시물 수
+    public int getTotalCount(String userid, String boardType2, String boardType3) {
+        return qnaMapper.selectTotalCount(userid, boardType2, boardType3);
+    }
+
+    public CSNoticeDTO getQnaview(Long id) {
+        return qnaMapper.selectQnaview(id);
     }
 
     public void insertQna(CSNoticeDTO qna) {
         qnaMapper.insertQna(qna);
     }
 
-    public void updateAnswer(CSNoticeDTO qna) {
-        qnaMapper.updateAnswer(qna);
-    }
 }
