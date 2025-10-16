@@ -1,12 +1,10 @@
 package kr.co.bnk_marketproject_be.controller;
 
-import kr.co.bnk_marketproject_be.dto.PageRequestDTO;
-import kr.co.bnk_marketproject_be.dto.PageResponseAdminInquiryDTO;
-import kr.co.bnk_marketproject_be.dto.PageResponseUserCouponsNowDTO;
-import kr.co.bnk_marketproject_be.dto.UserDTO;
+import kr.co.bnk_marketproject_be.dto.*;
 import kr.co.bnk_marketproject_be.service.MyPageService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -15,6 +13,8 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import java.security.Principal;
+import java.time.LocalDate;
+import java.util.List;
 
 @Controller
 @Slf4j
@@ -28,7 +28,33 @@ public class MyPageController {
         return "mypage/mypage_main";
     }
     @GetMapping("/mypage/mypage/point")
-    public String pointList(){
+    public String pointList(Model model,Principal principal, PageRequestDTO pageRequestDTO,
+                            @RequestParam(value = "s", required = false) String s,
+                            @RequestParam(value = "e", required = false) String e){
+        String userId = principal.getName();
+
+        // 기본값: 최근 7일
+        LocalDate today = LocalDate.now();
+        LocalDate oneYearAgo = today.minusDays(364);
+
+        LocalDate start = (s != null && !s.isBlank()) ? LocalDate.parse(s) : oneYearAgo;
+        LocalDate end   = (e != null && !e.isBlank()) ? LocalDate.parse(e) : today;
+
+        // 보정: start > end 방지 및 365일 제한 (선택사항)
+        if (start.isAfter(end)) start = end;
+        if (start.isBefore(end.minusDays(364))) start = end.minusDays(364);
+
+        pageRequestDTO.setStartDate(start);
+        pageRequestDTO.setEndDate(end);
+        pageRequestDTO.setEndExclusive(end.plusDays(1));
+
+        PageResponseUserPointDTO pageResponseUserPointDTO = myPageService.selectUserPoint(pageRequestDTO, userId);
+
+        log.info("pageResponseUserPointDTO={}", pageResponseUserPointDTO);
+        // 인풋 기본값 유지를 위해 넘김
+        model.addAttribute("s", start.toString());
+        model.addAttribute("e", end.toString());
+        model.addAttribute("pageResponseDTO", pageResponseUserPointDTO);
         return "mypage/mypage_point";
     }
     @GetMapping("/mypage/mypage/coupon")
