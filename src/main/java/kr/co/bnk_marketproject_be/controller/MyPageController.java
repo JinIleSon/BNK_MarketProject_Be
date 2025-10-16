@@ -21,6 +21,7 @@ import java.util.List;
 @RequiredArgsConstructor
 public class MyPageController {
 
+    // 푸시용 주석
     private final MyPageService myPageService;
 
     @GetMapping("/mypage/mypage/main")
@@ -67,7 +68,14 @@ public class MyPageController {
         return "mypage/mypage_coupon";
     }
     @GetMapping("/mypage/mypage/review")
-    public String reviewList(){
+    public String reviewList(Model model, PageRequestDTO pageRequestDTO, Principal principal){
+
+        String userId = principal.getName();
+        PageResponseUserReviewDTO pageResponseReviewDTO = myPageService.selectUserReview(pageRequestDTO, userId);
+
+        log.info("pageResponseReviewDTO={}", pageResponseReviewDTO);
+        model.addAttribute("pageResponseDTO", pageResponseReviewDTO);
+
         return "mypage/mypage_review";
     }
     @GetMapping("/mypage/mypage/ask")

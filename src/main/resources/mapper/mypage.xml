@@ -51,6 +51,38 @@
         WHERE user_id = #{user_id}
     </select>
 
+<!--    푸시용 주석-->
+    <select id="selectUserReview" resultType="kr.co.bnk_marketproject_be.dto.MyPageReviewDTO">
+        SELECT
+        pb.id,
+        u.USER_ID AS user_id,
+        p.PRODUCT_CODE AS product_code,
+        p.PRODUCT_NAME AS product_name,
+        pb.CONTENT,
+        pb.RATING,
+        pb.CREATED_AT AS created_at,
+        p.ID AS pid
+        FROM PRODUCT_BOARDS pb
+        JOIN USERS u
+        ON u.id = pb.USERS_ID
+        JOIN PRODUCTS p
+        ON p.id = pb.PRODUCTS_ID
+        WHERE u.USER_ID  = #{user_id}
+        ORDER BY pb.created_at DESC
+        OFFSET #{pageRequestDTO.offset} ROWS
+        FETCH NEXT #{pageRequestDTO.size} ROWS ONLY
+    </select>
+
+    <select id="selectCountTotalUserReview" resultType="int">
+        SELECT COUNT(*)
+        FROM PRODUCT_BOARDS pb
+        JOIN USERS u
+        ON u.id = pb.USERS_ID
+        JOIN PRODUCTS p
+        ON p.id = pb.PRODUCTS_ID
+        WHERE u.USER_ID  = #{user_id}
+    </select>
+
     <select id="selectAllInquiry" resultType="kr.co.bnk_marketproject_be.dto.AdminInquiryDTO">
         SELECT
         A.id                    AS id,

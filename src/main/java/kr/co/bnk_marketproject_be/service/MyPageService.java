@@ -17,7 +17,7 @@ import java.util.UUID;
 @Slf4j
 @RequiredArgsConstructor
 public class MyPageService {
-    // 푸시용
+    // 푸시용 주석
     private final MyPageMapper myPageMapper;
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
@@ -101,6 +101,25 @@ public class MyPageService {
 
     public int selectCountTotalUserCouponsNow(PageRequestDTO pageRequestDTO, String userId) {
         return myPageMapper.selectCountTotalUserCouponsNow(pageRequestDTO, userId);
+    }
+
+    // 마이페이지/포인트내역
+
+    public PageResponseUserReviewDTO selectUserReview(PageRequestDTO pageRequestDTO, String userId) {
+        // MyBatis 처리
+        List<MyPageReviewDTO> dtoList = myPageMapper.selectUserReview(pageRequestDTO, userId);
+
+        int total = myPageMapper.selectCountTotalUserReview(pageRequestDTO, userId);
+
+        return PageResponseUserReviewDTO.builder()
+                .pageRequestDTO(pageRequestDTO)
+                .dtoList(dtoList)
+                .total(total)
+                .build();
+    }
+
+    public int selectCountTotalUserReview(PageRequestDTO pageRequestDTO, String userId) {
+        return myPageMapper.selectCountTotalUserReview(pageRequestDTO, userId);
     }
 
     // 마이페이지/문의하기

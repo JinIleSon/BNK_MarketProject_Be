@@ -6,6 +6,7 @@
     <title>mypage_review</title>
     <!-- 모달 전용 스타일 -->
   <style>
+      /*푸시용 주석*/
     /* 전체 오버레이 */
     .modal-backdrop {
       position: fixed; inset: 0;
@@ -173,7 +174,7 @@
                         <div style="display: flex; margin-top:30px;">
                             <div style="font-weight: 800; margin-right:843px; margin-bottom:5px;">나의리뷰</div>
                         </div>
-                        <table style="text-align: center; border-collapse: collapse;border-top:1px solid; width:900px;">
+                        <table class="review-table" style="text-align: center; border-collapse: collapse;border-top:1px solid; width:900px;">
                             <tr style="background-color: #dedede; font-size:12px; color:white; font-weight: 800; height:40px;">
                                 <th style="width:70px;">번호</th>
                                 <th style="width:170px;">상품명</th>
@@ -181,89 +182,36 @@
                                 <th style="width:120px;">평점</th>
                                 <th style="">작성일</th>
                             </tr>
-                            <tr style="border-bottom: 1px solid #dddddd; height:65px;">
-                                <td>5</td>
-                                <td style="">상품번호 / 상품명</td>
-                                <td style="">배송이 빠릅니다. 잘 사용하겠습니다.</td>
-                                <td>★★★★☆</td>
-                                <td>2022-12-10</td>
-                            </tr>
-                            <tr style="border-bottom: 1px solid #dddddd; height:65px;">
-                                <td>4</td>
-                                <td style="">상품번호 / 상품명</td>
-                                <td style="">배송이 빠릅니다. 잘 사용하겠습니다.</td>
-                                <td>★★★★☆</td>
-                                <td>2022-12-10</td>
-                            </tr>
-                            <tr style="border-bottom: 1px solid #dddddd; height:65px;">
-                                <td>3</td>
-                                <td style="">상품번호 / 상품명</td>
-                                <td style="">배송이 빠릅니다. 잘 사용하겠습니다.</td>
-                                <td>★★★★☆</td>
-                                <td>2022-12-10</td>
-                            </tr>
-                            <tr style="border-bottom: 1px solid #dddddd; height:65px;">
-                                <td>2</td>
-                                <td style="">상품번호 / 상품명</td>
-                                <td style="">배송이 빠릅니다. 잘 사용하겠습니다.</td>
-                                <td>★★★★☆</td>
-                                <td>2022-12-10</td>
-                            </tr>
-                            <tr style="border-bottom: 1px solid #dddddd; height:65px;">
-                                <td>1</td>
-                                <td style="">상품번호 / 상품명</td>
-                                <td style="">배송이 빠릅니다. 잘 사용하겠습니다.</td>
-                                <td>★★★★☆</td>
-                                <td>2022-12-10</td>
-                            </tr>
-                            <tr style="border-bottom: 1px solid #dddddd; height:65px;">
-                                <td>1</td>
-                                <td style="">상품번호 / 상품명</td>
-                                <td style="">배송이 빠릅니다. 잘 사용하겠습니다.</td>
-                                <td>★★★★☆</td>
-                                <td>2022-12-10</td>
-                            </tr>
-                            <tr style="border-bottom: 1px solid #dddddd; height:65px;">
-                                <td>1</td>
-                                <td style="">상품번호 / 상품명</td>
-                                <td style="">배송이 빠릅니다. 잘 사용하겠습니다.</td>
-                                <td>★★★★☆</td>
-                                <td>2022-12-10</td>
-                            </tr>
-                            <tr style="border-bottom: 1px solid #dddddd; height:65px;">
-                                <td>1</td>
-                                <td style="">상품번호 / 상품명</td>
-                                <td style="">배송이 빠릅니다. 잘 사용하겠습니다.</td>
-                                <td>★★★★☆</td>
-                                <td>2022-12-10</td>
-                            </tr>
-                            <tr style="border-bottom: 1px solid #dddddd; height:65px;">
-                                <td>1</td>
-                                <td style="">상품번호 / 상품명</td>
-                                <td style="">배송이 빠릅니다. 잘 사용하겠습니다.</td>
-                                <td>★★★★☆</td>
-                                <td>2022-12-10</td>
-                            </tr>
-                            <tr style="border-bottom: 1px solid #dddddd; height:65px;">
-                                <td>1</td>
-                                <td style="">상품번호 / 상품명</td>
-                                <td style="">배송이 빠릅니다. 잘 사용하겠습니다.</td>
-                                <td>★★★★☆</td>
-                                <td>2022-12-10</td>
+                            <tr style="border-bottom: 1px solid #dddddd; height:65px;"
+                                th:each="review, stat: ${pageResponseDTO.dtoList}">
+                                <td th:text="${pageResponseDTO.startNo - stat.index}">5</td>
+                                <td style="" class="col-name"><span th:text="${review.product_code}"></span> / <a th:href="@{/product/views(id=${review.pid})}">[[${review.product_name}]]</a></td>
+                                <td style="" class="col-content"><span th:text="${review.content}"></span></td>
+                                <td><span th:text="${review.rating == 5 ? '★★★★★' :
+                                (review.rating == 4 ? '★★★★☆' :
+                                (review.rating == 3 ? '★★★☆☆' :
+                                (review.rating == 2 ? '★★☆☆☆' :
+                                (review.rating == 1 ? '★☆☆☆☆' : '☆☆☆☆☆'))))}"></span></td>
+                                <td><span th:text="${#temporals.format(review.created_at, 'yyyy-MM-dd')}"></span></td>
                             </tr>
                         </table>
                     </div>
-                        <div style=" height: 100px; margin-top:40px; display: flex; justify-content: center;">
-                            <form action="" method="" style="">
-                                <input type="button" class="prev-page" value="< 이전">
+                    <div style=" height: 100px; margin-top:40px; display: flex; justify-content: center;">
+                        <input th:if="${pageResponseDTO.prev}"
+                               th:onclick="|location.href='@{/mypage/mypage/review(pg=${pageResponseDTO.start - 1})}'|"
+                               type="button" class="prev-page" value="< 이전">
 
-                                <input type="button" value="1" style="border:1px solid #333; background-color: #333; color: white; height: 30px; width: 30px; margin-right:2px; line-height:1;">
-                                <input type="button" value="2" style="cursor: pointer; border:1px solid #ddd; color: #555; height: 30px; width: 30px; margin-right:2px; line-height:1;">
-                                <input type="button" value="3" style="cursor: pointer; border:1px solid #ddd; color: #555; height: 30px; width: 30px; line-height:1;">
+                        <th:block th:each="num:${#numbers.sequence(pageResponseDTO.start, pageResponseDTO.end)}">
+                            <input th:onclick="|location.href='@{/mypage/mypage/review(pg=${num})}'|"
+                                   th:class="${num == pageResponseDTO.pg ? 'current' : 'num'}"
+                                   type="button"
+                                   th:value="${num}" />
+                        </th:block>
 
-                                <input type="button" class="next-page" value="다음 >" style="">
-                            </form>
-                        </div>
+                        <input th:if="${pageResponseDTO.next}"
+                               th:onclick="|location.href='@{/mypage/mypage/review(pg=${pageResponseDTO.end + 1})}'|"
+                               type="button" class="next-page" value="다음 >" style="">
+                    </div>
                     </div>
                             
                     <div style="margin-bottom:50px;"></div>
@@ -275,5 +223,48 @@
         <div style="margin-top:100px;"></div>
         <div th:replace="~{main/footer.html}"></div>
     </main>
+    <style>
+        .current{
+            border:1px solid #333;
+            background-color: #333;
+            color: white;
+            height: 30px;
+            width: 30px;
+            margin-right:7px;
+            line-height:1;
+        }
+        .num {
+            cursor: pointer;
+            border:1px solid #ddd;
+            color: #555;
+            height: 30px;
+            width: 30px;
+            margin-right:7px;
+            line-height:1;
+        }
+        /* 표가 셀 너비를 지켜서 줄바꿈되도록 */
+        .review-table { table-layout: fixed; }
+
+        /* 상품명/내용 칸: 단어 기준 줄바꿈(스페이스 우선) */
+        .col-name, .col-content {
+            white-space: normal;        /* 줄바꿈 허용 */
+            word-break: keep-all;       /* 단어 중간 단절 금지(스페이스에서만 줄바꿈) */
+            overflow-wrap: break-word;  /* 너무 긴 토큰(코드 등)일 때만 예외적으로 줄바꿈 */
+            line-height: 1.4;
+        }
+        /* 상품명 링크 기본 스타일 */
+        .review-table a {
+            color: #a0a0a0;                 /* 기본 글자색 */
+            text-decoration: none;       /* 밑줄 제거 */
+            transition: color 0.2s, transform 0.2s; /* 부드러운 애니메이션 */
+        }
+
+        /* hover 시 시각적 피드백 */
+        .review-table a:hover {
+            color: #222;              /* 파란색으로 강조 */
+            text-decoration: underline;  /* 밑줄 표시 */
+            transform: translateY(-1px); /* 살짝 위로 올라가게 */
+        }
+    </style>
 </body>
 </html>

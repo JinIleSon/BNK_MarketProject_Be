@@ -67,7 +67,7 @@
             position: absolute;
             top: 0;
             left: 0;
-            width: 60vw;
+            width: 50vw;
             max-width: 900px;
             height: 100%;
             background: white;
@@ -242,135 +242,73 @@
                     <a href="#" data-cat="travel">여행/숙박/항공</a>
                     <a href="#" data-cat="safe">안전거래</a>
                 </div>
-
                 <div id="subcol">
                     <!-- 회원 -->
                     <section class="panel" data-key="member">
-                        <a th:href="@{/cs/qna/list(boardType2='member')}"><b>회원</b></a><br>
+                        <a th:href="@{/cs/faq/list(boardType='회원')}"><h3>회원</h3></a>
                         <ul class="menu-grid">
-                            <li th:classappend="${boardType3 == 'login'} ? 'on'">
-                                <a th:href="@{/cs/qna/list(boardType2='member', boardType3='login')}">로그인</a>
-                            </li>
-                            <li th:classappend="${boardType3 == 'signup'} ? 'on'">
-                                <a th:href="@{/cs/qna/list(boardType2='member', boardType3='signup')}">가입</a>
-                            </li>
-                            <li th:classappend="${boardType3 == 'withdraw'} ? 'on'">
-                                <a th:href="@{/cs/qna/list(boardType2='member', boardType3='withdraw')}">탈퇴</a>
-                            </li>
-                            <li th:classappend="${boardType3 == 'account'} ? 'on'">
-                                <a th:href="@{/cs/qna/list(boardType2='member', boardType3='account')}">회원정보</a>
-                            </li>
+                            <li><a th:href="@{/cs/faq/list(boardType='회원', subType='로그인')}">로그인</a></li>
+                            <li><a th:href="@{/cs/faq/list(boardType='회원', subType='가입')}">가입</a></li>
+                            <li><a th:href="@{/cs/faq/list(boardType='회원', subType='탈퇴')}">탈퇴</a></li>
                         </ul>
                     </section>
 
                     <!-- 쿠폰/이벤트 -->
                     <section class="panel" data-key="coupon">
-                        <a th:href="@{/cs/qna/list(boardType2='event')}"><b>쿠폰/이벤트</b></a><br>
+                        <a th:href="@{/cs/faq/list(boardType='쿠폰/이벤트')}"><h3>쿠폰/이벤트</h3></a>
                         <ul class="menu-grid">
-                            <li th:classappend="${boardType3 == 'couponissue'} ? 'on'">
-                                <a th:href="@{/cs/qna/list(boardType2='event', boardType3='couponissue')}">쿠폰발급</a>
-                            </li>
-                            <li th:classappend="${boardType3 == 'couponuse'} ? 'on'">
-                                <a th:href="@{/cs/qna/list(boardType2='event', boardType3='couponuse')}">쿠폰사용</a>
-                            </li>
-                            <li th:classappend="${boardType3 == 'eventjoin'} ? 'on'">
-                                <a th:href="@{/cs/qna/list(boardType2='event', boardType3='eventjoin')}">이벤트참여</a>
-                            </li>
-                            <li th:classappend="${boardType3 == 'winnercheck'} ? 'on'">
-                                <a th:href="@{/cs/qna/list(boardType2='event', boardType3='winnercheck')}">당첨확인</a>
-                            </li>
+                            <li><a th:href="@{/cs/faq/list(boardType='쿠폰/이벤트', subType='쿠폰발급')}">쿠폰발급</a></li>
+                            <li><a th:href="@{/cs/faq/list(boardType='쿠폰/이벤트', subType='쿠폰사용')}">쿠폰사용</a></li>
+                            <li><a th:href="@{/cs/faq/list(boardType='쿠폰/이벤트', subType='이벤트참여')}">이벤트참여</a></li>
+                            <li><a th:href="@{/cs/faq/list(boardType='쿠폰/이벤트', subType='당첨확인')}">당첨확인</a></li>
                         </ul>
                     </section>
 
                     <!-- 주문/결제 -->
                     <section class="panel" data-key="order">
-                        <a th:href="@{/cs/qna/list(boardType2='pay')}"><b>주문/결제</b></a><br>
+                        <a th:href="@{/cs/faq/list(boardType='주문/결제')}"><h3>주문/결제</h3></a>
                         <ul class="menu-grid">
-                            <li th:classappend="${boardType3 == 'orderguide'} ? 'on'">
-                                <a th:href="@{/cs/qna/list(boardType2='pay', boardType3='orderguide')}">주문방법</a>
-                            </li>
-                            <li th:classappend="${boardType3 == 'paymentmethod'} ? 'on'">
-                                <a th:href="@{/cs/qna/list(boardType2='pay', boardType3='paymentmethod')}">결제수단</a>
-                            </li>
-                            <li th:classappend="${boardType3 == 'paymenterror'} ? 'on'">
-                                <a th:href="@{/cs/qna/list(boardType2='pay', boardType3='paymenterror')}">결제오류</a>
-                            </li>
-                            <li th:classappend="${boardType3 == 'receipt'} ? 'on'">
-                                <a th:href="@{/cs/qna/list(boardType2='pay', boardType3='receipt')}">영수증/증빙</a>
-                            </li>
+                            <li><a th:href="@{/cs/faq/list(boardType='주문/결제', subType='주문방법')}">주문방법</a></li>
+                            <li><a th:href="@{/cs/faq/list(boardType='주문/결제', subType='결제수단')}">결제수단</a></li>
+                            <li><a th:href="@{/cs/faq/list(boardType='주문/결제', subType='결제오류')}">결제오류</a></li>
                         </ul>
                     </section>
 
                     <!-- 배송 -->
                     <section class="panel" data-key="delivery">
-                        <a th:href="@{/cs/qna/list(boardType2='delivery')}"><b>배송</b></a><br>
+                        <a th:href="@{/cs/faq/list(boardType='배송')}"><h3>배송</h3></a>
                         <ul class="menu-grid">
-                            <li th:classappend="${boardType3 == 'tracking'} ? 'on'">
-                                <a th:href="@{/cs/qna/list(boardType2='delivery', boardType3='tracking')}">배송조회</a>
-                            </li>
-                            <li th:classappend="${boardType3 == 'deliverytime'} ? 'on'">
-                                <a th:href="@{/cs/qna/list(boardType2='delivery', boardType3='deliverytime')}">배송기간</a>
-                            </li>
-                            <li th:classappend="${boardType3 == 'deliveryfee'} ? 'on'">
-                                <a th:href="@{/cs/qna/list(boardType2='delivery', boardType3='deliveryfee')}">배송비</a>
-                            </li>
-                            <li th:classappend="${boardType3 == 'globalshipping'} ? 'on'">
-                                <a th:href="@{/cs/qna/list(boardType2='delivery', boardType3='globalshipping')}">해외배송</a>
-                            </li>
+                            <li><a th:href="@{/cs/faq/list(boardType='배송', subType='배송조회')}">배송조회</a></li>
+                            <li><a th:href="@{/cs/faq/list(boardType='배송', subType='배송비')}">배송비</a></li>
+                            <li><a th:href="@{/cs/faq/list(boardType='배송', subType='해외배송')}">해외배송</a></li>
                         </ul>
                     </section>
 
                     <!-- 취소/반품/교환 -->
                     <section class="panel" data-key="return">
-                        <a th:href="@{/cs/qna/list(boardType2='cancel')}"><b>취소/반품/교환</b></a><br>
+                        <a th:href="@{/cs/faq/list(boardType='취소/반품/교환')}"><h3>취소/반품/교환</h3></a>
                         <ul class="menu-grid">
-                            <li th:classappend="${boardType3 == 'ordercancel'} ? 'on'">
-                                <a th:href="@{/cs/qna/list(boardType2='cancel', boardType3='ordercancel')}">주문취소</a>
-                            </li>
-                            <li th:classappend="${boardType3 == 'refund'} ? 'on'">
-                                <a th:href="@{/cs/qna/list(boardType2='cancel', boardType3='refund')}">반품</a>
-                            </li>
-                            <li th:classappend="${boardType3 == 'exchange'} ? 'on'">
-                                <a th:href="@{/cs/qna/list(boardType2='cancel', boardType3='exchange')}">교환</a>
-                            </li>
-                            <li th:classappend="${boardType3 == 'refundprocess'} ? 'on'">
-                                <a th:href="@{/cs/qna/list(boardType2='cancel', boardType3='refundprocess')}">환불처리</a>
-                            </li>
+                            <li><a th:href="@{/cs/faq/list(boardType='취소/반품/교환', subType='주문취소')}">주문취소</a></li>
+                            <li><a th:href="@{/cs/faq/list(boardType='취소/반품/교환', subType='반품')}">반품</a></li>
+                            <li><a th:href="@{/cs/faq/list(boardType='취소/반품/교환', subType='교환')}">교환</a></li>
                         </ul>
                     </section>
 
                     <!-- 여행/숙박/항공 -->
                     <section class="panel" data-key="travel">
-                        <a th:href="@{/cs/qna/list(boardType2='trip')}"><b>여행/숙박/항공</b></a><br>
+                        <a th:href="@{/cs/faq/list(boardType='여행/숙박/항공')}"><h3>여행/숙박/항공</h3></a>
                         <ul class="menu-grid">
-                            <li th:classappend="${boardType3 == 'reservation'} ? 'on'">
-                                <a th:href="@{/cs/qna/list(boardType2='trip', boardType3='reservation')}">예약</a>
-                            </li>
-                            <li th:classappend="${boardType3 == 'payment'} ? 'on'">
-                                <a th:href="@{/cs/qna/list(boardType2='trip', boardType3='payment')}">결제</a>
-                            </li>
-                            <li th:classappend="${boardType3 == 'changecancel'} ? 'on'">
-                                <a th:href="@{/cs/qna/list(boardType2='trip', boardType3='changecancel')}">변경/취소</a>
-                            </li>
+                            <li><a th:href="@{/cs/faq/list(boardType='여행/숙박/항공', subType='예약')}">예약</a></li>
+                            <li><a th:href="@{/cs/faq/list(boardType='여행/숙박/항공', subType='변경/취소')}">변경/취소</a></li>
                         </ul>
                     </section>
 
                     <!-- 안전거래 -->
                     <section class="panel" data-key="safe">
-                        <a th:href="@{/cs/qna/list(boardType2='safe')}"><b>안전거래</b></a><br>
+                        <a th:href="@{/cs/faq/list(boardType='안전거래')}"><h3>안전거래</h3></a>
                         <ul class="menu-grid">
-                            <li th:classappend="${boardType3 == 'security'} ? 'on'">
-                                <a th:href="@{/cs/qna/list(boardType2='safe', boardType3='security')}">보안공지</a>
-                            </li>
-                            <li th:classappend="${boardType3 == 'alert'} ? 'on'">
-                                <a th:href="@{/cs/qna/list(boardType2='safe', boardType3='alert')}">사기주의</a>
-                            </li>
-                            <li th:classappend="${boardType3 == 'safepayment'} ? 'on'">
-                                <a th:href="@{/cs/qna/list(boardType2='safe', boardType3='safepayment')}">안전결제</a>
-                            </li>
-                            <li th:classappend="${boardType3 == 'privacy'} ? 'on'">
-                                <a th:href="@{/cs/qna/list(boardType2='safe', boardType3='privacy')}">개인정보보호</a>
-                            </li>
+                            <li><a th:href="@{/cs/faq/list(boardType='안전거래', subType='안전결제')}">안전결제</a></li>
+                            <li><a th:href="@{/cs/faq/list(boardType='안전거래', subType='사기주의')}">사기주의</a></li>
                         </ul>
                     </section>
                 </div>
