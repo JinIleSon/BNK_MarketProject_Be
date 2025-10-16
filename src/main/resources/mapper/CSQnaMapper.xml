@@ -110,4 +110,19 @@
         </choose>
     </select>
 
+    <!-- view -->
+    <select id="selectQnaview" parameterType="long" resultType="kr.co.bnk_marketproject_be.dto.CSNoticeDTO">
+        SELECT
+            id,
+            board_type AS boardType,
+            board_type2 AS boardType2,
+            board_type3 AS boardType3,
+            title,
+            content,
+            user_id AS userid,
+            created_at AS createdAt
+        FROM board
+        WHERE id = #{id}
+    </select>
+
 </mapper>
