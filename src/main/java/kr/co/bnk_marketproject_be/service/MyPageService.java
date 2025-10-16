@@ -1,7 +1,8 @@
 package kr.co.bnk_marketproject_be.service;
 
 import jakarta.transaction.Transactional;
-import kr.co.bnk_marketproject_be.dto.UserDTO;
+import kr.co.bnk_marketproject_be.dto.*;
+import kr.co.bnk_marketproject_be.mapper.AdminMapper;
 import kr.co.bnk_marketproject_be.mapper.MyPageMapper;
 import kr.co.bnk_marketproject_be.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
@@ -9,13 +10,14 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.UUID;
 
 @Service
 @Slf4j
 @RequiredArgsConstructor
 public class MyPageService {
-    // 푸시용
+    // 푸시용 주석
     private final MyPageMapper myPageMapper;
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
@@ -62,5 +64,88 @@ public class MyPageService {
         user.setProviderId(null);
 
 
+    }
+    // 마이페이지/포인트내역
+
+    public PageResponseUserPointDTO selectUserPoint(PageRequestDTO pageRequestDTO, String userId) {
+        // MyBatis 처리
+        List<AdminPointDTO> dtoList = myPageMapper.selectUserPoint(pageRequestDTO, userId);
+
+        int total = myPageMapper.selectCountTotalUserPoint(pageRequestDTO, userId);
+
+        return PageResponseUserPointDTO.builder()
+                .pageRequestDTO(pageRequestDTO)
+                .dtoList(dtoList)
+                .total(total)
+                .build();
+    }
+
+    public int selectCountTotalUserPoint(PageRequestDTO pageRequestDTO, String userId) {
+        return myPageMapper.selectCountTotalUserPoint(pageRequestDTO, userId);
+    }
+
+    // 마이페이지/쿠폰
+
+    public PageResponseUserCouponsNowDTO selectUserCouponsNow(PageRequestDTO pageRequestDTO, String userId) {
+        // MyBatis 처리
+        List<MyPageCouponsNowDTO> dtoList = myPageMapper.selectUserCouponsNow(pageRequestDTO, userId);
+
+        int total = myPageMapper.selectCountTotalUserCouponsNow(pageRequestDTO, userId);
+
+        return PageResponseUserCouponsNowDTO.builder()
+                .pageRequestDTO(pageRequestDTO)
+                .dtoList(dtoList)
+                .total(total)
+                .build();
+    }
+
+    public int selectCountTotalUserCouponsNow(PageRequestDTO pageRequestDTO, String userId) {
+        return myPageMapper.selectCountTotalUserCouponsNow(pageRequestDTO, userId);
+    }
+
+    public int selectCountTotalUserCouponsNowAround(String user_id){
+        return myPageMapper.selectCountTotalUserCouponsNowAround(user_id);
+    }
+
+    // 마이페이지/포인트내역
+
+    public PageResponseUserReviewDTO selectUserReview(PageRequestDTO pageRequestDTO, String userId) {
+        // MyBatis 처리
+        List<MyPageReviewDTO> dtoList = myPageMapper.selectUserReview(pageRequestDTO, userId);
+
+        int total = myPageMapper.selectCountTotalUserReview(pageRequestDTO, userId);
+
+        return PageResponseUserReviewDTO.builder()
+                .pageRequestDTO(pageRequestDTO)
+                .dtoList(dtoList)
+                .total(total)
+                .build();
+    }
+
+    public int selectCountTotalUserReview(PageRequestDTO pageRequestDTO, String userId) {
+        return myPageMapper.selectCountTotalUserReview(pageRequestDTO, userId);
+    }
+
+    // 마이페이지/문의하기
+
+    public PageResponseAdminInquiryDTO selectAllInquiry(PageRequestDTO pageRequestDTO, String userId) {
+        // MyBatis 처리
+        List<AdminInquiryDTO> dtoList = myPageMapper.selectAllInquiry(pageRequestDTO, userId);
+
+        int total = myPageMapper.selectCountTotalInquiry(pageRequestDTO, userId);
+
+        return PageResponseAdminInquiryDTO.builder()
+                .pageRequestDTO(pageRequestDTO)
+                .dtoList(dtoList)
+                .total(total)
+                .build();
+    }
+
+    public int selectCountTotalInquiry(PageRequestDTO pageRequestDTO, String userId) {
+        return myPageMapper.selectCountTotalInquiry(pageRequestDTO, userId);
+    }
+
+    public int selectCountTotalInquiryAround(String user_id){
+        return myPageMapper.selectCountTotalInquiryAround(user_id);
     }
 }

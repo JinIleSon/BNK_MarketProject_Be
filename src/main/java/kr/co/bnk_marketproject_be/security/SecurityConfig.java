@@ -23,7 +23,8 @@ public class SecurityConfig {
 
     @Autowired
     private MyUserDetailsService myUserDetailsService;
-
+    @Autowired
+    private OAuth2LoginSuccessHandler oAuth2LoginSuccessHandler;
 
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http,
@@ -77,7 +78,8 @@ public class SecurityConfig {
                 ).permitAll()
 
                 // 2) OAuth2 엔드포인트 공개
-                .requestMatchers("/oauth2/**", "/login/oauth2/**", "/oauth2/authorization/**").permitAll()
+                .requestMatchers("/oauth2/**", "/login/oauth2/**",
+                        "/oauth2/authorization/**", "/auth/login/kakao/**").permitAll()
 
                 // 3) 사이트 공개 페이지
                 .requestMatchers(
@@ -107,18 +109,13 @@ public class SecurityConfig {
         // 구글 로그인
         // ✅ OAuth2 로그인 활성화 (필수)
         http.oauth2Login(oauth -> oauth
-                .loginPage("/member/login") // 같은 로그인 페이지 사용
-                .userInfoEndpoint(u -> u.userService(customOAuth2UserService)) // 우리의 매핑 로직
-                        .successHandler((req, res, auth) -> {
-                            Object p = auth.getPrincipal();
-                            if (p instanceof MyUserDetails mud) {
-                                log.info("✅ OAuth2 로그인 성공 : userId={}, role={}", mud.getUsername(), mud.getAuthorities());
-                            } else {
-                                log.info("✅ OAuth2 로그인 성공 : principal={}", p);
-                            }
-                            res.sendRedirect(req.getContextPath() + "/main/main/page");
-                        })
-                //.defaultSuccessUrl("/main/main/page", true)
+                .loginPage("/member/login") // 로그인 페이지 재사용
+                .userInfoEndpoint(u -> u.userService(customOAuth2UserService)) // 사용자 정보 매핑
+                .successHandler(oAuth2LoginSuccessHandler) // ✅ 성공 시 핸들러 실행
+                .failureHandler((req, res, ex) -> { // ✅ 실패 시 에러 로그 확인
+                    ex.printStackTrace();
+                    res.sendRedirect("/member/login?error=true");
+                })
         );
 
 
