@@ -63,19 +63,18 @@
         OFFSET #{offset} ROWS FETCH NEXT #{limit} ROWS ONLY
     </select>
 
-
-    <!-- ✅ QnA 총 개수 (페이지네이션용) -->
+    <!-- QnA 총 개수 (페이지네이션용) -->
     <select id="selectTotalCount" resultType="int">
         SELECT COUNT(*)
         FROM board b
         WHERE b.board_type = 'inquiry'
 
-        <!-- ✅ 1차 카테고리 필터 -->
+        <!-- 1차 카테고리 필터 -->
         <if test="boardType2 != null and boardType2 != ''">
             AND b.board_type2 = #{boardType2}
         </if>
 
-        <!-- ✅ 2차 카테고리 필터 -->
+        <!-- 2차 카테고리 필터 -->
         <choose>
             <when test="boardType3 != null and boardType3 != ''">
                 AND b.board_type3 = #{boardType3}
@@ -124,5 +123,6 @@
         FROM board
         WHERE id = #{id}
     </select>
+
 
 </mapper>

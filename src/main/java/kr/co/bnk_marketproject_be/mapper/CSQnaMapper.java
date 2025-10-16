@@ -21,6 +21,7 @@ public interface CSQnaMapper {
             @Param("userid") String userid,
             @Param("boardType2") String boardType2,
             @Param("boardType3") String boardType3
+
     );
 
     // QnA 상세
