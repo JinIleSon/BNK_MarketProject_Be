@@ -311,96 +311,107 @@
                         </script>
 
                     </div>
-                    <table id="orderListTable" style="text-align: center; border-collapse: collapse;border-top:1px solid; width:900px;">
-                        <tr style="background-color: #dedede; font-size:12px; color:white; font-weight: 800; height:40px;">
-                            <th style="width: 120px;">날짜</th>
+                    <table id="orderListTable" style="text-align:center; border-collapse:collapse; border-top:1px solid; width:900px;">
+                        <tr style="background-color:#dedede; font-size:12px; color:white; font-weight:800; height:40px;">
+                            <th style="width:120px;">날짜</th>
                             <th style="width:500px;">상품정보</th>
                             <th style="width:90px;">상태</th>
-                            <th style="">확인 / 신청</th>
+                            <th>확인 / 신청</th>
                         </tr>
 
-                        <!--주문 내역이 없을때-->
-                        <tr th:if="${#lists.isEmpty(orders)}" style="border-bottom: 1px solid #dddddd; height:180px;">
-                            <td colspan="4" style="padding: 50px; color: #888;">주문 내역이 없습니다.</td>
+                        <!-- 주문 내역이 없을 때 -->
+                        <tr th:if="${#lists.isEmpty(orders)}" style="border-bottom:1px solid #dddddd; height:180px;">
+                            <td colspan="4" style="padding:50px; color:#888;">주문 내역이 없습니다.</td>
                         </tr>
 
-                        <!-- 주문 목록 반복 -->
-                        <tr th:each="o : ${orders}" style="border-bottom: 1px solid #dddddd; height:180px;">
-                            <!-- 주문일자 -->
-                            <td th:text="${o.created_at}">2025-10-01</td>
+                        <!-- ✅ 주문별 반복 -->
+                        <!-- ✅ 주문별 반복 -->
+                        <th:block th:each="o : ${orders}">
+                            <tr style="border-bottom: 1px solid #dddddd;">
+                                <!-- 주문일자 -->
+                                <td th:text="${o.created_at}" style="vertical-align: top; padding-top:20px; white-space:nowrap;">
+                                    2025-10-01 02:02:14
+                                </td>
 
-                            <!-- 상품정보 -->
-                            <td style="text-align: left; padding-left:10px;">
-                                <div style="display: flex; align-items: center;">
+                                <!-- ✅ 상품정보 (여러 상품을 내부에서 반복) -->
+                                <td style="text-align:left; padding:15px 10px;">
+                                    <!-- 첫 번째 상품부터 모두 출력 -->
+                                    <th:block th:each="item : ${o.orderItems}">
+                                        <div style="display:flex; align-items:center; margin-bottom:15px; border-bottom:1px solid #eee; padding-bottom:15px;">
+                                            <!-- 이미지 -->
+                                            <div>
+                                                <img th:src="@{'/images/no_image.jpg'}" alt="상품 이미지"
+                                                     style="height:121px; width:121px; object-fit:cover; border:1px solid #eee;">
+                                            </div>
+
+                                            <!-- 상품정보 -->
+                                            <div style="padding-left:30px; letter-spacing:-1px;">
+                                                <!-- 첫 상품에만 주문번호 & 판매자 표시 -->
+                                                <div th:if="${itemStat.index == 0}" style="margin-bottom:5px;">
+                                                    <a href="#" class="order-link" th:data-order-id="${o.order_code}" style="color:gray;">
+                                                        주문번호 : <span th:text="${o.order_code}">10121211341</span>
+                                                    </a>
+                                                </div>
+                                                <div th:if="${itemStat.index == 0}" style="margin-bottom:5px;">
+                                                    <a href="#" class="seller-link" style="color:gray;">
+                                                        <span th:text="${o.company_name != null ? o.company_name : '(주) 상호명'}"></span>
+                                                    </a>
+                                                </div>
+
+                                                <!-- 상품명 / 수량 / 가격 -->
+                                                <div style="margin-bottom:5px;">
+                                                    <a href="#" style="color:gray;" th:text="${item.productName}">상품명</a>
+                                                </div>
+                                                <div style="margin-bottom:7px;">
+                                                    수량 : <span th:text="${item.quantity}">1</span>개
+                                                </div>
+                                                <div style="font-size:20px; font-weight:800;"
+                                                     th:text="${#numbers.formatInteger(item.price, 0, 'COMMA')} + '원'">0원</div>
+                                            </div>
+                                        </div>
+                                    </th:block>
+                                </td>
+
+                                <!-- 상태 -->
+                                <td th:text="${o.status}" style="vertical-align: top; padding-top:20px;">결제완료</td>
+
+                                <!-- ✅ 버튼 영역 -->
+                                <td style="vertical-align: top; padding-top:20px;">
                                     <div>
-                                        <!-- 상품 이미지 -->
-                                        <img th:src="@{${#strings.isEmpty(o.url) ? '/images/no_image.jpg' : '/images/' + o.url}}" alt="상품 이미지" style="height:121px;">
+                                        <button class="confirm-purchase"
+                                                style="background-color:black; color:white; width:97px; height:34px; margin-bottom:5px; border:none;">
+                                            구매확정
+                                        </button>
                                     </div>
 
-                                    <div style="padding-left:30px; letter-spacing:-1px;">
-                                        <!-- 주문번호 -->
-                                        <div style="margin-bottom:5px;">
-                                            <a href="#" class="order-link" th:data-order-id="${o.order_code}" style="color:gray;">
-                                                주문번호 : <span th:text="${o.order_code}">1012211341</span>
-                                            </a>
-                                        </div>
-
-                                        <!-- 판매자명 -->
-                                        <div style="margin-bottom:5px;">
-                                            <a href="#" class="seller-link" style="color:gray;">
-                                                <span th:text="${o.company_name != null ? o.company_name : '(주) 상호명'}"></span>
-                                            </a>
-                                        </div>
-
-                                        <!-- 상품명 -->
-                                        <div style="margin-bottom:5px;">
-                                            <a href="#" style="color:gray;" th:text="${o.product_name}">상품명</a>
-                                        </div>
-
-                                        <!-- 수량 -->
-                                        <div style="margin-bottom:7px;">
-                                            수량 : <span th:text="${o.quantity}">1</span>개
-                                        </div>
-
-                                        <!-- 가격 -->
-                                        <div style="margin-bottom:5px; font-size:20px; font-weight:800;"
-                                             th:text="${#numbers.formatInteger(o.price, 0, 'COMMA') + '원'}">34,000원
-                                        </div>
+                                    <!-- ✅ 상품평쓰기 버튼 (상품별 반복, 가로 정렬) -->
+                                    <div style="display:flex; flex-wrap:wrap; justify-content:center; gap:5px; margin-bottom:10px;">
+                                        <th:block th:each="item : ${o.orderItems}">
+                                            <button class="review-btn"
+                                                    th:attr="data-product-id=${item.products_id},data-product-name=${item.productName}"
+                                                    style="background-color:black; color:white; width:97px; height:34px; border:none;">
+                                                상품평쓰기
+                                            </button>
+                                        </th:block>
                                     </div>
-                                </div>
-                            </td>
 
-                            <!-- 상태 -->
-                            <td th:text="${o.status}">결제완료</td>
+                                    <div>
+                                        <button class="return-btn"
+                                                style="background-color:white; color:black; border:1px solid #ddd; width:97px; height:34px; margin-bottom:5px;">
+                                            반품신청
+                                        </button>
+                                    </div>
+                                    <div>
+                                        <button class="exchange-btn"
+                                                style="background-color:white; color:black; border:1px solid #ddd; width:97px; height:34px;">
+                                            교환신청
+                                        </button>
+                                    </div>
+                                </td>
+                            </tr>
+                        </th:block>
 
-                            <!-- 버튼 -->
-                            <td>
-                                <div>
-                                    <button class="confirm-purchase"
-                                            style="background-color: black; color: white; font-weight: 300; width:97px; height:34px; margin-bottom:5px; border:none;">
-                                        구매확정
-                                    </button>
-                                </div>
-                                <div>
-                                    <button class="review-btn"
-                                            style="background-color: black; color: white; font-weight: 300; width:97px; height:34px; margin-bottom:5px; border:none;">
-                                        상품평쓰기
-                                    </button>
-                                </div>
-                                <div>
-                                    <button class="return-btn"
-                                            style="background-color: white; color: black; border:1px solid #dddddd; font-weight: 300; width:97px; height:34px; margin-bottom:5px;">
-                                        반품신청
-                                    </button>
-                                </div>
-                                <div>
-                                    <button class="exchange-btn"
-                                            style="background-color: white; color: black; border:1px solid #dddddd; font-weight: 300; width:97px; height:34px; margin-bottom:5px;">
-                                        교환신청
-                                    </button>
-                                </div>
-                            </td>
-                        </tr>
+
                     </table>
                     <div style=" height: 100px; margin-top:40px; display: flex; justify-content: center;">
                         <form action="" method="" style="">
@@ -983,6 +994,7 @@
 </div>
 <script>
     // ===== 상품평 모달 제어 =====
+    const ctxPath = window.location.pathname.startsWith('/NICHIYA') ? '/NICHIYA' : '';
     const rModal    = document.getElementById('reviewModal');
     const rBackdrop = document.getElementById('reviewModalBackdrop');
     const rCloseBtn = document.getElementById('reviewClose');
@@ -995,6 +1007,9 @@
 
     const rvBody  = document.getElementById('rvBody');
     const rvCount = document.getElementById('rvCount');
+
+    // ✅ 전역 변수로 현재 상품 ID 저장
+    let currentProductId = null;
 
     // 행의 상품명 텍스트를 찾기
     function getRowProductName(btn){
@@ -1033,11 +1048,21 @@
     });
 
     // “상품평쓰기” 버튼 → 오픈
-    document.addEventListener('click', (e)=>{
+    document.addEventListener('click', (e) => {
         const btn = e.target.closest('.review-btn');
-        if(!btn) return;
+        if (!btn) return;
         e.preventDefault();
-        openReviewModal({ productName: getRowProductName(btn) });
+
+        // 버튼에 저장된 상품 ID/이름 가져오기
+        currentProductId = btn.dataset.productId;
+        const productName = btn.dataset.productName;
+
+        // ✅
+        console.log("🧩 버튼 dataset.productId:", currentProductId);
+        console.log("🧩 버튼 dataset.productName:", productName);
+
+        // 모달 오픈 시 상품명 표시
+        openReviewModal({ productName });
     });
 
     // 닫기/취소/백드롭/Esc
@@ -1058,18 +1083,49 @@
     rSentinel.addEventListener('focus', ()=> rModal.querySelector('.modal-close').focus());
 
     // 제출
-    rForm.addEventListener('submit', (e)=>{
+    rForm.addEventListener('submit', async (e) => {
         e.preventDefault();
         const selected = rForm.querySelector('input[name="rating"]:checked');
         const rating = selected ? Number(selected.value) : 0;
 
-        if (rating === 0) { alert('만족도를 선택해주세요.'); return; }
-        if (rForm.body.value.trim().length < 10) { alert('내용은 최소 10자 이상 입력해주세요.'); return; }
+        if (rating === 0) {
+            alert('만족도를 선택해주세요.');
+            return;
+        }
+        if (rForm.body.value.trim().length < 10) {
+            alert('내용은 최소 10자 이상 입력해주세요.');
+            return;
+        }
 
-        console.log('상품평 제출:', { rating, body: rForm.body.value.trim() });
-        alert('상품평이 등록되었습니다.');
-        closeReviewModal();
+        // ✅ 서버에 보낼 데이터 구성
+        const formData = new FormData();
+        formData.append("productId", currentProductId);
+        formData.append("rating", rating);
+        formData.append("body", rForm.body.value.trim());
+
+        // ✅ 전송 전 productId 확인 로그
+        console.log("🧩 전송되는 productId:", currentProductId);
+        console.log("⭐ rating:", rating);
+        console.log("📝 body:", rForm.body.value.trim());
+
+        try {
+            const res = await fetch(`${ctxPath}/api/mypage/review`, {
+                method: 'POST',
+                body: formData
+            });
+
+            if (!res.ok) throw new Error('리뷰 등록 실패');
+
+            alert('상품평이 등록되었습니다.');
+            closeReviewModal();
+
+        } catch (err) {
+            console.error('❌ 상품평 전송 오류:', err);
+            alert('상품평 등록 중 오류가 발생했습니다.');
+        }
     });
+
+
 
 </script>
 <!-- 주문 상세 마이페이지_메인#6-->

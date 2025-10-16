@@ -1058,6 +1058,9 @@ const rCloseBtn = document.getElementById('reviewClose');
 const rCancel   = document.getElementById('reviewCancel');
 const rForm     = document.getElementById('reviewForm');
 const rSentinel = document.getElementById('reviewSentinel');
+const ctxPath = window.location.pathname.startsWith('/NICHIYA') ? '/NICHIYA' : '';
+let currentProductId = null;
+
 
 // ✅ rvTitle 대신 상품명 출력용 span
 const rvProductName = document.getElementById('rvProductName');
@@ -1106,6 +1109,9 @@ document.addEventListener('click', (e)=>{
   const btn = e.target.closest('.review-btn');
   if(!btn) return;
   e.preventDefault();
+
+  // ✅ 버튼에 있는 data-product-id 읽기
+  currentProductId = btn.dataset.productId;
   openReviewModal({ productName: getRowProductName(btn) });
 });
 
@@ -1126,21 +1132,35 @@ document.addEventListener('keydown', (e)=>{
 });
 rSentinel.addEventListener('focus', ()=> rModal.querySelector('.modal-close').focus());
 
-  // 제출
-  rForm.addEventListener('submit', (e)=>{
-    e.preventDefault();
-    const selected = rForm.querySelector('input[name="rating}"]:checked');
-    const rating = selected ? Number(selected.value) : 0;
+// 제출
+rForm.addEventListener('submit', async (e)=>{
+  e.preventDefault();
+  const selected = rForm.querySelector('input[name="rating"]:checked');
+  const rating = selected ? Number(selected.value) : 0;
 
-    if (rating === 0) { alert('만족도를 선택해주세요.'); return; }
-    if (rForm.body.value.trim().length < 10) { alert('내용은 최소 10자 이상 입력해주세요.'); return; }
+  if (rating === 0) { alert('만족도를 선택해주세요.'); return; }
+  if (rForm.body.value.trim().length < 10) { alert('내용은 최소 10자 이상 입력해주세요.'); return; }
 
-    console.log('상품평 제출:', { rating, body: rForm.body.value.trim() });
-    alert('상품평이 등록되었습니다.');
-    closeReviewModal();
-  });
+  const formData = new FormData();
+  // ✅ 클릭한 상품의 id를 자동 사용
+  formData.append("productsId", currentProductId);
+  formData.append("rating", rating);
+  formData.append("body", rForm.body.value.trim());
 
-</script>
+  try {
+      const res = await fetch(`${ctxPath}/api/mypage/review`, {
+          method: 'POST',
+          body: formData
+      });
+      if (!res.ok) throw new Error('리뷰 등록 실패');
+      alert('상품평이 등록되었습니다.');
+      closeReviewModal();
+  } catch (err) {
+      console.error('❌ 상품평 전송 오류:', err);
+      alert('상품평 등록 중 오류가 발생했습니다.');
+  }
+});
+  </script>
   <!-- 주문 상세 마이페이지_메인#6-->
   <!-- 주문 상세 마이페이지_메인#7-->
    <!-- ===== 반품신청 모달 ===== -->
