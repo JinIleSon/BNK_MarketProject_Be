@@ -31,7 +31,7 @@ public class UserDTO {
     private String created_at;
     private String updated_at;
 
-    // 추가 필드(mypage - 개인정보 수정하기)
+    // 추가 필드(mypage - 개인정보 수정하기) // 푸시용 주석
     @Transient
     private String firstEmail;
     @Transient

@@ -5,6 +5,7 @@
 
 <mapper namespace="kr.co.bnk_marketproject_be.mapper.MyPageMapper">
 
+<!--    푸시용 주석-->
     <select id="selectUser" resultType="kr.co.bnk_marketproject_be.dto.UserDTO">
         SELECT
         user_id as user_id,
