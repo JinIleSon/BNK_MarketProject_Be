@@ -21,6 +21,8 @@ public interface MyPageMapper {
     public List<MyPageCouponsNowDTO> selectUserCouponsNow(@Param("pageRequestDTO") PageRequestDTO pageRequestDTO, @Param("user_id") String userId);
     public int selectCountTotalUserCouponsNow(@Param("pageRequestDTO") PageRequestDTO pageRequestDTO, @Param("user_id") String userId);
 
+    public int selectCountTotalUserCouponsNowAround(@Param("user_id") String user_id);
+
     // 마이페이지/나의리뷰 - 손진일 추가
     public List<MyPageReviewDTO> selectUserReview(@Param("pageRequestDTO") PageRequestDTO pageRequestDTO, @Param("user_id") String userId);
     public int selectCountTotalUserReview(@Param("pageRequestDTO") PageRequestDTO pageRequestDTO, @Param("user_id") String userId);

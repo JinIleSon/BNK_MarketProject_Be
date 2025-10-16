@@ -33,6 +33,17 @@
         WHERE u.USER_ID = #{user_id}
     </select>
 
+    <select id="selectCountTotalUserCouponsNowAround" resultType="int">
+        SELECT COUNT(*)
+        FROM coupons c
+        JOIN coupons_now cn
+        ON cn.COUPONS_ID = c.id
+        JOIN users u
+        ON cn.users_id = u.id
+        WHERE u.USER_ID = #{user_id}
+        AND cn.STATUS = '미사용'
+    </select>
+
 <!--    푸시용 주석-->
     <select id="selectUser" resultType="kr.co.bnk_marketproject_be.dto.UserDTO">
         SELECT
