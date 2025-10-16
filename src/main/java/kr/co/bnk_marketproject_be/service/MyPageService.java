@@ -103,6 +103,25 @@ public class MyPageService {
         return myPageMapper.selectCountTotalUserCouponsNow(pageRequestDTO, userId);
     }
 
+    // 마이페이지/포인트내역
+
+    public PageResponseUserReviewDTO selectUserReview(PageRequestDTO pageRequestDTO, String userId) {
+        // MyBatis 처리
+        List<MyPageReviewDTO> dtoList = myPageMapper.selectUserReview(pageRequestDTO, userId);
+
+        int total = myPageMapper.selectCountTotalUserReview(pageRequestDTO, userId);
+
+        return PageResponseUserReviewDTO.builder()
+                .pageRequestDTO(pageRequestDTO)
+                .dtoList(dtoList)
+                .total(total)
+                .build();
+    }
+
+    public int selectCountTotalUserReview(PageRequestDTO pageRequestDTO, String userId) {
+        return myPageMapper.selectCountTotalUserReview(pageRequestDTO, userId);
+    }
+
     // 마이페이지/문의하기
 
     public PageResponseAdminInquiryDTO selectAllInquiry(PageRequestDTO pageRequestDTO, String userId) {
