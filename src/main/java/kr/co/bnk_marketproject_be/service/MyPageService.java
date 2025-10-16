@@ -103,6 +103,10 @@ public class MyPageService {
         return myPageMapper.selectCountTotalUserCouponsNow(pageRequestDTO, userId);
     }
 
+    public int selectCountTotalUserCouponsNowAround(String user_id){
+        return myPageMapper.selectCountTotalUserCouponsNowAround(user_id);
+    }
+
     // 마이페이지/포인트내역
 
     public PageResponseUserReviewDTO selectUserReview(PageRequestDTO pageRequestDTO, String userId) {
@@ -139,5 +143,9 @@ public class MyPageService {
 
     public int selectCountTotalInquiry(PageRequestDTO pageRequestDTO, String userId) {
         return myPageMapper.selectCountTotalInquiry(pageRequestDTO, userId);
+    }
+
+    public int selectCountTotalInquiryAround(String user_id){
+        return myPageMapper.selectCountTotalInquiryAround(user_id);
     }
 }
