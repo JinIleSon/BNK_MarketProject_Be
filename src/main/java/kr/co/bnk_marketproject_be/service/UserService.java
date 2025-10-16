@@ -213,7 +213,7 @@ public class UserService {
 
     }
 
-    // 구글 로그인을 위한
+    // 📪 구글 로그인을 위한
     @Transactional
     public User upsertGoogleUser(String email, Map<String, Object> attrs) {
         if (email == null || email.isBlank()) {
@@ -288,6 +288,121 @@ public class UserService {
             i++;
         }
         return candidate;
+    }
+
+    // 📪 kakao 로그인 - 특성상 빈email이 많아서 예외처리
+    @Transactional
+    public User upsertKakaoUser(String email, Map<String, Object> attrs) {
+        // 1️⃣ 이메일 없을 경우 임시 이메일 생성
+        if (email == null || email.isBlank()) {
+            Object kakaoId = attrs.get("id");
+            email = "kakao_" + (kakaoId != null ? kakaoId : UUID.randomUUID()) + "@kakao-temp.com";
+        }
+
+        // 2️⃣ 람다 안에서 쓸 수 있도록 final 변수로 복사
+        final String safeEmail = email;
+
+        // 3️⃣ 이제 safeEmail을 사용
+        Optional<User> opt = userRepository.findByEmail(safeEmail);
+        User user = opt.orElseGet(() -> {
+            User u = new User();
+            u.setEmail(safeEmail);
+            u.setUserId(makeUniqueUserId(baseFromEmail(safeEmail)));
+            u.setPassword(passwordEncoder.encode("oauth2:" + UUID.randomUUID()));
+            return u;
+        });
+
+        // 4️⃣ 프로필 정보 추출
+        Map<String, Object> kakaoAccount = (Map<String, Object>) attrs.get("kakao_account");
+        if (kakaoAccount != null) {
+            Map<String, Object> profile = (Map<String, Object>) kakaoAccount.get("profile");
+            if (profile != null && profile.get("nickname") != null) {
+                user.setName((String) profile.get("nickname"));
+            }
+
+            // 이메일이 뒤늦게라도 있으면 업데이트
+            if (kakaoAccount.get("email") != null && safeEmail.endsWith("@kakao-temp.com")) {
+                user.setEmail((String) kakaoAccount.get("email"));
+            }
+        }
+
+        user.setProvider("kakao");
+        if (user.getRole() == null || user.getRole().isBlank()) {
+            user.setRole("user");
+        }
+
+        return userRepository.save(user);
+    }
+
+
+    // 📪 공통 OAuth 로그인 (Google / Kakao / Naver 통합)
+    @Transactional
+    public User upsertOAuthUser(String provider, String email, Map<String, Object> attrs) {
+        // ✅ 1️⃣ 이메일이 없으면 임시 이메일 생성
+        if (email == null || email.isBlank()) {
+            Object id = attrs.get("id");
+            email = provider + "_" + (id != null ? id : UUID.randomUUID()) + "@oauth-temp.com";
+        }
+
+        // ✅ 2️⃣ 람다에서 쓸 안전한 final 변수
+        final String safeEmail = email;
+
+        // ✅ 3️⃣ findByEmail 및 생성
+        Optional<User> opt = userRepository.findByEmail(safeEmail);
+        User user = opt.orElseGet(() -> {
+            User newUser = new User();
+            newUser.setEmail(safeEmail);
+            newUser.setUserId(makeUniqueUserId(baseFromEmail(safeEmail)));
+            newUser.setPassword(passwordEncoder.encode("oauth2:" + UUID.randomUUID()));
+            return newUser;
+        });
+
+        String name = null;
+        String picture = null;
+
+        switch (provider) {
+            case "google":
+                name = (String) attrs.get("name");
+                picture = (String) attrs.get("picture");
+                break;
+
+            case "kakao":
+                Map<String, Object> kakaoAccount = (Map<String, Object>) attrs.get("kakao_account");
+                if (kakaoAccount != null) {
+                    Map<String, Object> profile = (Map<String, Object>) kakaoAccount.get("profile");
+                    if (profile != null) {
+                        name = (String) profile.get("nickname");
+                        picture = (String) profile.get("profile_image_url");
+                    }
+                    // ✅ safeEmail을 사용하여 이메일 갱신
+                    if (kakaoAccount.get("email") != null && safeEmail.endsWith("@oauth-temp.com")) {
+                        user.setEmail((String) kakaoAccount.get("email"));
+                    }
+                }
+                break;
+
+            case "naver":
+                Map<String, Object> response = (Map<String, Object>) attrs.get("response");
+                if (response != null) {
+                    name = (String) response.get("name");
+                    picture = (String) response.get("profile_image");
+                    if (response.get("email") != null && safeEmail.endsWith("@oauth-temp.com")) {
+                        user.setEmail((String) response.get("email"));
+                    }
+                }
+                break;
+        }
+
+        if (name != null && (user.getName() == null || user.getName().isBlank())) {
+            user.setName(name);
+        }
+
+        user.setProvider(provider);
+        if (user.getRole() == null || user.getRole().isBlank()) {
+            user.setRole("user");
+        }
+
+        return userRepository.save(user);
     }
 
 
