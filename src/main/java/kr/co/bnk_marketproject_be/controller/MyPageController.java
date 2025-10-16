@@ -2,6 +2,7 @@ package kr.co.bnk_marketproject_be.controller;
 
 import kr.co.bnk_marketproject_be.dto.PageRequestDTO;
 import kr.co.bnk_marketproject_be.dto.PageResponseAdminInquiryDTO;
+import kr.co.bnk_marketproject_be.dto.PageResponseUserCouponsNowDTO;
 import kr.co.bnk_marketproject_be.dto.UserDTO;
 import kr.co.bnk_marketproject_be.service.MyPageService;
 import lombok.RequiredArgsConstructor;
@@ -31,7 +32,12 @@ public class MyPageController {
         return "mypage/mypage_point";
     }
     @GetMapping("/mypage/mypage/coupon")
-    public String couponList(){
+    public String couponList(Model model,Principal principal, PageRequestDTO pageRequestDTO){
+        String userId = principal.getName();
+        PageResponseUserCouponsNowDTO pageResponseUserCouponsNowDTO = myPageService.selectUserCouponsNow(pageRequestDTO, userId);
+
+        log.info("pageResponseUserCouponsNowDTO={}", pageResponseUserCouponsNowDTO);
+        model.addAttribute("pageResponseDTO", pageResponseUserCouponsNowDTO);
         return "mypage/mypage_coupon";
     }
     @GetMapping("/mypage/mypage/review")
