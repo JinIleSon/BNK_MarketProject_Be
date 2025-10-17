@@ -4,6 +4,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Data
@@ -21,6 +22,7 @@ public class PageResponseAdminInquiryDTO {
     private boolean prev, next; // 이전, 다음 버튼
     private String board_type2;
     private String board_type3;
+    private LocalDateTime created_at;
 
     private String searchType;
     private String keyword;
