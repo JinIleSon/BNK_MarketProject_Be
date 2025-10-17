@@ -104,9 +104,12 @@ public class OrdersService {
         // 아이템/재고/결제/배송/쿠폰/포인트 처리 (기존 로직 유지)
         for (var r : cart.getItems()) {
             ordersMapper.insertOrderItemFromCart(orderId, r.getOrder_item_id());
-            // 여기! 상품 ID는 product_id 로 들어옵니다.
-            ordersMapper.decreaseStock(r.getProduct_code(), r.getQuantity());
+            ordersMapper.decreaseStock(r.getId(), r.getQuantity());
         }
+
+        // ✅ 새로 생성한 주문(orderId)에 대해 총액 재계산
+        ordersMapper.recalcOrderTotal(orderId);
+
         ordersMapper.insertPayment(PaymentsDTO.builder()
                 .orders_id(orderId)
                 .amount(finalPay)
@@ -185,6 +188,9 @@ public class OrdersService {
 
         // 3) 아이템 MERGE(같은 상품/옵션이면 qty += ?, 없으면 INSERT)
         int affected = ordersMapper.mergeCartItem(cartOrderId, productId, optionId, qty);
+
+// ✅ 장바구니 담기 직후 orders.total_amount 재계산
+        ordersMapper.recalcOrderTotal(cartOrderId);
 
         return affected;
     }
