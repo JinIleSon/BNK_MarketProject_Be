@@ -1,5 +1,10 @@
-<div th:replace="~{admin/_header.html}"></div>
-<!-- 모달 전용 스타일 -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>mypage_allOrder</title>
+    <!-- 모달 전용 스타일 -->
 <style>
     /* 전체 오버레이 */
     .modal-backdrop {
@@ -117,9 +122,10 @@
 
     /* 게시판 아래버튼 부분 끝 */
 </style>
+</head>
 <body>
 <main>
-    <div id="header"></div>
+    <div th:replace="~{main/header.html}"></div>
     <div style="background-color: #f6f5f5; border-bottom: 1px solid #dddddd;">
         <div style="display: flex; justify-content: center; align-items: center;">
             <div style="width:1270px; font-size:15px; height:70px; display: flex; align-items: center; ">
@@ -131,15 +137,15 @@
                     </div>
                     <div style="width:70px; border-right:1px solid #dddddd; display: flex; flex-direction: column; align-items: center; justify-content: center;">
                         <div style="margin-bottom:8px;">쿠폰</div>
-                        <div>1</div>
+                        <div><span th:text="${couponCount}"></span></div>
                     </div>
                     <div style="width:70px;border-right:1px solid #dddddd; display: flex; flex-direction: column; align-items: center; justify-content: center;">
                         <div style="margin-bottom:8px;">포인트</div>
-                        <div>1,000</div>
+                        <div><span th:text="${#numbers.formatInteger(balance, 3, 'COMMA')} + 'P'">0P</span></div>
                     </div>
                     <div style="width:70px;display: flex; flex-direction: column; align-items: center; justify-content: center;">
                         <div style="margin-bottom:8px;">문의</div>
-                        <div>1</div>
+                        <div><span th:text="${count}"></span></div>
                     </div>
                 </div>
             </div>
@@ -315,8 +321,9 @@
                         <tr style="background-color:#dedede; font-size:12px; color:white; font-weight:800; height:40px;">
                             <th style="width:120px;">날짜</th>
                             <th style="width:500px;">상품정보</th>
-                            <th style="width:90px;">상태</th>
-                            <th>확인 / 신청</th>
+                            <th style="width:160px;">신청</th>
+                            <th style="width:100px;">상태</th>
+                            <th style="width:120px;">확인</th>
                         </tr>
 
                         <!-- 주문 내역이 없을 때 -->
@@ -325,93 +332,79 @@
                         </tr>
 
                         <!-- ✅ 주문별 반복 -->
-                        <!-- ✅ 주문별 반복 -->
                         <th:block th:each="o : ${orders}">
                             <tr style="border-bottom: 1px solid #dddddd;">
                                 <!-- 주문일자 -->
-                                <td th:text="${o.created_at}" style="vertical-align: top; padding-top:20px; white-space:nowrap;">
-                                    2025-10-01 02:02:14
-                                </td>
+                                <td th:text="${o.created_at}" style="vertical-align: top; padding-top:20px; white-space:nowrap;"></td>
 
-                                <!-- ✅ 상품정보 (여러 상품을 내부에서 반복) -->
+                                <!-- 상품정보 -->
                                 <td style="text-align:left; padding:15px 10px;">
-                                    <!-- 첫 번째 상품부터 모두 출력 -->
-                                    <th:block th:each="item : ${o.orderItems}">
-                                        <div style="display:flex; align-items:center; margin-bottom:15px; border-bottom:1px solid #eee; padding-bottom:15px;">
+                                    <th:block th:each="item, itemStat : ${o.orderItems}">
+                                        <div style="display:flex; align-items:flex-start; gap:15px; margin-bottom:15px; border-bottom:1px solid #f1f1f1; padding-bottom:10px;">
                                             <!-- 이미지 -->
                                             <div>
-                                                <img th:src="@{'/images/no_image.jpg'}" alt="상품 이미지"
-                                                     style="height:121px; width:121px; object-fit:cover; border:1px solid #eee;">
+                                                <img th:src="@{'/' + ${item.url}}"
+                                                     onerror="this.onerror=null; this.src='/images/no_image.jpg'"
+                                                     alt="상품 이미지"
+                                                     style="width:90px; height:90px; object-fit:cover; border:1px solid #eee; border-radius:6px;">
                                             </div>
 
-                                            <!-- 상품정보 -->
-                                            <div style="padding-left:30px; letter-spacing:-1px;">
-                                                <!-- 첫 상품에만 주문번호 & 판매자 표시 -->
-                                                <div th:if="${itemStat.index == 0}" style="margin-bottom:5px;">
-                                                    <a href="#" class="order-link" th:data-order-id="${o.order_code}" style="color:gray;">
-                                                        주문번호 : <span th:text="${o.order_code}">10121211341</span>
-                                                    </a>
+                                            <!-- 상품 정보 -->
+                                            <div style="flex:1;">
+                                                <!-- 첫 상품에만 주문번호 & 판매자 -->
+                                                <div th:if="${itemStat.index == 0}" style="margin-bottom:5px; color:#888; font-size:13px;">
+                                                    주문번호 : <span th:text="${o.order_code}"></span>
                                                 </div>
-                                                <div th:if="${itemStat.index == 0}" style="margin-bottom:5px;">
-                                                    <a href="#" class="seller-link" style="color:gray;">
-                                                        <span th:text="${o.company_name != null ? o.company_name : '(주) 상호명'}"></span>
-                                                    </a>
+                                                <div th:if="${itemStat.index == 0}" style="margin-bottom:5px; color:#888; font-size:13px;">
+                                                    판매자 : <span th:text="${o.company_name != null ? o.company_name : '(주) 상호명'}"></span>
                                                 </div>
 
                                                 <!-- 상품명 / 수량 / 가격 -->
-                                                <div style="margin-bottom:5px;">
-                                                    <a href="#" style="color:gray;" th:text="${item.productName}">상품명</a>
-                                                </div>
-                                                <div style="margin-bottom:7px;">
-                                                    수량 : <span th:text="${item.quantity}">1</span>개
-                                                </div>
-                                                <div style="font-size:20px; font-weight:800;"
-                                                     th:text="${#numbers.formatInteger(item.price, 0, 'COMMA')} + '원'">0원</div>
+                                                <div style="font-weight:600; color:#222;" th:text="${item.productName}"></div>
+                                                <div style="font-size:13px; color:#666;">수량: <span th:text="${item.quantity}"></span>개</div>
+                                                <div style="font-size:15px; font-weight:700; color:#000;" th:text="${#numbers.formatInteger(item.price, 0, 'COMMA')} + '원'"></div>
                                             </div>
                                         </div>
                                     </th:block>
                                 </td>
 
-                                <!-- 상태 -->
-                                <td th:text="${o.status}" style="vertical-align: top; padding-top:20px;">결제완료</td>
-
-                                <!-- ✅ 버튼 영역 -->
-                                <td style="vertical-align: top; padding-top:20px;">
-                                    <div>
-                                        <button class="confirm-purchase"
-                                                style="background-color:black; color:white; width:97px; height:34px; margin-bottom:5px; border:none;">
-                                            구매확정
-                                        </button>
-                                    </div>
-
-                                    <!-- ✅ 상품평쓰기 버튼 (상품별 반복, 가로 정렬) -->
-                                    <div style="display:flex; flex-wrap:wrap; justify-content:center; gap:5px; margin-bottom:10px;">
-                                        <th:block th:each="item : ${o.orderItems}">
+                                <!-- 신청 -->
+                                <td style="vertical-align:top; padding:15px 0;">
+                                    <th:block th:each="item : ${o.orderItems}">
+                                        <div style="display:flex; flex-direction:column; align-items:center; gap:6px; margin-bottom:10px;">
                                             <button class="review-btn"
                                                     th:attr="data-product-id=${item.products_id},data-product-name=${item.productName}"
-                                                    style="background-color:black; color:white; width:97px; height:34px; border:none;">
+                                                    style="background-color:#000; color:#fff; border:none; width:90px; height:32px; font-size:12px; cursor:pointer;">
                                                 상품평쓰기
                                             </button>
-                                        </th:block>
-                                    </div>
 
-                                    <div>
-                                        <button class="return-btn"
-                                                style="background-color:white; color:black; border:1px solid #ddd; width:97px; height:34px; margin-bottom:5px;">
-                                            반품신청
-                                        </button>
-                                    </div>
-                                    <div>
-                                        <button class="exchange-btn"
-                                                style="background-color:white; color:black; border:1px solid #ddd; width:97px; height:34px;">
-                                            교환신청
-                                        </button>
-                                    </div>
+                                            <button class="exchange-btn"
+                                                    th:attr="data-order-item-id=${item.id},data-product-name=${item.productName}"
+                                                    style="background-color:#fff; color:#000; border:1px solid #ddd; width:90px; height:32px; font-size:12px; cursor:pointer;">
+                                                교환신청
+                                            </button>
+
+                                            <button class="return-btn"
+                                                    th:attr="data-order-item-id=${item.id},data-product-name=${item.productName}"
+                                                    style="background-color:#fff; color:#000; border:1px solid #ddd; width:90px; height:32px; font-size:12px; cursor:pointer;">
+                                                반품신청
+                                            </button>
+                                        </div>
+                                    </th:block>
+                                </td>
+
+                                <!-- 상태 -->
+                                <td th:text="${o.status}" style="vertical-align:top; padding-top:20px; font-weight:600; color:#2f7ee6;"></td>
+
+                                <!-- 확인 -->
+                                <td style="vertical-align:top; padding-top:20px;">
+                                    <button class="confirm-purchase"
+                                            style="background-color:#000; color:#fff; width:100px; height:34px; border:none; cursor:pointer;">
+                                        구매확정
+                                    </button>
                                 </td>
                             </tr>
                         </th:block>
-
-
                     </table>
                     <div style=" height: 100px; margin-top:40px; display: flex; justify-content: center;">
                         <form action="" method="" style="">
@@ -1385,7 +1378,8 @@
         const orderA = row?.querySelector('.order-link');
         const seller = row?.querySelector('.seller-link')?.textContent?.trim() || '(주) 상호명';
         const nameA  = row?.querySelector('td:nth-child(2) a[href="#"]:not(.order-link):not(.seller-link)');
-        const name   = nameA?.textContent?.trim() || '상품명';
+        const name = fromBtn.dataset.productName || '상품명';
+        console.log("🧩 반품 버튼 클릭됨:", name);
         const qtyTxt = row?.querySelector('td:nth-child(2) div:nth-child(4)')?.textContent?.trim() || '수량 : 1개';
         const price  = row?.querySelector('td:nth-child(2) div[style*="font-size"]')?.textContent?.trim() || '0원';
         const status = row?.querySelector('td:nth-child(3)')?.textContent?.trim() || '-';
@@ -1466,23 +1460,38 @@
     });
     rtSentinel.addEventListener('focus', ()=> rtModal.querySelector('.modal-close').focus());
 
-    // 제출— 실제 연동 시 서버로 전송
-    rtSubmit.addEventListener('click', ()=>{
+    rtSubmit.addEventListener('click', async ()=>{
         const type = document.querySelector('input[name="rtType"]:checked')?.value || '';
         const reason = document.getElementById('rtReason').value.trim();
+        const orderNo = document.getElementById('rtOrderNo').textContent.trim();
 
         if (!type){ alert('반품유형을 선택해주세요.'); return; }
         if (reason.length < 10){ alert('사유를 최소 10자 이상 입력해주세요.'); return; }
 
-        const payload = {
-            orderNo: document.getElementById('rtOrderNo').textContent.trim(),
-            type, reason
-            // 파일은 document.getElementById('rtFile1').files[0] 등으로 수집
-        };
-        console.log('반품신청:', payload); // TODO: fetch('/api/return', {method:'POST', body:...})
-        alert('반품신청이 접수되었습니다.');
-        closeReturnModal();
+        const formData = new FormData();
+        formData.append("order_item_id", orderItemId);  // 서버 DTO 필드명 맞춰야 함
+        formData.append("reason_text", reason);
+        formData.append("reason_code", type);
+        formData.append("status", "요청"); // 기본 상태
+        if (document.getElementById('rtFile1').files.length > 0) {
+            formData.append("evidence_urls", document.getElementById('rtFile1').files[0]);
+        }
+
+        try {
+            const res = await fetch(`${ctxPath}/api/mypage/return`, {
+                method: 'POST',
+                body: formData
+            });
+            if (!res.ok) throw new Error('서버 오류');
+
+            alert('반품신청이 접수되었습니다.');
+            closeReturnModal();
+        } catch (err) {
+            console.error('반품신청 실패:', err);
+            alert('반품신청 중 오류가 발생했습니다.');
+        }
     });
+
 
 </script>
 <script>
@@ -1504,7 +1513,8 @@
         const orderA = row?.querySelector('.order-link');
         const seller = row?.querySelector('.seller-link')?.textContent?.trim() || '(주) 상호명';
         const nameA  = row?.querySelector('td:nth-child(2) a[href="#"]:not(.order-link):not(.seller-link)');
-        const name   = nameA?.textContent?.trim() || '상품명';
+        const name = fromBtn.dataset.productName || '상품명';
+        console.log("🧩 교환 버튼 클릭됨:", name);
         const qtyTxt = row?.querySelector('td:nth-child(2) div:nth-child(4)')?.textContent?.trim() || '수량 : 1개';
         const price  = row?.querySelector('td:nth-child(2) div[style*="font-size"]')?.textContent?.trim() || '0원';
         const status = row?.querySelector('td:nth-child(3)')?.textContent?.trim() || '-';
@@ -1589,22 +1599,37 @@
     });
 
     // 제출 — 실제 연동 시 서버로 전송
-    exSubmit.addEventListener('click', ()=>{
+    exSubmit.addEventListener('click', async ()=>{
         const type = document.querySelector('input[name="exType"]:checked')?.value || '';
         const reason = document.getElementById('exReason').value.trim();
+        const orderNo = document.getElementById('exOrderNo').textContent.trim();
 
         if (!type){ alert('교환유형을 선택해주세요.'); return; }
         if (reason.length < 10){ alert('사유를 최소 10자 이상 입력해주세요.'); return; }
 
-        const payload = {
-            orderNo: document.getElementById('exOrderNo').textContent.trim(),
-            type, reason
-            // 파일: document.getElementById('exFile1').files[0]
-        };
-        console.log('교환신청:', payload); // TODO: fetch('/api/exchange', {...})
-        alert('교환신청이 접수되었습니다.');
-        closeExchangeModal();
+        const formData = new FormData();
+        formData.append("order_item_id", orderItemId);
+        formData.append("reason_text", reason);
+        formData.append("desired_option", type);
+        formData.append("status", "요청");
+        if (document.getElementById('exFile1').files.length > 0) {
+            formData.append("evidence_urls", document.getElementById('exFile1').files[0]);
+        }
+
+        try {
+            const res = await fetch(`${ctxPath}/api/mypage/exchange`, {
+                method: 'POST',
+                body: formData
+            });
+            if (!res.ok) throw new Error('서버 오류');
+            alert('교환신청이 접수되었습니다.');
+            closeExchangeModal();
+        } catch (err) {
+            console.error('교환신청 실패:', err);
+            alert('교환신청 중 오류가 발생했습니다.');
+        }
     });
+
 </script>
 <script>
     document.addEventListener("DOMContentLoaded", () => {

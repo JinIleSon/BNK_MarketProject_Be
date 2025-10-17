@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="kr.co.bnk_marketproject_be.mapper.MypageReturnExchangeMapper">
+
+    <!-- ✅ 반품신청 등록 -->
+    <insert id="insertReturnRequest" parameterType="kr.co.bnk_marketproject_be.dto.MypageReturnRequestDTO" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO HTE_MY_PAGE_RETURN_REQUEST
+        (ORDER_ITEM_ID, USER_ID, REASON_TEXT, EVIDENCE_URLS, PICKUP_ADDRES, REASON_CODE, STATUS, CREATED_AT)
+        VALUES (#{orderItemId}, #{userId}, #{reasonText}, #{evidenceUrls}, #{pickupAddres}, #{reasonCode}, 'REQUESTED', SYSTIMESTAMP)
+    </insert>
+
+    <!-- ✅ 교환신청 등록 -->
+    <insert id="insertExchangeRequest" parameterType="kr.co.bnk_marketproject_be.dto.MypageExchangeRequestDTO" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO HTE_MY_PAGE_EXCHANGE_REQUEST
+        (ORDER_ITEM_ID, USER_ID, REASON_TEXT, DESIRED_OPTION, EVIDENCE_URLS, REASON_CODE, STATUS, CREATED_AT)
+        VALUES (#{orderItemId}, #{userId}, #{reasonText}, #{desiredOption}, #{evidenceUrls}, #{reasonCode}, 'REQUESTED', SYSTIMESTAMP)
+    </insert>
+
+    <!-- ✅ 반품신청 조회 -->
+    <select id="findReturnList" resultType="kr.co.bnk_marketproject_be.dto.MypageReturnRequestDTO">
+        SELECT *
+        FROM HTE_MY_PAGE_RETURN_REQUEST
+        WHERE USER_ID = #{userId}
+        ORDER BY CREATED_AT DESC
+    </select>
+
+    <!-- ✅ 교환신청 조회 -->
+    <select id="findExchangeList" resultType="kr.co.bnk_marketproject_be.dto.MypageExchangeRequestDTO">
+        SELECT *
+        FROM HTE_MY_PAGE_EXCHANGE_REQUEST
+        WHERE USER_ID = #{userId}
+        ORDER BY CREATED_AT DESC
+    </select>
+
+</mapper>

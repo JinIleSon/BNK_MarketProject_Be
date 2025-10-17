@@ -12,7 +12,7 @@
             o.users_id,
             o.status,
             o.total_amount,
-            TO_CHAR(o.created_at, 'YYYY-MM-DD HH24:MI:SS') AS created_at,
+            TO_CHAR(o.created_at, 'YYYY-MM-DD') AS created_at,
             o.order_code,
 
             u.user_id AS userId,
@@ -20,6 +20,7 @@
             p.method AS method,
             s.brand_name AS company_name,
 
+            oi.id AS order_item_id,
             oi.products_id AS products_id,
             pr.product_name AS product_name,
             pr.price AS price,
@@ -33,7 +34,7 @@
                  LEFT JOIN SELLERS s ON pr.sellers_id = s.id
                  LEFT JOIN PRODUCT_IMAGES pi ON pi.products_id = pr.id AND pi.is_main = 'Y'
         WHERE o.users_id = #{userId}
-        ORDER BY o.created_at DESC, pr.product_name ASC
+        ORDER BY o.created_at DESC, pr.product_name ASC,oi.id ASC
     </select>
 
     <!-- ✅ 매핑 정의 -->
@@ -50,6 +51,7 @@
         <result property="company_name" column="company_name"/>
 
         <collection property="orderItems" ofType="kr.co.bnk_marketproject_be.dto.OrderItemsDTO">
+            <id property="id" column="order_item_id"/>
             <result property="products_id" column="products_id"/>
             <result property="productName" column="product_name"/>
             <result property="price" column="price"/>
@@ -68,7 +70,7 @@
             o.users_id,
             o.status,
             o.total_amount,
-            TO_CHAR(o.created_at, 'YYYY-MM-DD HH24:MI:SS') AS created_at,
+            TO_CHAR(o.created_at, 'YYYY-MM-DD') AS created_at,
             o.order_code,
             u.user_name,
             u.phone AS ruphone,
@@ -101,7 +103,7 @@
         o.users_id,
         o.status,
         o.total_amount,
-        TO_CHAR(o.created_at, 'YYYY-MM-DD HH24:MI:SS') AS created_at,
+        TO_CHAR(o.created_at, 'YYYY-MM-DD') AS created_at,
         o.order_code,
 
         u.user_id       AS userId,
