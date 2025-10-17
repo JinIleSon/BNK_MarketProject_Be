@@ -21,12 +21,10 @@
                 <a th:href="@{/cs/notice/list}" class="more_link">All</a>
             </h2>
             <div class="section_list">
-                <ul>
-                    <li><a href="notice/notice_view.html"><span>[안내]</span> 해외결제사 정기점검주의</a><span class="date">22.10.31</span></li>
-                    <li><a href="notice/notice_view.html"><span>[안내]</span> 해외결제사 정기점검주의</a><span class="date">22.10.31</span></li>
-                    <li><a href="notice/notice_view.html"><span>[안내]</span> 해외결제사 정기점검주의</a><span class="date">22.10.31</span></li>
-                    <li><a href="notice/notice_view.html"><span>[안내]</span> 해외결제사 정기점검주의</a><span class="date">22.10.31</span></li>
-                    <li><a href="notice/notice_view.html"><span>[안내]</span> 해외결제사 정기점검주의</a><span class="date">22.10.31</span></li>
+                <ul th:each="notice, stat: ${pageResponseAdminAnnouncementDTO.dtoList}"
+                    th:if="${stat.index} < 5">
+                    <li><a th:href="@{/cs/notice/view/{id}(id=${notice.id}, boardType=${notice.board_type})}"><span>[[${notice.title}]]</span></a><span th:text="${#temporals.format(notice.created_at, 'yyyy.MM.dd')}"
+                    style="color:gray;"></span></li>
                 </ul>
             </div>
         </div>
