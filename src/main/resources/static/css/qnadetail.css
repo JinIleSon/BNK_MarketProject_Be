@@ -59,7 +59,7 @@
     box-sizing: border-box;
 }
 
-.cs_qna_viwe_wrap .qna_section.question{
+.cs_qna_view_wrap .qna_section.question{
     width: 80%;
     /* max-width: 980px; */
     margin: 0 auto;

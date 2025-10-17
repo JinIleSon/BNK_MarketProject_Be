@@ -31,4 +31,8 @@ public class CSQnaService {
         qnaMapper.insertQna(qna);
     }
 
+    public CSNoticeDTO selectCommentView(int bid){
+        return qnaMapper.selectCommentView(bid);
+    }
+
 }

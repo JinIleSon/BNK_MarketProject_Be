@@ -543,7 +543,7 @@
                         </td>
 
                         <td>
-                            <a th:href="@{/cs/qna/view/{id}(id=${qna.id})}"
+                            <a th:href="@{/cs/qna/view/{id}(id=${qna.id}, boardType2=${boardType2}, boardType3=${boardType3})}"
                                th:text="${qna.title}" style="text-decoration: none; color: inherit;"></a>
                         </td>
 
@@ -551,6 +551,9 @@
                             <span th:case="0" style="color: gray">검토 중</span>
                             <span th:case="1" style="color: blue">답변 완료</span>
                         </td>
+                        <form th:action="@{/cs/qna/view/{id}}" method="get">
+                            <input type="hidden" name="look" th:value="${qna.look}">
+                        </form>
                         <td th:text="${qna.userid}"></td>
                         <td th:text="${#temporals.format(qna.createdAt, 'yyyy-MM-dd')}"></td>
                     </tr>
