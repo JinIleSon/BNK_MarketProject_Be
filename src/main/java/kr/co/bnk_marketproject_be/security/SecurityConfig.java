@@ -38,7 +38,7 @@ public class SecurityConfig {
                     String username = request.getParameter("userId");
                     System.out.println("❌ 로그인 실패 (Controller 로그): 아이디=" + username);
                     exception.printStackTrace();
-                    response.sendRedirect("/NICHIYA/member/login");
+                    response.sendRedirect("/NICHIYA/member/login?error=true");
                 })
                 .successHandler((request, response, authentication) -> {
                     String username = authentication.getName();
