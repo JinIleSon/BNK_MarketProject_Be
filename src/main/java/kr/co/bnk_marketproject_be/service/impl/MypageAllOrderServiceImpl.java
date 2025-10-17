@@ -1,13 +1,12 @@
 package kr.co.bnk_marketproject_be.service.impl;
 
-import kr.co.bnk_marketproject_be.dto.OrdersDTO;
-import kr.co.bnk_marketproject_be.dto.PageRequestDTO;
-import kr.co.bnk_marketproject_be.dto.PageResponseMypageAllOrderDTO;
+import kr.co.bnk_marketproject_be.dto.*;
 import kr.co.bnk_marketproject_be.mapper.MypageAllOrderMapper;
 import kr.co.bnk_marketproject_be.service.MypageAllOrderService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -23,7 +22,8 @@ public class MypageAllOrderServiceImpl implements MypageAllOrderService {
 
     @Override
     public List<OrdersDTO> getAllOrdersByUserId(String userId) {
-        return orderMapper.findAllOrdersByUserId(userId);
+        return this.findAllOrdersByUserId(userId);
+
     }
 
     @Override
@@ -43,6 +43,22 @@ public class MypageAllOrderServiceImpl implements MypageAllOrderService {
                 .build();
     }
 
+    @Override
+    public void insertProductBoard(ProductBoardsDTO dto) {
+        orderMapper.insertProductBoard(dto);
+    }
 
+    // ✅ 상품평 버튼용 전체 주문 + 상품목록 세팅
+    @Override
+    public List<OrdersDTO> findAllOrdersByUserId(String userId) {
+        List<OrdersDTO> orders = orderMapper.findAllOrdersByUserId(userId);
 
+        for (OrdersDTO order : orders) {
+            List<OrderItemsDTO> items = orderMapper.findOrderItemsByOrderId(order.getId());
+            if (items == null) items = new ArrayList<>();
+            order.setOrderItems(items);
+        }
+
+        return orders;
+    }
 }

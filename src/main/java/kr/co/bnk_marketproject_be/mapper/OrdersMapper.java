@@ -21,6 +21,7 @@ public interface OrdersMapper {
     void insertOrder(OrdersDTO order);
     void insertOrderItemFromCart(@Param("orderId") int orderId,
                                  @Param("orderItemId") int orderItemId);
+    void recalcOrderTotal(@Param("orderId") int orderId);
     void decreaseStock(@Param("productId") int productId,
                        @Param("qty") int qty);
     void insertPayment(PaymentsDTO payment);

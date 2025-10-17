@@ -63,19 +63,18 @@
         OFFSET #{offset} ROWS FETCH NEXT #{limit} ROWS ONLY
     </select>
 
-
-    <!-- ✅ QnA 총 개수 (페이지네이션용) -->
+    <!-- QnA 총 개수 (페이지네이션용) -->
     <select id="selectTotalCount" resultType="int">
         SELECT COUNT(*)
         FROM board b
         WHERE b.board_type = 'inquiry'
 
-        <!-- ✅ 1차 카테고리 필터 -->
+        <!-- 1차 카테고리 필터 -->
         <if test="boardType2 != null and boardType2 != ''">
             AND b.board_type2 = #{boardType2}
         </if>
 
-        <!-- ✅ 2차 카테고리 필터 -->
+        <!-- 2차 카테고리 필터 -->
         <choose>
             <when test="boardType3 != null and boardType3 != ''">
                 AND b.board_type3 = #{boardType3}
@@ -108,6 +107,29 @@
                 </if>
             </otherwise>
         </choose>
+    </select>
+
+    <!-- view -->
+    <select id="selectQnaview" parameterType="long" resultType="kr.co.bnk_marketproject_be.dto.CSNoticeDTO">
+        SELECT
+            id,
+            board_type AS boardType,
+            board_type2 AS boardType2,
+            board_type3 AS boardType3,
+            title,
+            content,
+            user_id AS userid,
+            created_at AS createdAt
+        FROM board
+        WHERE id = #{id}
+    </select>
+
+    <select id="selectCommentView" resultType="kr.co.bnk_marketproject_be.dto.CSNoticeDTO">
+        select c.cid, c.content
+        from board b
+        LEFT JOIN comments c
+        on b.id = c.bid
+        WHERE c.bid = #{bid}
     </select>
 
 </mapper>

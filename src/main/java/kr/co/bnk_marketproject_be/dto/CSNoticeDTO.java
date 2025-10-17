@@ -20,4 +20,8 @@ public class CSNoticeDTO {
     private String look;
     private String userid;
 
+    // 문의하기_뷰 댓글출력
+    private int cid;
+
+
 }

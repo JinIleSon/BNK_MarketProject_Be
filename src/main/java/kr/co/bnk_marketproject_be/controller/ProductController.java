@@ -132,6 +132,9 @@ public class ProductController {
         }
     }
 
+//    @PostMapping("/product/cart")
+//    public
+
     /* 구매하기 버튼(담고 장바구니 페이지로 이동) */
     @PostMapping("/product/cart/add-and-go")
     public String addToCartAndGo(Authentication auth,

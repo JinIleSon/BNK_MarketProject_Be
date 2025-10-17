@@ -5,46 +5,63 @@
 
 <mapper namespace="kr.co.bnk_marketproject_be.mapper.MypageAllOrderMapper">
 
-    <!-- 전체 주문 목록 -->
-    <!-- 전체 주문 목록 + 대표 이미지 포함 -->
-    <select id="findAllOrdersByUserId" resultType="kr.co.bnk_marketproject_be.dto.OrdersDTO">
+    <!-- ✅ 주문 + 상품 리스트를 한번에 매핑 -->
+    <select id="findAllOrdersByUserId" resultMap="OrderWithItemsMap">
         SELECT
-        o.id,
-        o.users_id,
-        o.status,
-        o.total_amount,
-        TO_CHAR(o.created_at, 'YYYY-MM-DD HH24:MI:SS') AS created_at,
-        o.order_code,
+            o.id AS order_id,
+            o.users_id,
+            o.status,
+            o.total_amount,
+            TO_CHAR(o.created_at, 'YYYY-MM-DD') AS created_at,
+            o.order_code,
 
-        u.user_id       AS userId,
-        u.name          AS user_name,
-        p.method        AS method,
+            u.user_id AS userId,
+            u.name AS user_name,
+            p.method AS method,
+            s.brand_name AS company_name,
 
-        pr.product_name AS product_name,
-        pr.price        AS price,
-        s.brand_name AS company_name,
-        oi.quantity     AS quantity,
-        pi.url          AS url
-
+            oi.id AS order_item_id,
+            oi.products_id AS products_id,
+            pr.product_name AS product_name,
+            pr.price AS price,
+            oi.quantity AS quantity,
+            pi.url AS url
         FROM ORDERS o
-        JOIN USERS u ON o.users_id = u.id
-        LEFT JOIN PAYMENTS p ON p.orders_id = o.id
-        LEFT JOIN ORDER_ITEMS oi ON oi.orders_id = o.id
-        LEFT JOIN PRODUCTS pr ON oi.products_id = pr.id
-        LEFT JOIN SELLERS s ON pr.sellers_id = s.id
-        LEFT JOIN PRODUCT_IMAGES pi
-        ON pi.products_id = pr.id
-        AND pi.is_main = 'Y'
-
+                 JOIN USERS u ON o.users_id = u.id
+                 LEFT JOIN PAYMENTS p ON p.orders_id = o.id
+                 LEFT JOIN ORDER_ITEMS oi ON oi.orders_id = o.id
+                 LEFT JOIN PRODUCTS pr ON oi.products_id = pr.id
+                 LEFT JOIN SELLERS s ON pr.sellers_id = s.id
+                 LEFT JOIN PRODUCT_IMAGES pi ON pi.products_id = pr.id AND pi.is_main = 'Y'
         WHERE o.users_id = #{userId}
-
-        GROUP BY
-        o.id, o.users_id, o.status, o.total_amount, o.created_at,
-        o.order_code, u.user_id, u.name, p.method,
-        pr.product_name, pr.price, s.brand_name, oi.quantity, pi.url
-
-        ORDER BY o.created_at DESC
+        ORDER BY o.created_at DESC, pr.product_name ASC,oi.id ASC
     </select>
+
+    <!-- ✅ 매핑 정의 -->
+    <resultMap id="OrderWithItemsMap" type="kr.co.bnk_marketproject_be.dto.OrdersDTO">
+        <id property="id" column="order_id"/>
+        <result property="users_id" column="users_id"/>
+        <result property="status" column="status"/>
+        <result property="total_amount" column="total_amount"/>
+        <result property="created_at" column="created_at"/>
+        <result property="order_code" column="order_code"/>
+        <result property="userId" column="userId"/>
+        <result property="user_name" column="user_name"/>
+        <result property="method" column="method"/>
+        <result property="company_name" column="company_name"/>
+
+        <collection property="orderItems" ofType="kr.co.bnk_marketproject_be.dto.OrderItemsDTO">
+            <id property="id" column="order_item_id"/>
+            <result property="products_id" column="products_id"/>
+            <result property="productName" column="product_name"/>
+            <result property="price" column="price"/>
+            <result property="quantity" column="quantity"/>
+            <result property="url" column="url"/>
+        </collection>
+    </resultMap>
+
+
+
 
     <!-- 단일 주문 상세 -->
     <select id="findOrderDetailById" resultType="kr.co.bnk_marketproject_be.dto.OrdersDTO">
@@ -53,7 +70,7 @@
             o.users_id,
             o.status,
             o.total_amount,
-            TO_CHAR(o.created_at, 'YYYY-MM-DD HH24:MI:SS') AS created_at,
+            TO_CHAR(o.created_at, 'YYYY-MM-DD') AS created_at,
             o.order_code,
             u.user_name,
             u.phone AS ruphone,
@@ -86,7 +103,7 @@
         o.users_id,
         o.status,
         o.total_amount,
-        TO_CHAR(o.created_at, 'YYYY-MM-DD HH24:MI:SS') AS created_at,
+        TO_CHAR(o.created_at, 'YYYY-MM-DD') AS created_at,
         o.order_code,
 
         u.user_id       AS userId,
@@ -118,6 +135,55 @@
     <!-- 전체 주문 개수 -->
     <select id="countOrdersByUserId" resultType="int">
         SELECT COUNT(*) FROM ORDERS WHERE users_id = #{userId}
+    </select>
+
+    <!-- ========================= -->
+    <!--  [상품평 관련 기능 섹션]  -->
+    <!-- ========================= -->
+
+    <insert id="insertProductBoard" parameterType="kr.co.bnk_marketproject_be.dto.ProductBoardsDTO">
+        INSERT INTO PRODUCT_BOARDS (
+            PRODUCTS_ID, USERS_ID, TYPE, TITLE, CONTENT, RATING, CREATED_AT
+        ) VALUES (
+                     #{products_id},
+                     #{users_id},
+                     #{type},
+                     #{title},
+                     #{content},
+                     #{rating},
+                     SYSTIMESTAMP
+                 )
+    </insert>
+
+    <select id="findProductBoardsByProductId" resultType="kr.co.bnk_marketproject_be.dto.ProductBoardsDTO">
+        SELECT
+            pb.id,
+            pb.products_id,
+            pb.users_id,
+            pb.type,
+            pb.title,
+            pb.content,
+            pb.rating,
+            TO_CHAR(pb.created_at, 'YYYY-MM-DD HH24:MI:SS') AS created_at,
+            u.user_id AS user_id
+        FROM PRODUCT_BOARDS pb
+                 JOIN USERS u ON pb.users_id = u.id
+        WHERE pb.products_id = #{productId}
+        ORDER BY pb.created_at DESC
+    </select>
+
+    <select id="findOrderItemsByOrderId" resultType="kr.co.bnk_marketproject_be.dto.OrderItemsDTO">
+        SELECT
+            oi.id,
+            oi.orders_id,
+            oi.products_id,
+            oi.product_options_id,
+            oi.quantity,
+            oi.price,
+            pr.product_name AS productName
+        FROM ORDER_ITEMS oi
+                 JOIN PRODUCTS pr ON pr.id = oi.products_id
+        WHERE oi.orders_id = #{orderId}
     </select>
 
 </mapper>

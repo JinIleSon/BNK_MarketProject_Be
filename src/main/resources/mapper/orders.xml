@@ -75,8 +75,18 @@
         VALUES (#{orders_id}, #{recipient}, #{delicom}, #{zipcode}, #{address}, #{address2}, '배송준비', #{delichar})
     </insert>
 
+    <update id="recalcOrderTotal" parameterType="int">
+        UPDATE orders o
+        SET o.total_amount = (
+        SELECT NVL(SUM(NVL(oi.price,0) * NVL(oi.quantity,0)), 0)
+        FROM order_items oi
+        WHERE oi.orders_id = #{orderId}
+        )
+        WHERE o.id = #{orderId}
+    </update>
 
-    <!-- 장바구니의 특정 라인들을 주문아이템으로 복사하는 방식이라면 이 쿼리 대신 개별 insert 사용 -->
+
+
     <insert id="insertOrderItemFromCart">
         INSERT INTO order_items (orders_id, products_id, product_options_id, quantity, price)
         SELECT #{orderId}, oi.products_id, oi.product_options_id, oi.quantity, p.price

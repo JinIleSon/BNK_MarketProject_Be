@@ -3,6 +3,7 @@ package kr.co.bnk_marketproject_be.controller;
 import kr.co.bnk_marketproject_be.dto.CSNoticeDTO;
 import kr.co.bnk_marketproject_be.service.CSQnaService;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -12,6 +13,7 @@ import java.util.List;
 @Controller
 @RequiredArgsConstructor
 @RequestMapping("/cs/qna")
+@Slf4j
 public class CSQnaController {
 
     private final CSQnaService qnaService;
@@ -40,16 +42,28 @@ public class CSQnaController {
         model.addAttribute("limit", limit);
         model.addAttribute("userid", userid);
 
-
         return "customer_service/qna/qna_list";
     }
 
     /* QnA 상세 */
     @GetMapping("/view/{id}")
-    public String view(@PathVariable Long id, Model model) {
+    public String view(
+            @PathVariable Long id,
+            @RequestParam(required = false) String boardType2,
+            @RequestParam(required = false) String boardType3,
+            Model model,
+            CSNoticeDTO dto) {
+
         CSNoticeDTO qna = qnaService.getQnaview(id);
+        qna.setLook(dto.getLook());
+        log.info("qna={}", qna);
+        CSNoticeDTO comment = qnaService.selectCommentView(id.intValue());
+        log.info("comment={}", comment);
 
         model.addAttribute("qna", qna);
+        model.addAttribute("boardType2", boardType2 != null ? boardType2 : qna.getBoardType2());
+        model.addAttribute("boardType3", boardType3);
+        model.addAttribute("comment", comment);
 
         return "customer_service/qna/qna_view";
     }
@@ -57,8 +71,11 @@ public class CSQnaController {
     /* QnA 등록 */
     @PostMapping("/write")
     public String write(@ModelAttribute CSNoticeDTO qna) {
+
         qnaService.insertQna(qna);
+
         return "redirect:/qna/list";
     }
+
 
 }

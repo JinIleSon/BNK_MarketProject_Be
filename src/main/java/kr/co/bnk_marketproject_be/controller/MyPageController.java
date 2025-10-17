@@ -25,7 +25,37 @@ public class MyPageController {
     private final MyPageService myPageService;
 
     @GetMapping("/mypage/mypage/main")
-    public String mainpage() {
+    public String mainpage(Model model, Principal principal, PageRequestDTO pageRequestDTO) {
+
+        String userId = principal.getName();
+
+        // 문의내역 출력_마이페이지_메인#9 포인트적립내역 메인
+        PageResponseUserPointDTO pageResponseUserPointDTO = myPageService.selectUserPoint(pageRequestDTO, userId);
+
+        log.info("pageResponseUserPointDTO={}", pageResponseUserPointDTO);
+        model.addAttribute("pageResponseUserPointDTO", pageResponseUserPointDTO);
+
+        // 상품평 메인
+        PageResponseUserReviewDTO pageResponseReviewDTO = myPageService.selectUserReview(pageRequestDTO, userId);
+
+        log.info("pageResponseReviewDTO={}", pageResponseReviewDTO);
+        model.addAttribute("pageResponseReviewDTO", pageResponseReviewDTO);
+
+        // 문의내역 출력_마이페이지_메인#10 문의하기 메인
+        PageResponseAdminInquiryDTO pageResponseInquiryDTO = myPageService.selectAllInquiry(pageRequestDTO, userId);
+
+        log.info("pageResponseInquiryDTO={}", pageResponseInquiryDTO);
+        model.addAttribute("pageResponseInquiryDTO", pageResponseInquiryDTO);
+
+        // 나의설정 메인
+        UserDTO userDTO = myPageService.selectUser(userId);
+
+        log.info("userId = {}", userId);
+        userDTO.setUserId(userId);
+        log.info("userDTO = {}", userDTO);
+
+        model.addAttribute("userDTO", userDTO);
+
         return "mypage/mypage_main";
     }
     @GetMapping("/mypage/mypage/point")
