@@ -29,6 +29,7 @@ public class DeliveriesDTO {
     private String memo;
     private String zipcode;
     private String address2;
+    private String note;
 
 
     public String getReceipt() {
