@@ -28,28 +28,46 @@ public class OrdersService {
     public ProductCartDTO getCart(int userId) {
         var rows = ordersMapper.selectCartLineRows(userId);
 
-        // 파생값 계산
-        int subtotal = 0, discount = 0, delicharTotal = 0;
+        int subtotal = 0, discount = 0, delicharTotal = 0;   int itemCount = 0; // ✅ 수량 합계
+
         for (var r : rows) {
-            int sale = r.getUnitPrice() - (r.getUnitPrice() * r.getDiscountRate() / 100);
+            int unit = r.getUnitPrice();          // 정가
+            int rate = r.getDiscountRate();       // 0~100 가정(쿼리에서 보장)
+
+            // 안전 가드
+            if (rate < 0) rate = 0;
+            if (rate > 100) rate = 100;
+
+            // 1개당 할인액, 판매가
+            int unitDiscount = (int) Math.round(unit * (rate / 100.0));
+            int sale = unit - unitDiscount;
+
+            // 라인 합계(판매가 * 수량)
             int line = sale * r.getQuantity();
             r.setLineTotal(line);
-            boolean free = (r.getDelichar() == null || r.getDelichar() == 0);
+
+            // 배송비/무료배송
+            Integer deli = r.getDelichar();
+            int deliVal = (deli == null ? 0 : deli);
+            boolean free = (deliVal == 0);
             r.setFreeShipping(free);
-            subtotal += r.getUnitPrice() * r.getQuantity();
-            discount += (r.getUnitPrice() - sale) * r.getQuantity();
-            if (!free) delicharTotal += r.getDelichar();
+
+            // 합계 집계
+            subtotal += unit * r.getQuantity();          // 정가 합
+            discount += unitDiscount * r.getQuantity();  // 총 할인액
+            if (!free) delicharTotal += deliVal;
+            itemCount += r.getQuantity();
         }
 
         var summary = OrderPageSummaryDTO.builder()
-                .itemCount(rows.size())
+                .itemCount(itemCount)
                 .subtotalAmount(subtotal)
-                .discountAmount(discount)
+                .discountAmount(discount)                // 우측 하단 “할인금액”
                 .delichar(delicharTotal)
                 .couponAmount(0)
                 .pointUse(0)
                 .totalPayable(subtotal - discount + delicharTotal)
-                .rewardPoint((int) Math.floor((subtotal - discount) * 0.01)) // 예: 1% 적립
+                .rewardPoint((int) Math.floor((subtotal - discount) * 0.01)) // 1% 적립 예시
                 .build();
 
         return ProductCartDTO.builder()
@@ -193,5 +211,22 @@ public class OrdersService {
         ordersMapper.recalcOrderTotal(cartOrderId);
 
         return affected;
+    }
+
+    @Transactional
+    public int removeFromCart(int userId, List<Integer> itemIds) {
+        Integer cartOrderId = ordersMapper.selectOpenCartId(userId);
+        if (cartOrderId == null) return 0;
+
+        int removed = ordersMapper.deleteCartItems(cartOrderId, itemIds);
+
+        // 합계 재계산
+        ordersMapper.recalcOrderTotal(cartOrderId);
+
+        // (선택) 아이템이 0개면 빈 주문 레코드 정리
+        if (ordersMapper.countItemsInOrder(cartOrderId) == 0) {
+            ordersMapper.deleteOrderIfEmpty(cartOrderId);
+        }
+        return removed;
     }
 }

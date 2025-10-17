@@ -64,7 +64,7 @@
             <tr style="border-bottom: 1px solid #dddddd;"
                 th:each="r : ${cart != null ? cart.items : {}}">
                 <td>
-                    <input type="checkbox"
+                    <input type="checkbox"  class="js-cart-item"
                            th:value="${r.order_item_id != null ? r.order_item_id : r.id}">
                 </td>
                 <td style="display: flex;">
@@ -102,9 +102,35 @@
         </form>
     </table>
 
-    <input type="button" value="선택삭제"
-           style="border:1px solid #e2e2e2; width:95px; height: 40px; margin-right:1175px; font-weight:500; margin-top:7px;"
-           onclick="alert('선택삭제는 추후 구현 예정입니다.');">
+    <input type="button" id="btn-remove-selected" value="선택삭제"
+           style="border:1px solid #e2e2e2; width:95px; height: 40px; margin-right:1175px; font-weight:500; margin-top:7px;">
+
+    <script>
+        document.getElementById('btn-remove-selected')?.addEventListener('click', async () => {
+            const ids = [...document.querySelectorAll('.js-cart-item:checked')].map(el => el.value);
+            if (ids.length === 0) { alert('삭제할 상품을 선택하세요.'); return; }
+            if (!confirm('선택한 상품을 장바구니에서 삭제할까요?')) return;
+
+            try {
+                const res = await fetch('/NICHIYA/product/cart/items/delete', {
+                    method: 'POST',                 // (DELETE로 하고 싶으면 서버도 DELETE로 맞추면 OK)
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ itemIds: ids })
+                });
+                const json = await res.json();
+                if (json.ok) {
+                    // 가장 간단: 새로고침
+                    location.reload();
+                    // 또는 json.summary 등을 내려주면 화면 숫자만 갱신해도 됨
+                } else {
+                    alert(json.reason || '삭제 실패');
+                }
+            } catch (e) {
+                console.error(e);
+                alert('서버 오류가 발생했습니다.');
+            }
+        });
+    </script>
 
     <div style="border:1px solid #dddddd; width:300px; margin-left:970px;padding-left:20px;padding-right:20px;"
          th:with="s=${cart != null ? cart.summary : null}">
@@ -138,13 +164,12 @@
                 <div>적립 포인트<span style="float:right;"
                                  th:text="${s != null ? s.rewardPoint : 0}">270</span></div>
             </div>
-            <div style="display: flex; justify-content: center; margin-bottom:25px;">
-                <input type="button" value="주문하기"
-                       style="height: 40px; background-color: black; color:white; font-size: 20px; font-weight:300; border:none; width:190px;"
-                       onclick="location.href='[[@{/product/order(uid=${uid})}]]'">
-                <!-- 테스트 중 uid가 필요하면 위 한 줄을 아래로 교체
-                onclick="location.href='/product/order?uid=1'"
-                -->
+            <div style="display:flex; justify-content:center; margin-bottom:25px;">
+                <a th:href="@{/product/order}"
+                   style="display:inline-block;height:40px;line-height:40px;background:#000;color:#fff;
+            font-size:20px;font-weight:300;border:none;width:190px;text-align:center;">
+                    주문하기
+                </a>
             </div>
         </div>
     </div>
