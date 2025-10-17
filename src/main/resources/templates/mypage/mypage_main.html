@@ -150,7 +150,7 @@
                     <div style="display: flex; flex-direction: column; justify-content: center; align-items: center; margin-top:40px;">
                         <div style="display: flex; margin-top:30px;">
                             <div style="font-weight: 800; margin-right:750px; margin-bottom:5px;">최근주문내역</div>
-                            <div style="margin-left:auto;"><a href="#">더보기 ></a></div>
+                            <div style="margin-left:auto;"><a th:href="@{/mypage/mypage/allorder}">더보기 ></a></div>
                         </div>
                         <table style="text-align: center; border-collapse: collapse;border-top:1px solid; width:900px;">
                             <tr style="background-color: #dedede; font-size:12px; color:white; font-weight: 800; height:40px;">
@@ -290,7 +290,7 @@
                     <div style="display: flex; flex-direction: column; justify-content: center; align-items: center; margin-top:40px;">
                         <div style="display: flex; margin-top:30px;">
                             <div style="font-weight: 800; margin-right:736px; margin-bottom:5px;">포인트적립내역</div>
-                            <div style="margin-left:auto;"><a href="#">더보기 ></a></div>
+                            <div style="margin-left:auto;"><a th:href="@{/mypage/mypage/point}">더보기 ></a></div>
                         </div>
                         <table style="text-align: center; border-collapse: collapse;border-top:1px solid; width:900px;">
                             <tr style="background-color: #dedede; font-size:12px; color:white; font-weight: 800; height:40px;">
@@ -301,54 +301,38 @@
                                 <th style="">비고</th>
                                 <th style="width:125px;">유효기간</th>
                             </tr>
-                            <tr style="border-bottom: 1px solid #dddddd; height:65px;">
-                                <td>2022-12-13</td>
-                                <td style="">적립</td>
-                                <td style="letter-spacing: -1px;">2022121001</td>
-                                <td>340</td>
-                                <td>상품 구매확정</td>
-                                <td>2024-12-10</td>
+                            <tr style="border-bottom: 1px solid #dddddd; height:65px;"
+                                th:each="point, stat: ${pageResponseUserPointDTO.dtoList}"
+                                th:if="${stat.index} < 5">
+                                <td><span
+                                        th:text="${#strings.substring(point.created_at, 0, 10)}"></span></td>
+                                <td style=""><span
+                                        th:text="${point.change_amount >= 0 ? '적립' : '사용'}"></span></td>
+                                <td style="letter-spacing: -1px;"
+                                    th:text="${point.description == '상품 구매 완료'
+                                      ? (10121211362L
+                                         + pageResponseUserPointDTO.dtoList.subList(0, stat.index + 1).?[description == '상품 구매 완료'].size()
+                                         - 1)
+                                      : '-'}">2022121001</td>
+                                <td><span
+                                        th:text="${point.change_amount}"></span></td>
+                                <td><span
+                                        th:text="${point.description}"></span></td>
+                                <td><span th:text="${ T(java.time.LocalDate)
+                                                     .parse(#strings.substring(point.created_at, 0, 10))
+                                                     .plusYears(2)
+                                                     .format(T(java.time.format.DateTimeFormatter).ofPattern('yyyy-MM-dd')) }">
+                                  </span></td>
                             </tr>
-                            <tr style="border-bottom: 1px solid #dddddd; height:65px;">
-                                <td>2022-12-13</td>
-                                <td style="">적립</td>
-                                <td style="letter-spacing: -1px;">2022121001</td>
-                                <td>340</td>
-                                <td>상품 구매확정</td>
-                                <td>2024-12-10</td>
-                            </tr>
-                            <tr style="border-bottom: 1px solid #dddddd; height:65px;">
-                                <td>2022-12-13</td>
-                                <td style="">적립</td>
-                                <td style="letter-spacing: -1px;">2022121001</td>
-                                <td>340</td>
-                                <td>상품 구매확정</td>
-                                <td>2024-12-10</td>
-                            </tr>
-                            <tr style="border-bottom: 1px solid #dddddd; height:65px;">
-                                <td>2022-12-13</td>
-                                <td style="">적립</td>
-                                <td style="letter-spacing: -1px;">2022121001</td>
-                                <td>340</td>
-                                <td>상품 구매확정</td>
-                                <td>2024-12-10</td>
-                            </tr>
-                            <tr style="border-bottom: 1px solid #dddddd; height:65px;">
-                                <td>2022-12-13</td>
-                                <td style="">적립</td>
-                                <td style="letter-spacing: -1px;">2022121001</td>
-                                <td>340</td>
-                                <td>상품 구매확정</td>
-                                <td>2024-12-10</td>
-                            </tr>
+
                         </table>
                     </div>
                     <div style="display: flex; flex-direction: column; justify-content: center; align-items: center; margin-top:40px;">
                         <div style="display: flex; margin-top:30px;">
                             <div style="font-weight: 800; margin-right:797px; margin-bottom:5px;">상품평</div>
-                            <div style="margin-left:auto;"><a href="#">더보기 ></a></div>
+                            <div style="margin-left:auto;"><a th:href="@{/mypage/mypage/review}">더보기 ></a></div>
                         </div>
-                        <table style="text-align: center; border-collapse: collapse;border-top:1px solid; width:900px;">
+                        <table style="text-align: center; border-collapse: collapse;border-top:1px solid; width:900px;" class="review-table">
                             <tr style="background-color: #dedede; font-size:12px; color:white; font-weight: 800; height:40px;">
                                 <th style="width:70px;">번호</th>
                                 <th style="width:170px;">상품명</th>
@@ -356,42 +340,45 @@
                                 <th style="width:120px;">평점</th>
                                 <th style="">작성일</th>
                             </tr>
-                            <tr style="border-bottom: 1px solid #dddddd; height:65px;">
-                                <td>5</td>
-                                <td style="">상품번호 / 상품명</td>
-                                <td style="">배송이 빠릅니다. 잘 사용하겠습니다.</td>
-                                <td>★★★★☆</td>
-                                <td>2022-12-10</td>
-                            </tr>
-                            <tr style="border-bottom: 1px solid #dddddd; height:65px;">
-                                <td>4</td>
-                                <td style="">상품번호 / 상품명</td>
-                                <td style="">배송이 빠릅니다. 잘 사용하겠습니다.</td>
-                                <td>★★★★☆</td>
-                                <td>2022-12-10</td>
-                            </tr>
-                            <tr style="border-bottom: 1px solid #dddddd; height:65px;">
-                                <td>3</td>
-                                <td style="">상품번호 / 상품명</td>
-                                <td style="">배송이 빠릅니다. 잘 사용하겠습니다.</td>
-                                <td>★★★★☆</td>
-                                <td>2022-12-10</td>
-                            </tr>
-                            <tr style="border-bottom: 1px solid #dddddd; height:65px;">
-                                <td>2</td>
-                                <td style="">상품번호 / 상품명</td>
-                                <td style="">배송이 빠릅니다. 잘 사용하겠습니다.</td>
-                                <td>★★★★☆</td>
-                                <td>2022-12-10</td>
-                            </tr>
-                            <tr style="border-bottom: 1px solid #dddddd; height:65px;">
-                                <td>1</td>
-                                <td style="">상품번호 / 상품명</td>
-                                <td style="">배송이 빠릅니다. 잘 사용하겠습니다.</td>
-                                <td>★★★★☆</td>
-                                <td>2022-12-10</td>
+                            <tr style="border-bottom: 1px solid #dddddd; height:65px;"
+                                th:each="review, stat: ${pageResponseReviewDTO.dtoList}"
+                                th:if="${stat.index} < 5">
+                                <td th:text="${T(java.lang.Math).min(5, stat.size) - stat.index}">5</td>
+                                <td style="" class="col-name"><span th:text="${review.product_code}"></span> / <a th:href="@{/product/views(id=${review.pid})}">[[${review.product_name}]]</a></td>
+                                <td style="" class="col-content"><span th:text="${review.content}"></span></td>
+                                <td><span th:text="${review.rating == 5 ? '★★★★★' :
+                                (review.rating == 4 ? '★★★★☆' :
+                                (review.rating == 3 ? '★★★☆☆' :
+                                (review.rating == 2 ? '★★☆☆☆' :
+                                (review.rating == 1 ? '★☆☆☆☆' : '☆☆☆☆☆'))))}"></span></td>
+                                <td><span th:text="${#temporals.format(review.created_at, 'yyyy-MM-dd')}"></span></td>
                             </tr>
                         </table>
+                        <style>
+                            /* 표가 셀 너비를 지켜서 줄바꿈되도록 */
+                            .review-table { table-layout: fixed; }
+
+                            /* 상품명/내용 칸: 단어 기준 줄바꿈(스페이스 우선) */
+                            .col-name, .col-content {
+                                white-space: normal;        /* 줄바꿈 허용 */
+                                word-break: keep-all;       /* 단어 중간 단절 금지(스페이스에서만 줄바꿈) */
+                                overflow-wrap: break-word;  /* 너무 긴 토큰(코드 등)일 때만 예외적으로 줄바꿈 */
+                                line-height: 1.4;
+                            }
+                            /* 상품명 링크 기본 스타일 */
+                            .review-table a {
+                                color: #a0a0a0;                 /* 기본 글자색 */
+                                text-decoration: none;       /* 밑줄 제거 */
+                                transition: color 0.2s, transform 0.2s; /* 부드러운 애니메이션 */
+                            }
+
+                            /* hover 시 시각적 피드백 */
+                            .review-table a:hover {
+                                color: #222;              /* 파란색으로 강조 */
+                                text-decoration: underline;  /* 밑줄 표시 */
+                                transform: translateY(-1px); /* 살짝 위로 올라가게 */
+                            }
+                        </style>
                     </div>
                     <div style="margin-top:30px; display: flex; justify-content: center;">
                         <div>
