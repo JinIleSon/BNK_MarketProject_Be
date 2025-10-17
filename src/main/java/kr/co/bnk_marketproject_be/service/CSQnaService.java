@@ -27,12 +27,11 @@ public class CSQnaService {
         return qnaMapper.selectQnaview(id);
     }
 
-    public void insertQna(CSNoticeDTO qna) {
-        qnaMapper.insertQna(qna);
-    }
-
     public CSNoticeDTO selectCommentView(int bid){
         return qnaMapper.selectCommentView(bid);
     }
 
+    public void insertQna(CSNoticeDTO qna) {
+        qnaMapper.insertQna(qna);
+    }
 }
