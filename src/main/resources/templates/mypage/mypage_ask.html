@@ -119,38 +119,12 @@
             margin-right:3px;
             cursor: pointer;
         }
-        
+
         /* 게시판 아래버튼 부분 끝 */
   </style>
 </head>
 <body>
-    <!--헤더푸터 연결-->
-    <script>
-        fetch("../main/header.html")
-          .then(res => res.text())
-          .then(data => {
-            document.getElementById("header").innerHTML = data;
-
-            // header.html 안의 스크립트 실행 강제
-            const scripts = document.getElementById("header").querySelectorAll("script");
-            scripts.forEach(oldScript => {
-            const newScript = document.createElement("script");
-            if (oldScript.src) {
-                newScript.src = oldScript.src;
-            } else {
-                newScript.textContent = oldScript.textContent;
-            }
-            document.body.appendChild(newScript);
-            });
-          });
-
-       
-        fetch("../main/footer.html")
-          .then(res => res.text())
-          .then(data => {
-            document.getElementById("footer").innerHTML = data;
-          });
-    </script>
+<div th:replace="~{main/header.html}"></div>
     <main>
         <div id="header"></div>
         <div style="background-color: #f6f5f5; border-bottom: 1px solid #dddddd;">
@@ -164,15 +138,15 @@
                         </div>
                         <div style="width:70px; border-right:1px solid #dddddd; display: flex; flex-direction: column; align-items: center; justify-content: center;">
                             <div style="margin-bottom:8px;">쿠폰</div>
-                            <div>1</div>
+                            <div><span th:text="${couponCount}"></span></div>
                         </div>
                         <div style="width:70px;border-right:1px solid #dddddd; display: flex; flex-direction: column; align-items: center; justify-content: center;">
                             <div style="margin-bottom:8px;">포인트</div>
-                            <div>1,000</div>
+                            <div><span th:text="${#numbers.formatInteger(balance, 3, 'COMMA')} + 'P'">0P</span></div>
                         </div>
                         <div style="width:70px;display: flex; flex-direction: column; align-items: center; justify-content: center;">
                             <div style="margin-bottom:8px;">문의</div>
-                            <div>1</div>
+                            <div><span th:text="${count}"></span></div>
                         </div>
                     </div>
                 </div>
@@ -181,18 +155,18 @@
         <div style="display: flex; justify-content: center; align-items: center;">
             <div style="width:1270px; font-size:15px; display: flex;">
                 <div style=" width:200px; padding-left:70px; padding-top:30px; border-right:1px solid #dddddd;">
-                    <div style="margin-bottom:15px;"><a href="#">전체주문내역</a></div>
-                    <div style="margin-bottom:15px;"><a href="#">포인트내역</a></div>
-                    <div style="margin-bottom:15px;"><a href="#">쿠폰</a></div>
-                    <div style="margin-bottom:15px;"><a href="#">나의리뷰</a></div>
-                    <div style="margin-bottom:15px; font-weight: 800;"><a href="#">문의하기</a></div>
-                    <div><a href="#">나의설정</a></div>
+                    <div style="margin-bottom:15px;"><a th:href="@{/mypage/mypage/allorder}">전체주문내역</a></div>
+                    <div style="margin-bottom:15px;"><a th:href="@{/mypage/mypage/point}">포인트내역</a></div>
+                    <div style="margin-bottom:15px;"><a th:href="@{/mypage/mypage/coupon}">쿠폰</a></div>
+                    <div style="margin-bottom:15px;"><a th:href="@{/mypage/mypage/review}">나의리뷰</a></div>
+                    <div style="font-weight: 800;margin-bottom:15px;"><a th:href="@{/mypage/mypage/ask}">문의하기</a></div>
+                    <div><a th:href="@{/mypage/mypage/setup}">나의설정</a></div>
                 </div>
                 <div style="width: 100%;">
                     <div style="display: flex; flex-direction: column; justify-content: center; align-items: center; margin-top:40px;">
                     <div style="display: flex; justify-content: center;">
                         <div>
-                          <img src="/images/mypage_mainBanner6.jpg" alt="" style="width:400px;">
+                          <img th:src="@{/images/mypage_mainBanner6.jpg}" alt="" style="width:400px;">
                           <div style="font-size:10px; padding-left:0px;">Image by <a href="https://www.freepik.com" target="_blank" style="color:inherit; text-decoration:none;">Freepik</a></div>
                         </div>
                     </div>
@@ -203,112 +177,102 @@
                         <table style="text-align: center; border-collapse: collapse;border-top:1px solid; width:900px;">
                             <tr style="background-color: #dedede; font-size:12px; color:white; font-weight: 800; height:40px;">
                                 <th style="width:60px;">번호</th>
-                                <th style="width:120px;">문의채널</th>
-                                <th style="width:87px;">문의유형</th>
+                                <th style="width:120px;">1차 유형</th>
+                                <th style="width:87px;">2차 유형</th>
                                 <th style="">제목</th>
                                 <th style="">작성일</th>
                                 <th style="width:90px;">상태</th>
                             </tr>
-                            <tr style="border-bottom: 1px solid #dddddd; height:65px;">
-                                <td>1</td>
-                                <td style="">고객센터</td>
-                                <td style="letter-spacing: -1px;">주문 / 결제</td>
-                                <td>신용카드 결제 중 오류가 난 경우 어떻게 하나요?</td>
-                                <td>2022-12-12</td>
-                                <td style="color:gray;">검토중</td>
-                            </tr>
-                            <tr style="border-bottom: 1px solid #dddddd; height:65px;">
-                                <td>2</td>
-                                <td style="">고객센터</td>
-                                <td style="letter-spacing: -1px;">주문 / 결제</td>
-                                <td>신용카드 결제 중 오류가 난 경우 어떻게 하나요?</td>
-                                <td>2022-12-12</td>
-                                <td style="color:green;">답변완료</td>
-                            </tr>
-                            <tr style="border-bottom: 1px solid #dddddd; height:65px;">
-                                <td>3</td>
-                                <td style="">판매자 게시판</td>
-                                <td style="letter-spacing: -1px;">배송</td>
-                                <td>배송기간이 보통 얼마나 걸리나요?</td>
-                                <td>2022-12-12</td>
-                                <td style="color:green;">답변완료</td>
-                            </tr>
-                            <tr style="border-bottom: 1px solid #dddddd; height:65px;">
-                                <td>4</td>
-                                <td style="">판매자 게시판</td>
-                                <td style="letter-spacing: -1px;">배송</td>
-                                <td>배송기간이 보통 얼마나 걸리나요?</td>
-                                <td>2022-12-12</td>
-                                <td style="color:green;">답변완료</td>
-                            </tr>
-                            <tr style="border-bottom: 1px solid #dddddd; height:65px;">
-                                <td>5</td>
-                                <td style="">판매자 게시판</td>
-                                <td style="letter-spacing: -1px;">배송</td>
-                                <td>배송기간이 보통 얼마나 걸리나요?</td>
-                                <td>2022-12-12</td>
-                                <td style="color:green;">답변완료</td>
-                            </tr>
-                            <tr style="border-bottom: 1px solid #dddddd; height:65px;">
-                                <td>5</td>
-                                <td style="">판매자 게시판</td>
-                                <td style="letter-spacing: -1px;">배송</td>
-                                <td>배송기간이 보통 얼마나 걸리나요?</td>
-                                <td>2022-12-12</td>
-                                <td style="color:green;">답변완료</td>
-                            </tr>
-                            <tr style="border-bottom: 1px solid #dddddd; height:65px;">
-                                <td>5</td>
-                                <td style="">판매자 게시판</td>
-                                <td style="letter-spacing: -1px;">배송</td>
-                                <td>배송기간이 보통 얼마나 걸리나요?</td>
-                                <td>2022-12-12</td>
-                                <td style="color:green;">답변완료</td>
-                            </tr>
-                            <tr style="border-bottom: 1px solid #dddddd; height:65px;">
-                                <td>5</td>
-                                <td style="">판매자 게시판</td>
-                                <td style="letter-spacing: -1px;">배송</td>
-                                <td>배송기간이 보통 얼마나 걸리나요?</td>
-                                <td>2022-12-12</td>
-                                <td style="color:green;">답변완료</td>
-                            </tr>
-                            <tr style="border-bottom: 1px solid #dddddd; height:65px;">
-                                <td>5</td>
-                                <td style="">판매자 게시판</td>
-                                <td style="letter-spacing: -1px;">배송</td>
-                                <td>배송기간이 보통 얼마나 걸리나요?</td>
-                                <td>2022-12-12</td>
-                                <td style="color:green;">답변완료</td>
-                            </tr>
-                            <tr style="border-bottom: 1px solid #dddddd; height:65px;">
-                                <td>5</td>
-                                <td style="">판매자 게시판</td>
-                                <td style="letter-spacing: -1px;">배송</td>
-                                <td>배송기간이 보통 얼마나 걸리나요?</td>
-                                <td>2022-12-12</td>
-                                <td style="color:green;">답변완료</td>
+                            <tr style="border-bottom: 1px solid #dddddd; height:65px;"
+                            th:each="inquiry, stat: ${pageResponseDTO.dtoList}">
+                                <td th:text="${pageResponseDTO.startNo - stat.index}">1</td>
+                                <td th:text="${inquiry.board_type2 == 'member' ? '회원' :
+                        (inquiry.board_type2 == 'event' ? '쿠폰 / 이벤트' :
+                        (inquiry.board_type2 == 'pay' ? '주문 / 결제' :
+                        (inquiry.board_type2 == 'delivery' ? '배송' :
+                        (inquiry.board_type2 == 'cancel' ? '취소 / 반품 / 교환' :
+                        (inquiry.board_type2 == 'trip' ? '여행 / 숙박 / 항공' :
+                        (inquiry.board_type2 == 'safe' ? '안전거래' : ''))))))}">고객센터</td>
+                                <td th:text="${inquiry.board_type3 == 'signup' ? '가입' :
+                        (inquiry.board_type3 == 'withdraw' ? '탈퇴' :
+                        (inquiry.board_type3 == 'account' ? '회원정보' :
+                        (inquiry.board_type3 == 'login' ? '로그인' :
+                        (inquiry.board_type3 == 'couponissue' ? '쿠폰발급' :
+                        (inquiry.board_type3 == 'couponuse' ? '쿠폰사용' :
+                        (inquiry.board_type3 == 'eventjoin' ? '이벤트참여' :
+                        (inquiry.board_type3 == 'winnercheck' ? '당첨확인' :
+                        (inquiry.board_type3 == 'orderguide' ? '주문방법' :
+                        (inquiry.board_type3 == 'paymentmethod' ? '결제수단' :
+                        (inquiry.board_type3 == 'paymenterror' ? '결제오류' :
+                        (inquiry.board_type3 == 'receipt' ? '영수증/증빙' :
+                        (inquiry.board_type3 == 'tracking' ? '배송조회' :
+                        (inquiry.board_type3 == 'deliverytime' ? '배송기간' :
+                        (inquiry.board_type3 == 'deliveryfee' ? '배송비' :
+                        (inquiry.board_type3 == 'globalshipping' ? '해외배송' :
+                        (inquiry.board_type3 == 'ordercancel' ? '주문취소' :
+                        (inquiry.board_type3 == 'refund' ? '반품' :
+                        (inquiry.board_type3 == 'exchange' ? '교환' :
+                        (inquiry.board_type3 == 'refundprocess' ? '환불처리' :
+                        (inquiry.board_type3 == 'reservation' ? '예약' :
+                        (inquiry.board_type3 == 'payment' ? '결제' :
+                        (inquiry.board_type3 == 'changecancel' ? '변경/취소' :
+                        (inquiry.board_type3 == 'guide' ? '이용안내' :
+                        (inquiry.board_type3 == 'security' ? '보안공지' :
+                        (inquiry.board_type3 == 'alert' ? '사기주의' :
+                        (inquiry.board_type3 == 'safepayment' ? '안전결제' :
+                        (inquiry.board_type3 == 'privacy' ? '개인정보보호' : '')))))))))))))))))))))))))))}"
+                                        style="letter-spacing: -1px;">주문 / 결제</td>
+                                <td>[[${inquiry.title}]]</td>
+                                <td th:text="${#temporals.format(inquiry.createdAt, 'yyyy-MM-dd')}">2022-12-12</td>
+                                <td style="color:gray;"
+                                    th:text="${inquiry.look == 0 ? '검토 중' : '답변완료'}"
+                                    th:style="${inquiry.look == 0 ? 'color:black;' : 'color:#4f9cd3;'}">검토중</td>
                             </tr>
                         </table>
                     </div>
-                    <div style=" height: 100px; margin-top:40px; display: flex; justify-content: center;">
-                        <form action="" method="" style="">
-                            <input type="button" class="prev-page" value="< 이전">
+                        <div style=" height: 100px; margin-top:40px; display: flex; justify-content: center;">
+                            <input th:if="${pageResponseDTO.prev}"
+                                   th:onclick="|location.href='@{/mypage/mypage/ask(pg=${pageResponseDTO.start - 1})}'|"
+                                   type="button" class="prev-page" value="< 이전">
 
-                            <input type="button" value="1" style="border:1px solid #333; background-color: #333; color: white; height: 30px; width: 30px; margin-right:2px; line-height:1;">
-                            <input type="button" value="2" style="cursor: pointer; border:1px solid #ddd; color: #555; height: 30px; width: 30px; margin-right:2px; line-height:1;">
-                            <input type="button" value="3" style="cursor: pointer; border:1px solid #ddd; color: #555; height: 30px; width: 30px; line-height:1;">
+                            <th:block th:each="num:${#numbers.sequence(pageResponseDTO.start, pageResponseDTO.end)}">
+                                <input th:onclick="|location.href='@{/mypage/mypage/ask(pg=${num})}'|"
+                                       th:class="${num == pageResponseDTO.pg ? 'current' : 'num'}"
+                                       type="button"
+                                       th:value="${num}" />
+                            </th:block>
 
-                            <input type="button" class="next-page" value="다음 >" style="">
-                        </form>
-                    </div>
+                            <input th:if="${pageResponseDTO.next}"
+                                   th:onclick="|location.href='@{/mypage/mypage/ask(pg=${pageResponseDTO.end + 1})}'|"
+                                   type="button" class="next-page" value="다음 >" style="">
+                        </div>
                     <div style="margin-bottom:50px;"></div>
                 </div>
                 </div>
             </div>
         </div>
         <div style="margin-top:100px;"></div>
-        <div id="footer"></div>
+        <div th:replace="~{main/footer.html}"></div>
     </main>
+<style>
+    .current{
+        border:1px solid #333;
+        background-color: #333;
+        color: white;
+        height: 30px;
+        width: 30px;
+        margin-right:7px;
+        line-height:1;
+    }
+    .num {
+        cursor: pointer;
+        border:1px solid #ddd;
+        color: #555;
+        height: 30px;
+        width: 30px;
+        margin-right:7px;
+        line-height:1;
+    }
+</style>
 </body>
 </html>

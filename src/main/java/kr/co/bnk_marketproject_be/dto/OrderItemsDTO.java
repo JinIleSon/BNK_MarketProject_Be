@@ -14,6 +14,11 @@ public class OrderItemsDTO {
     private int orders_id;
     private int products_id;
     private int product_options_id;
-    private int quentity;
+    private int quantity;
     private int price;
+
+    private String productName;  // ★ 상품명
+    // ✅ 추가 (mapper에서 pi.url AS url 매핑)
+    private String url;
+
 }

@@ -10,14 +10,27 @@ import java.util.List;
 public interface CSQnaMapper {
 
     // QnA 목록
-    List<CSNoticeDTO> selectQnaList(@Param("userId") String userId);
+    List<CSNoticeDTO> selectQnaList(
+            @Param("userid") String userId,
+            @Param("boardType2") String boardType2,
+            @Param("boardType3") String boardType3,
+            @Param("offset") int offset,
+            @Param("limit") int limit);
+
+    int selectTotalCount(
+            @Param("userid") String userid,
+            @Param("boardType2") String boardType2,
+            @Param("boardType3") String boardType3
+    );
 
     // QnA 상세
-    CSNoticeDTO selectQnaDetail(@Param("id") Long id);
+    CSNoticeDTO selectQnaview(@Param("id") Long id);
+
+    // QnA 댓글 조회
+    CSNoticeDTO selectCommentView(@Param("bid") int bid);
+
 
     // QnA 등록
     void insertQna(CSNoticeDTO qna);
 
-    // 관리자 답변 등록/수정
-    void updateAnswer(CSNoticeDTO qna);
 }

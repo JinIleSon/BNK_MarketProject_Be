@@ -1,0 +1,462 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>product_views</title>
+
+    <!-- ✅ CSRF 메타 (UI 영향 없음) -->
+    <meta name="_csrf" th:content="${_csrf.token}"/>
+    <meta name="_csrf_header" th:content="${_csrf.headerName}"/>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Bodoni+Moda:opsz,wght@6..96,400;500&family=Noto+Serif+KR:wght@300;400&display=swap" rel="stylesheet">
+
+    <style>
+        html{ scrollbar-gutter: stable; }
+        .icon-btn{ background:none; border:1px solid #000; cursor:pointer; width:40px; height:40px; display:grid; place-items:center; }
+
+        /* Overlay */
+        .overlay{ position:fixed; inset:0; background:rgba(255,255,255,.28); backdrop-filter:blur(1px); -webkit-backdrop-filter:blur(1px); opacity:0; pointer-events:none; transition:opacity .25s ease; z-index:1000; }
+        .overlay.open{ opacity:1; pointer-events:auto; }
+
+        /* Panel */
+        .overlay__panel{ position:absolute; top:0; left:0; width:50vw; max-width:900px; height:100%; background:#fff; transform:translateX(-100%); transition:transform .35s ease; will-change:transform; display:flex; flex-direction:column; }
+        .overlay.open .overlay__panel{ transform:translateX(0); }
+
+        .overlay__top{ display:flex; align-items:center; gap:24px; padding:20px; }
+        .overlay__close{ background:none; width:100px; height:50px; cursor:pointer; position:relative; border:none; margin-left:.3%; }
+        .overlay__close::before,.overlay__close::after{ content:""; position:absolute; left:15px; right:10px; top:25px; height:2px; background:#000; }
+        .overlay__close::before{ transform:rotate(45deg); } .overlay__close::after{ transform:rotate(-45deg); }
+
+        .overlay__menu{ display:grid; grid-template-columns:180px auto; gap:24px; padding:40px 20px; font-size:16px; }
+        .overlay__menu a{ text-decoration:none; color:#000; display:block; padding:8px 0; }
+        .overlay__menu a[data-cat].is-active{ font-weight:700; text-decoration:underline; }
+
+        :root{ --glass-bg:rgba(255,255,255,.55); --glass-blur:8px; }
+        *{ box-sizing:border-box; }
+        body{ margin:0; font-family:system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif; }
+        a{ color:inherit; text-decoration:none; }
+        ul{ margin:0; padding:0; list-style:none; }
+
+        /* Header */
+        .site-header{ position:sticky; top:0; z-index:900; }
+        .site-header::before{ content:""; position:absolute; inset:0; background:rgba(255,255,255,0); transition:background .4s ease; z-index:-1; pointer-events:none; }
+        .site-header:hover::before{ background:rgba(255,255,255,.7); }
+        .site-header .inner{ position:relative; z-index:1; display:flex; align-items:center; gap:24px; padding:16px 24px; border-bottom:1px solid #000; }
+
+        footer a{ text-decoration:none; font-weight:300; color:#000; }
+
+        .prev-page,.next-page{ background:#fff; border:none; width:50px; height:30px; cursor:pointer; }
+        .prev-page{ margin-right:15px; } .next-page{ margin-left:15px; margin-right:3px; }
+
+        .title-didone{ text-align:center; font-family:'Bodoni Moda','Didot','Bodoni 72','Times New Roman',serif; margin-left:45px; font-weight:400; letter-spacing:.02em; -webkit-font-smoothing:antialiased; -moz-osx-font-smoothing:grayscale; }
+        .title-didone.ko{ font-family:'Noto Serif KR','Bodoni Moda',serif; font-weight:300; }
+
+        /* 오른쪽 옵션셀렉트 */
+        .select-box{ position:relative; display:block; width:100%; }
+        .select-wrap{ position:relative; display:inline-block; width:155px; height:27px; }
+        .select-wrap select{ appearance:none; -webkit-appearance:none; -moz-appearance:none; padding:0 25px 0 10px; width:100%; height:100%; box-sizing:border-box; }
+        .select-wrap select::-ms-expand{ display:none; }
+        .select-wrap::after{ content:"▼"; position:absolute; right:8px; top:50%; transform:translateY(-50%); font-size:12px; color:#000; pointer-events:none; }
+
+        /* 우측 서브패널 페이드 */
+        #subcol{ grid-row:span 2; height:900px; position:relative; padding:0; }
+        #subcol .panel{ position:absolute; inset:0; padding:20px; overflow:auto; opacity:0; transform:translateY(6px); transition:opacity .35s ease, transform .35s ease; visibility:hidden; pointer-events:none; }
+        #subcol .panel.show{ opacity:1; transform:none; visibility:visible; pointer-events:auto; }
+        .menu-grid{ display:grid; grid-template-columns:repeat(2,auto); column-gap:50px; row-gap:6px; padding:0; margin:0; justify-content:start; }
+        .menu-grid li{ list-style:none; }
+    </style>
+</head>
+
+
+<body th:object="${product}">
+<div th:replace="~{main/header.html}"></div>
+
+<!-- 본문 상단 경로/제목 -->
+<div style="height:100%; display:flex; flex-direction:column; justify-content:center; align-items:center; margin:0 auto;">
+    <div style="display:flex; width:100%; max-width:1270px;">
+        <div style="font-size:18px; margin-right:auto;"><b>상품목록</b></div>
+        <div>HOME > 패션 · 의류 · 뷰티 > <b>남성의류</b></div>
+    </div>
+    <hr style="border:none; border-top:1px solid #000; margin-bottom:40px; width:100%; max-width:1270px;">
+
+    <!-- 2-컬럼: 좌 이미지 / 우 정보 -->
+    <div style="display:flex; gap:100px; width:1270px;">
+        <!-- 메인 이미지 -->
+        <img id="mainImage"
+             style="width:700px; height:700px; object-fit:contain; background:#f3f3f3;"
+             alt="메인 이미지"
+             th:with="mi=*{mainImage}"
+             th:src="${mi} != null ? @{|/${mi}|} : @{/images/placeholder.png}"/>
+
+        <!-- 우측 패널 -->
+        <div style="width:463px; margin-top:100px;">
+            <div style="margin-top:10px;">
+                <span style="font-size:14px; font-weight:800; letter-spacing:-1px; color:gray;"
+                      th:text="|상품번호 : *{product_code}|">상품번호</span>
+
+                <span style="float:right; font-weight:800;"
+                      th:with="bn=*{brand_name}"
+                      th:text="${bn != null ? bn : '(주)상호명'}">(주)상호명</span>
+            </div>
+
+            <hr style="border:none; border-top:1px solid #ddd;">
+            <div>
+                <span style="font-weight:800;" th:text="*{product_name}">상품명</span>
+                <span style="float:right;">
+                    <span th:with="avg=${product.rating_avg} ?: 0.0"
+                          th:text="${#numbers.formatDecimal(avg,1,1)}">0.0</span>
+                    <a href="#"
+                       style="text-decoration-line:underline; color:blue;"
+                       th:text="'상품평보기'">상품평보기</a>
+                </span>
+            </div>
+
+            <hr style="border:none; border-top:1px solid #ddd;">
+            <div style="display:flex; align-items:center;">
+                <span style="color:gray;"
+                      th:with="p=*{price}">
+                    <s th:text="|₩ ${#numbers.formatInteger(p != null ? p : 0,3,'COMMA')}|">₩ 150,000</s>
+                </span>
+                <font color="red" th:if="*{discount_rate} > 0"
+                      th:text="|&nbsp;&nbsp;*{discount_rate}%↓|">&nbsp;&nbsp;10%↓</font>
+                <a href="#"><div style="border:1px red solid; color:red; margin-left:23px; margin-right:28px; font-size:12px;">쿠폰받기</div></a>
+                <span>💳무이자할부 💳카드추가혜택</span>
+            </div>
+
+            <!-- 판매가(=단가) 표시 + JS용 data-unit 주입 -->
+            <span id="priceLabel"
+                  th:with="sp=*{sale_price}, pp=*{price}, unit=${sp != null ? sp : (pp != null ? pp : 0)}"
+                  th:attr="data-unit=${unit}"
+                  style="font-size:18px;"
+                  th:text="|₩ ${#numbers.formatInteger(unit,3,'COMMA')}|">₩ 135,000</span>
+
+            <hr style="border:none; border-top:1px solid #ddd;">
+            <div>
+                <span style="color:#84a9e2;" th:if="*{delichar} == 0">무료배송</span>
+                <span style="color:#84a9e2;" th:if="*{delichar} != 0"
+                      th:with="dc=*{delichar}"
+                      th:text="|배송비 ₩ ${#numbers.formatInteger(dc != null ? dc : 0,3,'COMMA')}|">배송비</span>
+                <span style="font-weight:600;" th:text="|&nbsp; *{created_at} 등록|">&nbsp; 등록일</span>
+                <br>
+                <span style="display:block; padding-top:4px; font-size:14px; font-weight:600; color:gray; letter-spacing:-1px;">본상품은 국내배송만 가능합니다.</span>
+            </div>
+
+            <hr style="border:none; border-top:1px solid #ddd;">
+            <span style="letter-spacing:-1px;">원산지 - 상세설명 참고</span>
+            <hr style="border:none; border-top:1px solid #ddd;">
+
+            <!-- 옵션/수량 -->
+            <div class="select-box">
+                <form action="" method="" onsubmit="return false;">
+                    <!-- ✅ productId 히든(필수 파라미터) -->
+                    <input type="hidden" name="productId" th:value="*{id}"/>
+
+                    <div class="select-wrap">
+                        <!-- ✅ 서버 기대 파라미터: optionId -->
+                        <select name="optionId" id="optionSelect" style="width:155px; height:27px; border:1px solid #ddd;"
+                                th:with="opts=*{options}">
+                            <option value="">선택하기</option>
+                            <option th:each="op : ${opts != null ? opts : #lists.list()}"
+                                    th:if="${op != null}"
+                                    th:value="${op.id}"
+                                    th:text="${op.optionName}">옵션</option>
+                        </select>
+                    </div>
+
+                    <hr style="border:none; border-top:1px solid #ddd;">
+                    <span style="display:block; margin-bottom:5px; font-size:12px;" th:text="*{product_name}">선택한 상품명</span>
+
+                    <div style="display:flex;">
+                        <button type="button" onclick="decrease()" style="width:23px; height:25px; background:#f1f2f4; border:1px solid #f1f2f4;">-</button>
+                        <div id="number" style="font-weight:800; font-size:10px; display:flex; width:30px; height:25px; border:1px solid #f1f2f4; justify-content:center; align-items:center;">1</div>
+                        <button type="button" onclick="increase()" style="width:23px; height:25px; background:#f1f2f4; border:1px solid #f1f2f4;">+</button>
+
+                        <div id="linePrice" style="display:flex; align-items:center; margin-left:auto; font-size:12px;"
+                             th:with="sp=*{sale_price}, pp=*{price}, unit=${sp != null ? sp : (pp != null ? pp : 0)}"
+                             th:text="${#numbers.formatInteger(unit,3,'COMMA')}">135,000</div>
+                        <button type="button" style="border:none; background:#fff;">X</button>
+                    </div>
+
+                    <div id="totalPrice" style="float:right; font-size:14px; font-weight:600; margin-top:7px;"
+                         th:with="sp=*{sale_price}, pp=*{price}, unit=${sp != null ? sp : (pp != null ? pp : 0)}"
+                         th:text="|총 상품금액 ₩ ${#numbers.formatInteger(unit,3,'COMMA')}|">총 상품금액 ₩ 135,000</div>
+
+                    <br>
+                    <div style="display:flex; width:100%; gap:10px; margin-top:10px;">
+                        <!-- ✅ 컨트롤러 연동 -->
+                        <button type="button"
+                                onclick="addToCart()"
+                                style="color:#fff; height:35px; background:#bfbfbf; border:none; font-size:13px; font-weight:300; width:47%;">장바구니</button>
+                        <button type="button"
+                                onclick="buyNow()"
+                                style="margin-left:auto; color:#fff; background:#5e8fd7; border:none; font-size:13px; font-weight:300; width:47%;">구매하기</button>
+                    </div>
+
+                    <div style="width:100%; height:64px; background:gray; margin-top:5px;">배너 광고 이미지 필요</div>
+                </form>
+            </div>
+
+            <!-- 컨트롤러 연동용 임시 작업-->
+            <script>
+                // === 엔드포인트 ===
+                const ADD_TO_CART_URL = '/NICHIYA/product/cart';
+                const ADD_AND_GO_URL  = '/NICHIYA/product/cart/add-and-go';
+                const CART_PAGE_URL   = '/NICHIYA/product/cart';
+
+                // === CSRF: meta 우선, 없으면 쿠키(XSRF-TOKEN)에서 ===
+                function readMeta(name){
+                    const el = document.querySelector(`meta[name="${name}"]`);
+                    return el ? el.content : null;
+                }
+                function readCookie(name){
+                    const m = document.cookie.match(new RegExp('(?:^|; )' + name + '=([^;]*)'));
+                    return m ? decodeURIComponent(m[1]) : null;
+                }
+                function getCsrf(){
+                    // meta(_csrf.headerName/_csrf.token)가 있으면 그걸 사용
+                    const headerName = readMeta('_csrf_header') || 'X-XSRF-TOKEN';
+                    const token      = readMeta('_csrf')        || readCookie('XSRF-TOKEN');
+                    return { headerName, token };
+                }
+
+                // === 값 읽기 ===
+                function readQty(){
+                    const t = document.getElementById('number')?.innerText?.trim();
+                    const n = Number(t);
+                    return Number.isFinite(n) && n > 0 ? n : 1;
+                }
+                function readOptionId(){
+                    const sel = document.getElementById('optionSelect');
+                    return sel ? (sel.value || '') : '';
+                }
+                function hasOptions(){
+                    const sel = document.getElementById('optionSelect');
+                    return !!sel && sel.options && sel.options.length > 1;
+                }
+                function readProductId(){
+                    const el = document.querySelector('input[name="productId"]');
+                    return el ? el.value : '';
+                }
+
+                // === UX 토스트(간단) ===
+                function toast(msg, danger){
+                    const t = document.createElement('div');
+                    t.textContent = msg;
+                    t.style.cssText = `
+    position:fixed; right:16px; bottom:16px; z-index:2000;
+    padding:10px 14px; border-radius:8px; color:#fff;
+    background:${danger ? '#d64545' : '#333'};
+    box-shadow:0 6px 14px rgba(0,0,0,.15); font-size:14px;
+    opacity:.96; transform:translateY(10px); transition:transform .18s ease;`;
+                    document.body.appendChild(t);
+                    requestAnimationFrame(()=> t.style.transform='translateY(0)');
+                    setTimeout(()=>{ t.style.transform='translateY(10px)'; setTimeout(()=> t.remove(), 150); }, 1500);
+                }
+
+                // === 파라미터 구성 ===
+                function buildParams(){
+                    const p = new URLSearchParams();
+                    p.append('productId', readProductId());
+                    const opt = readOptionId();
+                    if (opt) p.append('optionId', opt);
+                    p.append('qty', String(readQty()));
+                    return p;
+                }
+
+                // === 장바구니 담기 (AJAX) ===
+                async function addToCart(){
+                    if (hasOptions() && !readOptionId()){
+                        toast('옵션을 선택해 주세요.', true);
+                        document.getElementById('optionSelect')?.focus();
+                        return;
+                    }
+                    const { headerName, token } = getCsrf();
+                    try{
+                        const res = await fetch(ADD_TO_CART_URL, {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type':'application/x-www-form-urlencoded;charset=UTF-8',
+                                ...(token ? { [headerName]: token } : {})
+                            },
+                            body: buildParams().toString()
+                        });
+                        if (!res.ok) throw new Error(`HTTP ${res.status}`);
+                        const json = await res.json();
+                        // 헤더 카운트 갱신 (있으면)
+                        const link = document.getElementById('basketCountLink');
+                        if (link && typeof json.itemCount === 'number'){
+                            link.textContent = `바스켓백 [${json.itemCount}]`;
+                        }
+                        toast('장바구니에 담았습니다.');
+                    }catch(e){
+                        console.error(e);
+                        toast('장바구니 담기 실패. 잠시 후 다시 시도해 주세요.', true);
+                    }
+                }
+
+                // === 구매하기 (POST 후 서버 리다이렉트) ===
+                function buyNow(){
+                    if (hasOptions() && !readOptionId()){
+                        toast('옵션을 선택해 주세요.', true);
+                        document.getElementById('optionSelect')?.focus();
+                        return;
+                    }
+                    const { token } = getCsrf();
+                    const params = buildParams();
+
+                    // 표준 form POST → 서버 redirect 따라가서 장바구니 페이지 진입
+                    const form = document.createElement('form');
+                    form.method = 'POST';
+                    form.action = ADD_AND_GO_URL;
+
+                    // CSRF 히든
+                    if (token){
+                        const input = document.createElement('input');
+                        input.type = 'hidden';
+                        input.name = '_csrf'; // CookieCsrfTokenRepo는 헤더로 보내지만, 서버가 히든 필드명은 무시 → 방어용
+                        input.value = token;
+                        // ↑ 대부분 불필요하지만 환경에 따라 유용. 확실히 하려면 아래처럼 표준명도 함께 넣기:
+                        // input.name = '_csrf';
+                        form.appendChild(input);
+                    }
+
+                    for (const [k,v] of params.entries()){
+                        const el = document.createElement('input');
+                        el.type = 'hidden';
+                        el.name = k;
+                        el.value = v;
+                        form.appendChild(el);
+                    }
+                    document.body.appendChild(form);
+                    form.submit();
+                }
+
+                // 전역에 노출 (버튼 onclick에서 사용)
+                window.addToCart = addToCart;
+                window.buyNow = buyNow;
+            </script>
+
+            <!-- 썸네일 -->
+            <div style="display:flex; gap:8px; margin-top:12px;" th:with="imgs=*{subImages}">
+                <img th:each="img : ${imgs != null ? imgs : #lists.list()}"
+                     th:src="${img} != null ? @{|/${img}|} : @{/images/placeholder.png}"
+                     alt="" style="width:80px; height:80px; object-fit:cover; border:1px solid #ddd; cursor:pointer;"
+                     onclick="swapMain(this)">
+            </div>
+
+            <!-- 수량/이미지 교체 스크립트 (UI 유지) -->
+            <script>
+                const unitPrice = (() => { const el=document.getElementById('priceLabel'); const raw=el?.dataset?.unit ?? '0'; return Number(raw)||0; })();
+                let count=1; const min=1, max=100;
+                const formatKRW=n=>n.toLocaleString('ko-KR');
+                function render(){ const q=document.getElementById('number'), l=document.getElementById('linePrice'), t=document.getElementById('totalPrice'); const sub=unitPrice*count; if(q) q.innerText=String(count); if(l) l.textContent=formatKRW(sub); if(t) t.textContent=`총 상품금액 ₩ ${formatKRW(sub)}`; }
+                function increase(){ if(count<max){ count++; render(); } }
+                function decrease(){ if(count>min){ count--; render(); } }
+                window.increase=increase; window.decrease=decrease;
+                function swapMain(th){ const main=document.getElementById('mainImage'); if(main && th && th.src){ main.src=th.src; } }
+                window.swapMain=swapMain;
+                render();
+            </script>
+        </div><!-- /우측 패널 -->
+    </div><!-- /2-컬럼 래퍼 -->
+
+    <!-- 전폭 상품정보/리뷰 섹션 -->
+    <div style="width:1265px; margin-top:5px; margin-bottom:5px;">
+        <span style="font-size:16px; font-weight:600; display:block;">상품정보</span>
+        <hr style="border:none; border-top:1px solid #ddd;">
+        <div style="background:gray; color:black; height:300px; margin-top:5px;">
+            <img src="#" alt="이미지 넣기" style="width:100%">
+        </div>
+
+        <div style="display:flex; margin-top:5px; margin-bottom:5px;">
+            <div style="letter-spacing:-1px; font-size:16px; font-weight:600;">상품정보 제공고시</div>
+            <div style="letter-spacing:-1px; font-size:14px; color:gray; margin-left:20px; padding-top:4px;">[전자상거래에 관한 상품정보 제공에 관한 고시] 항목에 의거 등록된 정보입니다.</div>
+        </div>
+
+        <hr style="border:none; border-top:1px solid #ddd;">
+        <table style="border-collapse:collapse; border:1px solid; width:1252px; font-size:14px; margin-left:7px;">
+            <tr style="border:1px solid; height:35px;">
+                <td style="border-right:1px solid; width:250px; padding-left:11px;">상품번호</td>
+                <td style="padding-left:11px;" th:text="*{product_code}">10010118412</td>
+            </tr>
+            <tr style="border:1px solid; height:35px;"><td style="border-right:1px solid; padding-left:11px;">상품상태</td><td style="padding-left:11px;">새상품</td></tr>
+            <tr style="border:1px solid; height:35px;"><td style="border-right:1px solid; padding-left:11px;">부가세면세여부</td><td style="padding-left:11px;">과세상품</td></tr>
+            <tr style="border:1px solid; height:35px;"><td style="border-right:1px solid; padding-left:11px;">영수증발행</td><td style="padding-left:11px;">발행가능신용카드전표, 온라인현금영수증</td></tr>
+            <tr style="border:1px solid; height:35px;"><td style="border-right:1px solid; padding-left:11px;">사업자구분</td><td style="padding-left:11px;">통신판매업자</td></tr>
+            <tr style="border:1px solid; height:35px;"><td style="border-right:1px solid; padding-left:11px;">브랜드</td><td style="padding-left:11px;" th:text="*{brand_name}">브랜드명</td></tr>
+            <tr style="border:1px solid; height:35px;"><td style="border-right:1px solid; padding-left:11px;">원산지</td><td style="padding-left:11px;">국내생산</td></tr>
+        </table>
+
+        <hr style="border:none; border-top:1px solid #ddd; margin-top:2px; margin-bottom:2px;">
+        <table style="border-collapse:collapse; border:1px solid; width:1252px; font-size:14px; margin-left:7px;">
+            <tr style="border:1px solid;"><td style="border-right:1px solid; width:250px; height:35px; padding-left:11px;">제조자 / 수입국</td><td style="padding-left:11px;">상세정보 직접입력</td></tr>
+            <tr style="border:1px solid; height:35px;"><td style="border-right:1px solid; padding-left:11px;">제조국</td><td style="padding-left:11px;">상세정보 직접입력</td></tr>
+            <tr style="border:1px solid; height:35px;"><td style="border-right:1px solid; padding-left:11px;">취급 시 주의사항</td><td style="padding-left:11px;">상세정보 직접입력</td></tr>
+            <tr style="border:1px solid; height:35px;"><td style="border-right:1px solid; padding-left:11px;">제조연월</td><td style="padding-left:11px;">상세정보 직접입력</td></tr>
+            <tr style="border:1px solid; height:35px;"><td style="border-right:1px solid; padding-left:11px;">품질보증기준</td><td style="padding-left:11px;">상세정보 직접입력</td></tr>
+            <tr style="border:1px solid; height:35px;"><td style="border-right:1px solid; padding-left:11px;">A/S 책임자</td><td style="padding-left:11px;">상세정보 직접입력</td></tr>
+            <tr style="border:1px solid; height:35px;"><td style="border-right:1px solid; padding-left:11px;">전화번호</td><td style="padding-left:11px;">상세정보 직접입력</td></tr>
+        </table>
+
+        <div th:with="rp=${reviewPage}">
+            <!-- 리뷰들 -->
+            <div th:each="rv : ${rp != null ? rp.dtoList : T(java.util.Collections).emptyList()}">
+                <div th:with="r=${rv?.rating} ?: 0"
+                     th:text="${#strings.repeat('★', r)} + ${#strings.repeat('☆', 5 - r)}">★★★★☆
+                </div>
+
+                <div style="margin-top:10px;">
+                    <span th:text="*{product_name}">상품명</span>
+                    <span style="float:right;"
+                          th:text="|${rv?.user_id} ${rv?.created_at}|">someId 2025-10-13</span>
+                </div>
+
+                <div style="margin-top:10px;">
+                    <div style="display:flex; margin-top:5px;">
+                        <div style="width:135px; height:75px; background:gray;"></div>
+                        <div style="margin-left:15px; color:gray; letter-spacing:0;"
+                             th:text="${rv?.content}">리뷰 내용</div>
+                    </div>
+                </div>
+                <hr style="border:none; border-top:1px solid #ddd; margin-top:13px;">
+            </div>
+
+            <!-- 페이지네이션 -->
+            <div style="height:100px; margin-top:40px; display:flex; justify-content:center;">
+                <!-- 이전 블록 -->
+                <input class="prev-page"
+                       th:if="${rp != null and rp.prev}"
+                       th:onclick="|location.href='@{/product/views(id=*{id}, rpg=${rp.start - 1}, rsize=${rp.size})}'|"
+                       type="button" value="&lt; 이전">
+
+                <!-- 번호들 -->
+                <th:block th:if="${rp != null}" th:each="num : ${#numbers.sequence(rp.start, rp.end)}">
+                    <input th:class="${num == rp.pg ? 'current' : 'num'}"
+                           th:onclick="|location.href='@{/product/views(id=*{id}, rpg=${num}, rsize=${rp.size})}'|"
+                           th:value="${num}" type="button"/>
+                </th:block>
+
+                <!-- 다음 블록 -->
+                <input class="next-page"
+                       th:if="${rp != null and rp.next}"
+                       th:onclick="|location.href='@{/product/views(id=*{id}, rpg=${rp.end + 1}, rsize=${rp.size})}'|"
+                       type="button" value="다음 &gt;">
+            </div>
+        </div>
+
+        <style>
+            .current { border: 1px solid #333; background-color: #333; color: white; height: 30px; width: 30px; margin-right: 7px; line-height: 1; }
+            .num { cursor: pointer; border: 1px solid #ddd; color: #555; height: 30px; width: 30px; margin-right: 7px; line-height: 1; }
+            .euro-nav__list { max-height: 0; overflow: hidden; transition: max-height 0.15s ease; }
+            .euro-nav__group.open .euro-nav__list { max-height: 500px; }
+        </style>
+    </div>
+</div>
+</div>
+
+<div th:replace="~{main/footer.html}"></div>
+</body>
+</html>

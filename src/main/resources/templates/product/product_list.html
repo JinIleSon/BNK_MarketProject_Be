@@ -220,271 +220,42 @@
         }
     </style>
 </head>
+
+
 <body>
-<header class="site-header">
-    <div style=" margin-left:2%; width:98%; box-sizing: border-box; margin-top:2%; display:flex; height:230px;">
-        <button aria-controls="menuOverlay" aria-expanded="false" aria-label="메뉴 열기" class="icon-btn" id="menuBtn"
-                style="border:none;">
-            <svg height="64" viewBox="0 0 64 64" width="64" xmlns="http://www.w3.org/2000/svg">
-                <rect fill="black" height="1" width="64" y="12"/>
-                <rect fill="black" height="1" width="64" y="30"/>
-                <rect fill="black" height="1" width="64" y="48"/>
-            </svg>
-        </button>
-        <a href="/main/main_main.html" style="margin-left:3%;">
-            <div style="">
-                <img alt="" src="/images/logo.png" style="width:270px;">
-            </div>
-        </a>
-        <div style="margin-top:27px; margin-left:auto; margin-right:3%; flex:1; max-width:30%;">
-            <ul style="list-style-type: none; padding: 0; margin:0; display:flex; gap:40px;">
-                <li style="flex:1; min-width: 100px;">
-                    <form action="" method="" style="width:100%;">
-                        <input onblur="this.style.outline='none';"
-                               onfocus="this.style.outline='none';"
-                               style="background: transparent;border:none; border-bottom:1px solid; padding-bottom:10px; width:80%;"
-                               type="text"
-                               value="검색">
-                    </form>
-                </li>
-                <li><a href="#" style="text-decoration: none; color:black; font-size:14px;">로그인</a></li>
-                <li><a href="#" style="text-decoration: none; color:black; font-size:14px;">도움말</a></li>
-                <li><a href="#" style="text-decoration: none; color:black; font-size:14px;">바스켓백 [0]</a></li>
-            </ul>
-        </div>
-    </div>
-</header>
-<!-- 전체 화면 오버레이 메뉴 -->
-<aside aria-hidden="true" class="overlay" id="menuOverlay">
-    <div class="overlay__panel">
-        <div class="overlay__top">
-            <button aria-label="메뉴 닫기" class="overlay__close" id="closeBtn"></button>
-            <div class="title-didone"
-                 style="font-size:72px; font-weight:800; letter-spacing:4px; letter-spacing: -10px;">NICHIYA
-            </div>
-        </div>
-        <style>
-            /* 우측 서브항목 기본은 숨김 + 페이드 트랜지션 준비 */
-            .sub {
-                opacity: 0;
-                transform: translateY(6px);
-                pointer-events: none;
-                transition: opacity .28s ease, transform .28s ease;
-                display: none; /* 시각·레이아웃 모두 숨김 */
-            }
-
-            /* 보여줄 때 */
-            .sub.show {
-                display: block;
-                opacity: 1;
-                transform: translateY(0);
-                pointer-events: auto;
-            }
-
-            /* 오른쪽 컬럼은 패널들을 포개는 '스테이지' */
-            #subcol {
-                grid-row: span 2;
-                height: 900px;
-                position: relative; /* 자식 absolute 기준점 */
-                padding: 0; /* 안쪽 여백은 패널에서 */
-            }
-
-            /* 접근성: 현재 선택된 카테고리 표시(선택사항) */
-            .overlay__menu a[data-cat].is-active {
-                font-weight: 700;
-                text-decoration: underline;
-            }
-
-            /* 오른쪽 컬럼의 항목은 여백 제거(전역 a padding 무시) */
-            #subcol .sub {
-                padding: 0;
-                margin: 0;
-            }
-
-            /* 패널: 전부 겹쳐 놓고 기본은 숨김 */
-            #subcol .panel {
-                position: absolute;
-                inset: 0;
-                padding: 20px;
-                overflow: auto;
-                opacity: 0;
-                transform: translateY(6px);
-                transition: opacity .35s ease, transform .35s ease;
-                visibility: hidden; /* display 대신 visibility */
-                pointer-events: none; /* 숨길 때 클릭 방지 */
-            }
-
-            /* 보이는 패널 */
-            #subcol .panel.show {
-                opacity: 1;
-                transform: none;
-                visibility: visible;
-                pointer-events: auto; /* 다시 클릭 가능 */
-            }
-
-            /* 예시용 그리드(원하면 커스터마이즈) */
-            .menu-grid {
-                display: grid;
-                grid-template-columns: repeat(2, auto);
-                column-gap: 50px; /* 가로 간격 여기서 조절 */
-                row-gap: 6px; /* 세로 간격(필요시) */
-                padding: 0; /* UL 기본 패딩 제거 */
-                margin: 0; /* UL 기본 마진 제거 */
-                justify-content: start; /* 왼쪽 정렬 */
-            }
-
-            .menu-grid li {
-                list-style: none;
-            }
-
-        </style>
-
-        <div style="display: flex; margin-left:20%; margin-top:1%; width:100%;">
-            <nav class="overlay__menu" style="width:100%;">
-                <div style="">
-                    <a href="#">히트상품</a>
-                    <a href="#">추천상품</a>
-                    <a href="#">최신상품</a>
-                    <a href="#">인기상품</a>
-                    <a href="#">할인상품</a>
-                    <br><br>
-                    <a data-cat="fashion" href="#">패션 · 의류 · 뷰티</a>
-                    <a data-cat="digital" href="#">가전 · 디지털</a>
-                    <a data-cat="grocery" href="#">식품 · 생필품</a>
-                    <a data-cat="home" href="#">홈 · 문구 · 취미</a>
-                    <a data-cat="book" href="#">도서</a>
-                </div>
-                <div id="subcol">
-                    <!-- 패션 패널 -->
-                    <section class="panel" data-key="fashion">
-                        <h3>패션 · 의류 · 뷰티</h3>
-                        <!-- 이 안은 자유롭게: 그리드/이미지/텍스트 무엇이든 -->
-                        <ul class="menu-grid" style="">
-                            <li><a href="#">여성 의류</a></li>
-                            <li><a href="#">스킨케어</a></li>
-                            <!-- … -->
-                        </ul>
-                    </section>
-
-                    <!-- 디지털 패널 -->
-                    <section class="panel" data-key="digital">
-                        <h3>가전 · 디지털</h3>
-                        <div class="menu-grid">
-                            <a href="#">생활가전</a>
-                            <a href="#">모바일 · PC</a>
-                        </div>
-                    </section>
-
-                    <!-- 식품 패널 -->
-                    <section class="panel" data-key="grocery">
-                        <h3>식품 · 생필품</h3>
-                        <div class="menu-grid">
-                            <a href="#">신선식품</a>
-                            <a href="#">생활용품</a>
-                        </div>
-                    </section>
-
-                    <!-- 홈/문구 패널 -->
-                    <section class="panel" data-key="home">
-                        <h3>홈 · 문구 · 취미</h3>
-                        <div class="menu-grid">
-                            <a href="#">가구 · 인테리어</a>
-                            <a href="#">문구 · 사무용품</a>
-                        </div>
-                    </section>
-
-                    <!-- 도서 패널 -->
-                    <section class="panel" data-key="book">
-                        <h3>도서</h3>
-                        <div class="menu-grid">
-                            <a href="#">소설 · 에세이</a>
-                            <a href="#">아동 · 교육</a>
-                        </div>
-                    </section>
-                </div>
-                <div style=""></div>
-            </nav>
-        </div>
-    </div>
-</aside>
-
-<script>
-    const body = document.body;
-    const menuBtn = document.getElementById('menuBtn');
-    const closeBtn = document.getElementById('closeBtn');
-    const overlay = document.getElementById('menuOverlay');
-
-    function openMenu() {
-        overlay.classList.add('open');
-        overlay.setAttribute('aria-hidden', 'false');
-        menuBtn.setAttribute('aria-expanded', 'true');
-        body.style.overflow = 'hidden'; // 뒤 스크롤 잠금
-    }
-
-    function closeMenu() {
-        overlay.classList.remove('open');
-        overlay.setAttribute('aria-hidden', 'true');
-        menuBtn.setAttribute('aria-expanded', 'false');
-        body.style.overflow = '';
-    }
-
-    menuBtn.addEventListener('click', openMenu);
-    closeBtn.addEventListener('click', closeMenu);
-    overlay.addEventListener('click', (e) => {
-        // 빈 배경 클릭 시 닫기 (메뉴 콘텐츠 클릭은 무시)
-        if (e.target === overlay) closeMenu();
-    });
-    // Esc 키로 닫기
-    window.addEventListener('keydown', (e) => {
-        if (e.key === 'Escape' && overlay.classList.contains('open')) closeMenu();
-    });
-    // ====== 새로 추가: 카테고리 클릭 시 페이드인 ======
-    // 매핑은 data-cat 값과 data-sub 값을 동일 키로 연결
-    const catLinks = document.querySelectorAll('.overlay__menu a[data-cat]');
-    const panels = document.querySelectorAll('#subcol .panel');
-
-    function setActiveCat(target) {
-        catLinks.forEach(a => a.classList.remove('is-active'));
-        if (target) target.classList.add('is-active');
-    }
-
-    function showPanel(key) {
-        panels.forEach(p => p.classList.toggle('show', p.dataset.key === key));
-    }
-
-    catLinks.forEach(link => {
-        link.addEventListener('click', (e) => {
-            e.preventDefault();
-            const key = link.getAttribute('data-cat');
-            setActiveCat(link);
-            showPanel(key);
-        });
-    });
-
-    // 기본으로 한 패널 오픈(원하는 키로 바꾸세요)
-    setActiveCat(document.querySelector('.overlay__menu a[data-cat="fashion"]'));
-    showPanel('fashion');
-</script>
-
+<div th:replace="~{main/header.html}"></div>
 <div style="height:100%;">
     <div style="display: flex;">
         <div style="flex:1; margin-left:7.6%; font-size:18px;"><b>상품목록</b></div>
-        <div style="margin-right:7.5%;">HOME > 패션 · 의류 · 뷰티 > <b>남성의류</b></div>
+        <div style="margin-right:7.5%;">HOME > <span
+                th:utext="${categoryId == 4 ? '패션 > <b>여성의류</b>' :
+                            (categoryId == 3 ? '패션 > <b>남성의류</b>' :
+                            (categoryId == 2 ? '패션 > <b>키즈의류</b>' :
+                            (categoryId == 5 ? '패션 > <b>스포츠의류</b>' :
+                            (categoryId == 7 ? '뷰티 > <b>화장품</b>' :
+                            (categoryId == 8 ? '뷰티 > <b>향수</b>' :
+                            (categoryId == 10 ? '전자제품 > <b>생활기기</b>' :
+                            (categoryId == 11 ? '전자제품 > <b>음향기기</b>' :
+                            (categoryId == 13 ? '홈 > <b>대형가구</b>' :
+                            (categoryId == 14 ? '홈 > <b>소형가구</b>' :
+                            (categoryId == 16 ? '레저 > <b>스터프</b>' :
+                            (categoryId == 17 ? '레저 > <b>탈것</b>' : '<b>전체상품</b>')))))))))))}"></span></div>
+
     </div>
     <hr style="border:none; border-top:1px solid black;">
     <div style="color:gray; margin-left:7.6%; margin-bottom:30px;">
         <a th:classappend="${sort}=='sales' ? ' active'"
-           th:href="@{/product/list(sort='sales',     pg=1, size=${pageResponseProductDTO.size})}">판매많은순</a>&nbsp;&nbsp;|&nbsp;
+           th:href="@{/product/list(sort='sales',     pg=1, size=${pageResponseProductDTO.size}, categoryId=${categoryId})}">판매많은순</a>&nbsp;&nbsp;|&nbsp;
         <a th:classappend="${sort}=='priceAsc' ? ' active'"
-           th:href="@{/product/list(sort='priceAsc',  pg=1, size=${pageResponseProductDTO.size})}">낮은가격순</a>&nbsp;&nbsp;|&nbsp;
+           th:href="@{/product/list(sort='priceAsc',  pg=1, size=${pageResponseProductDTO.size}, categoryId=${categoryId})}">낮은가격순</a>&nbsp;&nbsp;|&nbsp;
         <a th:classappend="${sort}=='priceDesc' ? ' active'"
-           th:href="@{/product/list(sort='priceDesc', pg=1, size=${pageResponseProductDTO.size})}">높은가격순</a>&nbsp;&nbsp;|&nbsp;
+           th:href="@{/product/list(sort='priceDesc', pg=1, size=${pageResponseProductDTO.size}, categoryId=${categoryId})}">높은가격순</a>&nbsp;&nbsp;|&nbsp;
         <a th:classappend="${sort}=='rating' ? ' active'"
-           th:href="@{/product/list(sort='rating',    pg=1, size=${pageResponseProductDTO.size})}">평점높은순</a>&nbsp;&nbsp;|&nbsp;
+           th:href="@{/product/list(sort='rating',    pg=1, size=${pageResponseProductDTO.size}, categoryId=${categoryId})}">평점높은순</a>&nbsp;&nbsp;|&nbsp;
         <a th:classappend="${sort}=='review' ? ' active'"
-           th:href="@{/product/list(sort='review',    pg=1, size=${pageResponseProductDTO.size})}">후기많은순</a>&nbsp;&nbsp;|&nbsp;
+           th:href="@{/product/list(sort='review',    pg=1, size=${pageResponseProductDTO.size}, categoryId=${categoryId})}">후기많은순</a>&nbsp;&nbsp;|&nbsp;
         <a th:classappend="${sort}=='recent' ? ' active'"
-           th:href="@{/product/list(sort='recent',    pg=1, size=${pageResponseProductDTO.size})}">최근등록순</a>
+           th:href="@{/product/list(sort='recent',    pg=1, size=${pageResponseProductDTO.size}, categoryId=${categoryId})}">최근등록순</a>
     </div>
 
     <style>
@@ -514,7 +285,7 @@
              stars=${p.ratingAvg != null ? T(java.lang.Math).round(p.ratingAvg) : 0}
            ">
                         <span style="font-size:18px;" th:text="${p.product_name}">상품명</span>
-                        <span style="font-size:10px;" th:text="${p.sub_description}">설명</span>
+                        <span style="font-size:10px; width:460px;" th:text="${p.sub_description}">설명</span>
 
                         <!-- 최종가 -->
                         <span style="font-size:18px;"
@@ -522,16 +293,26 @@
 
                         <!-- 원가 + 할인율 -->
                         <span style="color:gray;" th:if="${discSafe > 0}">
-          <s th:text="${#numbers.formatInteger(orig,3,'COMMA')} + '원'">0원</s>
-          <font color="red" th:text="' ' + ${rate} + '%↓'">0%↓</font>
-        </span>
+                          <s th:text="${#numbers.formatInteger(orig,3,'COMMA')} + '원'">0원</s>
+                          <font color="red" th:text="' ' + ${rate} + '%↓'">0%↓</font>
+                        </span>
+
+                        <style>
+                            .stars i{ color:#ddd; font-style:normal; }   /* 기본 5개는 회색 */
+                            .stars i.on{ color:#ffcc00; }                /* 채워질 별만 노란색 */
+                        </style>
 
                         <!-- 별점(노란색) + (평균/리뷰수) -->
-                        <span style="color:#ffcc00; font-size:16px; margin-top:5px;" th:if="${p.ratingAvg != null}">
-          <span th:each="i : ${#numbers.sequence(1, stars)}">★</span>
-          <span style="color:#666; font-size:12px;"
-                th:text="' (' + ${#numbers.formatDecimal(p.ratingAvg,1,1)} + ' / ' + ${p.ratingCnt} + ')'"></span>
-        </span>
+                        <span class="stars"
+                              th:with="
+                                avg=${p.ratingAvg} ?: 0.0,
+                                cnt=${p.ratingCnt} ?: 0,
+                                stars=${T(java.lang.Math).round(avg)}">
+                          <i th:each="i : ${#numbers.sequence(1,5)}"
+                             th:classappend="${i <= stars} ? ' on' : ''">★</i>
+                          <span style="color:#666; font-size:12px;"
+                                th:text="| (${#numbers.formatDecimal(avg,1,1)} / 5)|"> </span>
+                        </span>
                     </div>
 
                     <!-- 가운데: 배송비/무료배송 -->
@@ -557,17 +338,17 @@
 <div style="height:100px; margin-top:40px; display:flex; justify-content:center;">
     <input class="prev-page"
            th:if="${pageResponseProductDTO.prev}"
-           th:onclick="|location.href='@{/product/list(pg=${pageResponseProductDTO.start - 1}, size=${pageResponseProductDTO.size}, sort=${sort})}'|" type="button" value="< 이전">
+           th:onclick="|location.href='@{/product/list(pg=${pageResponseProductDTO.start - 1}, size=${pageResponseProductDTO.size}, sort=${sort}, categoryId=${categoryId})}'|" type="button" value="< 이전">
 
     <th:block th:each="num : ${#numbers.sequence(pageResponseProductDTO.start, pageResponseProductDTO.end)}">
         <input th:class="${num == pageResponseProductDTO.pg ? 'current' : 'num'}"
-               th:onclick="|location.href='@{/product/list(pg=${num}, size=${pageResponseProductDTO.size}, sort=${sort})}'|"
+               th:onclick="|location.href='@{/product/list(pg=${num}, size=${pageResponseProductDTO.size}, sort=${sort}, categoryId=${categoryId})}'|"
                th:value="${num}" type="button"/>
     </th:block>
 
     <input class="next-page"
            th:if="${pageResponseProductDTO.next}"
-           th:onclick="|location.href='@{/product/list(pg=${pageResponseProductDTO.end + 1}, size=${pageResponseProductDTO.size}, sort=${sort})}'|" type="button" value="다음 >">
+           th:onclick="|location.href='@{/product/list(pg=${pageResponseProductDTO.end + 1}, size=${pageResponseProductDTO.size}, sort=${sort}, categoryId=${categoryId})}'|" type="button" value="다음 >">
 </div>
 <style>
     .current {
@@ -600,29 +381,6 @@
         max-height: 500px; /* 펼쳐졌을 때 (충분히 크게 설정) */
     }
 </style>
-<footer>
-    <div style="">
-        <ul style="display: flex; gap:20px; margin-left:40px; list-style-type: none;">
-            <li><a href="#">YOUTUBE</a></li>
-            <li><a href="/compInfo/compInfo_main.html">회사소개</a></li>
-            <li><a href="/policy/policy_terms.html">서비스이용약관</a></li>
-            <li><a href="/policy/policy_terms.html#privacy">개인정보처리방침</a></li>
-            <li><a href="/customer_service/cs_main.html">고객센터</a></li>
-        </ul>
-    </div>
-    <div style="width:870px; margin-top:90px; margin-left:40px;">
-            <span>
-                NICHIYA 주식회사 &nbsp;|&nbsp; 사업자등록번호: 123-45-67890 &nbsp;|&nbsp; 대표자 : TANAKA HARUTO &nbsp;|&nbsp; 서울특별시 강남구 테헤란로 321 15층 1501호 (역삼동, 니치야타워) 
-                &nbsp;|&nbsp; 대표번호: 080-123-4567 &nbsp;|&nbsp; 호스팅 서비스 사업자: NICHIYA SYSTEMS Co., Ltd. 
-                &nbsp;|&nbsp; 통신판매업신고 : 제2025-서울강남-01234 (<a href="/main/main_nichiyaLicense.html"
-                                                             style="font-weight:800; text-decoration-line: underline;">사업자정보확인</a>)
-                &nbsp;|&nbsp; <a href="/policy/policy_terms.html#privacy"
-                                 style="font-weight: 800; text-decoration-line: underline;">개인정보처리방침</a>
-                &nbsp;|&nbsp; <a href="/policy/policy_terms.html#location"
-                                 style="font-weight: 800; text-decoration-line: underline;">위치기반서비스 이용약관</a>
-                &nbsp;|  <a href="/policy/policy_terms.html" style="font-weight: 800; text-decoration-line: underline;">이용약관</a>
-            </span>
-    </div>
-</footer>
+<div th:replace="~{main/footer.html}"></div>
 </body>
 </html>

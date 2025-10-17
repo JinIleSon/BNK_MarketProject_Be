@@ -6,6 +6,7 @@
     <title>mypage_setUp</title>
     <!-- 모달 전용 스타일 -->
   <style>
+      /*푸시용*/
     /* 전체 오버레이 */
     .modal-backdrop {
       position: fixed; inset: 0;
@@ -124,35 +125,9 @@
   <script src="https://t1.daumcdn.net/mapjsapi/bundle/postcode/prod/postcode.v2.js"></script>
 </head>
 <body>
-    <!--헤더푸터 연결-->
-    <script>
-        fetch("../main/header.html")
-          .then(res => res.text())
-          .then(data => {
-            document.getElementById("header").innerHTML = data;
 
-            // header.html 안의 스크립트 실행 강제
-            const scripts = document.getElementById("header").querySelectorAll("script");
-            scripts.forEach(oldScript => {
-            const newScript = document.createElement("script");
-            if (oldScript.src) {
-                newScript.src = oldScript.src;
-            } else {
-                newScript.textContent = oldScript.textContent;
-            }
-            document.body.appendChild(newScript);
-            });
-          });
-
-       
-        fetch("../main/footer.html")
-          .then(res => res.text())
-          .then(data => {
-            document.getElementById("footer").innerHTML = data;
-          });
-    </script>
     <main>
-        <div id="header"></div>
+        <div th:replace="~{main/header.html}"></div>
         <div style="background-color: #f6f5f5; border-bottom: 1px solid #dddddd;">
             <div style="display: flex; justify-content: center; align-items: center;">
                 <div style="width:1270px; font-size:15px; height:70px; display: flex; align-items: center; ">
@@ -164,15 +139,15 @@
                         </div>
                         <div style="width:70px; border-right:1px solid #dddddd; display: flex; flex-direction: column; align-items: center; justify-content: center;">
                             <div style="margin-bottom:8px;">쿠폰</div>
-                            <div>1</div>
+                            <div><span th:text="${couponCount}"></span></div>
                         </div>
                         <div style="width:70px;border-right:1px solid #dddddd; display: flex; flex-direction: column; align-items: center; justify-content: center;">
                             <div style="margin-bottom:8px;">포인트</div>
-                            <div>1,000</div>
+                            <div><span th:text="${#numbers.formatInteger(balance, 3, 'COMMA')} + 'P'">0P</span></div>
                         </div>
                         <div style="width:70px;display: flex; flex-direction: column; align-items: center; justify-content: center;">
                             <div style="margin-bottom:8px;">문의</div>
-                            <div>1</div>
+                            <div><span th:text="${count}"></span></div>
                         </div>
                     </div>
                 </div>
@@ -181,17 +156,17 @@
         <div style="display: flex; justify-content: center; align-items: center;">
             <div style="width:1270px; font-size:15px; display: flex;">
                 <div style=" width:200px; padding-left:70px; padding-top:30px; border-right:1px solid #dddddd;">
-                    <div style="margin-bottom:15px;"><a href="#">전체주문내역</a></div>
-                    <div style="margin-bottom:15px; "><a href="#">포인트내역</a></div>
-                    <div style="margin-bottom:15px;"><a href="#">쿠폰</a></div>
-                    <div style="margin-bottom:15px;"><a href="#">나의리뷰</a></div>
-                    <div style="margin-bottom:15px;"><a href="#">문의하기</a></div>
-                    <div ><a href="#" style=" font-weight: 800;">나의설정</a></div>
+                    <div style="margin-bottom:15px;"><a th:href="@{/mypage/mypage/allorder}">전체주문내역</a></div>
+                    <div style="margin-bottom:15px;"><a th:href="@{/mypage/mypage/point}">포인트내역</a></div>
+                    <div style="margin-bottom:15px;"><a th:href="@{/mypage/mypage/coupon}">쿠폰</a></div>
+                    <div style="margin-bottom:15px;"><a th:href="@{/mypage/mypage/review}">나의리뷰</a></div>
+                    <div style="margin-bottom:15px;"><a th:href="@{/mypage/mypage/ask}">문의하기</a></div>
+                    <div ><a th:href="@{/mypage/mypage/setup}" style=" font-weight: 800;">나의설정</a></div>
                 </div>
                 <div style="width: 100%;">
                     <div style="margin-top:30px; display: flex; justify-content: center;">
                         <div>
-                          <img src="/images/mypage_mainBanner10.jpg" alt="" style="width:400px;">
+                          <img th:src="@{/images/mypage_mainBanner10.jpg}" alt="" style="width:400px;">
                           <div style="font-size:10px;">Image by <a href="https://www.freepik.com" target="_blank" style="color:inherit; text-decoration:none;">Freepik</a></div>
                         </div>
                     </div>
@@ -199,260 +174,231 @@
                         <div style="display: flex; margin-top:30px;">
                             <div style="font-weight: 800; margin-right:840px; margin-bottom:10px;">나의설정</div>
                         </div>
+                        <form th:action="@{/mypage/mypage/setup}" method="post">
+                            <table class="kv" style="border-top:1px solid gray;  width:900px;">
+                                <tr>
+                                    <td>사용자 ID</td>
+                                    <td th:text="${userDTO.userId}"></td>
+                                </tr>
+                                <tr>
+                                    <td>비밀번호</td>
+                                    <td><button type="button" th:onclick="|location.href='@{/mypage/mypage/passwd(code=1)}'|" style="cursor:pointer;border:none; background-color: black; color:white; width: 95px;height: 30px;">비밀번호수정</button></td>
+                                </tr>
+                                <tr>
+                                    <td>이름</td>
+                                    <td th:text="${userDTO.name}"></td>
+                                </tr>
+                                <tr>
+                                    <td>생년월일</td>
+                                    <td th:text="${#strings.isEmpty(userDTO.birth) ? ''
+                                  : (
+                                      #strings.contains(userDTO.birth, ' ')
+                                        ? T(java.time.LocalDateTime).parse(
+                                            userDTO.birth,
+                                            T(java.time.format.DateTimeFormatter).ofPattern('yyyy-MM-dd HH:mm:ss')
+                                          ).toLocalDate()
+                                        : T(java.time.LocalDate).parse(userDTO.birth)
+                                    ).format(T(java.time.format.DateTimeFormatter).ofPattern('yyyy년 MM월 dd일'))
+                                }"></td>
+                                </tr>
+                                <tr>
+                                    <td>Email</td>
+                                    <td>
+                                        <input type="hidden" name="user_id" th:value="${userDTO.userId}">
+                                        <input type="text"
+                                               id="emailLocal"
+                                               name="firstEmail"
+                                               style="padding-right:5px;padding-left:5px; padding-bottom:4px; border:none; border-bottom:1px solid #dddddd; outline: none; width:130px; margin-right: 10px;"
+                                               th:value="${userDTO.email != null and #strings.contains(userDTO.email,'@')
+                                                            ? #strings.arraySplit(userDTO.email,'@')[0] : ''}">@<input
+                                            type="text"
+                                            id="emailDomain"
+                                            name="secondEmail"
+                                            style="padding-right:5px;padding-left:5px; padding-bottom:4px;margin-left:10px; width:100px; border:none; border-bottom:1px solid #dddddd; outline: none; margin-right: 10px;"
+                                            th:value="${userDTO.email != null and #strings.contains(userDTO.email,'@')
+                                                          ? (#strings.arraySplit(userDTO.email,'@').length > 1
+                                                                ? #strings.arraySplit(userDTO.email,'@')[1] : '')
+                                                          : ''}">
 
-                        <table class="kv" style="border-top:1px solid gray;  width:900px;">
-                            <tr><td>사용자 ID</td><td>chh03ab</td></tr>
-                            <tr><td>비밀번호</td><td><button onclick="location.href='./mypage_passwd.html'" style="border:none; background-color: black; color:white; width: 95px;height: 30px;">비밀번호수정</button></td></td></tr>
-                            <tr><td>이름</td><td>김철학</td></tr>
-                            <tr><td>생년월일</td><td>1983년 05월 03일</td></tr>
-                            <tr><td>Email</td>
-                                <td>
-                                    <form action="" method="post">
-                                        <input type="text" name="firstEmail" style="padding-right:5px;padding-left:5px; padding-bottom:4px; border:none; border-bottom:1px solid #dddddd; outline: none; width:130px; margin-right: 10px;">@<input type="text" name="secondEmail" style="padding-right:5px;padding-left:5px; padding-bottom:4px;margin-left:10px; width:100px; border:none; border-bottom:1px solid #dddddd; outline: none; margin-right: 10px;">
-                                        <select name="email" id=""  style="border:none; border-bottom:1px solid #dddddd; outline: none; margin-right: 10px; padding-right:5px;padding-left:5px; padding-bottom:4px;">
+                                        <select name="email" id="emailSelect"  style="border:none; border-bottom:1px solid #dddddd; outline: none; margin-right: 10px; padding-right:5px;padding-left:5px; padding-bottom:4px;">
                                             <option value="select">직접 입력</option>
                                             <option value="naver">naver.com</option>
                                             <option value="daum">daum.com</option>
                                             <option value="google">google.com</option>
                                             <option value="nate">nate.com</option>
                                         </select>
-                                        <input type="submit" value="수정하기" style="width: 70px;height: 30px;border:none; background-color: black; color: white; outline: none;">
-                                    </form>
-                                </td>
-                            </tr>
-                            <tr><td>휴대폰</td>
-                                <td>
-                                    <form action="" method="post">
-                                        <input type="text" name="firstPhone" style="border:none; border-bottom:1px solid #dddddd; outline: none; width:55px;margin-right: 10px; padding-right:5px;padding-left:16px; padding-bottom:4px;"> - <input type="text" name="secondPhone" style="margin-left: 10px;outline: none;border:none; border-bottom:1px solid #dddddd;width:55px;margin-right: 10px; padding-right:5px;padding-left:13px; padding-bottom:4px;"> - <input type="text" name="thirdPhone" style="margin-left: 10px;border:none; border-bottom:1px solid #dddddd;outline: none;width:55px;margin-right: 10px; padding-right:5px;padding-left:13px; padding-bottom:4px;">
-                                        <input type="submit" value="수정하기" style="width: 70px;height: 30px;border:none; background-color: black; color:white;outline: none;">
-                                    </form>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td>주소</td>
-                                <td>
-                                    <div><input type="text" readonly placeholder="우편번호" style="border:none; border-bottom:1px solid #dddddd;outline: none;margin-right: 10px; padding-right:5px;padding-left:5px; padding-bottom:4px;margin-top: 8px;"> <button type="button" id="btn-postcode" style="width: 70px;height: 30px;border:none; background-color: black; color:white;">주소검색</button></div>
-                                    <div><input type="text" readonly placeholder="기본주소검색" style="border:none; border-bottom:1px solid #dddddd; width:400px;outline: none; margin-right: 10px; padding-right:5px;padding-left:5px; padding-bottom:4px;margin-top: 8px;"></div>
-                                    <div><input type="text" placeholder="상세주소입력" style="border:none; border-bottom:1px solid #dddddd; width:400px;outline: none; margin-right: 10px; padding-right:5px;padding-left:5px; padding-bottom:4px;margin-top: 8px;"></div>
-                                </td>
-                            </tr>
-                            <tr style="border-bottom:1px solid gray;">
-                                <td>탈퇴</td>
-                                <td><button onclick="location.href='./mypage_passwd.html'" style="background-color: #760c0c; color:white; border:none; font-weight: 300; width:70px; font-size: 12px; height:28px;">탈퇴하기</button></td>
-                            </tr>
-                        </table>
-                        <div style="margin-top:20px;">
-                            <input type="submit" value="수정하기" onclick="location.href='./mypage_passwd.html'" style="border:none; background-color: black; color:white; font-weight: 300; width:190px; height:34px;">
-                        </div>
+                                        <button type="button" id="emailEditBtn" style="cursor:pointer;width: 70px;height: 30px;border:none; background-color: black; color: white; outline: none;">수정하기</button>
+                                    </td>
+                                </tr>
+                                <tr><td>휴대폰</td>
+                                    <td>
+                                        <input type="text" id="phone1" name="firstPhone" style="border:none; border-bottom:1px solid #dddddd; outline: none; width:55px;margin-right: 10px; padding-right:5px;padding-left:16px; padding-bottom:4px;"
+                                               th:value="${userDTO.phone != null and #strings.contains(userDTO.phone,'-')
+                                                            ? #strings.arraySplit(userDTO.phone,'-')[0] : ''}"> - <input type="text" id="phone2" name="secondPhone" style="margin-left: 10px;outline: none;border:none; border-bottom:1px solid #dddddd;width:55px;margin-right: 10px; padding-right:5px;padding-left:13px; padding-bottom:4px;"
+                                                                                                                         th:value="${userDTO.phone != null and #strings.contains(userDTO.phone,'-')
+                                                                                                                                      ? (#strings.arraySplit(userDTO.phone,'-').length > 1
+                                                                                                                                            ? #strings.arraySplit(userDTO.phone,'-')[1] : '')
+                                                                                                                                      : ''}"> - <input id="phone3" type="text" name="thirdPhone" style="margin-left: 10px;border:none; border-bottom:1px solid #dddddd;outline: none;width:55px;margin-right: 10px; padding-right:5px;padding-left:13px; padding-bottom:4px;"
+                                                                                                                                                       th:value="${userDTO.phone != null and #strings.contains(userDTO.phone,'-')
+                                                                                                                                                              ? (#strings.arraySplit(userDTO.phone,'-').length > 2
+                                                                                                                                                                    ? #strings.arraySplit(userDTO.phone,'-')[2] : '')
+                                                                                                                                                              : ''}">
+                                        <button type="button" id="phoneEditBtn" style="cursor:pointer;width: 70px;height: 30px;border:none; background-color: black; color:white;outline: none;">수정하기</button>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>주소</td>
+                                    <td>
+                                        <div><input type="text" name="postcode" th:value="${userDTO.postcode}" readonly placeholder="우편번호" style="border:none; border-bottom:1px solid #dddddd;outline: none;margin-right: 10px; padding-right:5px;padding-left:5px; padding-bottom:4px;margin-top: 8px;"> <button type="button" id="btn-postcode" style="cursor:pointer;width: 70px;height: 30px;border:none; background-color: black; color:white;">주소검색</button></div>
+                                        <div><input type="text" name="address" th:value="${userDTO.address}" readonly placeholder="기본주소검색" style="border:none; border-bottom:1px solid #dddddd; width:400px;outline: none; margin-right: 10px; padding-right:5px;padding-left:5px; padding-bottom:4px;margin-top: 8px;"></div>
+                                        <div><input type="text" name="detailAddress" th:value="${userDTO.detailAddress}" placeholder="상세주소입력" style="border:none; border-bottom:1px solid #dddddd; width:400px;outline: none; margin-right: 10px; padding-right:5px;padding-left:5px; padding-bottom:4px;margin-top: 8px;"></div>
+                                    </td>
+                                </tr>
+                                <tr style="border-bottom:1px solid gray;">
+                                    <td>탈퇴</td>
+                                    <td><button type="button" th:onclick="|location.href='@{/mypage/mypage/passwd(code=2)}'|" style="cursor:pointer;background-color: #760c0c; color:white; border:none; font-weight: 300; width:70px; font-size: 12px; height:28px;">탈퇴하기</button></td>
+                                </tr>
+                            </table>
+                            <div style="display: flex;justify-content:center;">
+                                <div style="margin-top:20px; ">
+                                    <button type="submit" name="code" value="3" style="cursor:pointer;border:none; background-color: black; color:white; font-weight: 300; width:190px; height:34px;">수정하기</button>
+                                </div>
+                            </div>
+                        </form>
                     </div>
                     </div>
                     <div style="margin-bottom:50px;"></div>
                     <script>
                         document.addEventListener("DOMContentLoaded", function () {
-                        // =====================
-                        // 사용자 ID 마스킹
-                        // =====================
-                        const idCell = document.querySelector("table.kv tr:nth-child(1) td:nth-child(2)");
-                        if (idCell && idCell.innerText) {
-                            const userId = idCell.innerText.trim();
-                            if (userId.length > 3) {
-                            const maskedId = userId.slice(0, 3) + "*".repeat(userId.length - 3);
-                            idCell.innerText = maskedId;
+                            /* =====================
+                               사용자 ID/이름 마스킹
+                            ===================== */
+                            const idCell = document.querySelector("table.kv tr:nth-child(1) td:nth-child(2)");
+                            if (idCell && idCell.innerText) {
+                                const userId = idCell.innerText.trim();
+                                if (userId.length > 3) {
+                                    idCell.innerText = userId.slice(0, 3) + "*".repeat(userId.length - 3);
+                                }
                             }
-                        }
 
-                        // =====================
-                        // 이름 마스킹 (김철학 → 김*학)
-                        // =====================
-                        const nameRow = document.querySelector("table.kv tr:nth-child(3) td:nth-child(2)");
-                        if (nameRow && nameRow.innerText) {
-                            const name = nameRow.innerText.trim();
-                            if (name.length >= 3) {
-                            const maskedName = name[0] + "*".repeat(name.length - 2) + name[name.length - 1];
-                            nameRow.innerText = maskedName;
-                            } else if (name.length === 2) {
-                            const maskedName = name[0] + "*";
-                            nameRow.innerText = maskedName;
+                            const nameCell = document.querySelector("table.kv tr:nth-child(3) td:nth-child(2)");
+                            if (nameCell && nameCell.innerText) {
+                                const name = nameCell.innerText.trim();
+                                nameCell.innerText =
+                                    name.length >= 3 ? name[0] + "*".repeat(name.length - 2) + name.at(-1)
+                                        : name.length === 2 ? name[0] + "*"
+                                            : name;
                             }
-                        }
 
-                        // =====================
-                        // 이메일 도메인 선택 반영
-                        // =====================
-                        // ===== 이메일 편집 제어 =====
-                        const emailForm   = document.querySelector('table.kv tr td form'); // 첫 번째 form(이메일)
-                        if (!emailForm) return;
+                            /* =====================
+                               이메일/휴대폰 편집 제어
+                               (개별 id 기반, form 탐색 X)
+                            ===================== */
+                            const emailLocal   = document.getElementById("emailLocal");
+                            const emailDomain  = document.getElementById("emailDomain");
+                            const emailSelect  = document.getElementById("emailSelect");   // 반드시 id 부여
+                            const emailEditBtn = document.getElementById("emailEditBtn");  // "수정하기" 버튼
 
-                        const localInput  = emailForm.querySelector('input[name="firstEmail"]');
-                        const domainInput = emailForm.querySelector('input[name="secondEmail"]');
-                        const domainSelect= emailForm.querySelector('select[name="email"]');
-                        const emailButton = emailForm.querySelector('input[type="submit"]');
+                            const p1 = document.getElementById("phone1");
+                            const p2 = document.getElementById("phone2");
+                            const p3 = document.getElementById("phone3");
+                            const phoneEditBtn = document.getElementById("phoneEditBtn");  // "수정하기" 버튼
 
-                        let isEditingEmail = false; // 수정 모드 아님(기본)
-
-                        // 초기: 언제나 읽기 전용
-                        function lockEmail() {
-                            localInput.readOnly  = true;
-                            domainInput.readOnly = true;
-                        }
-
-                        // 수정 모드일 때만 select 상태에 맞춰 도메인 입력 가능/불가를 전환
-                        function applyDomainFromSelect() {
-                            const val = domainSelect.value;
-                            const selectedText = domainSelect.options[domainSelect.selectedIndex].textContent.trim();
-
-                            // 선택한 옵션 값은 표시해 주되,
-                            // 편집 모드가 아닐 땐 readOnly 유지
-                            if (val !== 'select') domainInput.value = selectedText;
-
-                            if (isEditingEmail) {
-                            localInput.readOnly = false;
-                            if (val === 'select') {
-                                domainInput.readOnly = false;  // 직접 입력 허용
-                            } else {
-                                domainInput.readOnly = true;   // 옵션 고정
+                            // 초기 잠금
+                            function lockEmail() {
+                                if (!emailLocal || !emailDomain || !emailSelect) return;
+                                emailLocal.readOnly  = true;
+                                emailDomain.readOnly = true;
+                                emailSelect.disabled = true;
                             }
-                            } else {
-                            // 편집 모드가 아니면 모두 잠금
+                            function lockPhone() {
+                                [p1, p2, p3].forEach(i => i && (i.readOnly = true));
+                            }
                             lockEmail();
+                            lockPhone();
+
+                            // 셀렉트 적용 로직
+                            let emailEditing = false;
+                            function applyEmailSelect() {
+                                if (!emailSelect || !emailDomain) return;
+                                const val = emailSelect.value;
+                                const txt = emailSelect.options[emailSelect.selectedIndex].textContent.trim();
+                                if (val !== "select") {
+                                    emailDomain.value = txt;
+                                    emailDomain.readOnly = true;
+                                } else {
+                                    // 직접입력은 편집 중일 때만 허용
+                                    emailDomain.readOnly = !emailEditing;
+                                }
                             }
-                        }
 
-                        // 셀렉트 변경 시 동작
-                        domainSelect.addEventListener('change', applyDomainFromSelect);
-
-                        // "수정하기" 버튼: 편집 모드 ON
-                        emailButton.addEventListener('click', function (e) {
-                            e.preventDefault();
-                            isEditingEmail = true;
-                            applyDomainFromSelect(); // 현재 select 상태로 반영
-                            localInput.focus();
-                        });
-
-                        // 페이지 최초 로드 시 잠금 유지(프리필이 있어도 수정 불가)
-                        lockEmail();
-                        // 값 표시는 유지하되, 편집 불가 상태 유지
-                        applyDomainFromSelect();
-
-
-                        // =====================
-                        // 휴대폰 수정하기 버튼 처리
-                        // =====================
-                        const phoneForm = document.querySelectorAll('table.kv tr td form')[1]; // 두 번째 form
-                        if (phoneForm) {
-                            const phoneInputs = phoneForm.querySelectorAll('input[type="text"]');
-                            const phoneButton = phoneForm.querySelector('input[type="submit"]');
-
-                            // 처음엔 읽기 전용
-                            phoneInputs.forEach(input => input.readOnly = true);
-
-                            // 수정하기 버튼 클릭 시 편집 가능
-                            phoneButton.addEventListener("click", function (e) {
-                            e.preventDefault();
-                            phoneInputs.forEach(input => input.readOnly = false);
-                            phoneInputs[0].focus();
-                            });
-                        }
-                        // =====================
-                        // 주소검색(카카오 우편번호) - 기본 팝업 버전
-                        // =====================
-                        const addressRow = Array.from(document.querySelectorAll('table.kv tr'))
-                        .find(tr => tr.firstElementChild && tr.firstElementChild.textContent.trim() === '주소');
-
-                        if (addressRow) {
-                        const zipInput   = addressRow.querySelector('input[placeholder="우편번호"]');
-                        const addr1Input = addressRow.querySelector('input[placeholder="기본주소검색"]');
-                        const addr2Input = addressRow.querySelector('input[placeholder="상세주소입력"]');
-                        const searchBtn  = document.getElementById('btn-postcode');
-
-                        if (addr1Input) addr1Input.readOnly = true; // 기본주소는 검색 결과만 입력
-
-                        function openPostcodePopup() {
-                            // 팝업(카카오 기본 스타일)으로 열기
-                            new daum.Postcode({
-                            oncomplete: function (data) {
-                                // 도로명 우선, 없으면 지번 사용
-                                const baseAddr = data.roadAddress || data.jibunAddress || data.address || '';
-                                // 추가주소(법정동/건물명)
-                                let extra = '';
-                                if (data.bname && /[동|로|가]$/.test(data.bname)) extra += data.bname;
-                                if (data.buildingName) extra += (extra ? ', ' : '') + data.buildingName;
-                                const fullAddr = extra ? `${baseAddr} (${extra})` : baseAddr;
-
-                                if (zipInput)   zipInput.value = data.zonecode; // 5자리
-                                if (addr1Input) addr1Input.value = fullAddr;
-                                if (addr2Input) { addr2Input.value = ''; addr2Input.focus(); }
-                                // 기본 팝업은 주소 선택 시 자동으로 닫힙니다.
+                            // 이메일 "수정하기" 클릭 -> 잠금 해제
+                            if (emailEditBtn) {
+                                emailEditBtn.addEventListener("click", function () {
+                                    if (!emailLocal || !emailSelect) return;
+                                    emailEditing = true;
+                                    emailLocal.readOnly  = false;
+                                    emailSelect.disabled = false;
+                                    applyEmailSelect();
+                                    emailLocal.focus();
+                                });
                             }
-                            }).open(); // 기본 팝업 창으로 열림
-                        }
 
-                        if (searchBtn) {
-                            searchBtn.addEventListener('click', function (e) {
-                            e.preventDefault(); // form submit 방지
-                            openPostcodePopup();
-                            });
-                        }
-                        }
-                        });
-                        </script>
-                        <!-- (1) 프리필용 더미 데이터: 나중에 서버에서 값을 넣어주세요 -->
-                        <script id="user-payload" type="application/json">
-                        {
-                        "email": "kimcheolhak@example.com",
-                        "phone": "010-2345-6789"
-                        }
-                        </script>
-
-                        <!-- (2) 프리필 스크립트: 위 JSON을 읽어 input에 채워 넣기 -->
-                        <script>
-                        document.addEventListener('DOMContentLoaded', function () {
-                        // JSON 데이터 읽기
-                        var payloadEl = document.getElementById('user-payload');
-                        var data = {};
-                        try { data = JSON.parse((payloadEl && payloadEl.textContent) ? payloadEl.textContent.trim() : '{}'); }
-                        catch(e){ data = {}; }
-
-                        /* 이메일 프리필(값만 세팅, 잠금은 건들지 않음) */
-                        var emailForm = document.querySelector('table.kv tr td form'); // 첫 번째 form(이메일)
-                        if (emailForm && data.email) {
-                            var localInput  = emailForm.querySelector('input[name="firstEmail"]');
-                            var domainInput = emailForm.querySelector('input[name="secondEmail"]');
-                            var domainSelect= emailForm.querySelector('select[name="email"]');
-
-                            var parts = String(data.email).split('@');
-                            var local  = parts[0] || '';
-                            var domain = parts[1] || '';
-
-                            if (localInput)  localInput.value  = local;
-                            if (domainInput) domainInput.value = domain;
-
-                            // 셀렉트는 표시만 맞춰주고, readOnly는 절대 바꾸지 않음
-                            if (domainSelect) {
-                            var matched = Array.from(domainSelect.options).find(function(opt){
-                                return opt.textContent.trim() === domain;
-                            });
-                            domainSelect.value = matched ? matched.value : 'select';
+                            // 셀렉트 변경 반영
+                            if (emailSelect) {
+                                emailSelect.addEventListener("change", applyEmailSelect);
                             }
-                        }
 
-                        /* 휴대폰 프리필(값만 세팅) */
-                        var phoneForm = document.querySelectorAll('table.kv tr td form')[1];
-                        if (phoneForm && data.phone) {
-                            var inputs = phoneForm.querySelectorAll('input[type="text"]');
-                            var cleaned = String(data.phone).replace(/[^\d-]/g, '');
-                            var seg = cleaned.split('-');
-                            if (inputs[0]) inputs[0].value = seg[0] || '';
-                            if (inputs[1]) inputs[1].value = seg[1] || '';
-                            if (inputs[2]) inputs[2].value = seg[2] || '';
-                        }
+                            // 휴대폰 "수정하기" 클릭 -> 잠금 해제
+                            if (phoneEditBtn) {
+                                phoneEditBtn.addEventListener("click", function () {
+                                    [p1, p2, p3].forEach(i => i && (i.readOnly = false));
+                                    p1 && p1.focus();
+                                });
+                            }
+
+                            /* =====================
+                               카카오(다음) 우편번호
+                            ===================== */
+                            const addressRow = Array.from(document.querySelectorAll("table.kv tr"))
+                                .find(tr => tr.firstElementChild && tr.firstElementChild.textContent.trim() === "주소");
+                            if (addressRow) {
+                                const zipInput   = addressRow.querySelector('input[placeholder="우편번호"]');
+                                const addr1Input = addressRow.querySelector('input[placeholder="기본주소검색"]');
+                                const addr2Input = addressRow.querySelector('input[placeholder="상세주소입력"]');
+                                const searchBtn  = document.getElementById("btn-postcode");
+                                if (addr1Input) addr1Input.readOnly = true;
+
+                                function openPostcodePopup() {
+                                    new daum.Postcode({
+                                        oncomplete: function (data) {
+                                            const baseAddr = data.roadAddress || data.jibunAddress || data.address || "";
+                                            let extra = "";
+                                            if (data.bname && /[동|로|가]$/.test(data.bname)) extra += data.bname;
+                                            if (data.buildingName) extra += (extra ? ", " : "") + data.buildingName;
+                                            const fullAddr = extra ? `${baseAddr} (${extra})` : baseAddr;
+
+                                            if (zipInput)   zipInput.value = data.zonecode;
+                                            if (addr1Input) addr1Input.value = fullAddr;
+                                            if (addr2Input) { addr2Input.value = ""; addr2Input.focus(); }
+                                        }
+                                    }).open();
+                                }
+
+                                if (searchBtn) {
+                                    searchBtn.addEventListener("click", function (e) {
+                                        e.preventDefault();
+                                        openPostcodePopup();
+                                    });
+                                }
+                            }
                         });
                         </script>
                 </div>
             </div>
         </div>
         <div style="margin-top:100px;"></div>
-        <div id="footer"></div>
+        <div th:replace="~{main/footer.html}"></div>
     </main>
 </body>
 </html>

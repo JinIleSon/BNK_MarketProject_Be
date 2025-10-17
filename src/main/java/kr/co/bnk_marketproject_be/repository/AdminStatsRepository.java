@@ -18,7 +18,7 @@ public interface AdminStatsRepository extends JpaRepository<AdminStats, Long> {
     // ORDERS(결제완료) + ORDER_ITEMS + PRODUCTS + CATEGORIES
     @Query(value = """
     SELECT c.NAME AS category,
-           NVL(SUM(NVL(oi.QUENTITY, 1) * NVL(oi.PRICE, p.PRICE)), 0) AS amount
+           NVL(SUM(NVL(oi.QUANTITY, 1) * NVL(oi.PRICE, p.PRICE)), 0) AS amount
       FROM NICHIYA.ORDERS       o
       JOIN NICHIYA.ORDER_ITEMS  oi ON oi.ORDERS_ID   = o.ID
       JOIN NICHIYA.PRODUCTS     p  ON p.ID           = oi.PRODUCTS_ID

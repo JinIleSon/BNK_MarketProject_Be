@@ -1,6 +1,7 @@
 package kr.co.bnk_marketproject_be.dto;
 
 import jakarta.persistence.Column;
+import jakarta.persistence.Transient;
 import lombok.*;
 
 @Getter
@@ -12,6 +13,7 @@ import lombok.*;
 public class UserDTO {
 
     private int id;
+    @Column(name = "user_id")
     private String userId;
     private String password;
     private String name;
@@ -28,5 +30,17 @@ public class UserDTO {
 
     private String created_at;
     private String updated_at;
+
+    // 추가 필드(mypage - 개인정보 수정하기) // 푸시용
+    @Transient
+    private String firstEmail;
+    @Transient
+    private String secondEmail;
+    @Transient
+    private String firstPhone;
+    @Transient
+    private String secondPhone;
+    @Transient
+    private String thirdPhone;
 
 }

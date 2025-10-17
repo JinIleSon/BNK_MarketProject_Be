@@ -24,7 +24,7 @@
         border-bottom: 1px solid #ddd;
         width: 100px;
         height: 150px;
-        background-color: #dde6f3;
+        background-color: #ccc;
     }
     .th-gray {
         padding: 10px;
@@ -33,8 +33,8 @@
     }
     .btn {
         padding: 8px 12px;
-        background-color: #6FADCF;
-        color: #fff;
+        background-color: #ccc;
+        color: #333;
         border: none;
         cursor: pointer;
         float: right;
@@ -66,11 +66,11 @@
                 <section class="euro-nav__group">
                     <h4 class="euro-nav__title" style="">환경설정</h4>
                     <ul class="euro-nav__list">
-                        <li class="euro-nav__item"><a href="#">기본설정</a></li>
-                        <li class="euro-nav__item"><a href="#">배너관리</a></li>
-                        <li class="euro-nav__item is-active"><a href="#">약관관리</a></li>
-                        <li class="euro-nav__item"><a href="#">카테고리</a></li>
-                        <li class="euro-nav__item"><a href="#">버전관리</a></li>
+                        <li class="euro-nav__item"><a th:href="@{/admin/admin_basic}">기본설정</a></li>
+                        <li class="euro-nav__item"><a th:href="@{/admin/admin_banner}">배너관리</a></li>
+                        <li class="euro-nav__item is-active"><a th:href="@{/admin/admin_policy}">약관관리</a></li>
+                        <li class="euro-nav__item"><a th:href="@{/admin/admin_category}">카테고리</a></li>
+                        <li class="euro-nav__item"><a th:href="@{/admin/admin_version}">버전관리</a></li>
                     </ul>
                 </section>
 
@@ -126,7 +126,7 @@
             </aside>
         </div>
         <div style="border-left:1px solid #e2e2e2; "></div>
-        <div style="margin-left:40px; width:900px; height:1500px; ">
+        <div style="margin-left:40px; width:900px; height:100%; margin-bottom:100px;">
 
             <form>
                 <!-- 약관관리 타이틀 -->
@@ -252,19 +252,16 @@
                     </div>
 
                     <form id="termsForm" class="modal-body review-form" method="post" action="/NICHIYA/admin/terms">
-                        <!-- CSRF 토큰(프로젝트에 맞게 바인딩) -->
-                        <!--<input type="hidden" name="_csrf" th:value="${_csrf.token}">-->
-                        <!-- 어떤 섹션인지(BUYER/SELLER/FINANCE/LOCATION/PRIVACY) -->
                         <input type="hidden" name="type" id="termsType">
 
                         <table class="review-grid" style="border-top:1px solid #eee;">
                             <tr>
                                 <td>약관 내용</td>
                                 <td>
-            <textarea id="termsTextarea" name="content" maxlength="500"
-                      placeholder="수정할 약관 내용을 입력하세요 (최대 500자)"
+            <textarea id="termsTextarea" name="content" maxlength="4000"
+                      placeholder="수정할 약관 내용을 입력하세요 (최대 4000자)"
                       style="width:100%; min-height:160px;"></textarea>
-                                    <div class="char-count"><span id="termsCount">0</span>/500</div>
+                                    <div class="char-count"><span id="termsCount">0</span>/4000</div>
                                 </td>
                             </tr>
                         </table>
@@ -488,9 +485,9 @@
                 alert('약관 내용을 입력해 주세요.');
                 return;
             }
-            if ($textarea.value.length > 500) {
+            if ($textarea.value.length > 4000) {
                 e.preventDefault();
-                alert('약관 내용은 500자 이내여야 합니다.');
+                alert('약관 내용은 4000자 이내여야 합니다.');
                 return;
             }
             // 정상 submit → 닫기는 서버 응답 후 페이지 리로드로 처리

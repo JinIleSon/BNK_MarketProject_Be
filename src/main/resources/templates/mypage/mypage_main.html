@@ -103,35 +103,8 @@
   </style>
 </head>
 <body>
-    <!--헤더푸터 연결-->
-    <script>
-        fetch("../main/header.html")
-          .then(res => res.text())
-          .then(data => {
-            document.getElementById("header").innerHTML = data;
-
-            // header.html 안의 스크립트 실행 강제
-            const scripts = document.getElementById("header").querySelectorAll("script");
-            scripts.forEach(oldScript => {
-            const newScript = document.createElement("script");
-            if (oldScript.src) {
-                newScript.src = oldScript.src;
-            } else {
-                newScript.textContent = oldScript.textContent;
-            }
-            document.body.appendChild(newScript);
-            });
-          });
-
-       
-        fetch("../main/footer.html")
-          .then(res => res.text())
-          .then(data => {
-            document.getElementById("footer").innerHTML = data;
-          });
-    </script>
     <main>
-        <div id="header"></div>
+        <div th:replace="~{main/header.html}"></div>
         <div style="background-color: #f6f5f5; border-bottom: 1px solid #dddddd;">
             <div style="display: flex; justify-content: center; align-items: center;">
                 <div style="width:1270px; font-size:15px; height:70px; display: flex; align-items: center; ">
@@ -143,15 +116,15 @@
                         </div>
                         <div style="width:70px; border-right:1px solid #dddddd; display: flex; flex-direction: column; align-items: center; justify-content: center;">
                             <div style="margin-bottom:8px;">쿠폰</div>
-                            <div>1</div>
+                            <div><span th:text="${couponCount}"></span></div>
                         </div>
                         <div style="width:70px;border-right:1px solid #dddddd; display: flex; flex-direction: column; align-items: center; justify-content: center;">
                             <div style="margin-bottom:8px;">포인트</div>
-                            <div>1,000</div>
+                            <div><span th:text="${#numbers.formatInteger(balance, 3, 'COMMA')} + 'P'">0P</span></div>
                         </div>
                         <div style="width:70px;display: flex; flex-direction: column; align-items: center; justify-content: center;">
                             <div style="margin-bottom:8px;">문의</div>
-                            <div>1</div>
+                            <div><span th:text="${count}"></span></div>
                         </div>
                     </div>
                 </div>
@@ -160,17 +133,17 @@
         <div style="display: flex; justify-content: center; align-items: center;">
             <div style="width:1270px; font-size:15px; display: flex;">
                 <div style=" width:200px; padding-left:70px; padding-top:30px; border-right:1px solid #dddddd;">
-                    <div style="margin-bottom:15px;"><a href="#">전체주문내역</a></div>
-                    <div style="margin-bottom:15px;"><a href="#">포인트내역</a></div>
-                    <div style="margin-bottom:15px;"><a href="#">쿠폰</a></div>
-                    <div style="margin-bottom:15px;"><a href="#">나의리뷰</a></div>
-                    <div style="margin-bottom:15px;"><a href="#">문의하기</a></div>
-                    <div><a href="#">나의설정</a></div>
+                    <div style="margin-bottom:15px;"><a th:href="@{/mypage/mypage/allorder}">전체주문내역</a></div>
+                    <div style="margin-bottom:15px;"><a th:href="@{/mypage/mypage/point}">포인트내역</a></div>
+                    <div style="margin-bottom:15px;"><a th:href="@{/mypage/mypage/coupon}">쿠폰</a></div>
+                    <div style="margin-bottom:15px;"><a th:href="@{/mypage/mypage/review}">나의리뷰</a></div>
+                    <div style="margin-bottom:15px;"><a th:href="@{/mypage/mypage/ask}">문의하기</a></div>
+                    <div><a th:href="@{/mypage/mypage/setup}">나의설정</a></div>
                 </div>
                 <div style="width: 100%;">
                     <div style="margin-top:30px; display: flex; justify-content: center;">
                         <div>
-                          <img src="/images/mypage_mainBanner2.jpg" alt="" style="width:400px;">
+                          <img th:src="@{/images/mypage_mainBanner2.jpg}" alt="" style="width:400px;">
                           <div style="font-size:10px;">Image by <a href="https://www.freepik.com" target="_blank" style="color:inherit; text-decoration:none;">Freepik</a></div>
                         </div>
                     </div>
@@ -191,7 +164,7 @@
                                 <td style="text-align: left; padding-left:10px;">
                                     <div style="display: flex; align-items: center;">
                                         <div>
-                                            <img src="/images/product_list1.jpg" alt="" style="height:121px;">
+                                            <img th:src="@{/images/product_list1.jpg}" alt="" style="height:121px;">
                                         </div>
                                         <div style="padding-left:30px; letter-spacing: -1px;">
                                             <div style="margin-bottom:5px;"><a href="#" class="order-link" data-order-id="1012211341" style="color:gray;">주문번호 : 1012211341</a></div>
@@ -215,7 +188,7 @@
                                 <td style="text-align: left; padding-left:10px;">
                                     <div style="display: flex; align-items: center;">
                                         <div>
-                                            <img src="/images/product_list1.jpg" alt="" style="height:121px;">
+                                            <img th:src="@{/images/product_list1.jpg}" alt="" style="height:121px;">
                                         </div>
                                         <div style="padding-left:30px; letter-spacing: -1px;">
                                             <div style="margin-bottom:5px;"><a href="#" class="order-link" data-order-id="1012211341" style="color:gray;">주문번호 : 1012211341</a></div>
@@ -239,7 +212,7 @@
                                 <td style="text-align: left; padding-left:10px;">
                                     <div style="display: flex; align-items: center;">
                                         <div>
-                                            <img src="/images/product_list1.jpg" alt="" style="height:121px;">
+                                            <img th:src="@{/images/product_list1.jpg}" alt="" style="height:121px;">
                                         </div>
                                         <div style="padding-left:30px; letter-spacing: -1px;">
                                             <div style="margin-bottom:5px;"><a href="#" class="order-link" data-order-id="1012211341" style="color:gray;">주문번호 : 1012211341</a></div>
@@ -263,7 +236,7 @@
                                 <td style="text-align: left; padding-left:10px;">
                                     <div style="display: flex; align-items: center;">
                                         <div>
-                                            <img src="/images/product_list1.jpg" alt="" style="height:121px;">
+                                            <img th:src="@{/images/product_list1.jpg}" alt="" style="height:121px;">
                                         </div>
                                         <div style="padding-left:30px; letter-spacing: -1px;">
                                             <div style="margin-bottom:5px;"><a href="#" class="order-link" data-order-id="1012211341" style="color:gray;">주문번호 : 1012211341</a></div>
@@ -287,7 +260,7 @@
                                 <td style="text-align: left; padding-left:10px;">
                                     <div style="display: flex; align-items: center;">
                                         <div>
-                                            <img src="/images/product_list1.jpg" alt="" style="height:121px;">
+                                            <img th:src="@{/images/product_list1.jpg}" alt="" style="height:121px;">
                                         </div>
                                         <div style="padding-left:30px; letter-spacing: -1px;">
                                             <div style="margin-bottom:5px;"><a href="#" class="order-link" data-order-id="1012211341" style="color:gray;">주문번호 : 1012211341</a></div>
@@ -310,7 +283,7 @@
                     </div>
                     <div style="margin-top:30px; display: flex; justify-content: center;">
                         <div>
-                          <img src="/images/mypage_mainBanner3.jpg" alt="" style="width:400px;">
+                          <img th:src="@{/images/mypage_mainBanner3.jpg}" alt="" style="width:400px;">
                           <div style="font-size:10px;">Image by <a href="https://www.freepik.com" target="_blank" style="color:inherit; text-decoration:none;">Freepik</a></div>
                         </div>
                     </div>
@@ -422,63 +395,72 @@
                     </div>
                     <div style="margin-top:30px; display: flex; justify-content: center;">
                         <div>
-                          <img src="/images/mypage_mainBanner4.jpg" alt="" style="width:400px;">
+                          <img th:src="@{/images/mypage_mainBanner4.jpg}" alt="" style="width:400px;">
                           <div style="font-size:10px; padding-left:15px;">Image by <a href="https://www.freepik.com" target="_blank" style="color:inherit; text-decoration:none;">Freepik</a></div>
                         </div>
                     </div>
                     <div style="display: flex; flex-direction: column; justify-content: center; align-items: center; margin-top:40px;">
                         <div style="display: flex; margin-top:30px;">
                             <div style="font-weight: 800; margin-right:782px; margin-bottom:5px;">문의내역</div>
-                            <div style="margin-left:auto;"><a href="#">더보기 ></a></div>
+                            <div style="margin-left:auto;"><a th:href="@{/mypage/mypage/ask}">더보기 ></a></div>
                         </div>
                         <table style="text-align: center; border-collapse: collapse;border-top:1px solid; width:900px;">
-                            <tr style="background-color: #dedede; font-size:12px; color:white; font-weight: 800; height:40px;">
-                                <th style="width:60px;">번호</th>
-                                <th style="width:120px;">문의채널</th>
-                                <th style="width:87px;">문의유형</th>
+                            <tr style="background-color: #dedede; font-size:12px; color:white; font-weight: 800; height:40px;"
+                                >
+                                <th style="width:60px;"
+                                    >번호</th>
+                                <th style="width:120px;">1차 유형</th>
+                                <th style="width:87px;">2차 유형</th>
                                 <th style="">제목</th>
                                 <th style="">작성일</th>
                                 <th style="width:90px;">상태</th>
                             </tr>
-                            <tr style="border-bottom: 1px solid #dddddd; height:65px;">
-                                <td>1</td>
-                                <td style="">고객센터</td>
-                                <td style="letter-spacing: -1px;">주문 / 결제</td>
-                                <td>신용카드 결제 중 오류가 난 경우 어떻게 하나요?</td>
-                                <td>2022-12-12</td>
-                                <td style="color:gray;">검토중</td>
-                            </tr>
-                            <tr style="border-bottom: 1px solid #dddddd; height:65px;">
-                                <td>2</td>
-                                <td style="">고객센터</td>
-                                <td style="letter-spacing: -1px;">주문 / 결제</td>
-                                <td>신용카드 결제 중 오류가 난 경우 어떻게 하나요?</td>
-                                <td>2022-12-12</td>
-                                <td style="color:green;">답변완료</td>
-                            </tr>
-                            <tr style="border-bottom: 1px solid #dddddd; height:65px;">
-                                <td>3</td>
-                                <td style="">판매자 게시판</td>
-                                <td style="letter-spacing: -1px;">배송</td>
-                                <td>배송기간이 보통 얼마나 걸리나요?</td>
-                                <td>2022-12-12</td>
-                                <td style="color:green;">답변완료</td>
-                            </tr>
-                            <tr style="border-bottom: 1px solid #dddddd; height:65px;">
-                                <td>4</td>
-                                <td style="">판매자 게시판</td>
-                                <td style="letter-spacing: -1px;">배송</td>
-                                <td>배송기간이 보통 얼마나 걸리나요?</td>
-                                <td>2022-12-12</td>
-                                <td style="color:green;">답변완료</td>
-                            </tr>
-                            <tr style="border-bottom: 1px solid #dddddd; height:65px;">
-                                <td>5</td>
-                                <td style="">판매자 게시판</td>
-                                <td style="letter-spacing: -1px;">배송</td>
-                                <td>배송기간이 보통 얼마나 걸리나요?</td>
-                                <td>2022-12-12</td>
-                                <td style="color:green;">답변완료</td>
+                            <tr style="border-bottom: 1px solid #dddddd; height:65px;"
+                                th:each="inquiry, stat: ${pageResponseInquiryDTO.dtoList}"
+                                th:if="${stat.index} < 5">
+                                <td th:text="${T(java.lang.Math).min(5, stat.size) - stat.index}">1</td>
+                                <td style=""
+                                    th:text="${inquiry.board_type2 == 'member' ? '회원' :
+                        (inquiry.board_type2 == 'event' ? '쿠폰 / 이벤트' :
+                        (inquiry.board_type2 == 'pay' ? '주문 / 결제' :
+                        (inquiry.board_type2 == 'delivery' ? '배송' :
+                        (inquiry.board_type2 == 'cancel' ? '취소 / 반품 / 교환' :
+                        (inquiry.board_type2 == 'trip' ? '여행 / 숙박 / 항공' :
+                        (inquiry.board_type2 == 'safe' ? '안전거래' : ''))))))}">고객센터</td>
+                                <td style="letter-spacing: -1px;"
+                                    th:text="${inquiry.board_type3 == 'signup' ? '가입' :
+                        (inquiry.board_type3 == 'withdraw' ? '탈퇴' :
+                        (inquiry.board_type3 == 'account' ? '회원정보' :
+                        (inquiry.board_type3 == 'login' ? '로그인' :
+                        (inquiry.board_type3 == 'couponissue' ? '쿠폰발급' :
+                        (inquiry.board_type3 == 'couponuse' ? '쿠폰사용' :
+                        (inquiry.board_type3 == 'eventjoin' ? '이벤트참여' :
+                        (inquiry.board_type3 == 'winnercheck' ? '당첨확인' :
+                        (inquiry.board_type3 == 'orderguide' ? '주문방법' :
+                        (inquiry.board_type3 == 'paymentmethod' ? '결제수단' :
+                        (inquiry.board_type3 == 'paymenterror' ? '결제오류' :
+                        (inquiry.board_type3 == 'receipt' ? '영수증/증빙' :
+                        (inquiry.board_type3 == 'tracking' ? '배송조회' :
+                        (inquiry.board_type3 == 'deliverytime' ? '배송기간' :
+                        (inquiry.board_type3 == 'deliveryfee' ? '배송비' :
+                        (inquiry.board_type3 == 'globalshipping' ? '해외배송' :
+                        (inquiry.board_type3 == 'ordercancel' ? '주문취소' :
+                        (inquiry.board_type3 == 'refund' ? '반품' :
+                        (inquiry.board_type3 == 'exchange' ? '교환' :
+                        (inquiry.board_type3 == 'refundprocess' ? '환불처리' :
+                        (inquiry.board_type3 == 'reservation' ? '예약' :
+                        (inquiry.board_type3 == 'payment' ? '결제' :
+                        (inquiry.board_type3 == 'changecancel' ? '변경/취소' :
+                        (inquiry.board_type3 == 'guide' ? '이용안내' :
+                        (inquiry.board_type3 == 'security' ? '보안공지' :
+                        (inquiry.board_type3 == 'alert' ? '사기주의' :
+                        (inquiry.board_type3 == 'safepayment' ? '안전결제' :
+                        (inquiry.board_type3 == 'privacy' ? '개인정보보호' : '')))))))))))))))))))))))))))}">주문 / 결제</td>
+                                <td>[[${inquiry.title}]]</td>
+                                <td th:text="${#temporals.format(inquiry.createdAt, 'yyyy-MM-dd')}">2022-12-12</td>
+                                <td style="color:gray;"
+                                    th:text="${inquiry.look == 0 ? '검토 중' : '답변완료'}"
+                                    th:style="${inquiry.look == 0 ? 'color:black;' : 'color:#4f9cd3;'}">검토중</td>
                             </tr>
                         </table>
                     </div>
@@ -486,30 +468,30 @@
                         <div style="display: flex; margin-top:30px;">
                             <div style="font-weight: 800; margin-right:843px; margin-bottom:5px;">나의설정</div>
                         </div>
-                        <div style="padding:20px; border: 1px solid #dddddd;background-color: #dce6f2; height:130px; width:900px; display: grid; grid-template-columns: repeat(3, 300px);">
+                        <div style="padding:20px; border: 1px solid #dddddd;background-color: #dce6f2; height:150px; width:900px; display: grid; grid-template-columns: repeat(3, 300px);">
                           <div style="display:flex; flex-direction: column; border-right:1px solid gray;">
                             <div style="display: flex;">
                               <div style="margin-right: 20px; margin-bottom:20px;">기본배송지 설정</div>
-                              <div><a href="#" style="font-weight: 800;">변경</a></div>
+                              <div><a th:href="@{/mypage/mypage/setup}" style="font-weight: 800;">변경</a></div>
                             </div>
-                            <div style="font-size: 15px; color:gray; margin-bottom:6px;">부산광역시 부산진구 대연동 120</div>
-                            <div style="font-size: 15px; color:gray;">한빛빌딩 10층</div>
+                            <div style="width:250px;font-size: 15px; color:gray; margin-bottom:6px;"><span th:text="${userDTO.address}"></span></div>
+                            <div style="font-size: 15px; color:gray;"><span th:text="${userDTO.detailAddress}"></span></div>
                           </div>
                           <div style="display:flex; flex-direction: column; border-right:1px solid gray; padding-left:23px;">
                             <div style="display: flex;">
                               <div style="margin-right: 20px; margin-bottom:20px;">Email 설정</div>
-                              <div><a href="#" style="font-weight: 800;">변경</a></div>
+                              <div><a th:href="@{/mypage/mypage/setup}" style="font-weight: 800;">변경</a></div>
                             </div>
-                            <div style="font-size: 15px; color:gray; margin-bottom:6px;">abc123@naver.com</div>
-                            <div style="font-size: 15px; color:gray;">( 최종수정일 2021-12-10 )</div>
+                            <div style="font-size: 15px; color:gray; margin-bottom:6px;"><span th:text="${userDTO.email}"></span></div>
+                            <div style="font-size: 15px; color:gray;">( 최종수정일 <span th:text="${#temporals.format(userDTO.created_at, 'yyyy-MM-dd')}"></span> )</div>
                           </div>
                           <div style="display:flex; flex-direction: column; padding-left:23px;">
                             <div style="display: flex;">
                               <div style="margin-right: 20px; margin-bottom:20px;">휴대폰 설정</div>
-                              <div><a href="#" style="font-weight: 800;">변경</a></div>
+                              <div><a th:href="@{/mypage/mypage/setup}" style="font-weight: 800;">변경</a></div>
                             </div>
-                            <div style="font-size: 15px; color:gray; margin-bottom:6px;">010 - 1234 - 1001</div>
-                            <div style="font-size: 15px; color:gray;">( 최종수정일 2021-12-10 )</div>
+                            <div style="font-size: 15px; color:gray; margin-bottom:6px;"><span th:text="${userDTO.phone}"></span></div>
+                            <div style="font-size: 15px; color:gray;">( 최종수정일 <span th:text="${#temporals.format(userDTO.created_at, 'yyyy-MM-dd')}"></span> )</div>
                           </div>
                         </div>
                     </div>
@@ -519,13 +501,13 @@
             </div>
         </div>
         <div style="margin-top:100px;"></div>
-        <div id="footer"></div>
+        <div th:replace="~{main/footer.html}"></div>
     </main>
     <!-- 주문 상세 마이페이지_메인#2-->
     <!-- ===== 모달 마크업 ===== -->
   <div class="modal-backdrop" id="orderModalBackdrop" aria-hidden="true"></div>
-  <div class="modal" id="orderModal" role="dialog" aria-modal="true" aria-labelledby="orderModalTitle" aria-hidden="true">
-    <div class="modal-dialog" tabindex="-1" style="border-radius: 0px !important;">
+  <div class="modal" id="orderModal" role="dialog}" aria-modal="true" aria-labelledby="orderModalTitle" aria-hidden="true">
+    <div class="modal-dialog}" tabindex="-1" style="border-radius: 0px !important;">
       <div class="modal-header" style="border-radius: 0px !important;">
         <div>
           <span id="orderModalTitle">주문상세</span>
@@ -555,7 +537,7 @@
                     <td style="text-align: left; padding-left:10px;">
                         <div style="display: flex; align-items: center;">
                             <div>
-                                <img src="/images/product_list1.jpg" alt="" style="height:121px;">
+                                <img th:src="@{/images/product_list1.jpg}" alt="" style="height:121px;">
                             </div>
                             <div style="padding-left:30px; letter-spacing: -1px;">
                                 <div style="margin-bottom:5px;"><a href="#" class="order-link" data-order-id="1012211341" style="color:gray;">주문번호 : 1012211341</a></div>
@@ -680,8 +662,8 @@
   <!-- 주문 상세 마이페이지_메인#3-->
    <!-- ===== 판매자정보 모달 ===== -->
 <div class="modal-backdrop" id="sellerModalBackdrop" aria-hidden="true"></div>
-<div class="modal" id="sellerModal" role="dialog" aria-modal="true" aria-labelledby="sellerModalTitle" aria-hidden="true">
-  <div class="modal-dialog" tabindex="-1" style="border-radius:0 !important;">
+<div class="modal" id="sellerModal" role="dialog}" aria-modal="true" aria-labelledby="sellerModalTitle" aria-hidden="true">
+  <div class="modal-dialog}" tabindex="-1" style="border-radius:0 !important;">
     <div class="modal-header" style="border-radius:0 !important;">
       <div>
         <span id="sellerModalTitle">판매자정보</span>
@@ -783,8 +765,8 @@
   <!-- 주문 상세 마이페이지_메인#4-->
    <!-- ===== 문의하기 모달 ===== -->
 <div class="modal-backdrop" id="inquiryModalBackdrop" aria-hidden="true"></div>
-<div class="modal" id="inquiryModal" role="dialog" aria-modal="true" aria-labelledby="inquiryModalTitle" aria-hidden="true">
-  <div class="modal-dialog" tabindex="-1" style="border-radius:0 !important; width:720px; max-width:calc(100% - 40px);">
+<div class="modal" id="inquiryModal" role="dialog}" aria-modal="true" aria-labelledby="inquiryModalTitle" aria-hidden="true">
+  <div class="modal-dialog}" tabindex="-1" style="border-radius:0 !important; width:720px; max-width:calc(100% - 40px);">
     <div class="modal-header" style="border-radius:0 !important;">
       <div><span id="inquiryModalTitle">문의하기</span></div>
       <button class="modal-close" type="button" aria-label="닫기" id="inquiryModalClose">✕</button>
@@ -913,8 +895,8 @@
   <!-- 주문 상세 마이페이지_메인#5-->
   <!-- ===== 구매확정 모달 ===== -->
   <div class="modal-backdrop" id="buyModalBackdrop" aria-hidden="true"></div>
-  <div class="modal" id="buyModal" role="dialog" aria-modal="true" aria-labelledby="buyModalTitle" aria-hidden="true">
-    <div class="modal-dialog" tabindex="-1" style="border-radius:0 !important; width:420px; max-width:calc(100% - 40px);">
+  <div class="modal" id="buyModal" role="dialog}" aria-modal="true" aria-labelledby="buyModalTitle" aria-hidden="true">
+    <div class="modal-dialog}" tabindex="-1" style="border-radius:0 !important; width:420px; max-width:calc(100% - 40px);">
       <div class="modal-header" style="border-radius:0 !important;">
         <div><span id="buyModalTitle">구매확정</span></div>
         <button class="modal-close" type="button" aria-label="닫기" id="buyClose">✕</button>
@@ -1016,9 +998,9 @@
   <!-- 주문 상세 마이페이지_메인#6-->
   <!-- ===== 상품평 모달 ===== -->
   <div class="modal-backdrop" id="reviewModalBackdrop" aria-hidden="true"></div>
-  <div class="modal" id="reviewModal" role="dialog" aria-modal="true"
+  <div class="modal" id="reviewModal" role="dialog}" aria-modal="true"
       aria-labelledby="reviewModalTitle" aria-hidden="true">
-    <div class="modal-dialog" tabindex="-1" style="border-radius:0 !important; width:720px; max-width:calc(100% - 40px);">
+    <div class="modal-dialog}" tabindex="-1" style="border-radius:0 !important; width:720px; max-width:calc(100% - 40px);">
       <div class="modal-header" style="border-radius:0 !important;">
         <div><span id="reviewModalTitle">상품평작성하기</span></div>
         <button class="modal-close" type="button" aria-label="닫기" id="reviewClose">✕</button>
@@ -1035,12 +1017,12 @@
           <tr>
             <td>만족도</td>
             <td>
-              <div class="rating" role="radiogroup" aria-label="만족도">
-                <input type="radio" id="star5" name="rating" value="5"><label for="star5" title="5점"></label>
-                <input type="radio" id="star4" name="rating" value="4"><label for="star4" title="4점"></label>
-                <input type="radio" id="star3" name="rating" value="3"><label for="star3" title="3점"></label>
-                <input type="radio" id="star2" name="rating" value="2"><label for="star2" title="2점"></label>
-                <input type="radio" id="star1" name="rating" value="1"><label for="star1" title="1점"></label>
+              <div class="rating}" role="radiogroup" aria-label="만족도">
+                <input type="radio" id="star5" name="rating}" value="5"><label for="star5" title="5점"></label>
+                <input type="radio" id="star4" name="rating}" value="4"><label for="star4" title="4점"></label>
+                <input type="radio" id="star3" name="rating}" value="3"><label for="star3" title="3점"></label>
+                <input type="radio" id="star2" name="rating}" value="2"><label for="star2" title="2점"></label>
+                <input type="radio" id="star1" name="rating}" value="1"><label for="star1" title="1점"></label>
               </div>
             </td>
           </tr>
@@ -1085,6 +1067,9 @@ const rCloseBtn = document.getElementById('reviewClose');
 const rCancel   = document.getElementById('reviewCancel');
 const rForm     = document.getElementById('reviewForm');
 const rSentinel = document.getElementById('reviewSentinel');
+const ctxPath = window.location.pathname.startsWith('/NICHIYA') ? '/NICHIYA' : '';
+let currentProductId = null;
+
 
 // ✅ rvTitle 대신 상품명 출력용 span
 const rvProductName = document.getElementById('rvProductName');
@@ -1133,6 +1118,9 @@ document.addEventListener('click', (e)=>{
   const btn = e.target.closest('.review-btn');
   if(!btn) return;
   e.preventDefault();
+
+  // ✅ 버튼에 있는 data-product-id 읽기
+  currentProductId = btn.dataset.productId;
   openReviewModal({ productName: getRowProductName(btn) });
 });
 
@@ -1153,27 +1141,41 @@ document.addEventListener('keydown', (e)=>{
 });
 rSentinel.addEventListener('focus', ()=> rModal.querySelector('.modal-close').focus());
 
-  // 제출
-  rForm.addEventListener('submit', (e)=>{
-    e.preventDefault();
-    const selected = rForm.querySelector('input[name="rating"]:checked');
-    const rating = selected ? Number(selected.value) : 0;
+// 제출
+rForm.addEventListener('submit', async (e)=>{
+  e.preventDefault();
+  const selected = rForm.querySelector('input[name="rating"]:checked');
+  const rating = selected ? Number(selected.value) : 0;
 
-    if (rating === 0) { alert('만족도를 선택해주세요.'); return; }
-    if (rForm.body.value.trim().length < 10) { alert('내용은 최소 10자 이상 입력해주세요.'); return; }
+  if (rating === 0) { alert('만족도를 선택해주세요.'); return; }
+  if (rForm.body.value.trim().length < 10) { alert('내용은 최소 10자 이상 입력해주세요.'); return; }
 
-    console.log('상품평 제출:', { rating, body: rForm.body.value.trim() });
-    alert('상품평이 등록되었습니다.');
-    closeReviewModal();
-  });
+  const formData = new FormData();
+  // ✅ 클릭한 상품의 id를 자동 사용
+  formData.append("productsId", currentProductId);
+  formData.append("rating", rating);
+  formData.append("body", rForm.body.value.trim());
 
-</script>
+  try {
+      const res = await fetch(`${ctxPath}/api/mypage/review`, {
+          method: 'POST',
+          body: formData
+      });
+      if (!res.ok) throw new Error('리뷰 등록 실패');
+      alert('상품평이 등록되었습니다.');
+      closeReviewModal();
+  } catch (err) {
+      console.error('❌ 상품평 전송 오류:', err);
+      alert('상품평 등록 중 오류가 발생했습니다.');
+  }
+});
+  </script>
   <!-- 주문 상세 마이페이지_메인#6-->
   <!-- 주문 상세 마이페이지_메인#7-->
    <!-- ===== 반품신청 모달 ===== -->
 <div class="modal-backdrop" id="returnModalBackdrop" aria-hidden="true"></div>
-<div class="modal" id="returnModal" role="dialog" aria-modal="true" aria-labelledby="returnModalTitle" aria-hidden="true">
-  <div class="modal-dialog" tabindex="-1" style="border-radius:0 !important; width:860px; max-width:calc(100% - 40px);">
+<div class="modal" id="returnModal" role="dialog}" aria-modal="true" aria-labelledby="returnModalTitle" aria-hidden="true">
+  <div class="modal-dialog}" tabindex="-1" style="border-radius:0 !important; width:860px; max-width:calc(100% - 40px);">
     <div class="modal-header" style="border-radius:0 !important;">
       <div>
         <span id="returnModalTitle">반품신청</span>
@@ -1199,7 +1201,7 @@ rSentinel.addEventListener('focus', ()=> rModal.querySelector('.modal-close').fo
               <td id="rtDate">0000-00-00</td>
               <td style="text-align:left; padding-left:10px;">
                 <div style="display:flex; align-items:center;">
-                  <div><img id="rtThumb" src="/images/product_list1.jpg" alt="" style="height:100px;"></div>
+                  <div><img id="rtThumb" th:src="@{/images/product_list1.jpg}" alt="" style="height:100px;"></div>
                   <div style="padding-left:20px; letter-spacing:-1px;">
                     <div style="margin-bottom:4px; color:gray;">주문번호 : <span id="rtOrderNo">-</span></div>
                     <div style="margin-bottom:4px; color:gray;" id="rtSeller">(주) 상호명</div>
@@ -1427,8 +1429,8 @@ rSentinel.addEventListener('focus', ()=> rModal.querySelector('.modal-close').fo
   <!-- 주문 상세 마이페이지_메인#8-->
   <!-- ===== 교환신청 모달 ===== -->
 <div class="modal-backdrop" id="exchangeModalBackdrop" aria-hidden="true"></div>
-<div class="modal" id="exchangeModal" role="dialog" aria-modal="true" aria-labelledby="exchangeModalTitle" aria-hidden="true">
-  <div class="modal-dialog" tabindex="-1" style="border-radius:0 !important; width:860px; max-width:calc(100% - 40px);">
+<div class="modal" id="exchangeModal" role="dialog}" aria-modal="true" aria-labelledby="exchangeModalTitle" aria-hidden="true">
+  <div class="modal-dialog}" tabindex="-1" style="border-radius:0 !important; width:860px; max-width:calc(100% - 40px);">
     <div class="modal-header" style="border-radius:0 !important;">
       <div><span id="exchangeModalTitle">교환신청</span></div>
       <button class="modal-close" type="button" aria-label="닫기" id="exClose">✕</button>
@@ -1452,7 +1454,7 @@ rSentinel.addEventListener('focus', ()=> rModal.querySelector('.modal-close').fo
               <td id="exDate">0000-00-00</td>
               <td style="text-align:left; padding-left:10px;">
                 <div style="display:flex; align-items:center;">
-                  <div><img id="exThumb" src="/images/product_list1.jpg" alt="" style="height:100px;"></div>
+                  <div><img id="exThumb" th:src="@{/images/product_list1.jpg}" alt="" style="height:100px;"></div>
                   <div style="padding-left:20px; letter-spacing:-1px;">
                     <div style="margin-bottom:4px; color:gray;">주문번호 : <span id="exOrderNo">-</span></div>
                     <div style="margin-bottom:4px; color:gray;" id="exSeller">(주) 상호명</div>

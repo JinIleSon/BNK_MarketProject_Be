@@ -6,11 +6,11 @@
                 <section class="euro-nav__group">
                     <h4 class="euro-nav__title" style="">환경설정</h4>
                     <ul class="euro-nav__list">
-                        <li class="euro-nav__item"><a href="#">기본설정</a></li>
-                        <li class="euro-nav__item"><a href="#">배너관리</a></li>
-                        <li class="euro-nav__item"><a href="#">약관관리</a></li>
-                        <li class="euro-nav__item"><a href="#">카테고리</a></li>
-                        <li class="euro-nav__item is-active"><a href="#">버전관리</a></li>
+                        <li class="euro-nav__item"><a th:href="@{/admin/admin_basic}">기본설정</a></li>
+                        <li class="euro-nav__item"><a th:href="@{/admin/admin_banner}">배너관리</a></li>
+                        <li class="euro-nav__item"><a th:href="@{/admin/admin_policy}">약관관리</a></li>
+                        <li class="euro-nav__item"><a th:href="@{/admin/admin_category}">카테고리</a></li>
+                        <li class="euro-nav__item is-active"><a th:href="@{/admin/admin_version}">버전관리</a></li>
                     </ul>
                 </section>
 
@@ -92,7 +92,7 @@
                 </table>
                 <div style="display: flex; margin-top:25px;">
                     <button id="btnDelete" style="border:none; background:#760c0c; color:#fff; font-size:10px; height:25px; width:62px;">선택삭제</button>
-                    <button id="openRegBtn" style="margin-left:auto; border:none; background:#000; color:#fff; font-size:10px; height:25px; width:62px;">수정</button>
+                    <button id="openRegBtn" style="margin-left:auto; border:none; background:#000; color:#fff; font-size:10px; height:25px; width:62px;">등록</button>
                 </div>
             <div style="margin-top:300px;"></div>
         </div>
@@ -112,47 +112,42 @@
   </div>
 </div>
 
-<!-- ▼ 버전확인 폼 템플릿 -->
+<!-- ▼ 버전확인 폼 템플릿 (데이터 표시용) -->
 <template id="shipFormTemplate">
-  <div class="ship-form__wrap">
-    <form id="couponRegForm">
-      <table class="ship-form__table">
-        <colgroup>
-          <col style="width:120px;"><col><col style="width:120px;"><col>
-        </colgroup>
-        <tbody>
-          <tr style="border-top:1px solid #e2e2e2; border-bottom:1px solid #e2e2e2;">
-            <th style="text-align: center; font-weight: 300; border-bottom:none !important;">버전</th>
-            <td class="js-version-cell" style="border-bottom:none !important;"></td>
-          </tr>
-          <tr style="height:300px; border-bottom:1px solid #e2e2e2 !important;">
-            <th style="text-align: center; vertical-align: middle; font-weight: 300; border-bottom:none !important;">변경내역</th>
-            <td style="border-bottom:none !important; padding-left:16px;">
-              <div style="margin-bottom: 7px;display: flex;">
-                <div>-</div> <div style="margin-left:20px;">프로젝트 생성 및 전체 구조 설계</div>
-              </div>
-              <div style="margin-bottom: 7px;display: flex;">
-                <div>-</div> <div style="margin-left:20px;">회원가입 아이디 중복체크 완료</div>
-              </div>
-              <div style="margin-bottom: 7px;display: flex;">
-                <div>-</div> <div style="margin-left:20px;">관리자 상품 등록 완료</div>
-              </div>
-              <div style="margin-bottom: 7px;display: flex;">
-                <div>-</div> <div style="margin-left:20px;">쇼핑몰 메인 및 개별 페이지 링크 작업</div>
-              </div>
-              <div style="display: flex;">
-                <div>-</div> <div style="margin-left:20px;">개발을 위한 제반 사항 처리</div>
-              </div>
-            </td>
-          </tr>
-        </tbody>
-      </table>
-      <div class="ship-form__actions" style="justify-content:center; gap:8px;">
-        <button type="button" id="modalCloseBtn" class="btn-primary" style="font-weight: 300; width: 110px;">닫기</button>
-      </div>
-    </form>
-  </div>
+    <div class="ship-form__wrap">
+        <form id="couponRegForm">
+            <table class="ship-form__table">
+                <colgroup>
+                    <col style="width:120px;"><col>
+                </colgroup>
+                <tbody>
+                <!-- 버전 -->
+                <tr style="border-top:1px solid #e2e2e2; border-bottom:1px solid #e2e2e2;">
+                    <th style="text-align: center; font-weight: 300;">버전</th>
+                    <td class="js-version-cell" style="padding-left: 16px;"></td>
+                </tr>
+
+                <!-- 작성자 -->
+                <tr style="border-bottom:1px solid #e2e2e2;">
+                    <th style="text-align: center; font-weight: 300;">작성자</th>
+                    <td class="js-author-cell" style="padding-left: 16px;"></td>
+                </tr>
+
+                <!-- 변경내역 -->
+                <tr style="border-bottom:1px solid #e2e2e2;">
+                    <th style="text-align: center; vertical-align: top; font-weight: 300;">변경내역</th>
+                    <td class="js-change-cell" style="padding: 10px 16px; white-space: pre-line;"></td>
+                </tr>
+                </tbody>
+            </table>
+
+            <div class="ship-form__actions" style="justify-content:center; gap:8px;">
+                <button type="button" id="modalCloseBtn" class="btn-primary" style="font-weight:300; width:110px;">닫기</button>
+            </div>
+        </form>
+    </div>
 </template>
+
 
 <!-- ▼ 버전등록 모달 (신규) -->
 <div id="regModal" class="order-modal__overlay ship-modal" aria-hidden="true">
@@ -176,7 +171,7 @@
           <col style="width:120px;"><col>
         </colgroup>
         <tbody>
-          <tr style="border-top:1px solid #e2e2e2; border-bottom:1px solid #e2e2e2;">
+        <tr style="border-top:1px solid #e2e2e2; border-bottom:1px solid #e2e2e2;">
             <th style="text-align:center; font-weight:300; border-bottom:none !important; vertical-align: middle;">버전</th>
             <td style="border-bottom:none !important;">
               <input class="ipt" type="text" placeholder="버전 입력하기" style="width:240px;">
@@ -196,17 +191,69 @@
     </form>
   </div>
 </template>
-    <style>
-        .euro-nav__list {
-            max-height: 0;                /* 기본은 접힘 */
-            overflow: hidden;             /* 안 보이게 */
-            transition: max-height 0.15s ease;
-        }
+<style>
+    .euro-nav__list {
+        max-height: 0;                /* 기본은 접힘 */
+        overflow: hidden;             /* 안 보이게 */
+        transition: max-height 0.15s ease;
+    }
 
-            .euro-nav__group.open .euro-nav__list {
-            max-height: 500px;            /* 펼쳐졌을 때 (충분히 크게 설정) */
-        }
-        /* 모달 오버레이 기본 숨김 */
+    .euro-nav__group.open .euro-nav__list {
+        max-height: 500px;            /* 펼쳐졌을 때 (충분히 크게 설정) */
+    }
+</style>
+<script>
+    // 아코디언: 클릭 시 높이를 실제 내용 높이로 애니메이션
+    document.querySelectorAll('.euro-nav__title').forEach(title => {
+        title.style.cursor = 'pointer'; // 클릭 가능 시각화(선택)
+        title.addEventListener('click', () => {
+            const group = title.parentElement;
+            const list  = group.querySelector('.euro-nav__list');
+
+            const isOpen = group.classList.contains('open');
+
+            if (isOpen) {
+                // 닫기: 현재 높이를 고정 -> 0으로
+                list.style.maxHeight = list.scrollHeight + 'px';
+                // 강제 리플로우로 트랜지션 시작점 확정
+                list.offsetHeight;
+                list.style.maxHeight = '0px';
+                group.classList.remove('open');
+            } else {
+                // 열기: 0 -> 내용 높이
+                group.classList.add('open');
+                list.style.maxHeight = list.scrollHeight + 'px';
+
+                // 애니메이션 끝나면 inline max-height 제거(자연스런 레이아웃)
+                const onEnd = (e) => {
+                    if (e.propertyName === 'max-height') {
+                        list.style.maxHeight = 'none';
+                        list.removeEventListener('transitionend', onEnd);
+                    }
+                };
+                list.addEventListener('transitionend', onEnd);
+            }
+        });
+    });
+
+    const groups = document.querySelectorAll('.euro-nav__group');
+    document.querySelectorAll('.euro-nav__title').forEach(title => {
+        title.addEventListener('click', () => {
+            groups.forEach(g => {
+                if (g !== title.parentElement && g.classList.contains('open')) {
+                    const l = g.querySelector('.euro-nav__list');
+                    l.style.maxHeight = l.scrollHeight + 'px';
+                    l.offsetHeight;
+                    l.style.maxHeight = '0px';
+                    g.classList.remove('open');
+                }
+            });
+        }, {capture:true});
+    });
+
+</script>
+<style>
+/* 모달 오버레이 기본 숨김 */
 .order-modal__overlay{
   position: fixed; inset: 0;
   display: none;                      /* 기본 비표시 */
@@ -262,7 +309,7 @@
 .ship-form__table .js-version-cell{
   padding-left: 16px !important;  /* 원하는 값으로 */
 }
-    </style>
+</style>
 <script>
     // ===== 공통 DOM =====
     const shipModalOverlay = document.getElementById('shipModal');
@@ -274,6 +321,7 @@
     const regModalBody     = document.getElementById('regModalBody');
     const regModalClose    = document.getElementById('regModalClose');
     let   regTpl           = document.getElementById('regFormTemplate');
+
 
     const tbody            = document.getElementById('versionTbody');
     const selAllChk        = document.getElementById('selAll');
@@ -295,9 +343,9 @@
     <tr style="border-bottom:1px solid #e2e2e2; height:70px;vertical-align: middle;">
       <td><input type="checkbox" class="row-chk" data-id="${v.id}"></td>
       <td>${v.id ?? ''}</td>
-      <td>${v.version ?? ''}</td>
-      <td>${v.author ?? ''}</td>
-      <td>${fmt(v.updatedAt || v.createdAt)}</td>
+      <td>${v.versionName ?? ''}</td>
+      <td>${v.author ? v.author : '-'}</td>
+      <td>${fmt(v.createdAt)}</td>
       <td><a href="#" class="open-coupon" data-memo="${memo}">[확인]</a></td>
     </tr>
   `;
@@ -318,12 +366,19 @@
         shipModalBody.innerHTML = '';
         shipModalBody.appendChild(shipTpl.content.cloneNode(true));
 
+        // 버전
         const verCell = shipModalBody.querySelector('.js-version-cell');
-        if (verCell) verCell.textContent = data.version || '-';
+        if (verCell) verCell.textContent = data.versionName || '-';
 
-        const memoTa  = shipModalBody.querySelector('textarea[name="memo"]');
-        if (memoTa) memoTa.value = data.memo || '';
+        // 작성자
+        const authorCell = shipModalBody.querySelector('.js-author-cell');
+        if (authorCell) authorCell.textContent = data.author || '-';
 
+        // 변경내역
+        const changeCell = shipModalBody.querySelector('.js-change-cell');
+        if (changeCell) changeCell.textContent = data.changeLog || '-';
+
+        // 닫기 버튼
         const bottomCloseBtn = shipModalBody.querySelector('#modalCloseBtn');
         if (bottomCloseBtn) bottomCloseBtn.addEventListener('click', closeShipModal);
 
@@ -331,6 +386,7 @@
         shipModalOverlay.setAttribute('aria-hidden','false');
         document.body.style.overflow = 'hidden';
     }
+
 
     function closeShipModal(){
         shipModalOverlay.classList.remove('show');
@@ -349,10 +405,12 @@
         e.preventDefault();
         const tr  = a.closest('tr');
         const tds = tr ? tr.querySelectorAll('td') : [];
-        const ver = (tds[2]?.textContent || '').trim();
-        const memo= a.dataset.memo || '';
-        openShipModal({ version: ver, memo });
+        const version = (tds[2]?.textContent || '').trim();
+        const author  = (tds[3]?.textContent || '').trim();
+        const changeLog = a.dataset.memo || '';
+        openShipModal({ versionName: version, author, changeLog });
     });
+
 
     // ===== 버전 수정 모달 (PUT) =====
     function openRegModal(){
@@ -363,14 +421,22 @@
         const form = regModalBody.querySelector('#regForm');
         form.addEventListener('submit', async (e)=>{
             e.preventDefault();
-            const version   = regModalBody.querySelector('input.ipt')?.value?.trim() || '';
-            const changeLog = regModalBody.querySelector('textarea.txt')?.value?.trim() || '';
+            const versionInput   = regModalBody.querySelector('input.ipt');
+            const textarea       = regModalBody.querySelector('textarea.txt');
+
+            const version   = versionInput?.value?.trim() || '';
+            const changeLog = textarea?.value?.trim() || '';
+            const author = '관리자';
+
             if (!version){ alert('버전을 입력해주세요.'); return; }
 
             await fetch('/NICHIYA/api/admin/versions', {
-                method: 'PUT',
+                method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ version, changeLog })
+                body: JSON.stringify({ versionName: version,   // ✅ 필드명 맞추기
+                    author: author,
+                    changeLog: changeLog
+                })
             });
 
             await loadList();
@@ -419,6 +485,4 @@
     // 최초 로딩
     loadList();
 </script>
-
-</div>
 <div th:replace="~{admin/_footer.html}"></div>

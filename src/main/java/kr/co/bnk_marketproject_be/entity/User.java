@@ -3,6 +3,7 @@ package kr.co.bnk_marketproject_be.entity;
 import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.UpdateTimestamp;
 
 @Getter
 @Setter
@@ -34,8 +35,18 @@ public class User{
     @Builder.Default
     private String role = "user";
 
+    // 생성시 자동
     @CreationTimestamp
     private String created_at;
+    // 수정시 자동
+    @UpdateTimestamp
     private String updated_at;
+
+    // 구글 로그인
+    // provider : google이 들어감
+    private String provider;
+
+    // providerId : 구굴 로그인 한 유저의 고유 ID가 들어감
+    private String providerId;
 
 }

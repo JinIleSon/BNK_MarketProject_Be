@@ -1,177 +1,257 @@
 <div th:replace="~{admin/_header.html}"></div>
-<meta name="_csrf" th:content="${_csrf.token}">
-<meta name="_csrf_header" th:content="${_csrf.headerName}">
 <style>
-  /* 카드 */
-  .tree-card{
-    width: 540px;
-    border: 1px solid #d9d9d9;
-    background: #fff;
-    padding: 10px 10px 6px;
-  }
+    /* 카드 전체 */
+    .tree-card {
+        width: 540px;
+        border: 1px solid #dcdcdc;
+        background: #fff;
+        padding: 12px;
+        font-family: "Noto Sans KR", "Pretendard", sans-serif;
+        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+    }
 
-  /* 안내 배너 */
-  .helper{
-    margin-top: 10px;
-    background: #fff7cc;
-    color:#444;
-    font-size:12px;
-    padding:10px;
-    border:1px solid #f0e2a6;
-  }
+    /* 안내문 */
+    .helper {
+        margin-top: 12px;
+        background: #f8f8f8;
+        border: 1px solid #e0e0e0;
+        color: #555;
+        font-size: 13px;
+        padding: 8px 10px;
+    }
 
-  /* 트리 공통 */
-  .level-1,.level-2{list-style:none;margin:0;padding:0}
-  .level-2{padding-left:22px}
-  .node>.row,.leaf>.row{
-    display:flex;align-items:center;gap:8px;
-    padding:6px 8px;background:#fff;
-    border:1px solid #d9d9d9;border-top:none;
-  }
-  .node:first-child>.row{border-top:1px solid #d9d9d9}
-  .node>.row:hover,.leaf>.row:hover{background:#f7f9fc}
+    /* 트리 구조 */
+    .level-1, .level-2 {
+        list-style: none;
+        margin: 0;
+        padding: 0;
+    }
+    .level-2 {
+        padding-left: 24px;
+        border-left: 1px solid #e0e0e0;
+        margin-left: 8px;
+    }
 
-  /* 토글(▶/▼) */
-  .toggle{
-    width:22px;height:22px;line-height:20px;text-align:center;
-    border:1px solid #cfcfcf;background:#fff;cursor:pointer;
-    font-size:12px;flex-shrink:0;
-  }
+    /* 각 노드 */
+    .node > .row, .leaf > .row {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 8px 10px;
+        background: #fafafa;
+        border: 1px solid #e3e3e3;
+        margin-bottom: 6px;
+        transition: background 0.2s;
+    }
+    .node > .row:hover, .leaf > .row:hover {
+        background: #f0f0f0;
+    }
 
-  /* 이름 */
-  .name[contenteditable="true"]{
-    flex:1;min-width:0;padding:2px 4px;outline:1px dashed transparent
-  }
-  .name[contenteditable="true"]:focus{outline-color:#c7d2fe;background:#fff}
+    /* 토글버튼 (▶/▼ 자리) */
+    .toggle {
+        width: 22px;
+        height: 22px;
+        line-height: 22px;
+        text-align: center;
+        border: none;
+        background: transparent;
+        color: #222;
+        font-size: 12px;
+        cursor: pointer;
+        flex-shrink: 0;
+    }
 
-  /* 버튼 */
-  .btn-add{border:1px solid #cbd5e1;background:#fff;color:#555;font-size:12px;cursor:pointer;padding:4px 8px}
-  .btn-red{border:1px solid #ff6b6b;color:#ff4d4f;background:#fff;font-size:12px;padding:2px 6px;flex-shrink:0}
+    /* 이름 */
+    .name[contenteditable="true"] {
+        flex: 1;
+        padding: 2px 4px;
+        color: #222;
+        background: transparent;
+        outline: none;
+    }
+    .name[contenteditable="true"]:focus {
+        background: #f4f4f4;
+        outline: 1px solid #c0c0c0;
+    }
 
-  /* 접힘 처리 */
-  .level-2.collapsed{display:none}
+    /* 버튼들 */
+    .btn-add {
+        border: 1px solid #c8c8c8;
+        background: #f9f9f9;
+        color: #444;
+        font-size: 12px;
+        cursor: pointer;
+        padding: 4px 8px;
+    }
+    .btn-add:hover {
+        background: #efefef;
+    }
 
-  /* 하단(1차추가/저장) */
-  .card-footer{
-    margin-top:8px;display:flex;justify-content:space-between;align-items:center;
-  }
-  .save-btn{padding:8px 14px;background:#7d8fb3;color:#fff;border:none;cursor:pointer}
+    .btn-gray {
+        border: 1px solid #ccc;
+        color: #333;
+        background: #fff;
+        font-size: 12px;
+        padding: 4px 8px;
+        cursor: pointer;
+    }
+    .btn-gray:hover {
+        background: #f2f2f2;
+    }
 
-  /* 1차 추가 줄 */
-  .add-l1-row .row{
-    display:flex;align-items:center;gap:8px;
-    padding:6px 8px;border:1px dashed #cbd5e1;background:#fafcff
-  }
+    /* 하단 버튼 */
+    .card-footer {
+        margin-top: 10px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+    .save-btn {
+        padding: 8px 14px;
+        background: #333;
+        color: #fff;
+        border: none;
+        cursor: pointer;
+        font-weight: 500;
+        letter-spacing: 0.2px;
+    }
+    .save-btn:hover {
+        background: #000;
+    }
+
+    /* 1차 추가 줄 */
+    .add-l1-row .row {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        padding: 6px 8px;
+        border: 1px dashed #d0d0d0;
+        background: #fafafa;
+        margin-top: 8px;
+    }
+
+    /* 삭제 버튼 (무채색 버전) */
+    .btn-red {
+        border: 1px solid #bfbfbf;
+        background: #fff;
+        color: #555;
+        font-size: 12px;
+        padding: 2px 6px;
+        cursor: pointer;
+    }
+    .btn-red:hover {
+        background: #f2f2f2;
+    }
+
+
+
+
 
 </style>
 
-<main style="display:flex;justify-content:center;border-top:1px solid #e2e2e2;">
-  <div>
+<main style="display: flex; justify-content: center; border-top:1px solid #e2e2e2;">
+    <div>
+        <aside class="euro-nav" aria-label="관리자 사이드 메뉴" style="">
+            <section class="euro-nav__group">
+                <h4 class="euro-nav__title" style="">환경설정</h4>
+                <ul class="euro-nav__list">
+                    <li class="euro-nav__item"><a th:href="@{/admin/admin_basic}">기본설정</a></li>
+                    <li class="euro-nav__item"><a th:href="@{/admin/admin_banner}">배너관리</a></li>
+                    <li class="euro-nav__item"><a th:href="@{/admin/admin_policy}">약관관리</a></li>
+                    <li class="euro-nav__item is-active"><a th:href="@{/admin/admin_category}">카테고리</a></li>
+                    <li class="euro-nav__item"><a th:href="@{/admin/admin_version}">버전관리</a></li>
+                </ul>
+            </section>
 
-      <aside class="euro-nav" aria-label="관리자 사이드 메뉴" style="">
-          <section class="euro-nav__group">
-              <h4 class="euro-nav__title" style="">환경설정</h4>
-              <ul class="euro-nav__list">
-                  <li class="euro-nav__item"><a href="#">기본설정</a></li>
-                  <li class="euro-nav__item"><a href="#">배너관리</a></li>
-                  <li class="euro-nav__item"><a href="#">약관관리</a></li>
-                  <li class="euro-nav__item is-active"><a href="#">카테고리</a></li>
-                  <li class="euro-nav__item"><a href="#">버전관리</a></li>
-              </ul>
-          </section>
+            <section class="euro-nav__group">
+                <h4 class="euro-nav__title" style="">상점관리</h4>
+                <ul class="euro-nav__list">
+                    <li class="euro-nav__item"><a th:href="@{/admin/shop/list}">상점목록</a></li>
+                    <li class="euro-nav__item"><a th:href="@{/admin/sales/list}">매출현황</a></li>
+                </ul>
+            </section>
 
-          <section class="euro-nav__group">
-              <h4 class="euro-nav__title" style="">상점관리</h4>
-              <ul class="euro-nav__list">
-                  <li class="euro-nav__item"><a th:href="@{/admin/shop/list}">상점목록</a></li>
-                  <li class="euro-nav__item"><a th:href="@{/admin/sales/list}">매출현황</a></li>
-              </ul>
-          </section>
+            <section class="euro-nav__group">
+                <h4 class="euro-nav__title" style="">회원관리</h4>
+                <ul class="euro-nav__list">
+                    <li class="euro-nav__item"><a th:href="@{/admin/member/list}">회원목록</a></li>
+                    <li class="euro-nav__item"><a th:href="@{/admin/point/list}">포인트관리</a></li>
+                </ul>
+            </section>
 
-          <section class="euro-nav__group">
-              <h4 class="euro-nav__title" style="">회원관리</h4>
-              <ul class="euro-nav__list">
-                  <li class="euro-nav__item"><a th:href="@{/admin/member/list}">회원목록</a></li>
-                  <li class="euro-nav__item"><a th:href="@{/admin/point/list}">포인트관리</a></li>
-              </ul>
-          </section>
+            <section class="euro-nav__group">
+                <h4 class="euro-nav__title" style="">상품관리</h4>
+                <ul class="euro-nav__list">
+                    <li class="euro-nav__item"><a th:href="@{/admin/product/list}">상품목록</a></li>
+                    <li class="euro-nav__item"><a th:href="@{/admin/productReg/list}">상품등록</a></li>
+                </ul>
+            </section>
 
-          <section class="euro-nav__group">
-              <h4 class="euro-nav__title" style="">상품관리</h4>
-              <ul class="euro-nav__list">
-                  <li class="euro-nav__item"><a th:href="@{/admin/product/list}">상품목록</a></li>
-                  <li class="euro-nav__item"><a th:href="@{/admin/productReg/list}">상품등록</a></li>
-              </ul>
-          </section>
+            <section class="euro-nav__group">
+                <h4 class="euro-nav__title" style="">주문관리</h4>
+                <ul class="euro-nav__list">
+                    <li class="euro-nav__item"><a th:href="@{/admin/order/list}">주문현황</a></li>
+                    <li class="euro-nav__item"><a th:href="@{/admin/delivery/list}">배송현황</a></li>
+                </ul>
+            </section>
 
-          <section class="euro-nav__group">
-              <h4 class="euro-nav__title" style="">주문관리</h4>
-              <ul class="euro-nav__list">
-                  <li class="euro-nav__item"><a th:href="@{/admin/order/list}">주문현황</a></li>
-                  <li class="euro-nav__item"><a th:href="@{/admin/delivery/list}">배송현황</a></li>
-              </ul>
-          </section>
+            <section class="euro-nav__group">
+                <h4 class="euro-nav__title" style="">쿠폰관리</h4>
+                <ul class="euro-nav__list">
+                    <li class="euro-nav__item"><a th:href="@{/admin/coupon/list}">쿠폰목록</a></li>
+                    <li class="euro-nav__item"><a th:href="@{/admin/couponsnow/list}">쿠폰발급현황</a></li>
+                </ul>
+            </section>
 
-          <section class="euro-nav__group">
-              <h4 class="euro-nav__title" style="">쿠폰관리</h4>
-              <ul class="euro-nav__list">
-                  <li class="euro-nav__item"><a th:href="@{/admin/coupon/list}">쿠폰목록</a></li>
-                  <li class="euro-nav__item"><a th:href="@{/admin/couponsnow/list}">쿠폰발급현황</a></li>
-              </ul>
-          </section>
+            <section class="euro-nav__group">
+                <h4 class="euro-nav__title" style="">고객센터</h4>
+                <ul class="euro-nav__list">
+                    <li class="euro-nav__item"><a th:href="@{/admin/announcement/list}">공지사항</a></li>
+                    <li class="euro-nav__item"><a th:href="@{/admin/FAQ/list}">자주묻는질문</a></li>
+                    <li class="euro-nav__item"><a th:href="@{/admin/inquiry/list}">문의하기</a></li>
+                    <li class="euro-nav__item"><a th:href="@{/admin/employ/list}">채용하기</a></li>
+                </ul>
+            </section>
+        </aside>
+    </div>
+    <div style=" border-left:1px solid #e2e2e2;"></div>
+    <div style="margin-left:40px; width:900px; margin-bottom:300px;">
 
-          <section class="euro-nav__group">
-              <h4 class="euro-nav__title" style="">고객센터</h4>
-              <ul class="euro-nav__list">
-                  <li class="euro-nav__item"><a th:href="@{/admin/announcement/list}">공지사항</a></li>
-                  <li class="euro-nav__item"><a th:href="@{/admin/FAQ/list}">자주묻는질문</a></li>
-                  <li class="euro-nav__item"><a th:href="@{/admin/inquiry/list}">문의하기</a></li>
-                  <li class="euro-nav__item"><a th:href="@{/admin/employ/list}">채용하기</a></li>
-              </ul>
-          </section>
-      </aside>
-  </div>
-
-  <div style="border-left:1px solid #e2e2e2;"></div>
-
-  <div style="margin-left:40px; width:900px; height:1000px;">
-    <section class="category-admin">
-      <div class="page-head" style="border-bottom: 3px solid #cfcfcf;">
-        <div class="title"><b>카테고리</b></div>
-        <div class="breadcrumbs">HOME &gt; 환경설정 &gt; <b>카테고리</b></div>
-      </div>
-
-      <div class="div-gray" style="margin-bottom: 10px;">
-        쇼핑몰 메인, 상품 페이지 사이드 카테고리 메뉴 입니다
-      </div>
-
-      <div class="panel">
-        <div class="panel-head"></div>
-
-        <div class="tree-card">
-          <div class="tree-wrap" aria-label="카테고리 편집">
-            <ul class="level-1" id="level1"><!-- JS 렌더 --></ul>
-
-            <div class="card-footer">
-              <li class="node add-l1-row" style="list-style:none;width:auto;">
-                <div class="row">
-                  <button class="btn-add add-l1" type="button">+</button>
-                  <span class="name" style="pointer-events:none;">1차 카테고리 추가</span>
-                </div>
-              </li>
-              <button id="saveBtn" class="save-btn" type="button">수정하기</button>
-            </div>
-          </div>
-
-          <div class="helper">
-            카테고리 메뉴 순서를 변경할 때 드래그 앤 드롭으로 이동 후 <b>수정하기</b>를 클릭하세요.
-          </div>
-          <span class="save-hint" id="saveHint" aria-live="polite"></span>
+        <div class="title-line" style="border-bottom: 2px solid #ccc;">
+            <div style="padding-top: 10px; padding-bottom: 5px; font-size: 22px;"><b>카테고리</b></div>
+            <div>HOME > 환경설정 > <b>카테고리</b></div>
         </div>
 
-      </div>
-    </section>
-  </div>
+        <div class="div-gray" style="margin-bottom: 10px;">
+            쇼핑몰 메인, 상품 페이지 사이드 카테고리 메뉴 입니다
+        </div>
+
+        <div class="panel">
+            <div class="panel-head"></div>
+
+            <div class="tree-card">
+              <div class="tree-wrap" aria-label="카테고리 편집">
+                  <ul class="level-1" id="level1"></ul>
+                    <!-- JS 렌더 -->
+
+                <div class="card-footer">
+                  <li class="node add-l1-row" style="list-style:none;width:auto;">
+                    <div class="row">
+                      <button class="btn-add add-l1" type="button">+</button>
+                      <span class="name" style="pointer-events:none;">1차 카테고리 추가</span>
+                    </div>
+                  </li>
+                  <button id="saveBtn" class="save-btn" type="button">수정하기</button>
+                </div>
+              </div>
+
+              <div class="helper">
+                카테고리 메뉴 순서를 변경할 때 드래그 앤 드롭으로 이동 후 <b>수정하기</b>를 클릭하세요.
+              </div>
+              <span class="save-hint" id="saveHint" aria-live="polite"></span>
+            </div>
+        </div>
+    </div>
 </main>
 
 <script th:inline="javascript">
@@ -189,11 +269,11 @@
     return `
       <li class="node" data-id="${id}" draggable="true">
         <div class="row" style="border:1px solid #cfcfcf;">
-          <button class="drag-handle" type="button">▶</button>
+          <button class="drag-handle toggle" type="button">▶</button>
           <span class="name" contenteditable="true">${text}</span>
           <button class="btn-red btn-del" data-scope="l1" type="button">삭제</button>
         </div>
-        <ul class="level-2 droppable"></ul>
+        <ul class="level-2 droppable collapsed"></ul> <!-- ✅ 기본 접힘 -->
       </li>`;
   }
 
@@ -211,11 +291,11 @@
     return `
     <li class="node" data-id="${id}" draggable="true">
       <div class="row" style="border: 1px solid #cfcfcf;">
-        <button class="drag-handle" type="button">▶</button>
+        <button class="drag-handle toggle" type="button">▶</button>
         <span class="name" contenteditable="true">${name}</span>
         <button class="btn-red btn-del" data-scope="l1" type="button">삭제</button>
       </div>
-      <ul class="level-2 droppable"></ul>
+      <ul class="level-2 droppable collapsed"></ul> <!-- ✅ 기본 접힘 -->
     </li>`;
   }
 
@@ -293,6 +373,33 @@
     onDragLeaveList(e);
   }
 
+  // ===== Toggle (▶ / ▼ 열기·닫기) =====
+  document.addEventListener('click', function (e) {
+      const toggleBtn = e.target.closest('.toggle');
+      if (!toggleBtn) return; // 토글버튼 아닌 클릭 무시
+
+      const node = toggleBtn.closest('.node');
+      if (!node) return;
+
+      const childList = node.querySelector('.level-2');
+      if (!childList) return;
+
+      const isCollapsed = childList.classList.toggle('collapsed');
+      toggleBtn.textContent = isCollapsed ? '▶' : '▼';
+  });
+
+  // ===== 초기 로드시 모든 level-2 접기 =====
+  window.addEventListener('DOMContentLoaded', () => {
+      document.querySelectorAll('.node').forEach(node => {
+          const list = node.querySelector('.level-2');
+          const toggle = node.querySelector('.toggle');
+          if (list && toggle) {
+              list.classList.add('collapsed');
+              toggle.textContent = '▶';
+          }
+      });
+  });
+
   // ===== 바인딩 =====
   function wireNode(li){
     li.addEventListener('dragstart', onDragStart);
@@ -349,6 +456,9 @@
     }
   }
 
+
+
+
   // ===== API =====
   async function fetchCategories(){
     const res = await fetch(`${API_BASE}api/admin/categories`, {
@@ -390,7 +500,9 @@
       l2Leaves.forEach((leaf, idx2) => {
         const cidRaw = leaf.dataset.id;
         const cname  = leaf.querySelector('.name')?.textContent.trim() || '';
-        result.push({ id: toNumId(cidRaw), name: cname, parentId: toNumId(idRaw), categoryNo: idx2 + 1 });
+        const parentId = toNumId(leaf.closest('.node')?.dataset.id);
+        result.push({ id: toNumId(cidRaw), name: cname, parentId, categoryNo: idx2 + 1 });
+
       });
     });
     return result;
@@ -433,14 +545,19 @@
     level1.querySelectorAll('.add-l2').forEach(btn => {
       if (!btn.__wired){
         btn.__wired = true;
-        btn.addEventListener('click', () => {
-          const addRow = btn.closest('li.add-l2-row');
-          if (!addRow) return;
-          const ul = addRow.parentElement;
-          const cid = 'n' + Date.now();
-          addRow.insertAdjacentHTML('beforebegin', leafTemplate(cid, '새 2차 카테고리'));
-          wireLeaf(addRow.previousElementSibling);
-        });
+          btn.addEventListener('click', () => {
+              const addRow = btn.closest('li.add-l2-row');
+              if (!addRow) return;
+              const ul = addRow.parentElement;
+              const parentLi = ul.closest('.node');               // ✅ 부모 node 찾기
+              const parentId = parentLi?.dataset.id || null;      // ✅ 부모 id 확보
+              const cid = 'n' + Date.now();
+              addRow.insertAdjacentHTML('beforebegin', leafTemplate(cid, '새 2차 카테고리'));
+              const newLeaf = addRow.previousElementSibling;
+              newLeaf.dataset.parentId = parentId;                // ✅ 부모 id 기록
+              wireLeaf(newLeaf);
+          });
+
       }
     });
   }
@@ -504,6 +621,7 @@
           const result = await postJson(`${API_BASE}api/admin/categories/commit`, payload, 'PUT');
           console.log('✅ 저장 성공:', result);
           deletedIds.clear();
+          alert('수정이 완료되었습니다!');
           await renderCategories(); // DB 기준 재랜더
         } catch (err) {
           console.error('저장 실패:', err);
@@ -511,32 +629,83 @@
         }
       });
     }
-
-    // 사이드 아코디언(기존 코드가 있다면 그대로 두셔도 됩니다)
-    document.querySelectorAll('.euro-nav__title').forEach((title) => {
-      title.style.cursor = 'pointer';
-      title.addEventListener('click', () => {
-        const group = title.parentElement;
-        const list  = group.querySelector('.euro-nav__list');
-        const isOpen = group.classList.contains('open');
-        if (isOpen) {
-          list.style.maxHeight = list.scrollHeight + 'px'; list.offsetHeight;
-          list.style.maxHeight = '0px'; group.classList.remove('open');
-        } else {
-          group.classList.add('open');
-          list.style.maxHeight = list.scrollHeight + 'px';
-          const onEnd = (e) => {
-            if (e.propertyName === 'max-height') {
-              list.style.maxHeight = 'none';
-              list.removeEventListener('transitionend', onEnd);
-            }
-          };
-          list.addEventListener('transitionend', onEnd);
-        }
-      }, { capture: true });
-    });
   });
 </script>
+<style>
+    /* 닫힌 상태 숨기기 */
+    .level-2.collapsed {
+        display: none;
+    }
 
+    /* 기본 버튼 초기화 */
+    .toggle {
+        border: none;
+        background: transparent;
+        font-size: 13px;
+        cursor: pointer;
+        color: #333;
+        width: 20px;
+    }
+
+    .euro-nav__list {
+        max-height: 0;                /* 기본은 접힘 */
+        overflow: hidden;             /* 안 보이게 */
+        transition: max-height 0.15s ease;
+    }
+
+    .euro-nav__group.open .euro-nav__list {
+        max-height: 500px;            /* 펼쳐졌을 때 (충분히 크게 설정) */
+    }
+</style>
+<script>
+    // 아코디언: 클릭 시 높이를 실제 내용 높이로 애니메이션
+    document.querySelectorAll('.euro-nav__title').forEach(title => {
+        title.style.cursor = 'pointer'; // 클릭 가능 시각화(선택)
+        title.addEventListener('click', () => {
+            const group = title.parentElement;
+            const list  = group.querySelector('.euro-nav__list');
+
+            const isOpen = group.classList.contains('open');
+
+            if (isOpen) {
+                // 닫기: 현재 높이를 고정 -> 0으로
+                list.style.maxHeight = list.scrollHeight + 'px';
+                // 강제 리플로우로 트랜지션 시작점 확정
+                list.offsetHeight;
+                list.style.maxHeight = '0px';
+                group.classList.remove('open');
+            } else {
+                // 열기: 0 -> 내용 높이
+                group.classList.add('open');
+                list.style.maxHeight = list.scrollHeight + 'px';
+
+                // 애니메이션 끝나면 inline max-height 제거(자연스런 레이아웃)
+                const onEnd = (e) => {
+                    if (e.propertyName === 'max-height') {
+                        list.style.maxHeight = 'none';
+                        list.removeEventListener('transitionend', onEnd);
+                    }
+                };
+                list.addEventListener('transitionend', onEnd);
+            }
+        });
+    });
+
+    const groups = document.querySelectorAll('.euro-nav__group');
+    document.querySelectorAll('.euro-nav__title').forEach(title => {
+        title.addEventListener('click', () => {
+            groups.forEach(g => {
+                if (g !== title.parentElement && g.classList.contains('open')) {
+                    const l = g.querySelector('.euro-nav__list');
+                    l.style.maxHeight = l.scrollHeight + 'px';
+                    l.offsetHeight;
+                    l.style.maxHeight = '0px';
+                    g.classList.remove('open');
+                }
+            });
+        }, {capture:true});
+    });
+
+</script>
 
 <div th:replace="~{admin/_footer.html}"></div>

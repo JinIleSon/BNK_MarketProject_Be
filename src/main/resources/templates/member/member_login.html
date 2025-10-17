@@ -285,21 +285,26 @@
         <section class="login-side">
             <div class="login-panel">
                 <div class="header-logo">
-                    <img class="header-logo-img" src="../images/logo.png" alt="logo">
+                    <a th:href="@{/main/main/page}">
+                        <img class="header-logo-img" th:src="@{/images/logo.png}" alt="logo">
+                    </a>
                 </div>
                 <div class="login-text">로그인</div>
 
-                <form id="loginForm" class="login-form" method="post" novalidate>
+                <form id="loginForm" class="login-form" method="post" action="/NICHIYA/member/login" novalidate>
+           <!--  <form id="loginForm" class="login-form" method="post" th:action="@{/member/login}" novalidate>    -->
                     <div class="form-field form-field-id">
-                        <input id="userid" name="userId" type="text" placeholder="아이디" minlength="4" required />
+                        <input id="userid" name="userId" type="text" placeholder="아이디"  required />
                         <p class="error-msg"></p>
+                        <!--minlength="4" 아이디 비번뒤에 들어가야 되는데 로그인 확인용으로 잠깐 제거-->
                     </div>
 
                     <div class="form-field form-field-pw">
-                        <input id="password" name="password" type="password" placeholder="비밀번호" minlength="4"
+                        <input id="password" name="password" type="password" placeholder="비밀번호"
                             required />
                         <p class="error-msg"></p>
                     </div>
+
 
                     <div class="login-assist">
                         <div class="find-pw">
@@ -307,7 +312,8 @@
                             <a href="/NICHIYA/member/findpassword">비밀번호 찾기</a>
                         </div>
                         <div class="auto-login">
-                            <input type="checkbox" id="remember">
+                            <!--자동로그인 remember-me 활성화 -->
+                            <input type="checkbox" id="remember" name="remember-me" value="on">
                             <label for="remember">자동 로그인</label>
                         </div>
                     </div>
@@ -315,18 +321,15 @@
                     <button class="btn-log" type="submit">로그인</button>
                     <button class="btn-reg" type="button">회원가입</button>
 
-                    <div class="form-field-social" role="group" aria-label="간편 로그인">
-                        <a href="#" class="social-btn" aria-label="카카오 로그인">
-                            <img src="../images/icon_sns_kakao.png" alt="">
-                            <span class="sr-only">카카오로 로그인</span>
+                    <div class="form-field-social">
+                        <a th:href="@{/oauth2/authorization/kakao}" class="social-btn" aria-label="카카오 로그인">
+                            <img src="../images/icon_sns_kakao.png" alt="카카오 로그인">
                         </a>
-                        <a href="#" class="social-btn" aria-label="네이버 로그인">
-                            <img src="../images/icon_sns_naver.png" alt="">
-                            <span class="sr-only">네이버로 로그인</span>
+                        <a th:href="@{/oauth2/authorization/naver}" class="social-btn" aria-label="네이버 로그인">
+                            <img src="../images/icon_sns_naver.png" alt="네이버 로그인">
                         </a>
-                        <a href="#" class="social-btn" aria-label="구글 로그인">
-                            <img src="../images/icon_sns_google.png" alt="">
-                            <span class="sr-only">구글로 로그인</span>
+                        <a th:href="@{/oauth2/authorization/google}" class="social-btn" aria-label="구글 로그인">
+                            <img src="../images/icon_sns_google.png" alt="구글 로그인">
                         </a>
                     </div>
 
@@ -353,59 +356,77 @@
     </div>
 
     <script>
-        const form = document.getElementById('loginForm');
-        const groups = [
-            document.querySelector('.form-field-id'),
-            document.querySelector('.form-field-pw')
-        ];
+        document.addEventListener("DOMContentLoaded", function() {
 
-        function validateGroup(group) {
-            const input = group.querySelector('input');
-            const msg = group.querySelector('.error-msg');
-            const v = input.validity;
-            let text = "";
-
-            if (v.valid) {
-                group.classList.remove('is-invalid');
-                group.classList.add('is-valid');
-                msg.textContent = "";
-                return;
+            // 로그인 실패 시 경고 표시
+            const params = new URLSearchParams(window.location.search);
+            if (params.get("error") === "true") {
+                alert("아이디 또는 비밀번호가 올바르지 않습니다.");
             }
-            group.classList.add('is-invalid');
-            group.classList.remove('is-valid');
 
-            if (input.id === "userid") {
-                if (v.valueMissing) text = "아이디를 입력하세요.";
-                else if (v.tooShort) text = "아이디는 최소 4자 이상 입력해야 합니다.";
-                else text = "";
-            } else if (input.type === "password") {
-                if (v.valueMissing) text = "비밀번호를 입력하세요.";
-                else if (v.tooShort) text = "비밀번호는 최소 4자 이상 입력해야 합니다.";
-                else text = "";
-            }
-            msg.textContent = text;
-        }
+            const form = document.getElementById('loginForm');
+            const groups = [
+                document.querySelector('.form-field-id'),
+                document.querySelector('.form-field-pw')
+            ];
 
-        groups.forEach(group => {
-            const input = group.querySelector('input');
-            input.addEventListener('blur', () => validateGroup(group));
-            input.addEventListener('input', () => {
-                if (group.classList.contains('is-invalid') || group.classList.contains('is-valid')) {
-                    validateGroup(group);
+            function validateGroup(group) {
+                const input = group.querySelector('input');
+                const msg = group.querySelector('.error-msg');
+                const v = input.validity;
+                let text = "";
+
+                if (v.valid) {
+                    group.classList.remove('is-invalid');
+                    group.classList.add('is-valid');
+                    msg.textContent = "";
+                    return;
                 }
-            });
-        });
+                group.classList.add('is-invalid');
+                group.classList.remove('is-valid');
 
-        form.addEventListener('submit', (e) => {
-            let allValid = true;
-            groups.forEach(g => {
-                validateGroup(g);
-                const input = g.querySelector('input');
-                if (!input.checkValidity()) allValid = false;
+                if (input.id === "userid") {
+                    if (v.valueMissing) text = "아이디를 입력하세요.";
+                    else if (v.tooShort) text = "아이디는 최소 4자 이상 입력해야 합니다.";
+                } else if (input.type === "password") {
+                    if (v.valueMissing) text = "비밀번호를 입력하세요.";
+                    else if (v.tooShort) text = "비밀번호는 최소 4자 이상 입력해야 합니다.";
+                }
+                msg.textContent = text;
+            }
+
+            groups.forEach(group => {
+                const input = group.querySelector('input');
+                input.addEventListener('blur', () => validateGroup(group));
+                input.addEventListener('input', () => {
+                    if (group.classList.contains('is-invalid') || group.classList.contains('is-valid')) {
+                        validateGroup(group);
+                    }
+                });
             });
-            if (!allValid) e.preventDefault();
+
+            form.addEventListener('submit', (e) => {
+                let allValid = true;
+                groups.forEach(g => {
+                    validateGroup(g);
+                    const input = g.querySelector('input');
+                    if (!input.checkValidity()) allValid = false;
+                });
+                if (!allValid) e.preventDefault();
+            });
+
+            // ✅ 회원가입 버튼 이동 (제대로 위치해야 함)
+            const btnReg = document.querySelector(".btn-reg");
+            if (btnReg) {
+                btnReg.addEventListener("click", () => {
+                    // 일반 회원가입을 위한 약관 동의 페이지로 이동
+                    location.href = "/NICHIYA/member/signup";
+
+                });
+            }
         });
     </script>
+
 </body>
 
 </html>

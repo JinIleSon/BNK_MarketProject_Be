@@ -190,7 +190,6 @@
             color: white;
         }
 
-
         /* 본문 */
         .title_area {
             border-top: 3px solid #ddd;
@@ -339,61 +338,16 @@
         <div style="display: flex; margin-left:20%; margin-top:1%; width:100%;">
             <nav class="overlay__menu" style="width:100%;">
                 <div style="">
-<!--                    <a href="#"><b>공지사항</b></a>-->
-                    <b>공지사항</b>
-                    <br><br>
+                    <a th:href="@{/cs/notice/list}"><b>공지사항</b></a>
+                    <a th:href="@{/cs/faq/list}"><b>자주묻는질문</b></a>
+                    <a th:href="@{/cs/qna/list}"><b>Qna</b></a>
+                    <br>
                     <a th:href="@{/cs/notice/list}">전체</a>
                     <a th:href="@{/cs/notice/list(boardType='서비스')}">고객서비스</a>
                     <a th:href="@{/cs/notice/list(boardType='안전거래')}">안전거래</a>
                     <a th:href="@{/cs/notice/list(boardType='판매중지')}">위해상품</a>
                     <a th:href="@{/cs/notice/list(boardType='당첨자')}">이벤트당첨</a>
                 </div>
-
-<!--                <div id="subcol">-->
-<!--                    &lt;!&ndash; 전체 &ndash;&gt;-->
-<!--                    <section class="panel" data-key="fashion">-->
-<!--                        <h3>전체</h3>-->
-<!--                        &lt;!&ndash; 이 안은 자유롭게: 그리드/이미지/텍스트 무엇이든 &ndash;&gt;-->
-<!--                        <ul class="menu-grid" style="">-->
-<!--                        <li><a href="#">#</a></li>-->
-<!--                        &lt;!&ndash; … &ndash;&gt;-->
-<!--                        </ul>-->
-<!--                    </section>-->
-
-<!--                    &lt;!&ndash; 고객서비스 &ndash;&gt;-->
-<!--                    <section class="panel" data-key="digital">-->
-<!--                        <h3>고객서비스</h3>-->
-<!--                        <div class="menu-grid">-->
-<!--                        <a href="#">#</a>-->
-<!--                        </div>-->
-<!--                    </section>-->
-
-<!--                    &lt;!&ndash; 안전거래 &ndash;&gt;-->
-<!--                    <section class="panel" data-key="grocery">-->
-<!--                        <h3>안전거래</h3>-->
-<!--                        <div class="menu-grid">-->
-<!--                            <a href="#">#</a>-->
-<!--                        </div>-->
-<!--                    </section>-->
-
-<!--                    &lt;!&ndash; 위해상품 &ndash;&gt;-->
-<!--                    <section class="panel" data-key="home">-->
-<!--                        <h3>위해상품</h3>-->
-<!--                        <div class="menu-grid">-->
-<!--                            <a href="#">#</a>-->
-<!--                        </div>-->
-<!--                    </section>-->
-
-<!--                    &lt;!&ndash; 이벤트당첨 &ndash;&gt;-->
-<!--                    <section class="panel" data-key="book">-->
-<!--                        <h3>이벤트당첨</h3>-->
-<!--                        <div class="menu-grid">-->
-<!--                            <a href="#">#</a>-->
-<!--                        </div>-->
-<!--                    </section>-->
-<!--                </div>-->
-
-                <div style=""></div>
             </nav>
         </div>
     </div>
@@ -451,12 +405,6 @@
         });
     });
 
-    /* overlay 히든 메뉴 부모 자녀 관계 때문에 전체 버튼이 먹통되서 주석처리
-    // 기본으로 한 패널 오픈(원하는 키로 바꾸세요)
-    setActiveCat(document.querySelector('.overlay__menu a[data-cat="fashion"]'));
-    showPanel('fashion');
-    */
-
     </script>
 
 <!--    <div class="breadcrumb">-->
@@ -498,50 +446,47 @@
             <a th:href="@{/cs/notice/list(boardType=${boardType})}" class="btn_list">목록</a>
         </div>
     </div>
+    <div th:replace="~{main/footer :: footer}"></div>
 
-    <!-- DB 연동으로 주석처리
     <script>
-        // 샘플 데이터 (실제 데이터는 서버에서 받아와야 함)
-        const notices = [
-            { id:1, category: "안내", title: "해외결제사 정기점검주의", date: "2025.09.20", content: `안녕하세요. NICHITA입니다.<br>NICHITA 해외직구 결제 시 일부 해외카드 결제가 지연되고 있어 이용하실 때 이 점 양해 부탁드립니다.<br><br><strong><span style="color:red;">※피싱 관련 피해신고</span></strong><br>▶ 경찰청 사이버범죄수사 국 (국번없이) 1182<br>▶ KISA 인터넷침해대응센터 (국번없이) 1118<br>감사합니다.` },
-            { id:2, category: "고객서비스", title: "고객센터 운영시간 변경", date: "2025.09.22", content: "고객센터 운영시간이 변경되었습니다. 자세한 내용은 고객센터로 문의 바랍니다." },
-            { id:3, category: "안전거래", title: "안전거래 정책 안내", date: "2025.09.23", content: "안전거래 정책에 대한 안내입니다." },
-            { id:4, category: "위해상품", title: "리콜 공지사항", date: "2025.09.24", content: "위해상품 리콜 공지사항입니다." },
-            { id:5, category: "이벤트당첨", title: "이벤트 당첨자 발표", date: "2025.09.25", content: "이벤트 당첨자 명단이 발표되었습니다." },
-        ];
+        // --- 요소 가져오기 ---
+        const body     = document.body;
+        const menuBtn  = document.getElementById('menuBtn');
+        const closeBtn = document.getElementById('closeBtn');
+        const overlay  = document.getElementById('menuOverlay');
 
-        // URL에서 id, category 파라미터 받기
-        const urlParams = new URLSearchParams(window.location.search);
-        const noticeId = parseInt(urlParams.get('id'));
-        const category = urlParams.get('category') || '전체';
-
-        // 공지사항 찾기
-        const notice = notices.find(n => n.id === noticeId);
-
-        // 내용 채우기
-        if (notice) {
-            document.getElementById('notice-title').innerHTML = `[${notice.category}] ${notice.title}`;
-            document.getElementById('notice-date').textContent = notice.date;
-            document.getElementById('notice-content').innerHTML = notice.content;
-        } else {
-            document.getElementById('notice-title').textContent = "공지사항을 찾을 수 없습니다.";
-            document.getElementById('notice-date').textContent = "";
-            document.getElementById('notice-content').textContent = "";
+        // --- 메뉴 열기 ---
+        function openMenu(){
+            overlay.classList.add('open');
+            overlay.setAttribute('aria-hidden', 'false');
+            menuBtn.setAttribute('aria-expanded', 'true');
+            body.style.overflow = 'hidden';
         }
 
-        // 하단 목록 버튼 링크에 카테고리 유지
-        const listBtn = document.querySelector('.btn_list');
-        listBtn.href = `notice_list.html?category=${encodeURIComponent(category)}`;
+        // --- 메뉴 닫기 ---
+        function closeMenu(){
+            overlay.classList.remove('open');
+            overlay.setAttribute('aria-hidden', 'true');
+            menuBtn.setAttribute('aria-expanded', 'false');
+            body.style.overflow = '';
+        }
 
-        // 상단 탭에서 선택된 카테고리 표시
-        document.querySelectorAll('.cs_sub_nav ul li').forEach(li => li.classList.remove('on'));
-        document.querySelectorAll('.cs_sub_nav ul li a').forEach(a => {
-            if (a.getAttribute('href') === `notice_list.html?category=${category}`) {
-                a.parentElement.classList.add('on');
-            }
-        });
+        // --- 이벤트 연결 ---
+        if(menuBtn && closeBtn && overlay){
+            menuBtn.addEventListener('click', openMenu);
+            closeBtn.addEventListener('click', closeMenu);
+
+            // 배경 클릭 시 닫기
+            overlay.addEventListener('click', (e) => {
+                if(e.target === overlay) closeMenu();
+            });
+
+            // ESC 키 눌렀을 때 닫기
+            window.addEventListener('keydown', (e)=>{
+                if(e.key === 'Escape' && overlay.classList.contains('open')) closeMenu();
+            });
+        }
     </script>
-    -->
-    <div th:replace="~{main/footer :: footer}"></div>
+
 </body>
 </html>

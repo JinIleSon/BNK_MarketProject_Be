@@ -20,5 +20,8 @@ public class PageRequestProductDTO {
     private Integer maxPrice;     // 가격 최대 (옵션)
     @Builder.Default private String sort = "recent"; // sales | priceAsc | priceDesc | rating | review | recent
 
+    // 손진일 - 추가
+    @Builder.Default private Integer categoryId = 0;
+
     public int getOffset() { return (pg - 1) * size; }
 }

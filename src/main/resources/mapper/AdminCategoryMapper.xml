@@ -13,41 +13,69 @@
         <result property="categoryNo" column="category_no"/>
     </resultMap>
 
-    <!-- 목록: 부모 먼저, 같은 부모 내에서는 category_no 순 -->
+    <select id="findById" parameterType="int" resultMap="CategoryMap">
+        SELECT id, name, parent_id, category_no
+        FROM CATEGORIES
+        WHERE id = #{id}
+    </select>
+
+    <!-- 전체 목록 (부모 먼저, 자식 category_no 순) -->
     <select id="findAll" resultMap="CategoryMap">
         SELECT id, name, parent_id, category_no
         FROM CATEGORIES
         ORDER BY
             CASE WHEN parent_id IS NULL THEN id ELSE parent_id END,
-            CASE WHEN parent_id IS NULL THEN 0  ELSE category_no END,
-            id
+            category_no
     </select>
 
-    <!-- 다음 정렬 번호: parentId가 null이면 IS NULL 분기 필수 -->
-    <select id="nextOrderForParent" parameterType="int" resultType="int">
+    <!-- 특정 부모 하위 전체 (정렬용) -->
+    <select id="findByParentIdOrderByCategoryNo" resultMap="CategoryMap">
+        SELECT id, name, parent_id, category_no
+        FROM CATEGORIES
+        WHERE parent_id = #{parentId}
+        ORDER BY category_no
+    </select>
+
+    <!-- 다음 번호 자동 계산 -->
+    <select id="nextOrderForParent" parameterType="java.lang.Integer" resultType="int">
         SELECT COALESCE(MAX(category_no), 0) + 1
         FROM CATEGORIES
-        <where>
-            <choose>
-                <when test="parentId == null">
-                    parent_id IS NULL
-                </when>
-                <otherwise>
-                    parent_id = #{parentId}
-                </otherwise>
-            </choose>
-        </where>
+        WHERE
+            (#{parentId} IS NULL AND parent_id IS NULL)
+           OR (parent_id = #{parentId})
     </select>
 
-    <!-- INSERT: Oracle 시퀀스에서 PK 선발급 -->
     <insert id="insert" parameterType="kr.co.bnk_marketproject_be.dto.AdminCategoryDTO">
-        INSERT INTO CATEGORIES (
-            name, parent_id, category_no
-        ) VALUES (
-                     #{name},
-                     #{parentId, jdbcType=NUMERIC},
-                     #{categoryNo, jdbcType=NUMERIC}
-                 )
+        INSERT INTO CATEGORIES (name, parent_id, category_no)
+        VALUES (
+        #{name, jdbcType=VARCHAR},
+        <choose>
+            <when test="parentId != null">
+                #{parentId, jdbcType=NUMERIC}
+            </when>
+            <otherwise>
+                NULL
+            </otherwise>
+        </choose>,
+        <choose>
+            <!-- 부모가 있을 때: 부모의 category_no * 10 + 하위 순번 -->
+            <when test="parentId != null">
+                (
+                SELECT parent.category_no * 10
+                + (NVL(MAX(child.category_no), parent.category_no * 10)
+                - parent.category_no * 10) + 1
+                FROM CATEGORIES parent
+                LEFT JOIN CATEGORIES child ON child.parent_id = parent.id
+                WHERE parent.id = #{parentId}
+                GROUP BY parent.category_no
+                )
+            </when>
+            <!-- 부모가 없을 때: 최상위 카테고리 -->
+            <otherwise>
+                NVL((SELECT MAX(category_no) + 1 FROM CATEGORIES WHERE parent_id IS NULL), 1)
+            </otherwise>
+        </choose>
+        )
     </insert>
 
 
@@ -55,19 +83,29 @@
         UPDATE CATEGORIES
         SET
             name       = #{name},
-            parent_id  = #{parentId,   jdbcType=NUMERIC},
-            category_no= #{categoryNo, jdbcType=NUMERIC}
+            parent_id  = #{parentId, jdbcType=NUMERIC}
         WHERE id = #{id}
     </update>
 
+
     <delete id="delete" parameterType="int">
-        DELETE FROM CATEGORIES
-        WHERE id = #{id}
+        DELETE FROM CATEGORIES WHERE id = #{id}
     </delete>
 
     <delete id="deleteChildren" parameterType="int">
-        DELETE FROM CATEGORIES
-        WHERE parent_id = #{id}
+        DELETE FROM CATEGORIES WHERE parent_id = #{id}
     </delete>
+
+    <!-- 삭제 후 재정렬 -->
+    <update id="reorderAfterDelete" parameterType="int">
+        UPDATE CATEGORIES
+        SET category_no = (
+            SELECT rn FROM (
+                               SELECT id, ROW_NUMBER() OVER (ORDER BY category_no) AS rn
+                               FROM CATEGORIES WHERE parent_id = #{parentId}
+                           ) t WHERE t.id = CATEGORIES.id
+        )
+        WHERE parent_id = #{parentId}
+    </update>
 
 </mapper>

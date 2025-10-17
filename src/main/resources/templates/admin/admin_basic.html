@@ -61,11 +61,11 @@
                 <section class="euro-nav__group">
                     <h4 class="euro-nav__title" style="">환경설정</h4>
                     <ul class="euro-nav__list">
-                        <li class="euro-nav__item is-active"><a href="#">기본설정</a></li>
-                        <li class="euro-nav__item"><a href="#">배너관리</a></li>
-                        <li class="euro-nav__item"><a href="#">약관관리</a></li>
-                        <li class="euro-nav__item"><a href="#">카테고리</a></li>
-                        <li class="euro-nav__item"><a href="#">버전관리</a></li>
+                        <li class="euro-nav__item is-active"><a th:href="@{/admin/admin_basic}">기본설정</a></li>
+                        <li class="euro-nav__item"><a th:href="@{/admin/admin_banner}">배너관리</a></li>
+                        <li class="euro-nav__item"><a th:href="@{/admin/admin_policy}">약관관리</a></li>
+                        <li class="euro-nav__item"><a th:href="@{/admin/admin_category}">카테고리</a></li>
+                        <li class="euro-nav__item"><a th:href="@{/admin/admin_version}">버전관리</a></li>
                     </ul>
                 </section>
 
@@ -121,7 +121,7 @@
             </aside>
         </div>        
         <div style=" border-left:1px solid #e2e2e2;"></div>
-        <div style="margin-left:40px; width:900px; height:1500px; ">
+        <div style="margin-left:40px; width:900px; margin-bottom:100px;">
 
     <div class="title-line" style="border-bottom: 2px solid #ccc;">
         <div style="padding-top: 10px; padding-bottom: 5px; font-size: 22px;"><b>기본설정</b></div>
@@ -170,7 +170,7 @@
     <div class="title-line" style="padding-bottom: 5px;"><b>로고</b></div>
 
     <form th:action="@{/admin/admin_basic}" method="post" enctype="multipart/form-data">
-        <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>
+        <!--<input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>-->
 
         <!-- 기존 값도 함께 보냄: 새 파일이 없으면 서비스에서 이 값 유지 -->
         <input type="hidden" name="headerLogo" th:value="${config.headerLogo}">
@@ -193,11 +193,22 @@
 
                     <!-- 미리보기 -->
                     <div th:if="${config.headerLogo}" style="margin-top:8px;">
-                        <img th:src="${config.headerLogo}" alt="Header Logo" style="max-height:76px; max-width:370px;">
+                        <img id="headerLogoImg"
+                             th:src="${config.headerLogo.startsWith('/upload') ? '/NICHIYA' + config.headerLogo : config.headerLogo}"
+                             alt="Header Logo"
+                             style="max-height:76px; max-width:370px;">
                         <label style="margin-left:8px;">
                             <input type="checkbox" name="removeHeaderLogo"> 제거
                         </label>
                     </div>
+
+                    <script th:inline="javascript">
+                        const headerLogo = /*[[${config.headerLogo}]]*/ '';
+                        console.log("🧩 headerLogo =", headerLogo);
+                        console.log("🧩 실제 img src =", document.getElementById("headerLogoImg")?.src);
+                    </script>
+
+
                 </td>
             </tr>
 
@@ -210,7 +221,10 @@
                     <span> 크기 155 × 36 권장</span>
 
                     <div th:if="${config.footerLogo}" style="margin-top:8px;">
-                        <img th:src="${config.footerLogo}" alt="Footer Logo" style="max-height:36px; max-width:155px;">
+                        <img id="footerLogoImg"
+                             th:src="${config.footerLogo.startsWith('/upload') ? '/NICHIYA' + config.footerLogo : config.footerLogo}"
+                             alt="Footer Logo"
+                             style="max-height:36px; max-width:155px;">
                         <label style="margin-left:8px;">
                             <input type="checkbox" name="removeFooterLogo"> 제거
                         </label>
@@ -227,7 +241,10 @@
                     <span> 크기 32 × 32 권장</span>
 
                     <div th:if="${config.favicon}" style="margin-top:8px;">
-                        <img th:src="${config.favicon}" alt="Favicon" style="width:32px;height:32px;">
+                        <img id="faviconImg"
+                             th:src="${config.favicon.startsWith('/upload') ? '/NICHIYA' + config.favicon : config.favicon}"
+                             alt="Favicon"
+                             style="width:32px;height:32px;">
                         <label style="margin-left:8px;">
                             <input type="checkbox" name="removeFavicon"> 제거
                         </label>
@@ -240,32 +257,32 @@
 
     <!-- 기업 정보 -->
             <form th:action="@{/admin/admin_basic}" method="post" th:object="${config}">
-                <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>
-                <input type="hidden" name="section" value="company"/>
+                <!-- <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>-->
+                 <input type="hidden" name="section" value="company"/>
 
-                <div class="title-line"><b>기업 정보</b></div>
-                <table>
-                    <tr class="th-gray"><th colspan="2">브라우저 탭, 헤더 및 푸터 노출 정보 입니다.</th></tr>
-                    <tr><th class="th-blue">상호명</th>
-                        <td><input type="text" th:field="*{companyName}" style="width:250px"/></td></tr>
-                    <tr><th class="th-blue">대표이사</th>
-                        <td><input type="text" th:field="*{ceoName}" style="width:250px"/></td></tr>
-                    <tr><th class="th-blue">사업자등록번호</th>
-                        <td><input type="text" th:field="*{bizRegNo}" style="width:250px"/></td></tr>
-                    <tr><th class="th-blue">통신판매업신고</th>
-                        <td><input type="text" th:field="*{mailOrderNo}" style="width:250px"/></td></tr>
-                    <tr><th class="th-blue">기본주소</th>
-                        <td><input type="text" th:field="*{addrBase}" style="width:350px"/></td></tr>
-                    <tr><th class="th-blue">상세주소</th>
-                        <td><input type="text" th:field="*{addrDetail}" style="width:350px"/></td></tr>
-                </table>
-                <button class="btn" type="submit">수정하기</button>
-            </form>
+                 <div class="title-line"><b>기업 정보</b></div>
+                 <table>
+                     <tr class="th-gray"><th colspan="2">브라우저 탭, 헤더 및 푸터 노출 정보 입니다.</th></tr>
+                     <tr><th class="th-blue">상호명</th>
+                         <td><input type="text" th:field="*{companyName}" style="width:250px"/></td></tr>
+                     <tr><th class="th-blue">대표이사</th>
+                         <td><input type="text" th:field="*{ceoName}" style="width:250px"/></td></tr>
+                     <tr><th class="th-blue">사업자등록번호</th>
+                         <td><input type="text" th:field="*{bizRegNo}" style="width:250px"/></td></tr>
+                     <tr><th class="th-blue">통신판매업신고</th>
+                         <td><input type="text" th:field="*{mailOrderNo}" style="width:250px"/></td></tr>
+                     <tr><th class="th-blue">기본주소</th>
+                         <td><input type="text" th:field="*{addrBase}" style="width:350px"/></td></tr>
+                     <tr><th class="th-blue">상세주소</th>
+                         <td><input type="text" th:field="*{addrDetail}" style="width:350px"/></td></tr>
+                 </table>
+                 <button class="btn" type="submit">수정하기</button>
+             </form>
 
 
-            <!-- 고객센터 정보 -->
+             <!-- 고객센터 정보 -->
             <form th:action="@{/admin/admin_basic}" method="post" th:object="${config}">
-                <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>
+                <!--<input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>-->
                 <input type="hidden" name="section" value="cs"/>
 
                 <div class="title-line"><b>고객센터 정보</b></div>
@@ -286,7 +303,7 @@
 
             <!-- 카피라이트 -->
             <form th:action="@{/admin/admin_basic}" method="post" th:object="${config}">
-                <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>
+                <!--<input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>-->
                 <input type="hidden" name="section" value="copyright"/>
 
                 <div class="title-line"><b>카피라이트</b></div>
@@ -362,4 +379,5 @@
   });
   
     </script>
+
 <div th:replace="~{admin/_footer.html}"></div>

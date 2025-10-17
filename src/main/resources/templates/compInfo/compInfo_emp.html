@@ -131,18 +131,20 @@
                 </svg>
             </button>
             <div style="margin-left:3%;">
-                <img src="/images/logo.png" alt="" style="width:270px;">
+                <a th:href="@{/main/main/page}">
+                    <img th:src="@{/images/logo.png}" alt="" style="width:270px;">
+                </a>
             </div>
             <div style="margin-top:27px; margin-left:auto; margin-right:3%; flex:1; max-width:30%;">
                 <ul style="list-style-type: none; padding: 0; margin:0; display:flex; gap:40px;">
                     <li style="flex:1; min-width: 100px;">
                         
                     </li>
-                    <li><a href="#" style="text-decoration: none; color:black; font-size:14px;">HOME</a></li>
-                    <li><a href="#" style="text-decoration: none; color:black; font-size:14px;">기업문화</a></li>
-                    <li><a href="#" style="text-decoration: none; color:black; font-size:14px;">소식과 이야기</a></li>
-                    <li><a href="#" style="text-decoration: none; color:black; font-size:14px; font-weight: 800;">채용</a></li>
-                    <li><a href="#" style="text-decoration: none; color:black; font-size:14px;">미디어</a></li>
+                    <li><a th:href="@{/compinfo/compinfo/main}" style="text-decoration: none; color:black; font-size:14px;">HOME</a></li>
+                    <li><a th:href="@{/compinfo/compinfo/culture}" style="text-decoration: none; color:black; font-size:14px;">기업문화</a></li>
+                    <li><a th:href="@{/compinfo/compinfo/news}" style="text-decoration: none; color:black; font-size:14px;">소식과 이야기</a></li>
+                    <li><a th:href="@{/compinfo/compinfo/emp}" style="text-decoration: none; color:black; font-size:14px; font-weight: 800;">채용</a></li>
+                    <li><a th:href="@{/compinfo/compinfo/media}" style="text-decoration: none; color:black; font-size:14px;">미디어</a></li>
                 </ul>
             </div>
         </div>
@@ -221,64 +223,60 @@
 
         <div style="display: flex; margin-left:20%; margin-top:1%; width:100%;">
             <nav class="overlay__menu" style="width:100%;">
-                <div style="">
-                    <a href="#">히트상품</a>
-                    <a href="#">추천상품</a>
-                    <a href="#">최신상품</a>
-                    <a href="#">인기상품</a>
-                    <a href="#">할인상품</a>
-                    <br><br>
-                    <a href="#" data-cat="fashion">패션 · 의류 · 뷰티</a>
-                    <a href="#" data-cat="digital">가전 · 디지털</a>
-                    <a href="#" data-cat="grocery">식품 · 생필품</a>
-                    <a href="#" data-cat="home">홈 · 문구 · 취미</a>
-                    <a href="#" data-cat="book">도서</a>
+                <div style="padding-top: 31px;">
+                    <a href="#" data-cat="fashion" style="margin-bottom: 10px;">패션</a>
+                    <a href="#" data-cat="beauty" style="margin-bottom: 10px;">뷰티</a>
+                    <a href="#" data-cat="electronics" style="margin-bottom: 10px;">전자제품</a>
+                    <a href="#" data-cat="home" style="margin-bottom: 10px;">홈</a>
+                    <a href="#" data-cat="leisure" style="margin-bottom: 10px;">레저</a>
                 </div>
                 <div id="subcol">
                     <!-- 패션 패널 -->
                     <section class="panel" data-key="fashion">
-                        <h3>패션 · 의류 · 뷰티</h3>
+                        <h3>패션</h3>
                         <!-- 이 안은 자유롭게: 그리드/이미지/텍스트 무엇이든 -->
                         <ul class="menu-grid" style="">
-                        <li><a href="#">여성 의류</a></li>
-                        <li><a href="#">스킨케어</a></li>
-                        <!-- … -->
+                            <li><a th:href="@{/product/list(categoryId=4, sort='recent', pg=1, size=8)}">여성의류</a></li>
+                            <li><a th:href="@{/product/list(categoryId=3, sort='recent', pg=1, size=8)}">남성의류</a></li>
+                            <li><a th:href="@{/product/list(categoryId=2, sort='recent', pg=1, size=8)}">키즈의류</a></li>
+                            <li><a th:href="@{/product/list(categoryId=5, sort='recent', pg=1, size=8)}">스포츠의류</a></li>
+                            <!-- … -->
                         </ul>
                     </section>
 
                     <!-- 디지털 패널 -->
-                    <section class="panel" data-key="digital">
-                        <h3>가전 · 디지털</h3>
+                    <section class="panel" data-key="beauty">
+                        <h3>뷰티</h3>
                         <div class="menu-grid">
-                        <a href="#">생활가전</a>
-                        <a href="#">모바일 · PC</a>
+                            <a th:href="@{/product/list(categoryId=7,  sort='recent', pg=1, size=8)}">화장품</a>
+                            <a th:href="@{/product/list(categoryId=8,  sort='recent', pg=1, size=8)}">향수</a>
                         </div>
                     </section>
 
                     <!-- 식품 패널 -->
-                    <section class="panel" data-key="grocery">
-                        <h3>식품 · 생필품</h3>
+                    <section class="panel" data-key="electronics">
+                        <h3>전자제품</h3>
                         <div class="menu-grid">
-                            <a href="#">신선식품</a>
-                            <a href="#">생활용품</a>
+                            <a th:href="@{/product/list(categoryId=10, sort='recent', pg=1, size=8)}">생활기기</a>
+                            <a th:href="@{/product/list(categoryId=11, sort='recent', pg=1, size=8)}">음향기기</a>
                         </div>
                     </section>
 
                     <!-- 홈/문구 패널 -->
                     <section class="panel" data-key="home">
-                        <h3>홈 · 문구 · 취미</h3>
+                        <h3>홈</h3>
                         <div class="menu-grid">
-                            <a href="#">가구 · 인테리어</a>
-                            <a href="#">문구 · 사무용품</a>
+                            <a th:href="@{/product/list(categoryId=13, sort='recent', pg=1, size=8)}">대형가구</a>
+                            <a th:href="@{/product/list(categoryId=14, sort='recent', pg=1, size=8)}">소형가구</a>
                         </div>
                     </section>
 
                     <!-- 도서 패널 -->
-                    <section class="panel" data-key="book">
-                        <h3>도서</h3>
+                    <section class="panel" data-key="leisure">
+                        <h3>레저</h3>
                         <div class="menu-grid">
-                            <a href="#">소설 · 에세이</a>
-                            <a href="#">아동 · 교육</a>
+                            <a th:href="@{/product/list(categoryId=16, sort='recent', pg=1, size=8)}">스터프</a>
+                            <a th:href="@{/product/list(categoryId=17, sort='recent', pg=1, size=8)}">탈것</a>
                         </div>
                     </section>
                 </div>
@@ -363,12 +361,13 @@
                     NICHIYA와 함께 내일을 디자인할 준비가 되셨나요?
                 </p>
                 <div style="margin-top:70px;">
-                    <img src="/images/companyInformation_employment.jpg" alt="" style="width:700px;">
+                    <img th:src="@{/images/companyInformation_employment.jpg}" alt="" style="width:700px;">
                 </div>
             </section>
             <div style="display: flex; justify-content: center;">
                 <table style="font-size:14px; border-collapse: collapse; border:none; border-top:2px solid gray; width:900px; text-align: center;">
-                    <tr style=" height:60px; font-weight: 800; border-bottom: 1px solid #dddddd;">
+                    <tr style=" height:60px; font-weight: 800; border-bottom: 1px solid #dddddd;"
+                        >
                         <th style="width:70px;">번호</th>
                         <th style="width:100px;">채용부서</th>
                         <th style="width:180px;">경력사항</th>
@@ -377,56 +376,59 @@
                         <th style="width:60px;">상태</th>
                         <th>모집기간</th>
                     </tr>
-                    <tr style=" height:65px;border-bottom: 1px solid #dddddd;">
-                        <td>4</td>
-                        <td>광고사업</td>
-                        <td>경력 4 ~ 15년</td>
-                        <td>정규직</td>
-                        <td>광고 플랫폼 기획</td>
-                        <td style="color:red;">모집중</td>
-                        <td>0000-00-00 ~ 0000-00-00</td>
-                    </tr>
-                    <tr style=" height:65px;border-bottom: 1px solid #dddddd;">
-                        <td>3</td>
-                        <td>IT</td>
-                        <td>경력 2 ~ 15년</td>
-                        <td>정규직</td>
-                        <td>IT 인재 상시 영입(경력)</td>
-                        <td style="color:red;">모집중</td>
-                        <td>0000-00-00 ~ 0000-00-00</td>
-                    </tr>
-                    <tr style=" height:65px;border-bottom: 1px solid #dddddd;">
-                        <td>2</td>
-                        <td>경영</td>
-                        <td>신입</td>
-                        <td>계약직</td>
-                        <td>경영지원 직원 채용 공고</td>
-                        <td style="color:gray">종료</td>
-                        <td>0000-00-00 ~ 0000-00-00</td>
-                    </tr>
-                    <tr style=" height:65px;border-bottom: 1px solid #dddddd;">
-                        <td>1</td>
-                        <td>운영</td>
-                        <td>무관</td>
-                        <td>계약직</td>
-                        <td>단기 아르바이트 모집</td>
-                        <td style="color:gray;">종료</td>
-                        <td>0000-00-00 ~ 0000-00-00</td>
+                    <tr style=" height:65px;border-bottom: 1px solid #dddddd;"
+                        th:each="compinfo, stat:${pageResponseDTO.dtoList}">
+                        <td th:text="${pageResponseDTO.startNo - stat.index}">4</td>
+                        <td th:text="${compinfo.department}">광고사업</td>
+                        <td th:text="${compinfo.career}">경력 4 ~ 15년</td>
+                        <td th:text="${compinfo.form}">정규직</td>
+                        <td th:text="${compinfo.title}">광고 플랫폼 기획</td>
+                        <td th:text="${compinfo.status}"
+                            th:style="${compinfo.status == '모집중' ? 'color:#6fce90;' : 'color:gray;'}">모집중</td>
+                        <td>
+                            <span th:utext="${compinfo.recruit_from}"></span> ~
+                            <span th:utext="${compinfo.recruit_to}"></span>
+                        </td>
                     </tr>
                 </table>
             </div>
         </div>
         <div style=" height: 100px; margin-top:40px; display: flex; justify-content: center;">
-            <form action="" method="" style="">
-                <input type="button" class="prev-page" value="< 이전">
+            <div style=" height: 100px; margin-top:40px; display: flex; justify-content: center;">
+                <input th:if="${pageResponseDTO.prev}"
+                       th:onclick="|location.href='@{/compinfo/compinfo/emp(pg=${pageResponseDTO.start - 1})}'|"
+                       type="button" class="prev-page" value="< 이전">
 
-                <input type="button" value="1" style="border:1px solid #333; background-color: #333; color: white; height: 30px; width: 30px; margin-right:2px; line-height:1;">
-                <input type="button" value="2" style="cursor: pointer; border:1px solid #ddd; color: #555; height: 30px; width: 30px; margin-right:2px; line-height:1;">
-                <input type="button" value="3" style="cursor: pointer; border:1px solid #ddd; color: #555; height: 30px; width: 30px; line-height:1;">
+                <th:block th:each="num:${#numbers.sequence(pageResponseDTO.start, pageResponseDTO.end)}">
+                    <input th:onclick="|location.href='@{/compinfo/compinfo/emp(pg=${num})}'|"
+                           th:class="${num == pageResponseDTO.pg ? 'current' : 'num'}"
+                           type="button"
+                           th:value="${num}" />
+                </th:block>
 
-                <input type="button" class="next-page" value="다음 >" style="">
-            </form>
+                <input th:if="${pageResponseDTO.next}"
+                       th:onclick="|location.href='@{/compinfo/compinfo/emp(pg=${pageResponseDTO.end + 1})}'|"
+                       type="button" class="next-page" value="다음 >" style="">
+            </div>
             <style>
+                .current{
+                    border:1px solid #333;
+                    background-color: #333;
+                    color: white;
+                    height: 30px;
+                    width: 30px;
+                    margin-right:7px;
+                    line-height:1;
+                }
+                .num {
+                    cursor: pointer;
+                    border:1px solid #ddd;
+                    color: #555;
+                    height: 30px;
+                    width: 30px;
+                    margin-right:7px;
+                    line-height:1;
+                }
                 /* 페이지네이션 */
                 /* 게시판 아래버튼 부분 */
                 .prev-page{
@@ -450,36 +452,10 @@
                  /* 게시판 아래버튼 부분 끝 */
             </style>
         </div>
+        <div style="margin-bottom:100px;"></div>
     </main>
 
-    <footer>
-        <div style="">
-            <ul style="display: flex; gap:20px; margin-left:40px; list-style-type: none;">
-                <li><a href="#">YOUTUBE</a></li>
-                <li><a href="/compInfo/compInfo_main.html">회사소개</a></li>
-                <li><a href="/policy/policy_terms.html">서비스이용약관</a></li>
-                <li><a href="/policy/policy_terms.html#privacy">개인정보처리방침</a></li>
-                <li><a href="/customer_service/cs_main.html">고객센터</a></li>
-            </ul>
-        </div>
-        <div style="width:870px; margin-top:90px; margin-left:40px;">
-            <span>
-                NICHIYA 주식회사 &nbsp;|&nbsp; 사업자등록번호: 123-45-67890 &nbsp;|&nbsp; 대표자 : TANAKA HARUTO &nbsp;|&nbsp; 서울특별시 강남구 테헤란로 321 15층 1501호 (역삼동, 니치야타워) 
-                &nbsp;|&nbsp; 대표번호: 080-123-4567 &nbsp;|&nbsp; 호스팅 서비스 사업자: NICHIYA SYSTEMS Co., Ltd. 
-                &nbsp;|&nbsp; 통신판매업신고 : 제2025-서울강남-01234 (<a href="/main/main_nichiyaLicense.html" style="font-weight:800; text-decoration-line: underline;">사업자정보확인</a>)
-                &nbsp;|&nbsp; <a href="/policy/policy_terms.html#privacy" style="font-weight: 800; text-decoration-line: underline;">개인정보처리방침</a> 
-                &nbsp;|&nbsp; <a href="/policy/policy_terms.html#location" style="font-weight: 800; text-decoration-line: underline;">위치기반서비스 이용약관</a>
-                &nbsp;|<a href="/policy/policy_terms.html" style="font-weight: 800; text-decoration-line: underline;">이용약관</a> 
-            </span>
-        </div>
-    </footer>
-    <style>
-        footer a {
-            text-decoration: none;
-            font-weight: 300;
-            color:black;
-        }
-    </style>
+    <div th:replace="~{main/footer.html}"></div>
 </body>
 </html>
 

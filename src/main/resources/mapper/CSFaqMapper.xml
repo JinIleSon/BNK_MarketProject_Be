@@ -5,36 +5,75 @@
 
 <mapper namespace="kr.co.bnk_marketproject_be.mapper.CSFaqMapper">
 
-    <!-- FAQ 목록 -->
-    <select id="selectFaqList" resultType="kr.co.bnk_marketproject_be.dto.CSNoticeDTO">
+    <!-- FAQ 목록 (기본) -->
+    <select id="selectFaqList" parameterType="map" resultType="kr.co.bnk_marketproject_be.dto.CSNoticeDTO">
         SELECT
-            id,
-            board_type AS boardType,
-            title
-        FROM BOARD
+        id,
+        board_type AS boardType,
+        title
+        FROM board
         WHERE board_type = 'faq'
+        <if test="boardType != null and boardType != ''">
+            AND title LIKE '%' || #{boardType} || '%'
+        </if>
         ORDER BY id DESC
-        OFFSET 0 ROWS FETCH NEXT 3 ROWS ONLY
+        OFFSET #{offset} ROWS FETCH NEXT #{limit} ROWS ONLY
     </select>
 
-    <!-- FAQ 상세 -->
-    <select id="selectFaqDetail" parameterType="long" resultType="kr.co.bnk_marketproject_be.dto.CSNoticeDTO">
+    <!-- FAQ 목록 (카테고리별 + 2차 분류 필터 적용) -->
+    <select id="selectFaqListByType" parameterType="map" resultType="kr.co.bnk_marketproject_be.dto.CSNoticeDTO">
+        SELECT
+        id,
+        board_type AS boardType,
+        title
+        FROM board
+        WHERE board_type = 'faq'
+
+        <!-- 1차 카테고리 -->
+        <if test="boardType != null and boardType != ''">
+            <choose>
+                <when test="boardType == '회원'">
+                    AND (title LIKE '%회원%' OR title LIKE '%로그인%' OR title LIKE '%가입%' OR title LIKE '%탈퇴%')
+                </when>
+                <when test="boardType == '쿠폰/이벤트'">
+                    AND (title LIKE '%쿠폰%' OR title LIKE '%이벤트%' OR title LIKE '%당첨%' OR title LIKE '%참여%')
+                </when>
+                <when test="boardType == '주문/결제'">
+                    AND (title LIKE '%주문%' OR title LIKE '%결제%' OR title LIKE '%오류%')
+                </when>
+                <when test="boardType == '배송'">
+                    AND (title LIKE '%배송조회%' OR title LIKE '%배송비%' OR title LIKE '%해외배송%')
+                </when>
+                <when test="boardType == '취소/반품/교환'">
+                    AND (title LIKE '%취소%' OR title LIKE '%반품%' OR title LIKE '%교환%')
+                </when>
+                <when test="boardType == '여행/숙박/항공'">
+                    AND (title LIKE '%여행%' OR title LIKE '%숙박%' OR title LIKE '%항공%' OR title LIKE '%예약%' OR title LIKE '%변경%' OR title LIKE '%취소%')
+                </when>
+                <when test="boardType == '안전거래'">
+                    AND (title LIKE '%안전결제%' OR title LIKE '%사기주의%' )
+                </when>
+            </choose>
+        </if>
+
+        <!-- 2차 카테고리 (subType) -->
+        <if test="subType != null and subType != ''">
+            AND title LIKE '%' || #{subType} || '%'
+        </if>
+
+        ORDER BY id DESC
+        OFFSET #{offset} ROWS FETCH NEXT #{limit} ROWS ONLY
+    </select>
+
+    <!-- FAQ view -->
+    <select id="selectFaqView" parameterType="long" resultType="kr.co.bnk_marketproject_be.dto.CSNoticeDTO">
         SELECT
             id,
             board_type AS boardType,
             title,
-            content,
-            created_at AS createdAt
+            content
         FROM board
         WHERE id = #{id}
     </select>
-
-
-    <!-- FAQ 등록 주석처리
-    <insert id="insertFaq" parameterType="kr.co.bnk_marketproject_be.dto.CSNoticeDTO">
-        INSERT INTO cs_notice (board_type, title, content, created_at)
-        VALUES (#{boardType}, #{title}, #{content}, NOW())
-    </insert>
-    -->
 
 </mapper>

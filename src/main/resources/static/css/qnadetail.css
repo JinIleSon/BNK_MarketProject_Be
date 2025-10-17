@@ -1,0 +1,78 @@
+.cs_notice_view_wrap, .cs_qna_view_wrap {
+    overflow: hidden;
+}
+
+.cs_notice_view_wrap .cs_view_content, .cs_qna_view_wrap .qna_view_area {
+    
+    width: 980px;
+}
+
+.cs_notice_view_wrap .cs_view_content .title_area, .cs_qna_view_wrap .qna_view_area .qna_section h3 {
+    padding: 20px;
+    border-top: 2px solid #333;
+    border-bottom: 1px solid #ddd;
+}
+
+.cs_notice_view_wrap .cs_view_content .title_area h3 {
+    font-size: 18px;
+    margin: 0;
+}
+
+.cs_notice_view_wrap .cs_view_content .title_area .date {
+    font-size: 12px;
+    color: #999;
+    margin-top: 5px;
+}
+
+.cs_notice_view_wrap .cs_view_content .view_area, .cs_qna_view_wrap .qna_view_area .qna_section .content {
+    padding: 20px;
+    border-bottom: 1px solid #ddd;
+    min-height: 200px;
+}
+
+.cs_qna_view_wrap .qna_view_area .qna_section.question {
+    background-color: #f9f9f9;
+}
+
+.cs_qna_view_wrap .qna_view_area .qna_section.answer {
+    background-color: #e6f3ff;
+}
+
+
+/* //////////////////////////////////////
+   
+    2025-09-27  테이블 쏠림 수정사항
+
+    2025-09-28 질문, 답변 영역 80%로 수정
+    100% 좀 과해보여서 
+    list는 통일성을 위해 100%으로 한거고 
+    view쪽은 가독성을 위해 80%으로 잡음
+/////////////////////////////////////// */
+
+
+/* Q&A 전체 영역을 가운데 정렬 */
+.cs_qna_view_wrap .qna_view_area {
+    width: 80%;
+    /* max-width: 980px; */
+    margin: 0 auto;   /* 가로 가운데 정렬 */
+    text-align: left;
+    box-sizing: border-box;
+}
+
+.cs_qna_view_wrap .qna_section.question{
+    width: 80%;
+    /* max-width: 980px; */
+    margin: 0 auto;
+    text-align: left;
+    box-sizing: border-box;
+
+}
+
+.cs_qna_view_wrap .qna_section.answer{
+    width: 100%;
+    /* max-width: 980px; */
+    margin: 0 auto;
+    text-align: left;
+    box-sizing: border-box;
+
+}

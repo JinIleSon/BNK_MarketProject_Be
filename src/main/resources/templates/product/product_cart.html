@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>product_cart</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Bodoni+Moda:opsz,wght@6..96,400;500&family=Noto+Serif+KR:wght@300;400&display=swap" rel="stylesheet">
+    <style>
+        html{ scrollbar-gutter: stable; }
+        .icon-btn { background:none; border:1px solid #000; cursor:pointer; width:40px; height:40px; display:grid; place-items:center; }
+        .overlay { position: fixed; inset: 0; background: rgba(255,255,255,0.28); backdrop-filter: blur(1px); -webkit-backdrop-filter: blur(1px); opacity: 0; pointer-events: none; transition: opacity .25s ease; z-index: 1000; }
+        .overlay.open { opacity: 1; pointer-events: auto; }
+        .overlay__panel { position: absolute; top:0; left:0; width: 50vw; max-width: 900px; height: 100%; background: white; transform: translateX(-100%); transition: transform .35s ease; will-change: transform; display: flex; flex-direction: column; }
+        .overlay.open .overlay__panel { transform: translateX(0); }
+        .overlay__top { display:flex; align-items:center; gap:24px; padding:20px; }
+        .overlay__close { background:none; border:1px solid; width:100px; height:50px; cursor:pointer; position:relative; border:none; margin-left:0.3%; }
+        .overlay__close::before,.overlay__close::after{ content:""; position:absolute; left:15px; right:10px; top:25px; height:2px; background:#000; }
+        .overlay__close::before{ transform:rotate(45deg); } .overlay__close::after { transform:rotate(-45deg); }
+        .overlay__menu { display:grid; grid-template-columns: 180px auto; gap:24px; padding:40px 20px; font-size:16px; }
+        .overlay__menu a { text-decoration:none; color:#000; display:block; padding:8px 0; }
+        .overlay__menu strong { font-weight:700; }
+        :root{ --glass-bg: rgba(255,255,255,.55); --glass-blur: 8px; }
+        *{ box-sizing: border-box; }
+        body{ margin:0; font-family:system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif; }
+        a{ color:inherit; text-decoration:none; }
+        ul{ margin:0; padding:0; list-style:none; }
+        .site-header{ position: sticky; top: 0; z-index: 900; }
+        .site-header::before{ content:""; position:absolute; inset:0; background: rgba(255,255,255,0); transition: background 0.4s ease; z-index: -1; pointer-events: none; }
+        .site-header:hover::before{ background: rgba(255,255,255,0.7); }
+        .site-header .inner{ position: relative; z-index: 1; display:flex; align-items:center; gap:24px; padding: 16px 24px; border-bottom: 1px solid #000; }
+        footer a { text-decoration: none; font-weight: 300; color:black; }
+        .prev-page{ background-color: white; border: none; margin-right: 15px; width: 50px; height: 30px; }
+        .next-page{ background-color: white; border: none; margin-left: 15px; width: 50px; height: 30px; margin-right:3px; }
+        .title-didone{ text-align:center; font-family: 'Bodoni Moda','Didot','Bodoni 72','Times New Roman',serif; margin-left:45px; font-weight:400; letter-spacing:.02em; -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale; }
+        .title-didone.ko{font-family: 'Noto Serif KR','Bodoni Moda',serif; font-weight:300;}
+    </style>
+</head>
+
+<body>
+<div th:replace="~{main/header.html}"></div>
+
+<div style="height:100%; display: flex; flex-direction: column; justify-content: center; align-items: center;  margin: 0 auto;">
+    <div style="display: flex;">
+        <div style="font-size:18px; margin-right:1200px;"><b>장바구니</b></div>
+    </div>
+    <hr style="border:none; border-top:1px solid black; margin-bottom:40px; width:100%;">
+
+    <table style="border-collapse: collapse; border:none; width:1270px; text-align: center;">
+        <form action="" method="">
+            <tr style="height:50px;border-top: 4px solid black; border-bottom: 1px solid #dddddd;">
+                <td style="width:50px;"><input type="checkbox"></td>
+                <td style="width:450px;">상품명</td>
+                <td style="width:92px;">수량</td>
+                <td style="width:136px;">판매가</td>
+                <td style="width:92px;">할인</td>
+                <td style="width:136px;">포인트</td>
+                <td style="width:179px;">배송비</td>
+                <td>총합</td>
+            </tr>
+
+            <!-- 리스트 렌더링 -->
+            <tr style="border-bottom: 1px solid #dddddd;"
+                th:each="r : ${cart != null ? cart.items : {}}">
+                <td>
+                    <input type="checkbox"
+                           th:value="${r.order_item_id != null ? r.order_item_id : r.id}">
+                </td>
+                <td style="display: flex;">
+                    <div style="margin:10px;width:80px; height:75px; background-color: #dddddd;">
+                        <img th:src="${r.url} != null ? @{|/${r.url}|} : @{/images/placeholder.png}"
+                             alt="이미지" style="width:80px; height:75px; object-fit:cover;">
+                    </div>
+                    <div style="padding-left:18px; display:flex; font-size:14px; align-items: flex-start; justify-content: center; flex-direction: column; text-align:left;">
+                        <div style="margin-bottom:6px;" th:text="${r.product_name}">상품명</div>
+                        <div style="color: gray; font-size:12px;"
+                             th:text="${r.option_name != null ? r.option_name : ''}">상품설명</div>
+                    </div>
+                </td>
+                <td th:text="${r.quantity}">1</td>
+                <td th:text="|${#numbers.formatInteger(r.unitPrice,3,'COMMA')}|">27,000</td>
+                <td th:text="|${r.discountRate}%|">5%</td>
+
+                <!-- 라인 적립(예: 정가의 1%) -->
+                <td th:text="${#numbers.formatInteger(T(java.lang.Math).floor(r.unitPrice * 0.01 * r.quantity),0)}">270</td>
+
+                <td>
+                    <span th:if="${r.freeShipping}">무료배송</span>
+                    <span th:unless="${r.freeShipping}"
+                          th:text="|${#numbers.formatInteger(r.delichar,3,'COMMA')}|">0</span>
+                </td>
+                <td style="color:red;"
+                    th:text="|${#numbers.formatInteger(r.lineTotal,3,'COMMA')}|">25,650</td>
+            </tr>
+
+            <!-- 비어있을 때 -->
+            <tr th:if="${cart == null || cart.items == null || #lists.isEmpty(cart.items)}"
+                style="border-bottom: 1px solid #dddddd;">
+                <td colspan="8" style="padding:30px 0;">장바구니에 담긴 상품이 없습니다.</td>
+            </tr>
+        </form>
+    </table>
+
+    <input type="button" value="선택삭제"
+           style="border:1px solid #e2e2e2; width:95px; height: 40px; margin-right:1175px; font-weight:500; margin-top:7px;"
+           onclick="alert('선택삭제는 추후 구현 예정입니다.');">
+
+    <div style="border:1px solid #dddddd; width:300px; margin-left:970px;padding-left:20px;padding-right:20px;"
+         th:with="s=${cart != null ? cart.summary : null}">
+        <div style="font-size:18px; padding-top:12px;">
+            <b>전체합계</b>
+            <hr style="border:none; border-top:1px solid #dddddd; margin-top:7px; margin-bottom:19px;">
+        </div>
+
+        <div style="padding-left:7px;padding-right:7px;">
+            <div style="margin-bottom:6px;">
+                <div>상품수<span style="float:right;"
+                              th:text="${s != null ? s.itemCount : 0}">1</span></div>
+            </div>
+            <div style="margin-bottom:6px;">
+                <div>상품금액<span style="float:right;"
+                               th:text="|${#numbers.formatInteger(s != null ? s.subtotalAmount : 0,3,'COMMA')}|">27,000</span></div>
+            </div>
+            <div style="margin-bottom:6px;">
+                <div>할인금액<span style="float:right;"
+                               th:text="|-${#numbers.formatInteger(s != null ? s.discountAmount : 0,3,'COMMA')}|">-1,350</span></div>
+            </div>
+            <div style="margin-bottom:6px;">
+                <div>배송비<span style="float:right;"
+                              th:text="|${#numbers.formatInteger(s != null ? s.delichar : 0,3,'COMMA')}|">0</span></div>
+            </div>
+            <div style="margin-bottom:6px;">
+                <div>전체주문금액<span style="float:right; color:red;"
+                                 th:text="|${#numbers.formatInteger(s != null ? s.totalPayable : 0,3,'COMMA')}|">25,650</span></div>
+            </div>
+            <div style="margin-bottom:25px;">
+                <div>적립 포인트<span style="float:right;"
+                                 th:text="${s != null ? s.rewardPoint : 0}">270</span></div>
+            </div>
+            <div style="display: flex; justify-content: center; margin-bottom:25px;">
+                <input type="button" value="주문하기"
+                       style="height: 40px; background-color: black; color:white; font-size: 20px; font-weight:300; border:none; width:190px;"
+                       onclick="location.href='[[@{/product/order(uid=${uid})}]]'">
+                <!-- 테스트 중 uid가 필요하면 위 한 줄을 아래로 교체
+                onclick="location.href='/product/order?uid=1'"
+                -->
+            </div>
+        </div>
+    </div>
+</div>
+
+<div th:replace="~{main/footer.html}"></div>
+</body>
+</html>
