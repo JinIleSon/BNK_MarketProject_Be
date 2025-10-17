@@ -402,56 +402,65 @@
                     <div style="display: flex; flex-direction: column; justify-content: center; align-items: center; margin-top:40px;">
                         <div style="display: flex; margin-top:30px;">
                             <div style="font-weight: 800; margin-right:782px; margin-bottom:5px;">문의내역</div>
-                            <div style="margin-left:auto;"><a href="#">더보기 ></a></div>
+                            <div style="margin-left:auto;"><a th:href="@{/mypage/mypage/ask}">더보기 ></a></div>
                         </div>
                         <table style="text-align: center; border-collapse: collapse;border-top:1px solid; width:900px;">
-                            <tr style="background-color: #dedede; font-size:12px; color:white; font-weight: 800; height:40px;">
-                                <th style="width:60px;">번호</th>
-                                <th style="width:120px;">문의채널</th>
-                                <th style="width:87px;">문의유형</th>
+                            <tr style="background-color: #dedede; font-size:12px; color:white; font-weight: 800; height:40px;"
+                                >
+                                <th style="width:60px;"
+                                    >번호</th>
+                                <th style="width:120px;">1차 유형</th>
+                                <th style="width:87px;">2차 유형</th>
                                 <th style="">제목</th>
                                 <th style="">작성일</th>
                                 <th style="width:90px;">상태</th>
                             </tr>
-                            <tr style="border-bottom: 1px solid #dddddd; height:65px;">
-                                <td>1</td>
-                                <td style="">고객센터</td>
-                                <td style="letter-spacing: -1px;">주문 / 결제</td>
-                                <td>신용카드 결제 중 오류가 난 경우 어떻게 하나요?</td>
-                                <td>2022-12-12</td>
-                                <td style="color:gray;">검토중</td>
-                            </tr>
-                            <tr style="border-bottom: 1px solid #dddddd; height:65px;">
-                                <td>2</td>
-                                <td style="">고객센터</td>
-                                <td style="letter-spacing: -1px;">주문 / 결제</td>
-                                <td>신용카드 결제 중 오류가 난 경우 어떻게 하나요?</td>
-                                <td>2022-12-12</td>
-                                <td style="color:green;">답변완료</td>
-                            </tr>
-                            <tr style="border-bottom: 1px solid #dddddd; height:65px;">
-                                <td>3</td>
-                                <td style="">판매자 게시판</td>
-                                <td style="letter-spacing: -1px;">배송</td>
-                                <td>배송기간이 보통 얼마나 걸리나요?</td>
-                                <td>2022-12-12</td>
-                                <td style="color:green;">답변완료</td>
-                            </tr>
-                            <tr style="border-bottom: 1px solid #dddddd; height:65px;">
-                                <td>4</td>
-                                <td style="">판매자 게시판</td>
-                                <td style="letter-spacing: -1px;">배송</td>
-                                <td>배송기간이 보통 얼마나 걸리나요?</td>
-                                <td>2022-12-12</td>
-                                <td style="color:green;">답변완료</td>
-                            </tr>
-                            <tr style="border-bottom: 1px solid #dddddd; height:65px;">
-                                <td>5</td>
-                                <td style="">판매자 게시판</td>
-                                <td style="letter-spacing: -1px;">배송</td>
-                                <td>배송기간이 보통 얼마나 걸리나요?</td>
-                                <td>2022-12-12</td>
-                                <td style="color:green;">답변완료</td>
+                            <tr style="border-bottom: 1px solid #dddddd; height:65px;"
+                                th:each="inquiry, stat: ${pageResponseInquiryDTO.dtoList}"
+                                th:if="${stat.index} < 5">
+                                <td th:text="${T(java.lang.Math).min(5, stat.size) - stat.index}">1</td>
+                                <td style=""
+                                    th:text="${inquiry.board_type2 == 'member' ? '회원' :
+                        (inquiry.board_type2 == 'event' ? '쿠폰 / 이벤트' :
+                        (inquiry.board_type2 == 'pay' ? '주문 / 결제' :
+                        (inquiry.board_type2 == 'delivery' ? '배송' :
+                        (inquiry.board_type2 == 'cancel' ? '취소 / 반품 / 교환' :
+                        (inquiry.board_type2 == 'trip' ? '여행 / 숙박 / 항공' :
+                        (inquiry.board_type2 == 'safe' ? '안전거래' : ''))))))}">고객센터</td>
+                                <td style="letter-spacing: -1px;"
+                                    th:text="${inquiry.board_type3 == 'signup' ? '가입' :
+                        (inquiry.board_type3 == 'withdraw' ? '탈퇴' :
+                        (inquiry.board_type3 == 'account' ? '회원정보' :
+                        (inquiry.board_type3 == 'login' ? '로그인' :
+                        (inquiry.board_type3 == 'couponissue' ? '쿠폰발급' :
+                        (inquiry.board_type3 == 'couponuse' ? '쿠폰사용' :
+                        (inquiry.board_type3 == 'eventjoin' ? '이벤트참여' :
+                        (inquiry.board_type3 == 'winnercheck' ? '당첨확인' :
+                        (inquiry.board_type3 == 'orderguide' ? '주문방법' :
+                        (inquiry.board_type3 == 'paymentmethod' ? '결제수단' :
+                        (inquiry.board_type3 == 'paymenterror' ? '결제오류' :
+                        (inquiry.board_type3 == 'receipt' ? '영수증/증빙' :
+                        (inquiry.board_type3 == 'tracking' ? '배송조회' :
+                        (inquiry.board_type3 == 'deliverytime' ? '배송기간' :
+                        (inquiry.board_type3 == 'deliveryfee' ? '배송비' :
+                        (inquiry.board_type3 == 'globalshipping' ? '해외배송' :
+                        (inquiry.board_type3 == 'ordercancel' ? '주문취소' :
+                        (inquiry.board_type3 == 'refund' ? '반품' :
+                        (inquiry.board_type3 == 'exchange' ? '교환' :
+                        (inquiry.board_type3 == 'refundprocess' ? '환불처리' :
+                        (inquiry.board_type3 == 'reservation' ? '예약' :
+                        (inquiry.board_type3 == 'payment' ? '결제' :
+                        (inquiry.board_type3 == 'changecancel' ? '변경/취소' :
+                        (inquiry.board_type3 == 'guide' ? '이용안내' :
+                        (inquiry.board_type3 == 'security' ? '보안공지' :
+                        (inquiry.board_type3 == 'alert' ? '사기주의' :
+                        (inquiry.board_type3 == 'safepayment' ? '안전결제' :
+                        (inquiry.board_type3 == 'privacy' ? '개인정보보호' : '')))))))))))))))))))))))))))}">주문 / 결제</td>
+                                <td>[[${inquiry.title}]]</td>
+                                <td th:text="${#temporals.format(inquiry.createdAt, 'yyyy-MM-dd')}">2022-12-12</td>
+                                <td style="color:gray;"
+                                    th:text="${inquiry.look == 0 ? '검토 중' : '답변완료'}"
+                                    th:style="${inquiry.look == 0 ? 'color:black;' : 'color:#4f9cd3;'}">검토중</td>
                             </tr>
                         </table>
                     </div>
@@ -459,30 +468,30 @@
                         <div style="display: flex; margin-top:30px;">
                             <div style="font-weight: 800; margin-right:843px; margin-bottom:5px;">나의설정</div>
                         </div>
-                        <div style="padding:20px; border: 1px solid #dddddd;background-color: #dce6f2; height:130px; width:900px; display: grid; grid-template-columns: repeat(3, 300px);">
+                        <div style="padding:20px; border: 1px solid #dddddd;background-color: #dce6f2; height:150px; width:900px; display: grid; grid-template-columns: repeat(3, 300px);">
                           <div style="display:flex; flex-direction: column; border-right:1px solid gray;">
                             <div style="display: flex;">
                               <div style="margin-right: 20px; margin-bottom:20px;">기본배송지 설정</div>
-                              <div><a href="#" style="font-weight: 800;">변경</a></div>
+                              <div><a th:href="@{/mypage/mypage/setup}" style="font-weight: 800;">변경</a></div>
                             </div>
-                            <div style="font-size: 15px; color:gray; margin-bottom:6px;">부산광역시 부산진구 대연동 120</div>
-                            <div style="font-size: 15px; color:gray;">한빛빌딩 10층</div>
+                            <div style="width:250px;font-size: 15px; color:gray; margin-bottom:6px;"><span th:text="${userDTO.address}"></span></div>
+                            <div style="font-size: 15px; color:gray;"><span th:text="${userDTO.detailAddress}"></span></div>
                           </div>
                           <div style="display:flex; flex-direction: column; border-right:1px solid gray; padding-left:23px;">
                             <div style="display: flex;">
                               <div style="margin-right: 20px; margin-bottom:20px;">Email 설정</div>
-                              <div><a href="#" style="font-weight: 800;">변경</a></div>
+                              <div><a th:href="@{/mypage/mypage/setup}" style="font-weight: 800;">변경</a></div>
                             </div>
-                            <div style="font-size: 15px; color:gray; margin-bottom:6px;">abc123@naver.com</div>
-                            <div style="font-size: 15px; color:gray;">( 최종수정일 2021-12-10 )</div>
+                            <div style="font-size: 15px; color:gray; margin-bottom:6px;"><span th:text="${userDTO.email}"></span></div>
+                            <div style="font-size: 15px; color:gray;">( 최종수정일 <span th:text="${#temporals.format(userDTO.created_at, 'yyyy-MM-dd')}"></span> )</div>
                           </div>
                           <div style="display:flex; flex-direction: column; padding-left:23px;">
                             <div style="display: flex;">
                               <div style="margin-right: 20px; margin-bottom:20px;">휴대폰 설정</div>
-                              <div><a href="#" style="font-weight: 800;">변경</a></div>
+                              <div><a th:href="@{/mypage/mypage/setup}" style="font-weight: 800;">변경</a></div>
                             </div>
-                            <div style="font-size: 15px; color:gray; margin-bottom:6px;">010 - 1234 - 1001</div>
-                            <div style="font-size: 15px; color:gray;">( 최종수정일 2021-12-10 )</div>
+                            <div style="font-size: 15px; color:gray; margin-bottom:6px;"><span th:text="${userDTO.phone}"></span></div>
+                            <div style="font-size: 15px; color:gray;">( 최종수정일 <span th:text="${#temporals.format(userDTO.created_at, 'yyyy-MM-dd')}"></span> )</div>
                           </div>
                         </div>
                     </div>

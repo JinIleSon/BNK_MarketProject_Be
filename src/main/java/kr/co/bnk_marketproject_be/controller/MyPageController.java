@@ -25,7 +25,25 @@ public class MyPageController {
     private final MyPageService myPageService;
 
     @GetMapping("/mypage/mypage/main")
-    public String mainpage() {
+    public String mainpage(Model model, Principal principal, PageRequestDTO pageRequestDTO) {
+
+        String userId = principal.getName();
+
+        // 문의내역 출력_마이페이지_메인#9
+        UserDTO userDTO = myPageService.selectUser(userId);
+
+        log.info("userId = {}", userId);
+        userDTO.setUserId(userId);
+        log.info("userDTO = {}", userDTO);
+
+        model.addAttribute("userDTO", userDTO);
+
+        // 문의내역 출력_마이페이지_메인#10
+        PageResponseAdminInquiryDTO pageResponseInquiryDTO = myPageService.selectAllInquiry(pageRequestDTO, userId);
+
+        log.info("pageResponseInquiryDTO={}", pageResponseInquiryDTO);
+        model.addAttribute("pageResponseInquiryDTO", pageResponseInquiryDTO);
+
         return "mypage/mypage_main";
     }
     @GetMapping("/mypage/mypage/point")
