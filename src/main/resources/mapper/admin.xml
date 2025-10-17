@@ -241,8 +241,12 @@
 
 
     <insert id="insertDeliveries">
-        insert into deliveries(orders_id, order_code, recipient, zipcode, address, address2, delicom, invoice, note, receipt)
-        values ((SELECT COALESCE(MAX(orders_id), 0) + 1 FROM deliveries),
+        INSERT INTO deliveries (
+        orders_id, order_code, recipient, zipcode, address, address2,
+        delicom, invoice, note, receipt
+        )
+        VALUES (
+        (SELECT o.id FROM orders o WHERE o.order_code = #{deliveriesDTO.order_code}),  -- ★ FK
         #{deliveriesDTO.order_code},
         #{deliveriesDTO.recipient},
         #{deliveriesDTO.zipcode},
@@ -250,8 +254,9 @@
         #{deliveriesDTO.address2},
         #{deliveriesDTO.delicom, jdbcType=VARCHAR},
         #{deliveriesDTO.invoice},
-        #{deliveriesDTO.note},
-        systimestamp)
+        #{deliveriesDTO.note, jdbcType=VARCHAR},
+        SYSTIMESTAMP
+        )
     </insert>
     <!--    개별로 작성할 부분(덩어리 구분) -->
 
@@ -628,6 +633,13 @@
             </if>
         </where>
     </sql>
+
+    <resultMap id="AdminInquiryMap" type="kr.co.bnk_marketproject_be.dto.AdminInquiryDTO">
+        <!-- 다른 컬럼들 생략 -->
+        <result column="created_at" property="createdAt"
+                jdbcType="TIMESTAMP"
+                typeHandler="org.apache.ibatis.type.LocalDateTimeTypeHandler"/>
+    </resultMap>
 
     <select id="selectAllAdminInquiry" resultType="kr.co.bnk_marketproject_be.dto.AdminInquiryDTO">
         SELECT
