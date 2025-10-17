@@ -48,4 +48,11 @@ public interface OrdersMapper {
                       @Param("productId") int productId,
                       @Param("optionId") Integer optionId,
                       @Param("qty") int qty);
+
+    int deleteCartItems(@Param("orderId") int orderId,
+                        @Param("itemIds") List<Integer> itemIds);
+
+    int countItemsInOrder(@Param("orderId") int orderId);
+
+    int deleteOrderIfEmpty(@Param("orderId") int orderId);
 }

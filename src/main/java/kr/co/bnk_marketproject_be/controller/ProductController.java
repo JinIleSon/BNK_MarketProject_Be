@@ -9,6 +9,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -155,19 +156,26 @@ public class ProductController {
         }
     }
 
+    @PostMapping("/product/cart/items/delete")
+    @ResponseBody
+    public Map<String, Object> deleteCartItems(@AuthenticationPrincipal MyUserDetails me,
+                                               @RequestBody Map<String, List<Integer>> body) {
+        int userId = me.getUser().getId();          // 로그인 유저 id
+        List<Integer> itemIds = body.getOrDefault("itemIds", List.of());
+        if (itemIds.isEmpty()) {
+            return Map.of("ok", false, "reason", "EMPTY_SELECTION");
+        }
+        int removed = ordersService.removeFromCart(userId, itemIds);
+        return Map.of("ok", true, "removed", removed);
+    }
+
     /* 주문정보 가져오기 */
     @GetMapping("/product/order")
-    public String product_order(Authentication auth, Model model, RedirectAttributes ra) {
-        int uid = currentUserIdOr401(auth);
-
-        ProductOrderDTO order = ordersService.getOrderPage(uid);
-        if (order == null || order.getItems() == null || order.getItems().isEmpty()) {
-            ra.addFlashAttribute("info", "장바구니에 담긴 상품이 없습니다.");
-            return "redirect:/product/cart";
-        }
-
-        model.addAttribute("order", order);
-        return "product/product_order";
+    public String orderPage(Model model,
+                            @AuthenticationPrincipal MyUserDetails principal) {
+        int userId = principal.getUser().getId();
+        model.addAttribute("order", ordersService.getOrderPage(userId));
+        return "product/product_order"; // templates/product/product_order.html
     }
 
     /* 주문하기 전송 */
