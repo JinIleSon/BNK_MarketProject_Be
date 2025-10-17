@@ -21,12 +21,10 @@
                 <a th:href="@{/cs/notice/list}" class="more_link">All</a>
             </h2>
             <div class="section_list">
-                <ul>
-                    <li><a href="notice/notice_view.html"><span>[안내]</span> 해외결제사 정기점검주의</a><span class="date">22.10.31</span></li>
-                    <li><a href="notice/notice_view.html"><span>[안내]</span> 해외결제사 정기점검주의</a><span class="date">22.10.31</span></li>
-                    <li><a href="notice/notice_view.html"><span>[안내]</span> 해외결제사 정기점검주의</a><span class="date">22.10.31</span></li>
-                    <li><a href="notice/notice_view.html"><span>[안내]</span> 해외결제사 정기점검주의</a><span class="date">22.10.31</span></li>
-                    <li><a href="notice/notice_view.html"><span>[안내]</span> 해외결제사 정기점검주의</a><span class="date">22.10.31</span></li>
+                <ul th:each="notice, stat: ${pageResponseAdminAnnouncementDTO.dtoList}"
+                    th:if="${stat.index} < 5">
+                    <li><a th:href="@{/cs/notice/view/{id}(id=${notice.id}, boardType=${notice.board_type})}"><span>[[${notice.title}]]</span></a><span th:text="${#temporals.format(notice.created_at, 'yyyy.MM.dd')}"
+                    style="color:gray;"></span></li>
                 </ul>
             </div>
         </div>
@@ -38,27 +36,27 @@
                 <a th:href="@{/cs/faq/list}" class="more_link">All</a>
             </h2>
             <div class="faq_category">
-                <a href="faq/faq_view.html?category=회원">
+                <a th:href="@{/cs/faq/list?boardType=회원}">
                     <img th:src="@{/images/user.png}" alt="회원 아이콘">
                     <span>회원</span>
                 </a>
-                <a href="faq/faq_view.html?category=쿠폰/이벤트">
+                <a th:href="@{/cs/faq/list?boardType=쿠폰/이벤트}">
                     <img th:src="@{/images/event.png}" alt="쿠폰/이벤트 아이콘">
                     <span>쿠폰<br>이벤트</span>
                 </a>
-                <a href="faq/faq_view.html?category=주문/결제">
+                <a th:href="@{/cs/faq/list?boardType=주문/결제}">
                     <img th:src="@{/images/order.png}" alt="주문/결제 아이콘">
                     <span>주문<br>결제</span>
                 </a>
-                <a href="faq/faq_view.html?category=배송">
+                <a th:href="@{/cs/faq/list?boardType=배송}">
                     <img th:src="@{/images/delivery.png}" alt="배송 아이콘">
                     <span>배송</span>
                 </a>
-                <a href="faq/faq_view.html?category=취소/반품/교환">
+                <a th:href="@{/cs/faq/list?boardType=취소/반품/교환}">
                     <img th:src="@{/images/exchange.png}" alt="취소/반품/교환 아이콘">
                     <span>취소<br>반품/교환</span>
                 </a>
-                <a href="faq/faq_view.html?category=안전거래">
+                <a th:href="@{/cs/faq/list?boardType=안전거래}">
                     <img th:src="@{/images/lock.png}" alt="안전거래 아이콘">
                     <span>안전거래</span>
                 </a>
@@ -71,16 +69,15 @@
                 <a th:href="@{/cs/qna/list}" class="more_link">All</a>
             </h2>
             <div class="section_list">
-                <ul>
-                    <li><div style="display: flex;"><div style=""><a href="qna/qna_view.html">[회원] 개인회원과 법인회원차이가있나요?</a></div><div class="date" style="margin-top:auto;margin-left:10px !important;">22.10.31</div></div><div class="writer">chh**</div></li>
-                    <li><div style="display: flex;"><div style=""><a href="qna/qna_view.html">[쿠폰/이벤트] 스마일 포인트는 어디에 사용하나요?</a></div><div class="date" style="margin-top:auto;margin-left:10px !important;">22.10.31</div></div><div class="writer">chh**</div></li>
-                    <li><div style="display: flex;"><div style=""><a href="qna/qna_view.html">[주문/결제] 신용카드결제 중 오류가 난 경우 어떻게 하나요?</a></div><div class="date" style="margin-top:auto;margin-left:10px !important;">22.10.31</div></div><div class="writer">chh**</div></li>
-                    <li><div style="display: flex;"><div style=""><a href="qna/qna_view.html">[취소/반품/교환] 주문을 취소하고 싶어요.</a></div><div class="date" style="margin-top:auto;margin-left:10px !important;">22.10.31</div></div><div class="writer">chh**</div></li>
-                    <li><div style="display: flex;"><div style=""><a href="qna/qna_view.html">[배송] 배송은 언제 완료되나요?</a></div><div class="date" style="margin-top:auto;margin-left:10px !important;">22.10.31</div></div><div class="writer">chh**</div></li>
+                <ul th:each="ask, stat: ${pageResponseAdminInquiryDTO.dtoList}"
+                    th:if="${stat.index} < 5">
+                    <li><div style="display: flex;"><div style=""><a th:href="@{/cs/qna/view/{id}(id=${ask.id}, boardType2=${ask.board_type2}, boardType3=${ask.board_type3})}">[[${ask.title}]]</a></div><div class="date" style="margin-top:auto;margin-left:10px !important;"></span></div></div><div class="writer" th:text="${ask.userId.length() > 4 ?
+               ask.userId.substring(0, 4) + '*'.repeat(ask.userId.length() - 4)
+               : ask.userId}"></div></li>
                 </ul>
             </div>
             <div class="btn_area">
-                <a href="qna/qna_write.html" class="btn_write">write</a>
+                <a th:href="@{/cs/qna/write}" class="btn_write">write</a>
             </div>
         </div>
         <div class="cs_section qna_section">
