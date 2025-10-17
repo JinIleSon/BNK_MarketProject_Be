@@ -69,12 +69,20 @@ public class CSQnaController {
     }
 
     /* QnA 등록 */
+    @GetMapping("/write")
+    public String showWriteForm(Model model) {
+
+        model.addAttribute("qna", new CSNoticeDTO());
+
+        return "customer_service/qna/qna_write";
+    }
+
     @PostMapping("/write")
-    public String write(@ModelAttribute CSNoticeDTO qna) {
+    public String submitWriteForm(@ModelAttribute CSNoticeDTO qna) {
 
         qnaService.insertQna(qna);
 
-        return "redirect:/qna/list";
+        return "redirect:/cs/qna/list";
     }
 
 
