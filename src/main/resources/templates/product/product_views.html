@@ -325,6 +325,7 @@
                         alt="배너광고"
                         style="width:487px; height:100px;">
                     </div>
+                    <div style="font-size: 11px;">Image by <a href="https://www.freepik.com/">Freepik</a></div>
                 </form>
             </div>
             <style>
@@ -599,6 +600,61 @@
         <div id="reviews-start"></div>
 
         <div th:with="rp=${reviewPage}" style="margin-top: 30px;">
+            <!-- 리뷰 없음 -->
+            <div th:if="${rp == null or #lists.isEmpty(rp.dtoList)}"
+                 class="empty-review empty--highlight">
+                <div class="empty-review__icon">📝</div>
+                <div>
+                    <div class="empty-review__title">해당 상품에 등록된 리뷰가 없습니다.</div>
+                    <div class="empty-review__desc">
+                        첫 리뷰의 주인공이 되어 주세요! <span>구매하신 후 후기를 남기시면 혜택이 제공될 수 있어요.</span>
+                    </div>
+                </div>
+            </div>
+
+            <style>
+                .empty-review{
+                    position:relative;
+                    display:flex; align-items:center; gap:18px;
+                    padding:26px 28px;
+                    border:1.5px solid #e1e3e6;
+                    border-radius:6px;
+                    background:#fff;
+                    box-shadow:0 2px 6px rgba(0,0,0,.04);
+                    margin:10px 0 30px 0;
+                }
+                .empty--highlight::before{
+                    content:""; position:absolute; inset:0 0 0 0;
+                    border-left:6px solid #3b5bdb;   /* 💙 강조 포인트 (진한 네이비 블루) */
+                    border-radius:6px 0 0 6px;
+                }
+                .empty-review__icon{
+                    width:46px; height:46px;
+                    display:grid; place-items:center;
+                    background:#f4f6fb;
+                    border-radius:8px;
+                    font-size:22px;
+                    color:#3b5bdb;
+                    flex-shrink:0;
+                }
+                .empty-review__title{
+                    font-weight:800;
+                    font-size:18px;
+                    color:#222;
+                    letter-spacing:-.3px;
+                }
+                .empty-review__desc{
+                    margin-top:6px;
+                    font-size:15px;
+                    color:#555;
+                    line-height:1.5;
+                }
+                .empty-review__desc span{
+                    color:#3b5bdb;
+                    font-weight:500;
+                }
+            </style>
+
             <!-- 리뷰들 -->
             <div th:each="rv : ${rp != null ? rp.dtoList : T(java.util.Collections).emptyList()}">
                 <div th:with="r=${rv?.rating} ?: 0"
