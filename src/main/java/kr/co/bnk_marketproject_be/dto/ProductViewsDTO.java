@@ -57,5 +57,10 @@ public class ProductViewsDTO {
         }
         freeDelivery = (delichar == 0);
     }
+
+    // 뷰에서 쓰는 필드 추가 2
+    private String make;
+    private String origin;
+    private String prodcondition;
 }
 
