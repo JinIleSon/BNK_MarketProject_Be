@@ -85,7 +85,7 @@ public class ProductController {
     public String product_views(@RequestParam int id,
                                 @RequestParam(defaultValue = "1") int rpg,
                                 @RequestParam(defaultValue = "5") int rsize,
-                                @RequestParam int categoryId,
+                                @RequestParam(required=false) Integer categoryId,
                                 Model model) {
 
         ProductViewsDTO dto = productService.getProductDetail(id);
