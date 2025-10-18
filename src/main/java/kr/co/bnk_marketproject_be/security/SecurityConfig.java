@@ -63,6 +63,11 @@ public class SecurityConfig {
         // ✅ 접근 권한 설정
         http.authorizeHttpRequests(auth -> auth
 
+                .requestMatchers(
+                        "/member/issue-temp-password",   // ⬅ 임시 비번 발급 API
+                        "/NICHIYA/email/**"             // ⬅ 이메일 인증 전송/검증
+                ).permitAll()
+
                 // 🔹 정적 리소스 및 공개 페이지는 누구나 접근 가능
                 .requestMatchers(
                         "/", "/index",

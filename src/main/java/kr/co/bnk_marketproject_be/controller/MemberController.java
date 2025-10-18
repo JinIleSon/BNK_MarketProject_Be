@@ -3,13 +3,20 @@ package kr.co.bnk_marketproject_be.controller;
 import kr.co.bnk_marketproject_be.dto.UserDTO;
 import kr.co.bnk_marketproject_be.entity.User;
 import kr.co.bnk_marketproject_be.repository.UserRepository;
+import kr.co.bnk_marketproject_be.service.UserService;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
 import lombok.RequiredArgsConstructor;
+import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.ResponseBody;
 
 import java.security.Principal;
 
@@ -21,6 +28,7 @@ import java.security.Principal;
 public class MemberController {
 
     private final UserRepository userRepository;
+    private final UserService userService;
 
     @GetMapping("/member/join")
     public String member_join(){
@@ -106,6 +114,55 @@ public class MemberController {
     @GetMapping("/main/mainpage")
     public String mainPage() {
         return "main/main_main"; // ✅ templates/main/main_main.html 렌더링
+    }
+
+    @Getter @Setter
+    public static class IssueTempPasswordRequest {   // ★ static 추가 + public 권장
+        private String userId;
+        private String method; // "email" or "phone"
+        private String email;
+        private String phone;
+    }
+
+    @Getter
+    @AllArgsConstructor
+    public static class IssueTempPasswordResponse {  // ★ static 추가 + public 권장
+        private boolean ok;
+        private String message;
+        private String tempPassword;
+    }
+
+    @PostMapping("/member/issue-temp-password")
+    @ResponseBody
+    public ResponseEntity<IssueTempPasswordResponse> issueTempPassword(
+            @RequestBody IssueTempPasswordRequest req) {
+
+        // 1) 입력 체크
+        if (req.getUserId() == null || req.getUserId().isBlank()) {
+            return ResponseEntity.badRequest()
+                    .body(new IssueTempPasswordResponse(false, "userId가 필요합니다.", null));
+        }
+        if (!"email".equals(req.getMethod()) && !"phone".equals(req.getMethod())) {
+            return ResponseEntity.badRequest()
+                    .body(new IssueTempPasswordResponse(false, "지원하지 않는 방식입니다.", null));
+        }
+
+        // 2) 사용자 검증 (아이디 + 이메일/휴대폰 매칭)
+        boolean verified = userService.verifyUserForPasswordReset(
+                req.getUserId(),
+                "email".equals(req.getMethod()) ? req.getEmail() : null,
+                "phone".equals(req.getMethod()) ? req.getPhone() : null
+        );
+        if (!verified) {
+            return ResponseEntity.badRequest()
+                    .body(new IssueTempPasswordResponse(false, "회원 정보가 일치하지 않습니다.", null));
+        }
+
+        // 3) 임시 비밀번호 생성 및 DB 저장 (해시로)
+        String temp = userService.issueTempPasswordAndReturnPlain(req.getUserId());
+
+        // 4) 응답(평문 임시비번 포함)  ※ 알럿 노출용
+        return ResponseEntity.ok(new IssueTempPasswordResponse(true, "issued", temp));
     }
 
 }
