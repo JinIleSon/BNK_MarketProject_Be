@@ -1,41 +1,82 @@
 .cs_qna_write_wrap {
     overflow: hidden;
+    width: 100%;
+    clear: both;
+    display: block;
+}
+
+.cs_qna_write_wrap .qna_write_outer {
+    padding: 30px 0;
+    background-color: #f8f9fa;
 }
 
 .cs_qna_write_wrap .qna_write_form {
-    float: right;
-    width: 980px;
+    width: 75%;
+    margin: 0 auto;
+    box-sizing: border-box;
 }
 
 .cs_qna_write_wrap .form_row {
     display: flex;
     align-items: center;
-    padding: 15px 0;
-    border-bottom: 1px solid #ddd;
+    justify-content: flex-start;
+    margin: 10px;
+    padding: 20px;
 }
 
-.cs_qna_write_wrap .form_row label {
-    width: 120px;
-    font-weight: bold;
+.cs_qna_write_wrap .inline_label {
+    width: 100px;
+    text-align: left;
+    font-weight: 600;
+    color: #333;
+    flex-shrink: 0;
+    line-height: 1.2;
+    display: flex;
+    align-items: center;
+}
+
+.cs_qna_write_wrap .form_field {
+    flex: 1;
+    min-width: 0;
+}
+
+.cs_qna_write_wrap .form_row select,
+.cs_qna_write_wrap .form_row input,
+.cs_qna_write_wrap .form_row textarea {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #ccc;
+    font-size: 14px;
+    box-sizing: border-box;
+    border-radius: 4px;
+    background: #fff;
 }
 
 .cs_qna_write_wrap .form_row .select_group {
     display: flex;
     gap: 10px;
+    flex-wrap: nowrap;
+    width: 500px;
 }
 
-.cs_qna_write_wrap .form_row select, .cs_qna_write_wrap .form_row input, .cs_qna_write_wrap .form_row textarea {
-    padding: 8px 10px;
-    border: 1px solid #ccc;
-    font-size: 14px;
+.cs_qna_write_wrap .form_row .select_group select {
+    flex: 1;
+    height: 36px;
+    padding: 0;
 }
 
-.cs_qna_write_wrap .form_row input[type="text"] {
-    flex-grow: 1;
-}
-
-.cs_qna_write_wrap .form_row textarea {
-    flex-grow: 1;
+.cs_qna_write_wrap textarea {
     height: 200px;
     resize: none;
+}
+
+@media (max-width: 600px) {
+    .cs_qna_write_wrap .form_row {
+        flex-wrap: wrap;
+        align-items: flex-start;
+    }
+    .cs_qna_write_wrap .inline_label {
+        width: 100%;
+        margin-bottom: 6px;
+    }
 }

@@ -68,22 +68,25 @@ public class CSQnaController {
         return "customer_service/qna/qna_view";
     }
 
-    /* QnA 등록 */
+    /* QnA Mapping */
     @GetMapping("/write")
-    public String showWriteForm(Model model) {
+    public String write(
+            @RequestParam(required = false) String boardType2,
+            @RequestParam(required = false) String boardType3,
+            Model model) {
 
         model.addAttribute("qna", new CSNoticeDTO());
+        model.addAttribute("boardType2", boardType2);
+        model.addAttribute("boardType3", boardType3);
 
         return "customer_service/qna/qna_write";
     }
 
     @PostMapping("/write")
-    public String submitWriteForm(@ModelAttribute CSNoticeDTO qna) {
+    public String write(@ModelAttribute CSNoticeDTO qna) {
 
         qnaService.insertQna(qna);
 
         return "redirect:/cs/qna/list";
     }
-
-
 }

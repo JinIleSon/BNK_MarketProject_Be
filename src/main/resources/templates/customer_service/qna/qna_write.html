@@ -7,70 +7,234 @@
     <link rel="stylesheet" th:href="@{/css/style.css}">
     <link rel="stylesheet" th:href="@{/css/common.css}">
     <link rel="stylesheet" th:href="@{/css/write.css}">
+
 </head>
 <body>
 <div th:replace="~{main/header.html}"></div>
 
-    <div id="header"></div> 
-    
-    <div id="content" class="cs_qna_write_wrap">
-        <h1>문의하기</h1>
-        <div class="cs_sub_nav">
-            <ul>
-                <li class="on"><a href="#">회원</a></li>
-                <li><a href="#">쿠폰/이벤트</a></li>
-                <li><a href="#">주문/결제</a></li>
-                <li><a href="#">배송</a></li>
-                <li><a href="#">취소/반품/교환</a></li>
-                <li><a href="#">여행/숙박/항공</a></li>
-                <li><a href="#">안전거래</a></li>
-            </ul>
-        </div>
-        <div class="qna_write_form">
-            <div class="form_row">
-                <label for="qna_type"></label>
-                <div class="select_group">
-                    <select id="qna_type">
-                        <option>1차 문의유형</option>
-                    </select>
-                    <select id="qna_subtype">
-                        <option>2차 선택</option>
-                    </select>
-                </div>
-            </div>
-            <div class="form_row">
-                <label for="qna_title">제목</label>
-                <input type="text" id="qna_title" placeholder="제목을 입력해주세요.">
-            </div>
-            <div class="form_row">
-                <label for="qna_content">내용</label>
-                <textarea id="qna_content" placeholder="내용을 입력해주세요."></textarea>
-            </div>
-            <div class="btn_area">
-                <a th:href="@{/cs/qna/list}" class="btn_list">취소하기</a>
-                <a>등록하기</a>
-            </div>
+<div id="header"></div>
 
-            <script>
-                // 페이지가 로드되면 btn_list 클릭 시 뒤로가기 기능 추가
-                document.addEventListener('DOMContentLoaded', function () {
-                    const btn = document.querySelector('.btn_list');
-                    if (btn) {
-                        btn.addEventListener('click', function (e) {
-                            e.preventDefault(); // 원래 href 이동 막기
-                            if (document.referrer) {
-                                history.back(); // 이전 페이지로 이동
-                            } else {
-                                // referrer가 없을 경우 기본 목록 페이지로 이동
-                                window.location.href = '/cs/qna/list';
-                            }
-                        });
-                    }
-                });
-            </script>
+<div id="content" class="cs_qna_write_wrap">
+    <h1>문의하기</h1>
 
+    <div class="cs_sub_nav">
+        <ul>
+            <!-- 1차 카테고리 -->
+            <li th:classappend="${boardType2 == 'member'} ? 'on'">
+                <a th:href="@{/cs/qna/list(boardType2='member')}">회원</a>
+            </li>
+            <li th:classappend="${boardType2 == 'event'} ? 'on'">
+                <a th:href="@{/cs/qna/list(boardType2='event')}">쿠폰/이벤트</a>
+            </li>
+            <li th:classappend="${boardType2 == 'pay'} ? 'on'">
+                <a th:href="@{/cs/qna/list(boardType2='pay')}">주문/결제</a>
+            </li>
+            <li th:classappend="${boardType2 == 'delivery'} ? 'on'">
+                <a th:href="@{/cs/qna/list(boardType2='delivery')}">배송</a>
+            </li>
+            <li th:classappend="${boardType2 == 'cancel'} ? 'on'">
+                <a th:href="@{/cs/qna/list(boardType2='cancel')}">취소/반품/교환</a>
+            </li>
+            <li th:classappend="${boardType2 == 'trip'} ? 'on'">
+                <a th:href="@{/cs/qna/list(boardType2='trip')}">여행/숙박/항공</a>
+            </li>
+            <li th:classappend="${boardType2 == 'safe'} ? 'on'">
+                <a th:href="@{/cs/qna/list(boardType2='safe')}">안전거래</a>
+            </li>
+        </ul>
+    </div>
+
+    <div class="cs_qna_write_wrap">
+        <div class="qna_write_outer">
+            <div class="qna_write_form">
+
+                <form th:action="@{/cs/qna/write}" method="post">
+
+                    <h2 id="categoryTitle"
+                        style="font-size:23px; font-weight:bold; margin:0; margin-top:10px; margin-left:20px;">
+                        문의유형을 선택해주세요.
+                    </h2>
+
+                    <div class="form_row" style="border-top: 3px solid #ccc; border-bottom: 1px solid #ccc">
+                        <div class="inline_label">문의유형</div>
+
+                        <div class="form_field">
+                            <div class="select_group">
+                                <!-- 1차 선택 -->
+                                <select id="qna_type" name="boardType2"
+                                        th:onchange="|window.location='@{/cs/qna/write}?boardType2=' + this.value + '&boardType3=' + document.getElementById('qna_subtype').value|">
+                                    <option value="" th:selected="${boardType2 == null}">1차 선택</option>
+                                    <option value="member" th:selected="${boardType2 == 'member'}">회원</option>
+                                    <option value="event" th:selected="${boardType2 == 'event'}">쿠폰/이벤트</option>
+                                    <option value="pay" th:selected="${boardType2 == 'pay'}">주문/결제</option>
+                                    <option value="delivery" th:selected="${boardType2 == 'delivery'}">배송</option>
+                                    <option value="cancel" th:selected="${boardType2 == 'cancel'}">취소/반품/교환</option>
+                                    <option value="trip" th:selected="${boardType2 == 'trip'}">여행/숙박/항공</option>
+                                    <option value="safe" th:selected="${boardType2 == 'safe'}">안전거래</option>
+                                </select>
+
+                                <!-- 2차 선택 -->
+                                <select id="qna_subtype" name="boardType3" required>
+                                    <option value="">2차 선택</option>
+                                    <th:block th:switch="${boardType2}">
+                                        <th:block th:case="'member'">
+                                            <option value="login">로그인</option>
+                                            <option value="signup">가입</option>
+                                            <option value="withdraw">탈퇴</option>
+                                            <option value="account">회원정보</option>
+                                        </th:block>
+                                        <th:block th:case="'event'">
+                                            <option value="couponissue">쿠폰발급</option>
+                                            <option value="couponuse">쿠폰사용</option>
+                                            <option value="eventjoin">이벤트참여</option>
+                                            <option value="winnercheck">당첨확인</option>
+                                        </th:block>
+                                        <th:block th:case="'pay'">
+                                            <option value="orderguide">주문방법</option>
+                                            <option value="paymentmethod">결제수단</option>
+                                            <option value="paymenterror">결제오류</option>
+                                            <option value="receipt">영수증/증빙</option>
+                                        </th:block>
+                                        <th:block th:case="'delivery'">
+                                            <option value="tracking">배송조회</option>
+                                            <option value="deliverytime">배송기간</option>
+                                            <option value="deliveryfee">배송비</option>
+                                            <option value="globalshipping">해외배송</option>
+                                        </th:block>
+                                        <th:block th:case="'cancel'">
+                                            <option value="ordercancel">주문취소</option>
+                                            <option value="refund">반품</option>
+                                            <option value="exchange">교환</option>
+                                            <option value="refundprocess">환불처리</option>
+                                        </th:block>
+                                        <th:block th:case="'trip'">
+                                            <option value="payment">결제</option>
+                                            <option value="reservation">예약</option>
+                                            <option value="changecancel">변경/취소</option>
+                                        </th:block>
+                                        <th:block th:case="'safe'">
+                                            <option value="security">보안공지</option>
+                                            <option value="alert">사기주의</option>
+                                            <option value="safepayment">안전결제</option>
+                                            <option value="privacy">개인정보보호</option>
+                                        </th:block>
+                                    </th:block>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="form_row">
+                        <div class="inline_label">제목</div>
+                        <div class="form_field">
+                            <input type="text" id="qna_title" name="title" placeholder="제목을 입력해주세요.">
+                        </div>
+                    </div>
+
+                    <div class="form_row" style="border-bottom: 1px solid #ccc; border-top: 1px solid #ccc; padding-top: 20px">
+                        <div class="inline_label">내용</div>
+                        <div class="form_field">
+                            <textarea id="qna_content" name="content" placeholder="내용을 입력해주세요."></textarea>
+                        </div>
+                    </div>
+
+                    <div class="btn_area" style="text-align: center">
+                        <a th:href="@{/cs/qna/list}" class="btn_write">취소하기</a>
+                        <a th:href="@{#}" class="btn_submit">등록하기</a>
+                    </div>
+
+                </form>
+
+            </div>
         </div>
     </div>
+</div>
+
+<script>
+    // 1차-2차 매핑
+    const subCategories = {
+        member: ["로그인", "가입", "탈퇴", "회원정보"],
+        event: ["쿠폰발급", "쿠폰사용", "이벤트참여", "당첨확인"],
+        pay: ["주문방법", "결제수단", "결제오류", "영수증/증빙"],
+        delivery: ["배송조회", "배송기간", "배송비", "해외배송"],
+        cancel: ["주문취소", "반품", "교환", "환불처리"],
+        trip: ["결제", "예약", "변경/취소"],
+        safe: ["보안공지", "사기주의", "안전결제", "개인정보보호"]
+    };
+
+    // 1차 이름 매핑
+    const mainNames = {
+        member: "회원",
+        event: "쿠폰/이벤트",
+        pay: "주문/결제",
+        delivery: "배송",
+        cancel: "취소/반품/교환",
+        trip: "여행/숙박/항공",
+        safe: "안전거래"
+    };
+
+    const mainSelect = document.getElementById("qna_type");
+    const subSelect = document.getElementById("qna_subtype");
+    const title = document.getElementById("categoryTitle");
+
+    // 저장된 값 불러오기 (새로고침 유지용)
+    const savedMain = localStorage.getItem("boardType2");
+    const savedSub = localStorage.getItem("boardType3");
+
+    if (savedMain) {
+        mainSelect.value = savedMain;
+        fillSubOptions(savedMain);
+        title.textContent = mainNames[savedMain];
+    }
+
+    if (savedSub) {
+        subSelect.value = savedSub;
+        title.textContent = savedSub;
+    }
+
+    // 1차 변경 시
+    mainSelect.addEventListener("change", function () {
+        const value = this.value;
+        localStorage.setItem("boardType2", value);
+        localStorage.removeItem("boardType3");
+
+        fillSubOptions(value);
+
+        if (value) {
+            title.textContent = mainNames[value]; // 제목 = 1차 이름
+        } else {
+            title.textContent = "문의유형을 선택해주세요.";
+        }
+    });
+
+    // 2차 변경 시
+    subSelect.addEventListener("change", function () {
+        const mainValue = mainSelect.value;
+        const subValue = this.value;
+        localStorage.setItem("boardType3", subValue);
+
+        if (mainValue && subValue) {
+            title.textContent = `${mainNames[mainValue]} > ${subValue}`; // 예: 회원 > 가입
+        } else if (mainValue) {
+            title.textContent = mainNames[mainValue];
+        } else {
+            title.textContent = "문의유형을 선택해주세요.";
+        }
+    });
+
+    // 2차 옵션 채우기
+    function fillSubOptions(main) {
+        subSelect.innerHTML = '<option value="">2차 선택</option>';
+        if (subCategories[main]) {
+            subCategories[main].forEach(sub => {
+                const opt = document.createElement("option");
+                opt.value = sub;
+                opt.textContent = sub;
+                subSelect.appendChild(opt);
+            });
+        }
+    }
+</script>
 <div id="footer"></div>
 <div th:replace="~{main/footer.html}"></div>
 </body>
