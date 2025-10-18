@@ -139,7 +139,8 @@
         title,
         content,
         user_id,
-        look
+        look,
+        hits
         ) VALUES (
         #{id},
         'inquiry',
@@ -148,7 +149,8 @@
         #{title, jdbcType=VARCHAR},
         #{content, jdbcType=VARCHAR},
         #{userid, jdbcType=VARCHAR},
-        0
+        0,
+        0 <!-- hits값 고정 -->
         )
     </insert>
 </mapper>
