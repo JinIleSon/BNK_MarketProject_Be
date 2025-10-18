@@ -31,5 +31,4 @@ public interface CSQnaMapper {
 
     // QnA 등록
     void insertQna(CSNoticeDTO qna);
-
 }

@@ -135,7 +135,6 @@
 
     <!-- write -->
     <insert id="insertQna" parameterType="kr.co.bnk_marketproject_be.dto.CSNoticeDTO">
-        <!-- PK를 시퀀스로 미리 채워 DTO.id 에 세팅 -->
         <selectKey keyProperty="id" resultType="long" order="BEFORE">
             SELECT BOARD_SEQ.NEXTVAL FROM DUAL
         </selectKey>
