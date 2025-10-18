@@ -141,7 +141,7 @@
     }</style>
     <div style="display:flex; gap:80px; justify-content:center; flex-wrap:wrap;">
         <th:block th:each="p : ${pageResponseProductDTO.dtoList}">
-            <a th:href="@{/product/views(id=${p.id})}">
+            <a th:href="@{/product/views(id=${p.id}, categoryId=${categoryId})}">
                 <img style="width:40vw;"
                      th:src="${p.url} != null ? (@{/__${p.url}__}) : @{/images/placeholder.png}">
 

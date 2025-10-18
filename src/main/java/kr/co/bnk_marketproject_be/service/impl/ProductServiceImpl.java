@@ -5,6 +5,7 @@ import kr.co.bnk_marketproject_be.dto.*;
 import kr.co.bnk_marketproject_be.mapper.ProductsMapper;
 import kr.co.bnk_marketproject_be.service.ProductService;
 import lombok.RequiredArgsConstructor;
+import org.apache.ibatis.annotations.Param;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -58,6 +59,16 @@ public class ProductServiceImpl implements ProductService {
 
         // 페이지 응답 DTO 조립 (네가 쓰던 PageResponseProductDTO 그대로 활용)
         return new PageResponseProductDTO<>(req, list, total);
+    }
+
+    @Transactional
+    public ProductsDTO selectProductSeller(int id){
+        return  productsMapper.selectProductSeller(id);
+    }
+
+    @Transactional
+    public int  insertCouponUser(String user_id){
+        return productsMapper.insertCouponUser(user_id);
     }
 }
 

@@ -236,7 +236,10 @@
     SELECT COUNT(1)
     FROM product_boards pb
     WHERE pb.type='REVIEW' AND pb.products_id = p.id
-    )                            AS rating_cnt
+    )                            AS rating_cnt,
+    p.prodcondition,
+    p.origin,
+    p.make
     FROM products p
     LEFT JOIN sellers s ON s.id = p.sellers_id   <!-- ★ 연결 -->
     WHERE p.id = #{id}
@@ -344,4 +347,25 @@
     ]]>
 </select>
 
+    <select id="selectProductSeller" resultType="kr.co.bnk_marketproject_be.dto.ProductsDTO">
+        SELECT
+        u.name
+        FROM PRODUCTS p
+        JOIN SELLERS s
+        ON p.SELLERS_ID = s.id
+        JOIN USERS u
+        ON s.USERS_ID = u.id
+        WHERE p.id = #{id}
+    </select>
+
+    <insert id="insertCouponUser" parameterType="string">
+        INSERT INTO COUPONS_NOW (issue_id, users_id, status, coupons_id)
+        VALUES (
+        (SELECT NVL(MAX(issue_id), 0) + 1 FROM COUPONS_NOW),
+        (SELECT u.id
+        FROM USERS u
+        WHERE u.USER_ID = #{user_id}),
+        '미사용', 4)
+    </insert>
+    
 </mapper>

@@ -42,4 +42,8 @@ public interface ProductsMapper {
             @Param("productId") int productId,
             @Param("req") PageRequestProductDTO req
     );
+
+    ProductsDTO selectProductSeller(@Param("id") int id);
+
+    int  insertCouponUser(@Param("user_id") String user_id);
 }

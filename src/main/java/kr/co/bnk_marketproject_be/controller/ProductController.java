@@ -5,9 +5,11 @@ import kr.co.bnk_marketproject_be.mapper.ProductsMapper;
 import kr.co.bnk_marketproject_be.security.MyUserDetails;
 import kr.co.bnk_marketproject_be.service.OrdersService;
 import kr.co.bnk_marketproject_be.service.ProductService;
+import kr.co.bnk_marketproject_be.service.impl.ProductServiceImpl;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
@@ -16,6 +18,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import java.security.Principal;
 import java.util.List;
 import java.util.Map;
 
@@ -27,6 +30,7 @@ public class ProductController {
     private final ProductsMapper productsMapper;
     private final ProductService productService;
     private final OrdersService ordersService;
+    private final ProductServiceImpl  productServiceImpl;
 
     /** 현재 로그인 사용자의 DB PK(id) 반환. 미로그인 시 401 */
     private int currentUserIdOr401(Authentication auth) {
@@ -81,6 +85,7 @@ public class ProductController {
     public String product_views(@RequestParam int id,
                                 @RequestParam(defaultValue = "1") int rpg,
                                 @RequestParam(defaultValue = "5") int rsize,
+                                @RequestParam(required=false) Integer categoryId,
                                 Model model) {
 
         ProductViewsDTO dto = productService.getProductDetail(id);
@@ -93,9 +98,24 @@ public class ProductController {
         PageResponseProductDTO<ProductBoardsDTO> reviewPage =
                 productService.getProductReviewPage(id, req);
 
+        ProductsDTO seller = productServiceImpl.selectProductSeller(id);
+
+        model.addAttribute("categoryId", categoryId);
         model.addAttribute("product", dto);
         model.addAttribute("reviewPage", reviewPage);
+        model.addAttribute("seller",seller);
         return "product/product_views";
+    }
+
+    @PostMapping("/product/coupons/claim")
+    public ResponseEntity<?> claimCoupon(Principal principal) {
+        if (principal == null) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+                    .body(Map.of("ok", false, "reason", "UNAUTHORIZED"));
+        }
+        // user_id = principal.getName()
+        int inserted = productServiceImpl.insertCouponUser(principal.getName()); // 1이면 성공
+        return ResponseEntity.ok(Map.of("ok", inserted > 0));
     }
 
     /* 장바구니 */

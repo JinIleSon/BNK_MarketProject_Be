@@ -5,6 +5,8 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.time.LocalDateTime;
+
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
@@ -33,5 +35,11 @@ public class ProductsDTO {
     private String user_name;  // 판매자 이름(qUser.name);
     private Double ratingAvg;   // 평균 별점 (null 가능)
     private Integer ratingCnt;  // 리뷰 수
+
+    // 뷰에서 쓰는 필드 추가 2
+    private String make;
+    private String origin;
+    private String prodcondition;
+    private String name;
 
 }
