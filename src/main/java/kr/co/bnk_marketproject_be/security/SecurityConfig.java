@@ -34,18 +34,26 @@ public class SecurityConfig {
                 .loginProcessingUrl("/member/login")   // 로그인 요청 처리 URL (form action과 동일)
                 .defaultSuccessUrl("/NICHIYA/main/main/page", true) // 로그인 성공 시
                 // 로그인 실패 성공 시 핸들러
-                .failureHandler((request, response, exception) -> {
-                    String username = request.getParameter("userId");
-                    System.out.println("❌ 로그인 실패 (Controller 로그): 아이디=" + username);
-                    exception.printStackTrace();
-                    response.sendRedirect("/NICHIYA/member/login");
+                .failureHandler((request, response, ex) -> {
+                    String reason = "unknown";
+                    if (ex instanceof org.springframework.security.authentication.BadCredentialsException) {
+                        reason = "bad";           // 아이디/비밀번호 불일치
+                    } else if (ex instanceof org.springframework.security.authentication.LockedException) {
+                        reason = "locked";        // 계정 잠김
+                    } else if (ex instanceof org.springframework.security.authentication.DisabledException) {
+                        reason = "disabled";      // 비활성/미인증
+                    } else if (ex instanceof org.springframework.security.authentication.CredentialsExpiredException) {
+                        reason = "expired";       // 비밀번호 만료
+                    }
+                    // 필요시: 로그인 시도 아이디 로깅
+                    System.out.println("❌ 로그인 실패: userId=" + request.getParameter("userId") + ", reason=" + reason);
+                    response.sendRedirect("/NICHIYA/member/login?error=" + reason);
                 })
                 .successHandler((request, response, authentication) -> {
                     String username = authentication.getName();
-                    System.out.println("✅ 로그인 성공 (Controller 로그): 아이디=" + username);
+                    System.out.println("✅ 로그인 성공: 아이디=" + username);
                     response.sendRedirect("/NICHIYA/main/main/page");
                 })
-                //.failureUrl("/member/login?error=true")    // 실패 시
                 .usernameParameter("userId")
                 .passwordParameter("password")
                 .permitAll()
@@ -62,6 +70,11 @@ public class SecurityConfig {
 
         // ✅ 접근 권한 설정
         http.authorizeHttpRequests(auth -> auth
+
+                .requestMatchers(
+                        "/member/issue-temp-password",   // ⬅ 임시 비번 발급 API
+                        "/NICHIYA/email/**"             // ⬅ 이메일 인증 전송/검증
+                ).permitAll()
 
                 // 🔹 정적 리소스 및 공개 페이지는 누구나 접근 가능
                 .requestMatchers(
