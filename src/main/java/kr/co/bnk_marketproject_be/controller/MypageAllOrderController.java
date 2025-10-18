@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
+import jakarta.servlet.http.HttpServletRequest;
 
 import java.security.Principal;
 import java.util.List;
@@ -28,7 +29,7 @@ public class MypageAllOrderController {
     private final MypageAllOrderMapper orderMapper;
 
     @GetMapping("/mypage/mypage/allorder")
-    public String MypageAllOrder(Model model, Principal principal) {
+    public String MypageAllOrder(Model model, Principal principal, HttpServletRequest request) {
         System.out.println("🔥 [Controller] >>> /mypage/orderall 호출됨");
 
         if (principal == null) {
@@ -45,6 +46,7 @@ public class MypageAllOrderController {
         System.out.println("✅ [Controller] 불러온 주문 개수: " + (orders != null ? orders.size() : 0));
 
         model.addAttribute("orders", orders);
+        model.addAttribute("contextPath", request.getContextPath());
 
         return "mypage/mypage_allOrder";
     }

@@ -42,9 +42,7 @@ public class AdminInquiry {
 
     @Column(name="CREATED_AT", insertable = false, updatable = false)
     private LocalDateTime createdAt;
-    private void onCreate() {
-        if (createdAt == null) createdAt = LocalDateTime.now();
-    }
+
 
     @Column(name="UPDATED_AT", insertable = false, updatable = false)
     private String updatedAt;

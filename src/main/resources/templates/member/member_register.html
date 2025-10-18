@@ -521,19 +521,79 @@
         window.execDaumPostcode = execDaumPostcode;
 
         // ---------- 제출 ----------
-        form.addEventListener("submit",async function (e) {
+        // form.addEventListener("submit",async function (e) {
+        //     e.preventDefault();
+        //
+        //     const okNow =
+        //         emailVerified &&
+        //         //phoneVerified &&
+        //         validateUserId() &&
+        //         validatePassword() &&
+        //         validateName() &&
+        //         validateBirth();
+        //
+        //     if (!okNow) {
+        //
+        //         alert("필수 인증/입력 항목을 완료해 주세요.");
+        //         updateSubmitState();
+        //         return;
+        //     }
+        //
+        //     const payload = {
+        //         userId: elUserId.value.trim(),
+        //         password: elPw.value,
+        //         name: elName.value.trim(),
+        //         gender: document.querySelector('input[name="gender"]:checked')?.value || null,
+        //         birth: elBirth.value,
+        //         email: emailInput.value.trim(),
+        //         phone: phoneInput.value.trim(),
+        //         postcode: document.getElementById("postcode").value,
+        //         address: document.getElementById("address").value,
+        //         detailAddress: document.getElementById("detailAddress").value,
+        //
+        //         // 🔽 추가: 회원 구분 값 전송
+        //         role: document.querySelector('input[name="memberType"]:checked')?.value || "user"
+        //     };
+        //
+        //     try {
+        //         const res = await fetch(`${ctx}user/register`, {
+        //             method: "POST",
+        //             headers: { "Content-Type": "application/json" },
+        //             body: JSON.stringify(payload)
+        //         });
+        //         const body = await res.json();
+        //         if (res.ok && body.ok) {
+        //             alert("회원가입이 완료되었습니다.");
+        //             //location.href = "/welcome";
+        //
+        //         // ✅ 로그인 페이지로 이동 여부 확인
+        //         if (confirm("로그인 페이지로 이동하시겠습니까?")) {
+        //             // ✅ 확인 클릭 시 로그인 페이지로 이동
+        //             location.href = `${ctx}member/login`;
+        //         } else {
+        //             // ❌ 취소 클릭 시 환영 페이지로 이동 (또는 메인 등)
+        //             location.href = `${ctx}member/join`;
+        //         }
+        //         } else {
+        //             alert("회원가입 실패: " + (body.error || "알 수 없는 오류"));
+        //         }
+        //     } catch (err) {
+        //         console.error(err);
+        //         alert("서버 오류로 가입 실패");
+        //     }
+        // });
+        // ---------- 제출 ----------
+        form.addEventListener("submit", async function (e) {
             e.preventDefault();
 
             const okNow =
                 emailVerified &&
-                //phoneVerified &&
                 validateUserId() &&
                 validatePassword() &&
                 validateName() &&
                 validateBirth();
 
             if (!okNow) {
-
                 alert("필수 인증/입력 항목을 완료해 주세요.");
                 updateSubmitState();
                 return;
@@ -550,8 +610,6 @@
                 postcode: document.getElementById("postcode").value,
                 address: document.getElementById("address").value,
                 detailAddress: document.getElementById("detailAddress").value,
-
-                // 🔽 추가: 회원 구분 값 전송
                 role: document.querySelector('input[name="memberType"]:checked')?.value || "user"
             };
 
@@ -561,21 +619,44 @@
                     headers: { "Content-Type": "application/json" },
                     body: JSON.stringify(payload)
                 });
-                const body = await res.json();
-                if (res.ok && body.ok) {
-                    alert("회원가입이 완료되었습니다.");
-                    //location.href = "/welcome";
 
-                // ✅ 로그인 페이지로 이동 여부 확인
-                if (confirm("로그인 페이지로 이동하시겠습니까?")) {
-                    // ✅ 확인 클릭 시 로그인 페이지로 이동
-                    location.href = `${ctx}member/login`;
+                // 응답 본문 안전 파싱 (JSON/텍스트/빈 본문 모두 대응)
+                const ct = res.headers.get("content-type") || "";
+                let data = null;
+                let raw = null;
+
+                if (ct.includes("application/json")) {
+                    data = await res.json().catch(() => null);
                 } else {
-                    // ❌ 취소 클릭 시 환영 페이지로 이동 (또는 메인 등)
-                    location.href = `${ctx}member/join`;
+                    raw = await res.text().catch(() => "");
                 }
+
+                if (!res.ok) {
+                    const msg = (data && (data.error || data.message))
+                        || raw
+                        || "서버 오류";
+                    alert(`회원가입 실패(${res.status}): ${msg}`);
+                    return;
+                }
+
+                // 성공 판정: 여러 응답 형태 지원
+                const success =
+                    (data == null) ? true // 204/빈 응답도 성공으로 간주
+                        : (data.ok === true || data.success === true
+                            || typeof data === "boolean" && data === true
+                            || data.id != null); // 생성된 리소스를 돌려주는 경우
+
+                if (success) {
+                    alert("회원가입이 완료되었습니다.");
+
+                    if (confirm("로그인 페이지로 이동하시겠습니까?")) {
+                        location.href = `${ctx}member/login`;
+                    } else {
+                        location.href = `${ctx}member/join`;
+                    }
                 } else {
-                    alert("회원가입 실패: " + (body.error || "알 수 없는 오류"));
+                    const msg = data?.error || data?.message || "응답 형식이 예상과 다릅니다.";
+                    alert(`회원가입 실패: ${msg}`);
                 }
             } catch (err) {
                 console.error(err);

@@ -6,7 +6,7 @@
 
 <mapper namespace="kr.co.bnk_marketproject_be.mapper.CSQnaMapper">
 
-    <!-- ✅ QnA 목록 -->
+    <!-- QnA 목록 -->
     <select id="selectQnaList" resultType="kr.co.bnk_marketproject_be.dto.CSNoticeDTO">
         SELECT
         b.id,
@@ -21,12 +21,12 @@
         LEFT JOIN comments c ON b.id = c.bid
         WHERE b.board_type = 'inquiry'
 
-        <!-- ✅ 1차 카테고리 필터 -->
+        <!-- 1차 카테고리 필터 -->
         <if test="boardType2 != null and boardType2 != ''">
             AND b.board_type2 = #{boardType2}
         </if>
 
-        <!-- ✅ 2차 카테고리 필터 -->
+        <!-- 2차 카테고리 필터 -->
         <choose>
             <when test="boardType3 != null and boardType3 != ''">
                 AND b.board_type3 = #{boardType3}
@@ -132,5 +132,33 @@
         on b.id = c.bid
         WHERE c.bid = #{bid}
     </select>
+
+    <!-- write -->
+    <insert id="insertQna" parameterType="kr.co.bnk_marketproject_be.dto.CSNoticeDTO">
+        <!-- PK를 시퀀스로 미리 채워 DTO.id 에 세팅 -->
+        <selectKey keyProperty="id" resultType="long" order="BEFORE">
+            SELECT BOARD_SEQ.NEXTVAL FROM DUAL
+        </selectKey>
+
+        INSERT INTO board (
+            id,
+            board_type,
+            board_type2,
+            board_type3,
+            title,
+            content,
+            user_id,
+            look
+        ) VALUES (
+        #{id},
+        'inquiry',
+        #{boardType2},
+        #{boardType3},
+        #{title},
+        #{content},
+        #{userid},
+        '0'
+        )
+    </insert>
 
 </mapper>

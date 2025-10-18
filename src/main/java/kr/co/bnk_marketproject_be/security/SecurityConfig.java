@@ -1,7 +1,5 @@
 package kr.co.bnk_marketproject_be.security;
 
-import kr.co.bnk_marketproject_be.service.CustomOAuth2UserService;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -17,19 +15,15 @@ import org.springframework.security.web.csrf.CookieCsrfTokenRepository;
 // import org.springframework.security.core.userdetails.UserDetails;
 // import org.springframework.security.provisioning.InMemoryUserDetailsManager;
 
-@Slf4j
 @Configuration
 public class SecurityConfig {
 
     @Autowired
     private MyUserDetailsService myUserDetailsService;
-    @Autowired
-    private OAuth2LoginSuccessHandler oAuth2LoginSuccessHandler;
+
 
     @Bean
-    public SecurityFilterChain filterChain(HttpSecurity http,
-                                           CustomAuthenticationProvider customAuthenticationProvider,
-                                           CustomOAuth2UserService customOAuth2UserService) throws Exception {
+    public SecurityFilterChain filterChain(HttpSecurity http, CustomAuthenticationProvider customAuthenticationProvider) throws Exception {
 
         // ✅ DB 기반 인증 (CustomAuthenticationProvider)
         http.authenticationProvider(customAuthenticationProvider);
@@ -40,18 +34,26 @@ public class SecurityConfig {
                 .loginProcessingUrl("/member/login")   // 로그인 요청 처리 URL (form action과 동일)
                 .defaultSuccessUrl("/NICHIYA/main/main/page", true) // 로그인 성공 시
                 // 로그인 실패 성공 시 핸들러
-                .failureHandler((request, response, exception) -> {
-                    String username = request.getParameter("userId");
-                    System.out.println("❌ 로그인 실패 (Controller 로그): 아이디=" + username);
-                    exception.printStackTrace();
-                    response.sendRedirect("/member/login?error=true");
+                .failureHandler((request, response, ex) -> {
+                    String reason = "unknown";
+                    if (ex instanceof org.springframework.security.authentication.BadCredentialsException) {
+                        reason = "bad";           // 아이디/비밀번호 불일치
+                    } else if (ex instanceof org.springframework.security.authentication.LockedException) {
+                        reason = "locked";        // 계정 잠김
+                    } else if (ex instanceof org.springframework.security.authentication.DisabledException) {
+                        reason = "disabled";      // 비활성/미인증
+                    } else if (ex instanceof org.springframework.security.authentication.CredentialsExpiredException) {
+                        reason = "expired";       // 비밀번호 만료
+                    }
+                    // 필요시: 로그인 시도 아이디 로깅
+                    System.out.println("❌ 로그인 실패: userId=" + request.getParameter("userId") + ", reason=" + reason);
+                    response.sendRedirect("/NICHIYA/member/login?error=" + reason);
                 })
                 .successHandler((request, response, authentication) -> {
                     String username = authentication.getName();
-                    System.out.println("✅ 로그인 성공 (Controller 로그): 아이디=" + username);
+                    System.out.println("✅ 로그인 성공: 아이디=" + username);
                     response.sendRedirect("/NICHIYA/main/main/page");
                 })
-                //.failureUrl("/member/login?error=true")    // 실패 시
                 .usernameParameter("userId")
                 .passwordParameter("password")
                 .permitAll()
@@ -69,20 +71,16 @@ public class SecurityConfig {
         // ✅ 접근 권한 설정
         http.authorizeHttpRequests(auth -> auth
 
-                // 접근 권한 변경 시 이 순서대로 안하면 스프링 자체 run 오류납니다!
-                // 1) 완전 공개(정적/공용)
+                .requestMatchers(
+                        "/member/issue-temp-password",   // ⬅ 임시 비번 발급 API
+                        "/NICHIYA/email/**"             // ⬅ 이메일 인증 전송/검증
+                ).permitAll()
+
+                // 🔹 정적 리소스 및 공개 페이지는 누구나 접근 가능
                 .requestMatchers(
                         "/", "/index",
                         "/css/**", "/js/**", "/images/**", "/fonts/**",
-                        "/favicon.ico", "/error"
-                ).permitAll()
-
-                // 2) OAuth2 엔드포인트 공개
-                .requestMatchers("/oauth2/**", "/login/oauth2/**",
-                        "/oauth2/authorization/**", "/auth/login/kakao/**").permitAll()
-
-                // 3) 사이트 공개 페이지
-                .requestMatchers(
+                        "/favicon.ico", "/error",
                         "/user/**",
                         "/email/**",
                         "/member/**",
@@ -91,33 +89,20 @@ public class SecurityConfig {
                         "/compinfo/**",
                         "/main/**",
                         "/product/**",
-                        "/cs/**"
+                        "/cs/**",
+                        "/member/**",
+                        "/mypage/**"
                 ).permitAll()
 
-                // 4) 인증/권한 필요한 구간 (구체 → 덜 구체 순서)
                 // 🔹 일반 회원, 셀러 접근 허용
-                .requestMatchers("/article/**").hasAnyAuthority("user", "seller", "admin")
-                .requestMatchers("/mypage/**").hasAnyAuthority("user", "seller", "admin")
-                .requestMatchers("/admin/**").hasAnyAuthority( "admin")
+                .requestMatchers("/article/**").hasAnyRole("user", "seller", "admin")
+                .requestMatchers("/mypage/**").hasAnyRole("user", "seller", "admin")
+                .requestMatchers("/admin/**").hasAnyRole( "admin")
+                .requestMatchers("/api/mypage/**").hasAnyRole("user", "seller", "admin")
 
-                // 5) 마지막에 anyRequest
                 // 🔹 관리자(admin)는 모든 페이지 접근 가능
-                .anyRequest().hasAnyAuthority("admin")
-                //.anyRequest().authenticated()
+                .anyRequest().hasAnyRole("admin")
         );
-
-        // 구글 로그인
-        // ✅ OAuth2 로그인 활성화 (필수)
-        http.oauth2Login(oauth -> oauth
-                .loginPage("/member/login") // 로그인 페이지 재사용
-                .userInfoEndpoint(u -> u.userService(customOAuth2UserService)) // 사용자 정보 매핑
-                .successHandler(oAuth2LoginSuccessHandler) // ✅ 성공 시 핸들러 실행
-                .failureHandler((req, res, ex) -> { // ✅ 실패 시 에러 로그 확인
-                    ex.printStackTrace();
-                    res.sendRedirect("/member/login?error=true");
-                })
-        );
-
 
         // ✅ CSRF (쿠키 기반) 너무 복잡하고 어려워서 안함
 //        http.csrf(csrf -> csrf

@@ -156,10 +156,10 @@
                     <div style="display:flex; justify-content:flex-end; margin-top:30px;">
                         <input type="button" value="삭제"
                                style="cursor:pointer; border:none; width:80px; height:40px; background-color:#760c0c; color:#fff; margin-left:8px;"
-                               th:onclick="|if(confirm('정말로 삭제하시겠습니까?')) location.href='@{~/admin/inquiry/delete(id=${adminInquiryDTO.id})}';|">
+                               th:onclick="|if(confirm('정말로 삭제하시겠습니까?')) location.href='@{/admin/inquiry/delete(id=${adminInquiryDTO.id})}';|">
                         <input type="button" value="목록"
                                style="cursor:pointer; border:none; width:80px; height:40px; background-color:#000; color:#fff; margin-left:8px;"
-                               th:onclick="|location.href='@{~/admin/inquiry/list}'|">
+                               th:onclick="|location.href='@{/admin/inquiry/list}'|">
                     </div>
                 </div>
             </div>

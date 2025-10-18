@@ -333,7 +333,7 @@
                         </a>
                     </div>
 
-                    <div class="help-link"><a href="#">도움말</a></div>
+                    <div class="help-link"><a th:href="@{/member/help-login}">도움말</a></div>
                 </form>
 
                 <!-- ▼ 로그인 패널 내부 전용: 로고 3칸 + 우측 배너 -->
@@ -363,6 +363,39 @@
             if (params.get("error") === "true") {
                 alert("아이디 또는 비밀번호가 올바르지 않습니다.");
             }
+
+            const err = params.get("error"); // bad | locked | disabled | expired | unknown
+
+            if (err) {
+                const msgMap = {
+                    bad:      "아이디 또는 비밀번호가 올바르지 않습니다.",
+                    locked:   "계정이 잠겨 있습니다. 관리자에게 문의해 주세요.",
+                    disabled: "비활성화된 계정입니다. 이메일 인증 또는 관리자 문의가 필요합니다.",
+                    expired:  "비밀번호가 만료되었습니다. 비밀번호를 변경해 주세요.",
+                    unknown:  "로그인에 실패했습니다. 잠시 후 다시 시도해 주세요."
+                };
+                const message = msgMap[err] || msgMap.unknown;
+
+                // 1) 알림
+                alert(message);
+
+                // 2) 인라인 에러 표시 + 폼 흔들기 효과
+                const idGroup = document.querySelector('.form-field-id');
+                const pwGroup = document.querySelector('.form-field-pw');
+                const setErr = (g, t) => {
+                    g.classList.add('is-invalid');
+                    g.querySelector('.error-msg').textContent = t;
+                };
+                setErr(idGroup, message);
+                setErr(pwGroup, message);
+
+                const form = document.getElementById('loginForm');
+                form.classList.add('shake');
+                setTimeout(() => form.classList.remove('shake'), 500);
+            }
+
+            // (나머지 기존 유효성 검사/버튼 로직 유지)
+
 
             const form = document.getElementById('loginForm');
             const groups = [
@@ -426,6 +459,16 @@
             }
         });
     </script>
+    <style>
+        /* 폼 흔들기 */
+        @keyframes shake {
+            10%, 90% { transform: translateX(-2px); }
+            20%, 80% { transform: translateX(4px); }
+            30%, 50%, 70% { transform: translateX(-6px); }
+            40%, 60% { transform: translateX(6px); }
+        }
+        #loginForm.shake { animation: shake .5s; }
+    </style>
 
 </body>
 

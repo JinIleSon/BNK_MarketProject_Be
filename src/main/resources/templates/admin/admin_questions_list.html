@@ -280,9 +280,13 @@
                     (admin.board_type3 == 'alert' ? '사기주의' :
                     (admin.board_type3 == 'safepayment' ? '안전결제' :
                     (admin.board_type3 == 'privacy' ? '개인정보보호' : '')))))))))))))))))))))))))))}">2차유형</td>
+<<<<<<< HEAD
                     <td style="text-align: left;padding-left: 20px; padding-right:20px;"><a th:href="${admin.look == 0 ?
                                                                                                     '/NICHIYA/admin/FAQ/answer?id=' + admin.id :
                                                                                                     '/NICHIYA/admin/FAQ/view?id=' + admin.id}">[[${admin.title}]]</a></td>
+=======
+                    <td style="text-align: left;padding-left: 20px; padding-right:20px;"><a th:href="@{/admin/FAQ/view(id=${admin.id})}">[[${admin.title}]]</a></td>
+>>>>>>> eb87f79b4bde345add8d4a0de9ecbc8420a89917
                     <td style="width:45px;"
                             th:text="${admin.hits}">120</td>
                     <td style="width:122px;"

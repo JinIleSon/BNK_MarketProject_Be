@@ -11,6 +11,8 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.security.SecureRandom;
+import java.time.LocalDate;
 import java.util.Map;
 import java.util.List;
 import java.util.UUID;
@@ -130,6 +132,10 @@ public class UserService {
 
         // 이 형태가 위반이 안됨.
         user.setRole(userDTO.getRole());
+
+        if (userDTO.getBirth() != null) {
+            user.setBirth(userDTO.getBirth());
+        }
 
         // 7) 저장
         userRepository.save(user);
@@ -405,6 +411,32 @@ public class UserService {
         return userRepository.save(user);
     }
 
+    @Transactional
+    public String issueTempPasswordAndReturnPlain(String userId) {
+        User user = userRepository.findByUserId(userId);
+        if (user == null) {
+            throw new IllegalArgumentException("존재하지 않는 사용자입니다.");
+        }
+
+        String temp = generateTempPassword(10); // 평문
+        String encoded = passwordEncoder.encode(temp);
+
+        user.setPassword(encoded);
+        // 선택: 임시비번 플래그/만료일 컬럼이 있다면 업데이트
+        // user.setPwTempYn("Y");
+        // user.setPwChangedAt(LocalDateTime.now());
+
+        userRepository.save(user);
+        return temp; // 프론트 알럿용
+    }
+
+    private String generateTempPassword(int len) {
+        final String chars = "ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnpqrstuvwxyz23456789"; // O/0, l/1 제거
+        SecureRandom r = new SecureRandom();
+        StringBuilder sb = new StringBuilder(len);
+        for (int i = 0; i < len; i++) sb.append(chars.charAt(r.nextInt(chars.length())));
+        return sb.toString();
+    }
 
 
 

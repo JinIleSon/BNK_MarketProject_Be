@@ -26,9 +26,10 @@ public class DeliveriesDTO {
     private String recipient;
     private Integer delichar;
     private String receipt;
-    private String note;
+    private String memo;
     private String zipcode;
     private String address2;
+    private String note;
 
 
     public String getReceipt() {

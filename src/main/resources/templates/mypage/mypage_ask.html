@@ -222,7 +222,7 @@
                         (inquiry.board_type3 == 'safepayment' ? '안전결제' :
                         (inquiry.board_type3 == 'privacy' ? '개인정보보호' : '')))))))))))))))))))))))))))}"
                                         style="letter-spacing: -1px;">주문 / 결제</td>
-                                <td>[[${inquiry.title}]]</td>
+                                <td><a class="link-hover" th:href="@{|/cs/qna/view/${inquiry.id}|}">[[${inquiry.title}]]</a></td>
                                 <td th:text="${#temporals.format(inquiry.createdAt, 'yyyy-MM-dd')}">2022-12-12</td>
                                 <td style="color:gray;"
                                     th:text="${inquiry.look == 0 ? '검토 중' : '답변완료'}"
@@ -273,6 +273,18 @@
         margin-right:7px;
         line-height:1;
     }
+    /* 공통 링크 호버 스타일 */
+    .link-hover {
+        color: #a0a0a0;
+        text-decoration: none;
+        transition: color .2s, transform .2s;
+    }
+    .link-hover:hover {
+        color: #222;
+        text-decoration: underline;
+        transform: translateY(-1px);
+    }
+
 </style>
 </body>
 </html>

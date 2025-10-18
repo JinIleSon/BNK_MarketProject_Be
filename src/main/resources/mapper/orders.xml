@@ -8,13 +8,19 @@
     <select id="selectCartLineRows" resultType="kr.co.bnk_marketproject_be.dto.OrderPageLineRowDTO">
         SELECT
         oi.id              AS order_item_id,
-        p.id               AS product_id,
+        p.id               AS id,
         p.product_code     AS product_code,
         p.product_name     AS product_name,
         po.option_name     AS option_name,
         oi.quantity        AS quantity,
-        p.price            AS unit_price,
-        NVL(p.discount,0)  AS discount_rate,
+        p.price            AS unitPrice,
+        NVL(
+        CASE
+        WHEN p.discount BETWEEN 0 AND 100 THEN ROUND(p.discount)
+        WHEN p.discount > 100 AND p.price > 0 THEN ROUND(p.discount / p.price * 100)
+        ELSE 0
+        END, 0
+        )                    AS discountRate,
         img.url            AS url,
         p.delichar         AS delichar
         FROM order_items oi
@@ -23,7 +29,7 @@
         LEFT JOIN product_options po ON po.id = oi.product_options_id
         LEFT JOIN product_images img ON img.products_id = p.id AND img.is_main='Y'
         WHERE o.users_id = #{userId}
-        AND o.status = '결제대기(장바구니)'
+        AND o.status = '결제대기'
         ORDER BY oi.id DESC
     </select>
 
@@ -41,16 +47,23 @@
     </select>
 
     <select id="selectAvailablePoint" resultType="int">
-        SELECT NVL(MAX(balance),0)
+        SELECT NVL(MAX(balance), 0)
         FROM point_ledgers
-        WHERE users_id = #{userId}
+        WHERE users_id = TO_CHAR(#{userId})
     </select>
 
-    <select id="selectDefaultShipping" resultType="kr.co.bnk_marketproject_be.dto.OrderPageShippingInfoDTO">
-        SELECT recipient, delicom, zipcode, address, address2, '' AS memo
-        FROM user_addresses
-        WHERE users_id = #{userId}
-        AND is_default='Y'
+    <select id="selectDefaultShipping" resultType="kr.co.bnk_marketproject_be.dto.DeliveriesDTO">
+        SELECT
+        d.deliveries_name     AS recipient,
+        d.deliveries_hp       AS hp,
+        d.deliveries_zipcode  AS zipcode,
+        d.deliveries_address1 AS address1,
+        d.deliveries_address2 AS address2,
+        d.deliveries_others   AS memo
+        FROM deliveries d
+        WHERE d.users_id = #{userId}
+        ORDER BY d.id DESC
+        FETCH FIRST 1 ROWS ONLY
     </select>
 
     <!-- 주문 생성 -->
@@ -112,21 +125,22 @@
     <insert id="consumePoint">
         INSERT INTO point_ledgers (users_id, change_amount, balance, description, created_at, board_type)
         VALUES (
-        #{userId},
+        TO_CHAR(#{userId}),
         -#{amount},
-        (SELECT NVL(MAX(balance),0) FROM point_ledgers WHERE users_id=#{userId}) - #{amount},
+        (SELECT NVL(MAX(balance),0) FROM point_ledgers WHERE users_id = TO_CHAR(#{userId})) - #{amount},
         #{orderId},
         SYSTIMESTAMP,
         'ORDER_USE'
         )
     </insert>
 
+    <!-- 포인트 적립 -->
     <insert id="addRewardPoint">
         INSERT INTO point_ledgers (users_id, change_amount, balance, description, created_at, board_type)
         VALUES (
-        #{userId},
+        TO_CHAR(#{userId}),
         #{amount},
-        (SELECT NVL(MAX(balance),0) FROM point_ledgers WHERE users_id=#{userId}) + #{amount},
+        (SELECT NVL(MAX(balance),0) FROM point_ledgers WHERE users_id = TO_CHAR(#{userId})) + #{amount},
         #{orderId},
         SYSTIMESTAMP,
         'ORDER_REWARD'
@@ -138,7 +152,7 @@
         WHERE orders_id IN (
         SELECT id FROM orders
         WHERE users_id=#{userId}
-        AND status='결제대기(장바구니)'
+        AND status='결제대기'
         )
     </delete>
 
@@ -163,19 +177,24 @@
 
     <select id="selectOrderCompleteHeader" parameterType="int" resultType="kr.co.bnk_marketproject_be.dto.ProductCompleteDTO">
         SELECT
-        o.id            AS orderId,      <!-- ✅ DTO 필드명과 일치 -->
-        p.method        AS payMethod,
-        u.name          AS buyerName,
-        u.phone         AS buyerPhone,
-        to_char(o.created_at, 'YYYY-MM-DD HH24:MI:SS') AS completedAt,
-        d.recipient     AS "shipping.recipient",
-        d.delicom       AS "shipping.delicom",
-        d.zipcode       AS "shipping.zipcode",
-        d.address       AS "shipping.address",
-        d.address2      AS "shipping.address2"
+        /* 주문/결제/구매자 */
+        o.id                                     AS orderId,
+        p.method                                 AS payMethod,
+        u.name                                   AS buyerName,
+        u.phone                                  AS buyerPhone,
+        TO_CHAR(o.created_at, 'YYYY-MM-DD HH24:MI:SS') AS completedAt,
+
+        /* 배송지(orders_id로 조인된 배송 스냅샷) */
+        d.deliveries_name                        AS "deliveries.recipient",
+        /* delicom 컬럼이 현재 없으므로 NULL 반환 (있으면 d.delicom 으로 바꿔) */
+        NULL                                     AS "deliveries.delicom",
+        d.deliveries_zipcode                     AS "deliveries.zipcode",
+        d.deliveries_address1                    AS "deliveries.address1",
+        d.deliveries_address2                    AS "deliveries.address2",
+        d.deliveries_hp                          AS "deliveries.hp"
         FROM orders o
-        JOIN users u        ON u.id = o.users_id
-        LEFT JOIN payments p ON p.orders_id = o.id
+        JOIN users u          ON u.id = o.users_id
+        LEFT JOIN payments p  ON p.orders_id = o.id
         LEFT JOIN deliveries d ON d.orders_id = o.id
         WHERE o.id = #{orderId}
     </select>
@@ -220,5 +239,26 @@
         (SELECT price FROM products WHERE id = #{productId})
         )
     </update>
+
+    <delete id="deleteCartItems">
+        DELETE FROM order_items
+        WHERE orders_id = #{orderId}
+        AND id IN
+        <foreach collection="itemIds" item="id" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+
+    <select id="countItemsInOrder" resultType="int">
+        SELECT COUNT(*) FROM order_items WHERE orders_id = #{orderId}
+    </select>
+
+    <!-- 선택: 아이템 0개면 장바구니 주문 레코드 제거 -->
+    <delete id="deleteOrderIfEmpty">
+        DELETE FROM orders o
+        WHERE o.id = #{orderId}
+        AND o.status = '결제대기'
+        AND NOT EXISTS (SELECT 1 FROM order_items oi WHERE oi.orders_id = o.id)
+    </delete>
 
 </mapper>

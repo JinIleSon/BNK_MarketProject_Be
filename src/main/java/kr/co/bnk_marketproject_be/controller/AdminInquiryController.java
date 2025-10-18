@@ -24,6 +24,7 @@ public class AdminInquiryController {
 
         log.info("pageResponseAdminInquiryDTO={}", pageResponseAdminInquiryDTO);
         model.addAttribute("pageResponseDTO", pageResponseAdminInquiryDTO);
+        log.info("dtoList[0].createdAt={}", pageResponseAdminInquiryDTO.getCreated_at());
 
         return "admin/admin_asking";
     }

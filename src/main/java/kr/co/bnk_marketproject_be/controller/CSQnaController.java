@@ -1,5 +1,6 @@
 package kr.co.bnk_marketproject_be.controller;
 
+import jakarta.servlet.http.HttpServletRequest;
 import kr.co.bnk_marketproject_be.dto.CSNoticeDTO;
 import kr.co.bnk_marketproject_be.service.CSQnaService;
 import lombok.RequiredArgsConstructor;
@@ -73,7 +74,17 @@ public class CSQnaController {
     public String write(
             @RequestParam(required = false) String boardType2,
             @RequestParam(required = false) String boardType3,
-            Model model) {
+            Model model,
+            HttpServletRequest request) {
+
+        if (boardType2 == null || boardType2.isEmpty()) {
+            String referer = request.getHeader("Referer");
+            if (referer != null && referer.contains("boardType2=")) {
+                boardType2 = referer.substring(referer.indexOf("boardType2=") + 11);
+                int amp = boardType2.indexOf("&");
+                if (amp > 0) boardType2 = boardType2.substring(0, amp);
+            }
+        }
 
         model.addAttribute("qna", new CSNoticeDTO());
         model.addAttribute("boardType2", boardType2);
@@ -82,11 +93,15 @@ public class CSQnaController {
         return "customer_service/qna/qna_write";
     }
 
+
     @PostMapping("/write")
     public String write(@ModelAttribute CSNoticeDTO qna) {
 
+        // 작성자 guest로 들어감
+        if (qna.getUserid() == null || qna.getUserid().isBlank()) {
+            qna.setUserid("guest");
+        }
         qnaService.insertQna(qna);
-
         return "redirect:/cs/qna/list";
     }
 }
