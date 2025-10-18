@@ -165,4 +165,8 @@ public class MemberController {
         return ResponseEntity.ok(new IssueTempPasswordResponse(true, "issued", temp));
     }
 
+    @GetMapping("/member/help-login")
+    public String member_helpLogin(){
+        return "member/member_help_login";
+    }
 }

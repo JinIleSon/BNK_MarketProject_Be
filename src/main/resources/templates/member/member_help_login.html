@@ -1,0 +1,255 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>로그인 도움말 | NICHIYA</title>
+    <meta name="description" content="NICHIYA 로그인 문제 해결, 아이디/비밀번호 찾기, 자동 로그인, 소셜 로그인, 보안 안내" />
+    <style>
+        :root{ --ink:#000; --muted:#666; --line:#e5e5e5; --bg:#fff; --radius:12px; }
+        html{scrollbar-gutter:stable}
+        html,body{margin:0}
+        body{font-family:system-ui,-apple-system,Segoe UI,Roboto,"Noto Sans KR",sans-serif;color:var(--ink);background:var(--bg);font-size:clamp(14px,1.1vw,16px);line-height:1.6}
+        a{color:var(--ink);text-decoration:none} a:hover{text-decoration:underline}
+        .wrap{max-width:980px;margin-inline:auto;padding:24px}
+        header{padding:20px 0 6px;border-bottom:1px solid var(--line)}
+        .breadcrumbs{font-size:.9em;color:var(--muted)}
+        .breadcrumbs a{color:inherit}
+        h1{font-size:clamp(22px,2.2vw,28px);margin:18px 0}
+        .lead{color:var(--muted);margin-top:-6px}
+        .grid{display:grid;gap:20px;grid-template-columns:1fr}
+        @media (min-width:900px){ .grid{grid-template-columns:1.3fr .7fr} }
+        .cards{display:grid;gap:12px;grid-template-columns:1fr;margin:8px 0 4px}
+        @media(min-width:640px){ .cards{grid-template-columns:repeat(3,1fr)} }
+        .card{border:1px solid var(--line);border-radius:var(--radius);padding:16px;transition:box-shadow .15s}
+        .card:hover{box-shadow:0 4px 18px rgba(0,0,0,.06)}
+        .card b{display:block;margin-bottom:6px}
+        details{border:1px solid var(--line);border-radius:10px;padding:12px 14px;background:#fff}
+        details+details{margin-top:10px}
+        summary{cursor:pointer;list-style:none;display:flex;justify-content:space-between;align-items:center;font-weight:700}
+        summary::-webkit-details-marker{display:none}
+        .q{display:flex;gap:10px;align-items:center}
+        .q .badge{border:1px solid var(--ink);border-radius:6px;padding:2px 6px;font-size:.8em}
+        .a{margin-top:10px;color:#222}
+        .note{font-size:.95em;color:var(--muted)}
+        .kbd{font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;border:1px solid var(--line);padding:2px 6px;border-radius:6px}
+        .aside{border:1px solid var(--line);border-radius:var(--radius);padding:16px;position:sticky;top:16px;height:fit-content}
+        .aside h3{margin:0 0 8px 0;font-size:1.05em}
+        .list{margin:0;padding-left:18px}
+        .divider{height:1px;background:var(--line);margin:18px 0}
+        footer{margin-top:40px;border-top:1px solid var(--line);padding:20px 0 36px;font-size:.92em}
+        .corp{margin-top:8px;text-align:center}
+        /* 1) 텍스트 링크: 좌→우 슬라이딩 밑줄 + 미묘한 컬러 변화  */
+        /* 카드(anchor.card)는 제외해 카드 전체에 밑줄이 깔리는 걸 방지 */
+        a:not(.card){
+            position: relative;
+            color: var(--ink);
+            text-decoration: none;
+            transition: color .2s ease;
+            text-underline-offset: 4px; /* 접근성 향상 */
+        }
+        a:not(.card)::after{
+            content: "";
+            position: absolute;
+            left: 0; right: 0; bottom: -2px;
+            height: 1px;
+            background: currentColor;
+            transform: scaleX(0);
+            transform-origin: left;
+            transition: transform .22s ease;
+        }
+        a:not(.card):hover{
+            color: #111; /* 살짝 진하게 */
+        }
+        a:not(.card):hover::after{
+            transform: scaleX(1);
+        }
+
+        /* 2) 카드 링크: 살짝 떠오르며 제목에 화살표 등장 */
+        .card{
+            will-change: transform, box-shadow;
+        }
+        .card:hover{
+            transform: translateY(-2px);
+            box-shadow: 0 6px 22px rgba(0,0,0,.08);
+            text-decoration: none;
+        }
+        .card b{
+            position: relative;
+            padding-right: 16px;
+            transition: color .2s ease;
+        }
+        .card b::after{
+            content: "→";
+            position: absolute; top: 0; right: 0;
+            opacity: 0;
+            transform: translateX(-6px);
+            transition: transform .2s ease, opacity .2s ease;
+        }
+        .card:hover b::after{
+            opacity: 1;
+            transform: translateX(0);
+        }
+
+        /* 3) FAQ summary: 배지 반전 + 텍스트 컬러 강화 */
+        summary{
+            transition: color .2s ease;
+        }
+        summary:hover{ color:#111; }
+        summary .badge{
+            transition: background-color .2s ease, color .2s ease, border-color .2s ease;
+        }
+        summary:hover .badge{
+            background:#111; color:#fff; border-color:#111;
+        }
+
+        /* 4) 모션 민감 사용자 배려 */
+        @media (prefers-reduced-motion: reduce) {
+            a:not(.card)::after,
+            .card, .card b::after {
+                transition: none;
+            }
+        }
+        /* ===== footer 링크는 hover 효과 해제 ===== */
+        footer a { position: static; text-decoration: none; }
+        footer a::after { content: none !important; } /* 전역 밑줄 애니메이션 제거 */
+        footer a:hover { text-decoration: none; color: inherit; } /* 기본만 유지 */
+    </style>
+</head>
+<body>
+<div class="wrap">
+
+    <header>
+        <nav class="breadcrumbs" aria-label="breadcrumb">
+            <a th:href="@{/}">홈</a> &rsaquo;
+            <a th:href="@{/member/login}">로그인</a> &rsaquo;
+            <span aria-current="page">도움말</span>
+        </nav>
+        <h1>로그인 도움말</h1>
+        <p class="lead">아이디·비밀번호 찾기, 자동 로그인, 소셜 로그인, 보안 안내까지 한 곳에서 확인하세요.</p>
+    </header>
+
+    <main class="grid" id="content">
+        <!-- 좌측: FAQ -->
+        <section aria-label="자주 묻는 질문과 해결 방법">
+            <h2 style="margin:18px 0 10px">빠른 해결</h2>
+            <div class="cards" role="list">
+                <a class="card" role="listitem" th:href="@{/member/finduserId}">
+                    <b>아이디 찾기</b>
+                    가입 시 입력한 정보(이름·이메일/휴대폰)로 아이디를 확인합니다.
+                </a>
+                <a class="card" role="listitem" th:href="@{/member/findpassword}">
+                    <b>비밀번호 재설정</b>
+                    본인 확인 후 임시 비밀번호 발급 또는 새 비밀번호를 설정합니다.
+                </a>
+                <a class="card" role="listitem" th:href="@{/cs/index}">
+                    <b>고객센터 문의</b>
+                    1:1 문의 또는 전화 상담(대표번호 080-123-4567)으로 도움을 받아보세요.
+                </a>
+            </div>
+
+            <h2 style="margin:22px 0 10px">자주 묻는 질문(FAQ)</h2>
+
+            <details>
+                <summary><span class="q"><span class="badge">Q1</span>아이디/비밀번호가 기억나지 않아요.</span></summary>
+                <div class="a">
+                    • <a th:href="@{/member/finduserId}">아이디 찾기</a>에서 본인정보로 아이디를 확인하세요.<br/>
+                    • <a th:href="@{/member/findpassword}">비밀번호 재설정</a>에서 본인 확인 후 임시 비밀번호를 발급받거나 새 비밀번호를 설정할 수 있어요.<br/>
+                    <span class="note">임시 비밀번호 로그인 후 <a th:href="@{/member/changepassword}">비밀번호 변경</a>을 꼭 진행하세요.</span>
+                </div>
+            </details>
+
+            <details>
+                <summary><span class="q"><span class="badge">Q2</span>자동 로그인이 안 되거나 자꾸 해제돼요.</span></summary>
+                <div class="a">
+                    자동 로그인은 브라우저 쿠키에 저장됩니다. <br/>
+                    1) 쿠키/사이트 데이터 차단 해제 여부<br/>
+                    2) 시크릿(Incognito) 창 사용 여부<br/>
+                    3) 보안 프로그램/확장 기능이 쿠키를 삭제하지 않는지<br/>
+                    4) 여러 기기 동시 로그인 시 보안상 해제될 수 있어요.
+                </div>
+            </details>
+
+            <details>
+                <summary><span class="q"><span class="badge">Q3</span>카카오/네이버/구글 소셜 로그인이 안 돼요.</span></summary>
+                <div class="a">
+                    1) 각 서비스 정상 로그인 여부 확인<br/>
+                    2) 최초 1회 NICHIYA 계정 연동 동의 완료 필요<br/>
+                    3) 팝업 차단 해제(동의 창이 차단될 수 있음)<br/>
+                    4) 계속 실패 시 <a th:href="@{/cs/index}">고객센터</a>로 오류 시각/메시지를 알려주세요.
+                </div>
+            </details>
+
+            <details>
+                <summary><span class="q"><span class="badge">Q4</span>계정이 잠겼다는 메시지가 나와요.</span></summary>
+                <div class="a">
+                    실패 횟수 초과 시 일시 잠금됩니다. ① 약 10분 후 자동 해제 또는 ②
+                    <a th:href="@{/member/findpassword}">비밀번호 재설정</a>으로 즉시 해제 가능.
+                </div>
+            </details>
+
+            <details>
+                <summary><span class="q"><span class="badge">Q5</span>회원가입 인증 이메일/문자가 오지 않아요.</span></summary>
+                <div class="a">
+                    스팸함 확인 → 인증코드 유효시간(10분) 경과 여부 → 수신 차단 해제 후 재요청.
+                    지속 실패 시 대표번호(080-123-4567)로 문의해주세요.
+                </div>
+            </details>
+
+            <details>
+                <summary><span class="q"><span class="badge">Q6</span>기업/공용 PC에서 안전하게 로그인하려면?</span></summary>
+                <div class="a">
+                    • 사용 후 반드시 로그아웃<br/>
+                    • 다른 사이트와 다른 비밀번호 사용, 주기적 변경<br/>
+                    • 주소창이 <span class="kbd">nichiya.co.kr</span>인지 확인(피싱 주의)<br/>
+                    • 2단계 인증 사용 시 개인 기기에만 설치
+                </div>
+            </details>
+
+            <details>
+                <summary><span class="q"><span class="badge">Q7</span>오류 화면(500/404 등)이 나와요.</span></summary>
+                <div class="a">
+                    새로고침/캐시삭제 후 재시도 → 다른 브라우저/네트워크 시도 → 지속 시
+                    <a th:href="@{/cs/index}">고객센터</a>로 캡처와 발생 시각 전달.
+                </div>
+            </details>
+
+            <div class="divider"></div>
+
+            <h2 style="margin:18px 0 10px">추가 안내</h2>
+            <ul>
+                <li><a th:href="@{/policy/policy/terms#privacy}">개인정보처리방침</a> 및
+                    <a th:href="@{/policy/policy/terms}">이용약관</a>을 확인하세요.</li>
+                <li>주문/배송 문의는 <a th:href="@{/cs/index}">고객센터</a>에서 빠르게 해결할 수 있어요.</li>
+            </ul>
+        </section>
+
+        <!-- 우측: 연락처/바로가기 -->
+        <aside class="aside" aria-label="연락처 및 바로가기">
+            <h3>도움이 더 필요하신가요?</h3>
+            <p><strong>대표번호</strong> : 080-123-4567</p>
+            <p class="note">통화량이 많을 경우 <a th:href="@{/cs/index}">고객센터</a> 1:1 문의를 이용해 주세요.</p>
+
+            <div class="divider"></div>
+
+            <h3>바로가기</h3>
+            <ul class="list">
+                <li><a th:href="@{/member/signup}">회원가입</a></li>
+                <li><a th:href="@{/member/finduserId}">아이디 찾기</a></li>
+                <li><a th:href="@{/member/findpassword}">비밀번호 재설정</a></li>
+                <li><a th:href="@{/policy/policy/terms#privacy}">개인정보처리방침</a></li>
+                <li><a th:href="@{/policy/policy/terms#location}">위치기반서비스 이용약관</a></li>
+                <li><a th:href="@{/policy/policy/terms}">이용약관</a></li>
+                <li><a th:href="@{/compinfo/compinfo/main}">회사소개</a></li>
+                <li><a th:href="@{/compinfo/compinfo/media}">YOUTUBE</a></li>
+                <li><a th:href="@{/main/main/license}">사업자정보확인</a></li>
+            </ul>
+        </aside>
+    </main>
+
+
+
+</div>
+<div th:replace="~{main/footer.html}"></div>
+</body>
+</html>
