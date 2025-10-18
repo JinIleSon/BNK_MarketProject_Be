@@ -125,14 +125,6 @@
         WHERE id = #{id}
     </select>
 
-    <select id="selectCommentView" resultType="kr.co.bnk_marketproject_be.dto.CSNoticeDTO">
-        select c.cid, c.content
-        from board b
-        LEFT JOIN comments c
-        on b.id = c.bid
-        WHERE c.bid = #{bid}
-    </select>
-
     <!-- write -->
     <insert id="insertQna" parameterType="kr.co.bnk_marketproject_be.dto.CSNoticeDTO">
         <selectKey keyProperty="id" resultType="long" order="BEFORE">
@@ -140,23 +132,23 @@
         </selectKey>
 
         INSERT INTO board (
-            id,
-            board_type,
-            board_type2,
-            board_type3,
-            title,
-            content,
-            user_id,
-            look
+        id,
+        board_type,
+        board_type2,
+        board_type3,
+        title,
+        content,
+        user_id,
+        look
         ) VALUES (
         #{id},
         'inquiry',
-        #{boardType2},
-        #{boardType3},
-        #{title},
-        #{content},
-        #{userid},
-        '0'
+        #{boardType2, jdbcType=VARCHAR},
+        #{boardType3, jdbcType=VARCHAR},
+        #{title, jdbcType=VARCHAR},
+        #{content, jdbcType=VARCHAR},
+        #{userid, jdbcType=VARCHAR},
+        0
         )
     </insert>
 
