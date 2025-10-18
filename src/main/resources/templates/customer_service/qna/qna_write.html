@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org" lang="ko">
 <head>
@@ -40,6 +41,109 @@
             </li>
             <li th:classappend="${boardType2 == 'safe'} ? 'on'">
                 <a th:href="@{/cs/qna/list(boardType2='safe')}">안전거래</a>
+            </li>
+        </ul>
+
+        <!-- 2차 카테고리 -->
+        <ul th:if="${boardType2 == 'member'}">
+            <li th:classappend="${boardType3 == 'login'} ? 'on'">
+                <a th:href="@{/cs/qna/list(boardType2='member', boardType3='login')}">로그인</a>
+            </li>
+            <li th:classappend="${boardType3 == 'signup'} ? 'on'">
+                <a th:href="@{/cs/qna/list(boardType2='member', boardType3='signup')}">가입</a>
+            </li>
+            <li th:classappend="${boardType3 == 'withdraw'} ? 'on'">
+                <a th:href="@{/cs/qna/list(boardType2='member', boardType3='withdraw')}">탈퇴</a>
+            </li>
+            <li th:classappend="${boardType3 == 'account'} ? 'on'">
+                <a th:href="@{/cs/qna/list(boardType2='member', boardType3='account')}">회원정보</a>
+            </li>
+        </ul>
+
+        <ul th:if="${boardType2 == 'event'}">
+            <li th:classappend="${boardType3 == 'couponissue'} ? 'on'">
+                <a th:href="@{/cs/qna/list(boardType2='event', boardType3='couponissue')}">쿠폰발급</a>
+            </li>
+            <li th:classappend="${boardType3 == 'couponuse'} ? 'on'">
+                <a th:href="@{/cs/qna/list(boardType2='event', boardType3='couponuse')}">쿠폰사용</a>
+            </li>
+            <li th:classappend="${boardType3 == 'eventjoin'} ? 'on'">
+                <a th:href="@{/cs/qna/list(boardType2='event', boardType3='eventjoin')}">이벤트참여</a>
+            </li>
+            <li th:classappend="${boardType3 == 'winnercheck'} ? 'on'">
+                <a th:href="@{/cs/qna/list(boardType2='event', boardType3='winnercheck')}">당첨확인</a>
+            </li>
+        </ul>
+
+        <ul th:if="${boardType2 == 'pay'}">
+            <li th:classappend="${boardType3 == 'orderguide'} ? 'on'">
+                <a th:href="@{/cs/qna/list(boardType2='pay', boardType3='orderguide')}">주문방법</a>
+            </li>
+            <li th:classappend="${boardType3 == 'paymentmethod'} ? 'on'">
+                <a th:href="@{/cs/qna/list(boardType2='pay', boardType3='paymentmethod')}">결제수단</a>
+            </li>
+            <li th:classappend="${boardType3 == 'paymenterror'} ? 'on'">
+                <a th:href="@{/cs/qna/list(boardType2='pay', boardType3='paymenterror')}">결제오류</a>
+            </li>
+            <li th:classappend="${boardType3 == 'receipt'} ? 'on'">
+                <a th:href="@{/cs/qna/list(boardType2='pay', boardType3='receipt')}">영수증/증빙</a>
+            </li>
+        </ul>
+
+        <ul th:if="${boardType2 == 'delivery'}">
+            <li th:classappend="${boardType3 == 'tracking'} ? 'on'">
+                <a th:href="@{/cs/qna/list(boardType2='delivery', boardType3='tracking')}">배송조회</a>
+            </li>
+            <li th:classappend="${boardType3 == 'deliverytime'} ? 'on'">
+                <a th:href="@{/cs/qna/list(boardType2='delivery', boardType3='deliverytime')}">배송기간</a>
+            </li>
+            <li th:classappend="${boardType3 == 'deliveryfee'} ? 'on'">
+                <a th:href="@{/cs/qna/list(boardType2='delivery', boardType3='deliveryfee')}">배송비</a>
+            </li>
+            <li th:classappend="${boardType3 == 'globalshipping'} ? 'on'">
+                <a th:href="@{/cs/qna/list(boardType2='delivery', boardType3='globalshipping')}">해외배송</a>
+            </li>
+        </ul>
+
+        <ul th:if="${boardType2 == 'cancel'}">
+            <li th:classappend="${boardType3 == 'ordercancel'} ? 'on'">
+                <a th:href="@{/cs/qna/list(boardType2='cancel', boardType3='ordercancel')}">주문취소</a>
+            </li>
+            <li th:classappend="${boardType3 == 'refund'} ? 'on'">
+                <a th:href="@{/cs/qna/list(boardType2='cancel', boardType3='refund')}">반품</a>
+            </li>
+            <li th:classappend="${boardType3 == 'exchange'} ? 'on'">
+                <a th:href="@{/cs/qna/list(boardType2='cancel', boardType3='exchange')}">교환</a>
+            </li>
+            <li th:classappend="${boardType3 == 'refundprocess'} ? 'on'">
+                <a th:href="@{/cs/qna/list(boardType2='cancel', boardType3='refundprocess')}">환불처리</a>
+            </li>
+        </ul>
+
+        <ul th:if="${boardType2 == 'trip'}">
+            <li th:classappend="${boardType3 == 'payment'} ? 'on'">
+                <a th:href="@{/cs/qna/list(boardType2='trip', boardType3='payment')}">결제</a>
+            </li>
+            <li th:classappend="${boardType3 == 'reservation'} ? 'on'">
+                <a th:href="@{/cs/qna/list(boardType2='trip', boardType3='reservation')}">예약</a>
+            </li>
+            <li th:classappend="${boardType3 == 'changecancel'} ? 'on'">
+                <a th:href="@{/cs/qna/list(boardType2='trip', boardType3='changecancel')}">변경/취소</a>
+            </li>
+        </ul>
+
+        <ul th:if="${boardType2 == 'safe'}">
+            <li th:classappend="${boardType3 == 'security'} ? 'on'">
+                <a th:href="@{/cs/qna/list(boardType2='safe', boardType3='security')}">보안공지</a>
+            </li>
+            <li th:classappend="${boardType3 == 'alert'} ? 'on'">
+                <a th:href="@{/cs/qna/list(boardType2='safe', boardType3='alert')}">사기주의</a>
+            </li>
+            <li th:classappend="${boardType3 == 'safepayment'} ? 'on'">
+                <a th:href="@{/cs/qna/list(boardType2='safe', boardType3='safepayment')}">안전결제</a>
+            </li>
+            <li th:classappend="${boardType3 == 'privacy'} ? 'on'">
+                <a th:href="@{/cs/qna/list(boardType2='safe', boardType3='privacy')}">개인정보보호</a>
             </li>
         </ul>
     </div>
@@ -139,19 +243,19 @@
                     </div>
 
                     <div class="btn_area" style="text-align: center">
-                        <a th:href="@{/cs/qna/list}" class="btn_write">취소하기</a>
-                        <a th:href="@{#}" class="btn_submit">등록하기</a>
+                        <a th:href="@{/cs/qna/list(boardType2=${boardType2}, boardType3=${boardType3})}"
+                           class="btn_write">취소하기</a>
+                        <button type="submit" class="btn_submit" style="background: #5e8fd7">등록하기</button>
                     </div>
 
                 </form>
-
             </div>
         </div>
     </div>
 </div>
 
 <script>
-    // 1차-2차 매핑
+    // 문의하기 카테고리 선택 스크립트
     const subCategories = {
         member: ["로그인", "가입", "탈퇴", "회원정보"],
         event: ["쿠폰발급", "쿠폰사용", "이벤트참여", "당첨확인"],
@@ -162,7 +266,6 @@
         safe: ["보안공지", "사기주의", "안전결제", "개인정보보호"]
     };
 
-    // 1차 이름 매핑
     const mainNames = {
         member: "회원",
         event: "쿠폰/이벤트",
@@ -177,7 +280,6 @@
     const subSelect = document.getElementById("qna_subtype");
     const title = document.getElementById("categoryTitle");
 
-    // 저장된 값 불러오기 (새로고침 유지용)
     const savedMain = localStorage.getItem("boardType2");
     const savedSub = localStorage.getItem("boardType3");
 
@@ -192,7 +294,6 @@
         title.textContent = savedSub;
     }
 
-    // 1차 변경 시
     mainSelect.addEventListener("change", function () {
         const value = this.value;
         localStorage.setItem("boardType2", value);
@@ -201,20 +302,19 @@
         fillSubOptions(value);
 
         if (value) {
-            title.textContent = mainNames[value]; // 제목 = 1차 이름
+            title.textContent = mainNames[value];
         } else {
             title.textContent = "문의유형을 선택해주세요.";
         }
     });
 
-    // 2차 변경 시
     subSelect.addEventListener("change", function () {
         const mainValue = mainSelect.value;
         const subValue = this.value;
         localStorage.setItem("boardType3", subValue);
 
         if (mainValue && subValue) {
-            title.textContent = `${mainNames[mainValue]} > ${subValue}`; // 예: 회원 > 가입
+            title.textContent = `${mainNames[mainValue]} > ${subValue}`;
         } else if (mainValue) {
             title.textContent = mainNames[mainValue];
         } else {
@@ -222,7 +322,6 @@
         }
     });
 
-    // 2차 옵션 채우기
     function fillSubOptions(main) {
         subSelect.innerHTML = '<option value="">2차 선택</option>';
         if (subCategories[main]) {

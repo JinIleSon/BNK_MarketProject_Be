@@ -29,8 +29,6 @@ public interface CSQnaMapper {
     // QnA 댓글 조회
     CSNoticeDTO selectCommentView(@Param("bid") int bid);
 
-
     // QnA 등록
     void insertQna(CSNoticeDTO qna);
-
 }
