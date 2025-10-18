@@ -93,7 +93,6 @@ public class CSQnaController {
         return "customer_service/qna/qna_write";
     }
 
-
     @PostMapping("/write")
     public String write(@ModelAttribute CSNoticeDTO qna) {
 

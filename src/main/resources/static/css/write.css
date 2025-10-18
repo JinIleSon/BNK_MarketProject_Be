@@ -75,8 +75,7 @@
     margin-top: 30px;
 }
 
-.qna_btn_cancel,
-.qna_btn_submit {
+.qna_btn_cancel, .qna_btn_submit {
     display: inline-block;
     padding: 16px 20px;
     font-size: 14px;
