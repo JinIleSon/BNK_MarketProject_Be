@@ -71,6 +71,9 @@ dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-security'
     implementation 'org.springframework.boot:spring-boot-starter-oauth2-client'
 
+    // layout 공통
+    implementation 'nz.net.ultraq.thymeleaf:thymeleaf-layout-dialect:3.3.0'
+
 }
 
 tasks.named('test') {

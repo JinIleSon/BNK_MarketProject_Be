@@ -80,7 +80,7 @@ public class SecurityConfig {
                 .requestMatchers(
                         "/", "/index",
                         "/css/**", "/js/**", "/images/**", "/fonts/**",
-                        "/favicon.ico", "/error",
+                        "/favicon.ico","/NICHIYA/favicon.ico", "/error",
                         "/user/**",
                         "/email/**",
                         "/member/**",
