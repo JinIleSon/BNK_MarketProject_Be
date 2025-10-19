@@ -70,13 +70,43 @@
     resize: none;
 }
 
-@media (max-width: 600px) {
-    .cs_qna_write_wrap .form_row {
-        flex-wrap: wrap;
-        align-items: flex-start;
-    }
-    .cs_qna_write_wrap .inline_label {
-        width: 100%;
-        margin-bottom: 6px;
-    }
+.qna_btn_area {
+    text-align: center;
+    margin-top: 30px;
 }
+
+.qna_btn_cancel, .qna_btn_submit {
+    display: inline-block;
+    padding: 16px 20px;
+    font-size: 14px;
+    border-radius: 5px;
+    font-weight: 600;
+    text-decoration: none;
+    cursor: pointer;
+    transition: background-color 0.2s;
+    line-height: 1;
+    box-sizing: border-box;
+    border: 1px solid transparent;
+    vertical-align: middle;
+}
+
+.qna_btn_cancel {
+    background-color: #d1d1d1;
+    color: #333;
+    border-color: #bfbfbf;
+    margin-right: 8px;
+}
+.qna_btn_cancel:hover {
+    background-color: #bfbfbf;
+}
+
+/* button */
+.qna_btn_submit {
+    background-color: #5e8fd7;
+    color: #fff;
+    border: 1px solid #5e8fd7;
+}
+.qna_btn_submit:hover {
+    background-color: #4a78c5;
+}
+

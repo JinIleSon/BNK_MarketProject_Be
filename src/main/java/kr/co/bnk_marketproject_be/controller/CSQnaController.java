@@ -96,11 +96,12 @@ public class CSQnaController {
     @PostMapping("/write")
     public String write(@ModelAttribute CSNoticeDTO qna) {
 
-        // 작성자 guest로 들어감
         if (qna.getUserid() == null || qna.getUserid().isBlank()) {
             qna.setUserid("guest");
         }
+
         qnaService.insertQna(qna);
+
         return "redirect:/cs/qna/list";
     }
 }

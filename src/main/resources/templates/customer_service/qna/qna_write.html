@@ -8,7 +8,6 @@
     <link rel="stylesheet" th:href="@{/css/style.css}">
     <link rel="stylesheet" th:href="@{/css/common.css}">
     <link rel="stylesheet" th:href="@{/css/write.css}">
-
 </head>
 <body>
 <div th:replace="~{main/header.html}"></div>
@@ -166,7 +165,7 @@
                             <div class="select_group">
                                 <!-- 1차 선택 -->
                                 <select id="qna_type" name="boardType2"
-                                        th:onchange="|window.location='@{/cs/qna/write}?boardType2=' + this.value + '&boardType3=' + document.getElementById('qna_subtype').value|">
+                                        th:onchange="|window.location='@{/cs/qna/write}?boardType2=' + this.value|">
                                     <option value="" th:selected="${boardType2 == null}">1차 선택</option>
                                     <option value="member" th:selected="${boardType2 == 'member'}">회원</option>
                                     <option value="event" th:selected="${boardType2 == 'event'}">쿠폰/이벤트</option>
@@ -178,49 +177,65 @@
                                 </select>
 
                                 <!-- 2차 선택 -->
-                                <select id="qna_subtype" name="boardType3" required>
+                                <select id="qna_subtype" name="boardType3"
+                                        th:onchange="|window.location='@{/cs/qna/write}?boardType2=' + document.getElementById('qna_type').value + '&boardType3=' + this.value|"
+                                        required>
                                     <option value="">2차 선택</option>
+
                                     <th:block th:switch="${boardType2}">
+                                        <!-- 회원 -->
                                         <th:block th:case="'member'">
-                                            <option value="login">로그인</option>
-                                            <option value="signup">가입</option>
-                                            <option value="withdraw">탈퇴</option>
-                                            <option value="account">회원정보</option>
+                                            <option th:value="'login'" th:text="'로그인'" th:selected="${boardType3 == 'login'}"></option>
+                                            <option th:value="'signup'" th:text="'가입'" th:selected="${boardType3 == 'signup'}"></option>
+                                            <option th:value="'withdraw'" th:text="'탈퇴'" th:selected="${boardType3 == 'withdraw'}"></option>
+                                            <option th:value="'account'" th:text="'회원정보'" th:selected="${boardType3 == 'account'}"></option>
                                         </th:block>
+
+                                        <!-- 쿠폰/이벤트 -->
                                         <th:block th:case="'event'">
-                                            <option value="couponissue">쿠폰발급</option>
-                                            <option value="couponuse">쿠폰사용</option>
-                                            <option value="eventjoin">이벤트참여</option>
-                                            <option value="winnercheck">당첨확인</option>
+                                            <option th:value="'couponissue'" th:text="'쿠폰발급'" th:selected="${boardType3 == 'couponissue'}"></option>
+                                            <option th:value="'couponuse'" th:text="'쿠폰사용'" th:selected="${boardType3 == 'couponuse'}"></option>
+                                            <option th:value="'eventjoin'" th:text="'이벤트참여'" th:selected="${boardType3 == 'eventjoin'}"></option>
+                                            <option th:value="'winnercheck'" th:text="'당첨확인'" th:selected="${boardType3 == 'winnercheck'}"></option>
                                         </th:block>
+
+                                        <!-- 주문/결제 -->
                                         <th:block th:case="'pay'">
-                                            <option value="orderguide">주문방법</option>
-                                            <option value="paymentmethod">결제수단</option>
-                                            <option value="paymenterror">결제오류</option>
-                                            <option value="receipt">영수증/증빙</option>
+                                            <option th:value="'orderguide'" th:text="'주문방법'" th:selected="${boardType3 == 'orderguide'}"></option>
+                                            <option th:value="'paymentmethod'" th:text="'결제수단'" th:selected="${boardType3 == 'paymentmethod'}"></option>
+                                            <option th:value="'paymenterror'" th:text="'결제오류'" th:selected="${boardType3 == 'paymenterror'}"></option>
+                                            <option th:value="'receipt'" th:text="'영수증/증빙'" th:selected="${boardType3 == 'receipt'}"></option>
                                         </th:block>
+
+                                        <!-- 배송 -->
                                         <th:block th:case="'delivery'">
-                                            <option value="tracking">배송조회</option>
-                                            <option value="deliverytime">배송기간</option>
-                                            <option value="deliveryfee">배송비</option>
-                                            <option value="globalshipping">해외배송</option>
+                                            <option th:value="'tracking'" th:text="'배송조회'" th:selected="${boardType3 == 'tracking'}"></option>
+                                            <option th:value="'deliverytime'" th:text="'배송기간'" th:selected="${boardType3 == 'deliverytime'}"></option>
+                                            <option th:value="'deliveryfee'" th:text="'배송비'" th:selected="${boardType3 == 'deliveryfee'}"></option>
+                                            <option th:value="'globalshipping'" th:text="'해외배송'" th:selected="${boardType3 == 'globalshipping'}"></option>
                                         </th:block>
+
+                                        <!-- 취소/반품/교환 -->
                                         <th:block th:case="'cancel'">
-                                            <option value="ordercancel">주문취소</option>
-                                            <option value="refund">반품</option>
-                                            <option value="exchange">교환</option>
-                                            <option value="refundprocess">환불처리</option>
+                                            <option th:value="'ordercancel'" th:text="'주문취소'" th:selected="${boardType3 == 'ordercancel'}"></option>
+                                            <option th:value="'refund'" th:text="'반품'" th:selected="${boardType3 == 'refund'}"></option>
+                                            <option th:value="'exchange'" th:text="'교환'" th:selected="${boardType3 == 'exchange'}"></option>
+                                            <option th:value="'refundprocess'" th:text="'환불처리'" th:selected="${boardType3 == 'refundprocess'}"></option>
                                         </th:block>
+
+                                        <!-- 여행/숙박/항공 -->
                                         <th:block th:case="'trip'">
-                                            <option value="payment">결제</option>
-                                            <option value="reservation">예약</option>
-                                            <option value="changecancel">변경/취소</option>
+                                            <option th:value="'payment'" th:text="'결제'" th:selected="${boardType3 == 'payment'}"></option>
+                                            <option th:value="'reservation'" th:text="'예약'" th:selected="${boardType3 == 'reservation'}"></option>
+                                            <option th:value="'changecancel'" th:text="'변경/취소'" th:selected="${boardType3 == 'changecancel'}"></option>
                                         </th:block>
+
+                                        <!-- 안전거래 -->
                                         <th:block th:case="'safe'">
-                                            <option value="security">보안공지</option>
-                                            <option value="alert">사기주의</option>
-                                            <option value="safepayment">안전결제</option>
-                                            <option value="privacy">개인정보보호</option>
+                                            <option th:value="'security'" th:text="'보안공지'" th:selected="${boardType3 == 'security'}"></option>
+                                            <option th:value="'alert'" th:text="'사기주의'" th:selected="${boardType3 == 'alert'}"></option>
+                                            <option th:value="'safepayment'" th:text="'안전결제'" th:selected="${boardType3 == 'safepayment'}"></option>
+                                            <option th:value="'privacy'" th:text="'개인정보보호'" th:selected="${boardType3 == 'privacy'}"></option>
                                         </th:block>
                                     </th:block>
                                 </select>
@@ -242,98 +257,80 @@
                         </div>
                     </div>
 
-                    <div class="btn_area" style="text-align: center">
+                    <div class="qna_btn_area">
                         <a th:href="@{/cs/qna/list(boardType2=${boardType2}, boardType3=${boardType3})}"
-                           class="btn_write">취소하기</a>
-                        <button type="submit" class="btn_submit" style="background: #5e8fd7">등록하기</button>
+                           class="qna_btn_cancel">취소하기</a>
+                        <button type="submit" class="qna_btn_submit">등록하기</button>
                     </div>
 
                 </form>
+
             </div>
         </div>
     </div>
 </div>
 
 <script>
-    // 문의하기 카테고리 선택 스크립트
     const subCategories = {
-        member: ["로그인", "가입", "탈퇴", "회원정보"],
-        event: ["쿠폰발급", "쿠폰사용", "이벤트참여", "당첨확인"],
-        pay: ["주문방법", "결제수단", "결제오류", "영수증/증빙"],
-        delivery: ["배송조회", "배송기간", "배송비", "해외배송"],
-        cancel: ["주문취소", "반품", "교환", "환불처리"],
-        trip: ["결제", "예약", "변경/취소"],
-        safe: ["보안공지", "사기주의", "안전결제", "개인정보보호"]
-    };
-
-    const mainNames = {
-        member: "회원",
-        event: "쿠폰/이벤트",
-        pay: "주문/결제",
-        delivery: "배송",
-        cancel: "취소/반품/교환",
-        trip: "여행/숙박/항공",
-        safe: "안전거래"
+        member: [
+            { value: "login", text: "로그인" },
+            { value: "signup", text: "가입" },
+            { value: "withdraw", text: "탈퇴" },
+            { value: "account", text: "회원정보" },
+        ],
+        event: [
+            { value: "couponissue", text: "쿠폰발급" },
+            { value: "couponuse", text: "쿠폰사용" },
+            { value: "eventjoin", text: "이벤트참여" },
+            { value: "winnercheck", text: "당첨확인" },
+        ],
+        pay: [
+            { value: "orderguide", text: "주문방법" },
+            { value: "paymentmethod", text: "결제수단" },
+            { value: "paymenterror", text: "결제오류" },
+            { value: "receipt", text: "영수증/증빙" },
+        ],
+        delivery: [
+            { value: "tracking", text: "배송조회" },
+            { value: "deliverytime", text: "배송기간" },
+            { value: "deliveryfee", text: "배송비" },
+            { value: "globalshipping", text: "해외배송" },
+        ],
+        cancel: [
+            { value: "ordercancel", text: "주문취소" },
+            { value: "refund", text: "반품" },
+            { value: "exchange", text: "교환" },
+            { value: "refundprocess", text: "환불처리" },
+        ],
+        trip: [
+            { value: "payment", text: "결제" },
+            { value: "reservation", text: "예약" },
+            { value: "changecancel", text: "변경/취소" },
+        ],
+        safe: [
+            { value: "security", text: "보안공지" },
+            { value: "alert", text: "사기주의" },
+            { value: "safepayment", text: "안전결제" },
+            { value: "privacy", text: "개인정보보호" },
+        ],
     };
 
     const mainSelect = document.getElementById("qna_type");
-    const subSelect = document.getElementById("qna_subtype");
-    const title = document.getElementById("categoryTitle");
-
-    const savedMain = localStorage.getItem("boardType2");
-    const savedSub = localStorage.getItem("boardType3");
-
-    if (savedMain) {
-        mainSelect.value = savedMain;
-        fillSubOptions(savedMain);
-        title.textContent = mainNames[savedMain];
-    }
-
-    if (savedSub) {
-        subSelect.value = savedSub;
-        title.textContent = savedSub;
-    }
-
-    mainSelect.addEventListener("change", function () {
-        const value = this.value;
-        localStorage.setItem("boardType2", value);
-        localStorage.removeItem("boardType3");
-
-        fillSubOptions(value);
-
-        if (value) {
-            title.textContent = mainNames[value];
-        } else {
-            title.textContent = "문의유형을 선택해주세요.";
-        }
-    });
-
-    subSelect.addEventListener("change", function () {
-        const mainValue = mainSelect.value;
-        const subValue = this.value;
-        localStorage.setItem("boardType3", subValue);
-
-        if (mainValue && subValue) {
-            title.textContent = `${mainNames[mainValue]} > ${subValue}`;
-        } else if (mainValue) {
-            title.textContent = mainNames[mainValue];
-        } else {
-            title.textContent = "문의유형을 선택해주세요.";
-        }
-    });
+    const subSelect  = document.getElementById("qna_subtype");
 
     function fillSubOptions(main) {
         subSelect.innerHTML = '<option value="">2차 선택</option>';
-        if (subCategories[main]) {
-            subCategories[main].forEach(sub => {
-                const opt = document.createElement("option");
-                opt.value = sub;
-                opt.textContent = sub;
-                subSelect.appendChild(opt);
-            });
-        }
+        (subCategories[main] || []).forEach(({value, text}) => {
+            const opt = document.createElement("option");
+            opt.value = value;        // ✅ 영문 코드
+            opt.textContent = text;   // 표시용 한글
+            subSelect.appendChild(opt);
+        });
     }
+
+    mainSelect.addEventListener("change", () => fillSubOptions(mainSelect.value));
 </script>
+
 <div id="footer"></div>
 <div th:replace="~{main/footer.html}"></div>
 </body>
