@@ -26,5 +26,4 @@ public class CSNoticeDTO {
     // write hits값 고정
     private int hits;
 
-
 }
