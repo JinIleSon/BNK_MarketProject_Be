@@ -1,5 +1,6 @@
 package kr.co.bnk_marketproject_be.controller;
 
+import kr.co.bnk_marketproject_be.dto.OrderItemsDTO;
 import kr.co.bnk_marketproject_be.dto.OrdersDTO;
 import kr.co.bnk_marketproject_be.dto.ProductBoardsDTO;
 import kr.co.bnk_marketproject_be.mapper.MypageAllOrderMapper;
@@ -43,10 +44,18 @@ public class MypageAllOrderController {
         System.out.println("✅ [Controller] 조회된 userId: " + userId);
 
         List<OrdersDTO> orders = orderService.getAllOrdersByUserId(String.valueOf(userId));
+        // ✅ 로그 찍기
+        for (OrdersDTO o : orders) {
+            for (OrderItemsDTO item : o.getOrderItems()) {
+                log.info("🧾 [DEBUG] orderItemId={}, product={}, price={}",
+                        item.getId(), item.getProductName(), item.getPrice());
+            }
+        }
         System.out.println("✅ [Controller] 불러온 주문 개수: " + (orders != null ? orders.size() : 0));
 
         model.addAttribute("orders", orders);
         model.addAttribute("contextPath", request.getContextPath());
+        model.addAttribute("userId", userId);
 
         return "mypage/mypage_allOrder";
     }

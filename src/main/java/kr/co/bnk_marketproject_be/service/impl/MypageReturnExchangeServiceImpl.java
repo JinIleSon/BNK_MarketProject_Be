@@ -6,12 +6,14 @@ import kr.co.bnk_marketproject_be.service.MypageReturnExchangeService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
 @Slf4j
 @Service
 @RequiredArgsConstructor
+@Transactional
 public class MypageReturnExchangeServiceImpl implements MypageReturnExchangeService {
 
     private final MypageReturnExchangeMapper mapper;
@@ -23,10 +25,14 @@ public class MypageReturnExchangeServiceImpl implements MypageReturnExchangeServ
     }
 
     @Override
+    @Transactional
     public void insertExchangeRequest(MypageExchangeRequestDTO dto) {
         log.info("🔁 [Service] 교환신청 저장: {}", dto);
-        mapper.insertExchangeRequest(dto);
+        int result = mapper.insertExchangeRequest(dto);
+        log.info("✅ [MyBatis Insert 결과] result={}", result);
     }
+
+
 
     @Override
     public List<MypageReturnRequestDTO> findReturnList(Long userId) {

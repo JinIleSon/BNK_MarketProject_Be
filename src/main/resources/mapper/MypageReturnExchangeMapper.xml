@@ -6,18 +6,42 @@
 <mapper namespace="kr.co.bnk_marketproject_be.mapper.MypageReturnExchangeMapper">
 
     <!-- ✅ 반품신청 등록 -->
-    <insert id="insertReturnRequest" parameterType="kr.co.bnk_marketproject_be.dto.MypageReturnRequestDTO" useGeneratedKeys="true" keyProperty="id">
+    <insert id="insertReturnRequest" parameterType="kr.co.bnk_marketproject_be.dto.MypageReturnRequestDTO">
         INSERT INTO HTE_MY_PAGE_RETURN_REQUEST
-        (ORDER_ITEM_ID, USER_ID, REASON_TEXT, EVIDENCE_URLS, PICKUP_ADDRES, REASON_CODE, STATUS, CREATED_AT)
-        VALUES (#{orderItemId}, #{userId}, #{reasonText}, #{evidenceUrls}, #{pickupAddres}, #{reasonCode}, 'REQUESTED', SYSTIMESTAMP)
+        (ORDER_ITEM_ID, USER_ID, REASON_TEXT, EVIDENCE_URLS, PICKUP_ADDRESS, REASON_CODE, STATUS, CREATED_AT)
+        VALUES (
+                   #{orderItemId},
+                   #{userId},
+                   #{reasonText},
+                   #{evidenceUrls, jdbcType=VARCHAR},
+                   #{pickupAddress, jdbcType=VARCHAR},
+                   #{reasonCode},
+                   #{status},
+                   SYSTIMESTAMP
+               )
     </insert>
 
     <!-- ✅ 교환신청 등록 -->
-    <insert id="insertExchangeRequest" parameterType="kr.co.bnk_marketproject_be.dto.MypageExchangeRequestDTO" useGeneratedKeys="true" keyProperty="id">
+    <insert id="insertExchangeRequest"
+            parameterType="kr.co.bnk_marketproject_be.dto.MypageExchangeRequestDTO">
         INSERT INTO HTE_MY_PAGE_EXCHANGE_REQUEST
         (ORDER_ITEM_ID, USER_ID, REASON_TEXT, DESIRED_OPTION, EVIDENCE_URLS, REASON_CODE, STATUS, CREATED_AT)
-        VALUES (#{orderItemId}, #{userId}, #{reasonText}, #{desiredOption}, #{evidenceUrls}, #{reasonCode}, 'REQUESTED', SYSTIMESTAMP)
+        VALUES (
+                   #{orderItemId},
+                   #{userId},
+                   #{reasonText},
+                   #{desiredOption},
+                   #{evidenceUrls, jdbcType=VARCHAR},
+                   #{reasonCode},
+                   #{status},
+                   SYSTIMESTAMP
+               )
     </insert>
+
+
+
+
+
 
     <!-- ✅ 반품신청 조회 -->
     <select id="findReturnList" resultType="kr.co.bnk_marketproject_be.dto.MypageReturnRequestDTO">

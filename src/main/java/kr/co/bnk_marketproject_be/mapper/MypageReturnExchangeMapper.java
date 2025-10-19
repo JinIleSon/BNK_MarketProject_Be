@@ -13,7 +13,7 @@ public interface MypageReturnExchangeMapper {
     void insertReturnRequest(MypageReturnRequestDTO dto);
 
     // ✅ 교환신청 등록
-    void insertExchangeRequest(MypageExchangeRequestDTO dto);
+    int insertExchangeRequest(MypageExchangeRequestDTO dto);
 
     // ✅ 반품신청 목록 조회
     List<MypageReturnRequestDTO> findReturnList(Long userId);
