@@ -42,4 +42,7 @@ public class ProductsDTO {
     private String prodcondition;
     private String name;
 
+    // 뷰에서 쓰는 필드 추가 - 판매자
+    private String brand_name;
+
 }

@@ -273,7 +273,7 @@
                 <img style="width:40vw;"
                      th:src="${p.url} != null ? (@{/__${p.url}__}) : @{/images/placeholder.png}">
 
-                <div style="display:flex; justify-content:space-between; align-items:flex-end; width:100%;">
+                <div style="display:flex; justify-content:space-between; align-items:flex-end; width:770px;">
                     <!-- 좌측: 텍스트 영역 -->
                     <div style="flex:1; display:flex; flex-direction:column;"
                          th:with="
@@ -315,23 +315,223 @@
                         </span>
                     </div>
 
-                    <!-- 가운데: 배송비/무료배송 -->
-                    <div style="border:1px solid #778ba3; font-weight:300; width:120px; height:30px;
-                  display:flex; justify-content:center; align-items:center; margin-bottom:27px;"
+                    <!-- C. 모노 아이콘형 -->
+                    <div class="ship-badge--mono"
                          th:if="${p.delichar != null}"
-                         th:text="${p.delichar == 0 ? '무료배송' :
-                     '배송비 ' + #numbers.formatInteger(p.delichar,3,'COMMA') + '원'}">
+                         th:classappend="${p.delichar == 0} ? ' is-free' : ''"
+                         th:with="isFree=${p.delichar == 0},
+              shipLabel=${isFree ? 'FREE SHIPPING' : 'SHIPPING ' + #numbers.formatInteger(p.delichar,3,'COMMA') + '원'}">
+                        <span th:text="${shipLabel}"
+                              th:style="${p.delichar == 0} ? 'font-size:12px;' : 'font-size:10px;'">SHIPPING 3,000원</span>
                     </div>
 
+
                     <!-- 우측: 판매자 영역(고객만족우수) -->
-                    <div style="margin-left:auto; display:flex; flex-direction:column;
-                  padding-left:65px; margin-bottom:10px; width:200px;">
-                        <span>🏠판매자</span>
-                        <span>🏅고객만족우수</span>
+                    <!-- 우측: 브랜드/배지 (트렌디 버전) -->
+                    <div class="brand-meta"
+                         th:with="avg=${p.ratingAvg} ?: 0.0,
+              badge=${avg >= 4.5 ? 'TOP RATED' : 'CURATED'}">
+                        <span class="brand-name" th:text="${p.brand_name}">NICHIYA_WOMEN</span>
+                        <span class="brand-badge"
+                              th:classappend="${badge == 'TOP RATED'} ? ' is-top' : ''"
+                              th:text="${badge}">TOP RATED</span>
                     </div>
                 </div>
             </a>
         </th:block>
+        <style>
+            /* === 브랜드/배지 트렌디 스타일 === */
+            .brand-meta{
+                margin-left:auto;
+                display:flex;
+                flex-direction:column;
+                align-items:flex-end;
+                gap:6px;
+                padding-left:65px;
+                margin-bottom:10px;
+                width:220px; /* 살짝 넓혀 여유 확보 */
+            }
+
+            .brand-name{
+                font-family: 'Bodoni Moda', 'Noto Serif KR', serif;
+                font-weight:500;
+                font-variant-caps: all-small-caps;
+                letter-spacing:.06em;
+                font-size:14px;
+                color:#111;
+                opacity:.9;
+            }
+
+            /* Glass pill badge */
+            .brand-badge{
+                display:inline-flex;
+                align-items:center;
+                gap:6px;
+                padding:.34rem .7rem;
+                font-size:12px;
+                letter-spacing:.08em;
+                font-weight:500;
+                border:1px solid rgba(0,0,0,.18);
+                border-radius:999px;
+                background: rgba(255,255,255,.45);
+                -webkit-backdrop-filter: blur(6px);
+                backdrop-filter: blur(6px);
+                color:#111;
+                white-space:nowrap;
+                transition: all .2s ease;
+            }
+
+            .brand-badge::before{
+                content:"★";
+                font-size:11px;
+                opacity:.7;
+            }
+
+            .brand-badge:hover{
+                background: rgba(255,255,255,.7);
+                border-color: rgba(0,0,0,.28);
+                transform: translateY(-1px);
+            }
+
+            /* 작을 때 줄바꿈/폭 대응 */
+            @media (max-width: 900px){
+                .brand-meta{ width:auto; padding-left:20px; }
+                .brand-name{ font-size:13px; }
+            }
+
+            /* 공통: 텍스트 계산용 */
+            .ship-badge,
+            .ship-badge--ticket,
+            .ship-badge--line,
+            .ship-badge--mono{
+                font-size:12px;
+                font-weight:500;
+                letter-spacing:.06em;
+                color:#111;
+                white-space:nowrap;
+                transition:all .2s ease;
+            }
+
+            /* A. 티켓형 (notch + dash) */
+            .ship-badge--ticket{
+                position:relative;
+                display:inline-flex;
+                align-items:center;
+                gap:8px;
+                height:32px;
+                padding:.34rem 1rem;
+                border:1px dashed rgba(0,0,0,.35);
+                border-radius:12px;
+                background:#fff;
+                margin-bottom:27px;
+            }
+            .ship-badge--ticket::before,
+            .ship-badge--ticket::after{
+                content:"";
+                position:absolute;
+                top:50%;
+                width:12px; height:12px;
+                border:1px solid rgba(0,0,0,.25);
+                border-radius:50%;
+                background:#fff;            /* 페이지 바탕이 흰색이므로 컷아웃처럼 보임 */
+                transform:translateY(-50%);
+            }
+            .ship-badge--ticket::before{ left:-7px; }
+            .ship-badge--ticket::after{  right:-7px; }
+            .ship-badge--ticket:hover{ transform:translateY(-1px); border-color:rgba(0,0,0,.5); }
+
+            /* B. 라인형 (텍스트 언더라인 애니메이션) */
+            .ship-badge--line{
+                position:relative;
+                display:inline-flex; align-items:center; gap:8px;
+                padding:.2rem .1rem .28rem .1rem;
+                margin-bottom:27px;
+                background-image: linear-gradient(currentColor,currentColor);
+                background-size: 0% 1px;           /* 시작: 0% */
+                background-repeat:no-repeat;
+                background-position: 0 100%;
+            }
+            .ship-badge--line::before{
+                content:"•";
+                font-size:18px; line-height:1; opacity:.55;
+            }
+            .ship-badge--line:hover{
+                background-size:100% 1px;          /* 호버 시 라인 채워짐 */
+            }
+
+            /* C. 모노 아이콘형 (글래스 + 트럭 마스크) */
+            .ship-badge--mono{
+                display:inline-flex; align-items:center; gap:8px;
+                height:32px; padding:.34rem .8rem; margin-bottom:27px;
+                border:1px solid rgba(0,0,0,.18);
+                border-radius:999px;
+                background: rgba(255,255,255,.45);
+                -webkit-backdrop-filter: blur(6px);
+                backdrop-filter: blur(6px);
+            }
+            .ship-badge--mono::before{
+                content:"";
+                width:14px; height:14px; display:inline-block;
+                background:#111; opacity:.8;
+                /* 모노 트럭 아이콘 (SVG 마스크) */
+                -webkit-mask: url('data:image/svg+xml;utf8,\
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">\
+  <path d="M3 7h11v8H3V7zm11 0h3l4 4v4h-7V7zm-8 9a2 2 0 1 0 0 4 2 2 0 0 0 0-4zm11 0a2 2 0 1 0 .001 4.001A2 2 0 0 0 17 16z"/>\
+  </svg>') no-repeat center / contain;
+                mask: url('data:image/svg+xml;utf8,\
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">\
+  <path d="M3 7h11v8H3V7zm11 0h3l4 4v4h-7V7zm-8 9a2 2 0 1 0 0 4 2 2 0 0 0 0-4zm11 0a2 2 0 1 0 .001 4.001A2 2 0 0 0 17 16z"/>\
+  </svg>') no-repeat center / contain;
+            }
+            .ship-badge--mono:hover{
+                background: rgba(255,255,255,.7);
+                border-color: rgba(0,0,0,.28);
+                transform: translateY(-1px);
+            }
+
+            /* 무료배송 강조 (세 스타일 공통으로 먹게) */
+            .free    { border-color:rgba(0,0,0,.32) !important; }
+            .free:not(.ship-badge--line){
+                background: rgba(255,255,255,.6) !important;
+            }
+
+            /* FREE SHIPPING 강조 (모노 배지 변형) */
+            .ship-badge--mono.is-free{
+                border-color: rgba(26,143,92,.35);
+                background: var(--accent-free-tint);
+                color:#0d3b29;
+            }
+            .ship-badge--mono.is-free::before{
+                background: var(--accent-free);
+                opacity:.9;
+            }
+            .ship-badge--mono.is-free:hover{
+                background: rgba(26,143,92,.14);
+                border-color: rgba(26,143,92,.5);
+            }
+
+            /* TOP RATED 강조 (브랜드 배지 변형) */
+            .brand-badge.is-top{
+                font-size:10px;          /* 기본 12px → 10px */
+                padding:.28rem .60rem;   /* (선택) 글자 줄었을 때 pill 균형 */
+                border-color: rgba(176,138,45,.45);
+                background: var(--accent-top-tint);
+                box-shadow: inset 0 0 0 1px rgba(176,138,45,.25);
+                color:#2b2412;
+            }
+            .brand-badge.is-top::before{
+                content:"★";
+                opacity:1;
+                color: var(--accent-top);
+            }
+            .brand-badge.is-top:hover{
+                background: rgba(176,138,45,.16);
+                border-color: rgba(176,138,45,.6);
+            }
+
+            /* 유료배송일 때 텍스트만 살짝 작게 */
+            .ship-badge--mono:not(.is-free) span{ font-size:10px; }
+        </style>
         <!-- /상품 카드 반복 -->
     </div>
 </div>

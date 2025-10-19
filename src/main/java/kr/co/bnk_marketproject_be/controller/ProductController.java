@@ -241,6 +241,7 @@ public class ProductController {
         }
     }
 
+
     /* 상품 검색*/
     @GetMapping("/product/header/search")
     public String productSearch(
@@ -275,6 +276,8 @@ public class ProductController {
         int total = productsMapper.selectProductSearchTotal(req);
 
         var page = new PageResponseProductDTO<>(req, list, total);
+
+
 
         model.addAttribute("pageResponseProductDTO", page);
         model.addAttribute("sort", sort);
