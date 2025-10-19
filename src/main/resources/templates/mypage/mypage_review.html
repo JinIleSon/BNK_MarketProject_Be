@@ -185,8 +185,10 @@
                             <tr style="border-bottom: 1px solid #dddddd; height:65px;"
                                 th:each="review, stat: ${pageResponseDTO.dtoList}">
                                 <td th:text="${pageResponseDTO.startNo - stat.index}">5</td>
-                                <td style="" class="col-name"><span th:text="${review.product_code}"></span> / <a th:href="@{/product/views(id=${review.pid})}">[[${review.product_name}]]</a></td>
-                                <td style="" class="col-content"><span th:text="${review.content}"></span></td>
+                                <td style="" class="col-name"><span th:text="${review.product_code}"></span> / <a th:href="@{/product/views(id=${review.pid})}">
+                                    [[${review.product_name}]]
+                                </a></td>
+                                <td style="" class="col-content"><a th:href="@{|/product/views?id=${review.pid}#reviews|}" th:text="${review.content}"></a></td>
                                 <td><span th:text="${review.rating == 5 ? '★★★★★' :
                                 (review.rating == 4 ? '★★★★☆' :
                                 (review.rating == 3 ? '★★★☆☆' :
