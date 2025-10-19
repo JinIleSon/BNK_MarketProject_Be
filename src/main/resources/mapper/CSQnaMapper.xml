@@ -154,4 +154,12 @@
         )
 
     </insert>
+
+    <select id="selectCommentView" resultType="kr.co.bnk_marketproject_be.dto.CSNoticeDTO">
+        select c.cid, c.content
+        from board b
+                 LEFT JOIN comments c
+                           on b.id = c.bid
+        WHERE c.bid = #{bid}
+    </select>
 </mapper>
