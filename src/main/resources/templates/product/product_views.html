@@ -192,22 +192,6 @@
                         width: 100%;
                     }
                 </style>
-                <script>
-                    document.addEventListener('DOMContentLoaded', () => {
-                        const link   = document.getElementById('reviewLink');     // "상품평보기"
-                        const target = document.getElementById('reviews-start');  // ← 새 앵커
-                        const header = document.querySelector('.site-header');
-
-                        if (!link || !target) return;
-
-                        link.addEventListener('click', (e) => {
-                            e.preventDefault();
-                            const headerOffset = (header?.offsetHeight || 0) + 10; // 헤더 + 여유
-                            const y = target.getBoundingClientRect().top + window.pageYOffset - headerOffset;
-                            window.scrollTo({ top: y, behavior: 'smooth' });
-                        });
-                    });
-                </script>
             </div>
 
             <hr style="border:none; border-top:1px solid #ddd;">
@@ -550,6 +534,43 @@
                 window.increase=increase; window.decrease=decrease;
                 window.swapMain=swapMain; window.addToCart=addToCart; window.buyNow=buyNow;
                 render();
+                (function(){
+                    const GAP = 100; // 더 아래로 내릴 픽셀 (원하는 만큼 조정)
+
+                    function scrollToReviews(extra = GAP) {
+                        const target = document.getElementById('reviews-start');
+                        const header = document.querySelector('.site-header');
+                        if (!target) return;
+
+                        const headerOffset = (header?.offsetHeight || 0) + 10;
+                        const y = target.getBoundingClientRect().top + window.pageYOffset
+                            - headerOffset + extra;   // ← 추가 여백
+                        window.scrollTo({ top: y, behavior: 'smooth' });
+                    }
+
+                    // "상품평보기" 클릭 (이벤트 한 번만 등록)
+                    document.addEventListener('click', (e) => {
+                        const a = e.target.closest('#reviewLink');
+                        if (!a) return;
+                        e.preventDefault();
+                        scrollToReviews();
+                    });
+
+                    // 해시/쿼리로 진입 시 자동 스크롤
+                    function needScroll() {
+                        const h = location.hash;
+                        const q = new URLSearchParams(location.search);
+                        return h === '#reviews' || h === '#reviews-start' || q.get('scroll') === 'reviews';
+                    }
+
+                    function kickoffScroll() {
+                        if (!needScroll()) return;
+                        // 레이아웃/이미지 로딩 지연 대비 여러 번 시도
+                        [0, 120, 350, 800].forEach(ms => setTimeout(scrollToReviews, ms));
+                    }
+
+                    document.addEventListener('DOMContentLoaded', kickoffScroll);
+                })();
             </script>
 
             <!-- 썸네일 -->
@@ -566,7 +587,8 @@
     <div id="reviews" style="width:1265px; margin-top:5px; margin-bottom:5px;">
         <style>
             html { scroll-behavior: smooth; }
-            #reviews { scroll-margin-top: 80px; } /* 헤더 높이에 맞춰 숫자 조절 */
+            #reviews { scroll-margin-top: 120px; } /* 헤더 높이에 맞춰 숫자 조절 */
+            #reviews-start{ scroll-margin-top: 120px; }
         </style>
         <div style="display:flex; margin-top:5px; margin-bottom:5px;">
             <div style="letter-spacing:-1px; font-size:16px; font-weight:600;">상품정보 제공고시</div>
