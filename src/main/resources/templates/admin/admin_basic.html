@@ -212,26 +212,6 @@
                 </td>
             </tr>
 
-            <!-- 푸터 로고 -->
-            <tr>
-                <th class="th-blue">푸터 로고</th>
-                <td>
-                    <input type="file" name="footerLogoFile" accept="image/*"
-                           style="border: 2px solid #ced4da; padding: 2px;">
-                    <span> 크기 155 × 36 권장</span>
-
-                    <div th:if="${config.footerLogo}" style="margin-top:8px;">
-                        <img id="footerLogoImg"
-                             th:src="${config.footerLogo.startsWith('/upload') ? '/NICHIYA' + config.footerLogo : config.footerLogo}"
-                             alt="Footer Logo"
-                             style="max-height:36px; max-width:155px;">
-                        <label style="margin-left:8px;">
-                            <input type="checkbox" name="removeFooterLogo"> 제거
-                        </label>
-                    </div>
-                </td>
-            </tr>
-
             <!-- 파비콘 -->
             <tr>
                 <th class="th-blue">파비콘</th>
