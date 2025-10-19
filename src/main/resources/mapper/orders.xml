@@ -35,33 +35,114 @@
 
     <!-- 쿠폰/포인트/기본배송지 -->
     <select id="selectAvailableCoupons" resultType="kr.co.bnk_marketproject_be.dto.OrderPageCouponViewDTO">
-        SELECT id, coupon_name, discount_type, discount_value, company, note,
+        SELECT
+        id,
+        coupon_name,
+        discount_type,
+        discount_value,
+        company,
+        note,
         TO_CHAR(valid_from,'YYYY-MM-DD HH24:MI') AS valid_from,
         TO_CHAR(valid_to,'YYYY-MM-DD HH24:MI')   AS valid_to,
         status
         FROM coupons
         WHERE users_id = #{userId}
-        AND status = 'USABLE'
+        AND status IN ('발급중')  <!-- 필요 상태만 남기세요 -->
         AND SYSDATE BETWEEN valid_from AND valid_to
         ORDER BY id DESC
     </select>
 
+    <update id="markCouponUsed">
+        UPDATE coupons
+        SET status = '종료'
+        <!-- , used_order_id = #{orderId}   -->
+        <!-- , used_at = SYSTIMESTAMP       -->
+        WHERE id = #{couponId}
+        AND users_id = #{userId}
+        AND status = '발급중'
+    </update>
+
     <select id="selectAvailablePoint" resultType="int">
-        SELECT NVL(MAX(balance), 0)
+        SELECT NVL(balance, 0)
+        FROM (
+        SELECT balance
         FROM point_ledgers
         WHERE users_id = TO_CHAR(#{userId})
+        OR users_id = (SELECT u.user_id FROM users u WHERE u.id = #{userId})
+        ORDER BY created_at DESC, id DESC
+        ) t
+        WHERE ROWNUM = 1
     </select>
 
-    <select id="selectDefaultShipping" resultType="kr.co.bnk_marketproject_be.dto.DeliveriesDTO">
+    <insert id="consumePoint">
+        INSERT INTO point_ledgers (users_id, change_amount, balance, description, created_at, board_type)
         SELECT
-        d.deliveries_name     AS recipient,
-        d.deliveries_hp       AS hp,
-        d.deliveries_zipcode  AS zipcode,
-        d.deliveries_address1 AS address1,
-        d.deliveries_address2 AS address2,
-        d.deliveries_others   AS memo
+        x.user_id_val,
+        -#{amount},
+        NVL((
+        SELECT balance
+        FROM (
+        SELECT balance
+        FROM point_ledgers
+        WHERE users_id = x.user_id_val
+        ORDER BY created_at DESC, id DESC
+        ) t2
+        WHERE ROWNUM = 1
+        ), 0) - #{amount},
+        #{orderId},
+        SYSTIMESTAMP,
+        'ORDER_USE'
+        FROM (
+        SELECT NVL(
+        (SELECT u.user_id FROM users u WHERE u.id = #{userId}),
+        TO_CHAR(#{userId})
+        ) AS user_id_val
+        FROM dual
+        ) x
+    </insert>
+
+    <insert id="addRewardPoint">
+        INSERT INTO point_ledgers (users_id, change_amount, balance, description, created_at, board_type)
+        SELECT
+        x.user_id_val,
+        #{amount},
+        NVL((
+        SELECT balance
+        FROM (
+        SELECT balance
+        FROM point_ledgers
+        WHERE users_id = x.user_id_val
+        ORDER BY created_at DESC, id DESC
+        ) t2
+        WHERE ROWNUM = 1
+        ), 0) + #{amount},
+        #{orderId},
+        SYSTIMESTAMP,
+        'ORDER_REWARD'
+        FROM (
+        SELECT NVL(
+        (SELECT u.user_id FROM users u WHERE u.id = #{userId}),
+        TO_CHAR(#{userId})
+        ) AS user_id_val
+        FROM dual
+        ) x
+    </insert>
+
+    <select id="selectDefaultShipping"
+            parameterType="int"
+            resultType="kr.co.bnk_marketproject_be.dto.DeliveriesDTO">
+        SELECT
+        d.recipient,
+        d.delicom,
+        d.zipcode,
+        d.address,
+        d.address2,
+        d.delichar,
+        d.status,
+        d.note
         FROM deliveries d
-        WHERE d.users_id = #{userId}
+        JOIN orders o ON o.id = d.orders_id
+        WHERE o.users_id = #{userId}
         ORDER BY d.id DESC
         FETCH FIRST 1 ROWS ONLY
     </select>
@@ -76,16 +157,16 @@
         VALUES (#{users_id}, #{status}, #{total_amount}, #{order_code}, SYSTIMESTAMP)
     </insert>
 
-    <insert id="insertPayment" parameterType="kr.co.bnk_marketproject_be.dto.PaymentsDTO"
-            useGeneratedKeys="true" keyProperty="id">
+    <insert id="insertPayment" parameterType="kr.co.bnk_marketproject_be.dto.PaymentsDTO">
         INSERT INTO payments (orders_id, amount, method, status, paid_at)
         VALUES (#{orders_id}, #{amount}, #{method}, #{status}, SYSTIMESTAMP)
     </insert>
 
-    <insert id="insertDelivery" parameterType="kr.co.bnk_marketproject_be.dto.DeliveriesDTO"
-            useGeneratedKeys="true" keyProperty="id">
-        INSERT INTO deliveries (orders_id, recipient, delicom, zipcode, address, address2, status, delichar)
-        VALUES (#{orders_id}, #{recipient}, #{delicom}, #{zipcode}, #{address}, #{address2}, '배송준비', #{delichar})
+    <insert id="insertDelivery" parameterType="kr.co.bnk_marketproject_be.dto.DeliveriesDTO">
+        INSERT INTO deliveries
+        (orders_id, recipient, delicom, zipcode, address, address2, status, delichar, note)
+        VALUES
+        (#{orders_id}, #{recipient}, #{delicom}, #{zipcode}, #{address}, #{address2}, #{status}, #{delichar}, #{note})
     </insert>
 
     <update id="recalcOrderTotal" parameterType="int">
@@ -97,7 +178,6 @@
         )
         WHERE o.id = #{orderId}
     </update>
-
 
 
     <insert id="insertOrderItemFromCart">
@@ -115,37 +195,6 @@
         WHERE id = #{productId}
         AND stock >= #{qty}
     </update>
-
-    <update id="markCouponUsed">
-        UPDATE coupons
-        SET status='USED'
-        WHERE id=#{couponId}
-    </update>
-
-    <insert id="consumePoint">
-        INSERT INTO point_ledgers (users_id, change_amount, balance, description, created_at, board_type)
-        VALUES (
-        TO_CHAR(#{userId}),
-        -#{amount},
-        (SELECT NVL(MAX(balance),0) FROM point_ledgers WHERE users_id = TO_CHAR(#{userId})) - #{amount},
-        #{orderId},
-        SYSTIMESTAMP,
-        'ORDER_USE'
-        )
-    </insert>
-
-    <!-- 포인트 적립 -->
-    <insert id="addRewardPoint">
-        INSERT INTO point_ledgers (users_id, change_amount, balance, description, created_at, board_type)
-        VALUES (
-        TO_CHAR(#{userId}),
-        #{amount},
-        (SELECT NVL(MAX(balance),0) FROM point_ledgers WHERE users_id = TO_CHAR(#{userId})) + #{amount},
-        #{orderId},
-        SYSTIMESTAMP,
-        'ORDER_REWARD'
-        )
-    </insert>
 
     <delete id="clearCartByUser">
         DELETE FROM order_items
@@ -175,7 +224,10 @@
         WHERE oi.orders_id = #{orderId}
     </select>
 
-    <select id="selectOrderCompleteHeader" parameterType="int" resultType="kr.co.bnk_marketproject_be.dto.ProductCompleteDTO">
+    <!-- 완료 화면 헤더: 주문/결제/구매자 + 배송 스냅샷 -->
+    <select id="selectOrderCompleteHeader"
+            parameterType="int"
+            resultType="kr.co.bnk_marketproject_be.dto.ProductCompleteDTO">
         SELECT
         /* 주문/결제/구매자 */
         o.id                                     AS orderId,
@@ -184,17 +236,17 @@
         u.phone                                  AS buyerPhone,
         TO_CHAR(o.created_at, 'YYYY-MM-DD HH24:MI:SS') AS completedAt,
 
-        /* 배송지(orders_id로 조인된 배송 스냅샷) */
-        d.deliveries_name                        AS "deliveries.recipient",
-        /* delicom 컬럼이 현재 없으므로 NULL 반환 (있으면 d.delicom 으로 바꿔) */
-        NULL                                     AS "deliveries.delicom",
-        d.deliveries_zipcode                     AS "deliveries.zipcode",
-        d.deliveries_address1                    AS "deliveries.address1",
-        d.deliveries_address2                    AS "deliveries.address2",
-        d.deliveries_hp                          AS "deliveries.hp"
+        /* 배송지(orders_id에 저장된 스냅샷) — 실제 컬럼명으로 매핑 */
+        d.recipient                              AS "deliveries.recipient",
+        /* delicom이 수취인 연락처라면 그대로, 없을 수 있으니 보강(Optional) */
+        NVL(d.delicom, u.phone)                  AS "deliveries.delicom",
+        d.zipcode                                AS "deliveries.zipcode",
+        d.address                                AS "deliveries.address",
+        d.address2                               AS "deliveries.address2"
+
         FROM orders o
-        JOIN users u          ON u.id = o.users_id
-        LEFT JOIN payments p  ON p.orders_id = o.id
+        JOIN users u           ON u.id = o.users_id
+        LEFT JOIN payments p   ON p.orders_id = o.id
         LEFT JOIN deliveries d ON d.orders_id = o.id
         WHERE o.id = #{orderId}
     </select>
@@ -260,5 +312,40 @@
         AND o.status = '결제대기'
         AND NOT EXISTS (SELECT 1 FROM order_items oi WHERE oi.orders_id = o.id)
     </delete>
+
+    <select id="selectCouponForUser"
+            resultType="kr.co.bnk_marketproject_be.dto.CouponsDTO">
+        SELECT
+        id,
+        users_id,
+        code,
+        discount_type,
+        discount_value,
+        company,
+        valid_from,
+        valid_to,
+        status,
+        coupon_name,
+        issuecount,
+        usercount,
+        created_at,
+        note
+        FROM coupons
+        WHERE id = #{couponId}
+        AND users_id = #{userId}
+        AND status = '발급중'
+        AND SYSDATE BETWEEN valid_from AND valid_to
+    </select>
+
+    <!-- 헤더 결제완료 승격 -->
+    <update id="finalizeOrder">
+        UPDATE orders
+        SET status = '결제완료',
+        total_amount = #{totalAmount},
+        updated_at = SYSTIMESTAMP
+        WHERE id = #{orderId}
+        AND users_id = #{userId}
+        AND status = '결제대기'
+    </update>
 
 </mapper>

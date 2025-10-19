@@ -35,19 +35,10 @@
         .title-didone.ko{ font-family:'Noto Serif KR','Bodoni Moda',serif; font-weight:300; }
     </style>
 </head>
-<body th:object="${complete}">
+
+<body th:object="${order}">
 <div th:replace="~{main/header.html}"></div>
 
-<!-- 헤더 장바구니 링크에도 uid 유지 -->
-<script th:inline="javascript">
-    const CART_PAGE_URL_TPL = /*[[@{/product/cart(uid=${uid})}]]*/ '/product/cart';
-    document.addEventListener('DOMContentLoaded', () => {
-        const link = document.getElementById('basketCountLink');
-        if (link) link.setAttribute('href', CART_PAGE_URL_TPL);
-    });
-</script>
-
-<!-- 본문 -->
 <div style="height:100%; display:flex; flex-direction:column; justify-content:center; align-items:center; margin:0 auto;">
     <div style="display:flex;">
         <div style="font-size:18px; margin-right:1200px;"><b>주문완료</b></div>
@@ -57,8 +48,11 @@
     <div style="margin-bottom:20px;">즐거운 쇼핑이 되셨나요? 항상 고객님을 위한 일야가 되겠습니다.</div>
 
     <!-- 아이템 테이블 -->
-    <table style="border-collapse:collapse; border:none; width:1270px; text-align:center;">
-        <form action="" method="">
+    <div th:with="
+         itemsList=${order != null and order.items != null ? order.items : #lists.list()},
+         totalDiscount=*{ (summary != null ? summary.discountAmount : 0)
+                        + (summary != null ? (summary.pointUse ?: 0) : 0) }">
+        <table style="border-collapse:collapse; border:none; width:1270px; text-align:center;">
             <tr style="height:50px; border-top:4px solid black; border-bottom:1px solid #dddddd;">
                 <td style="width:50px;"><input type="checkbox" disabled></td>
                 <td style="width:450px;">상품명</td>
@@ -69,40 +63,45 @@
             </tr>
 
             <!-- 목록 -->
-            <tr th:each="it : *{items}" style="border-bottom:1px solid #dddddd;">
+            <tr th:each="it, st : ${itemsList}" style="border-bottom:1px solid #dddddd;">
                 <td><input type="checkbox" disabled></td>
+
+                <!-- 상품명/이미지 -->
                 <td style="display:flex;">
                     <div style="margin:10px; width:80px; height:75px; background-color:#dddddd;">
-                        <!-- URL 바인딩 수정 -->
                         <img th:src="${it.url} != null ? @{|/${it.url}|} : @{/images/placeholder.png}"
                              alt="이미지" style="width:100%; height:100%; object-fit:cover;">
                     </div>
                     <div style="padding-left:18px; display:flex; font-size:14px; align-items:flex-start; justify-content:center; flex-direction:column;">
                         <div style="margin-bottom:6px;" th:text="${it.product_name}">상품명</div>
-                        <!-- 옵션명 삼항 수정 -->
                         <div style="color:gray; font-size:12px;" th:text="${it.option_name} != null ? it.option_name : ''">옵션</div>
                     </div>
                 </td>
 
                 <!-- 상품금액(정가 × 수량) -->
-                <td th:text="${#numbers.formatInteger(it.unitPrice * it.quantity, 3, 'COMMA')}">27,000</td>
+                <td th:text="${#numbers.formatInteger((it.unitPrice ?: 0) * (it.quantity ?: 0), 3, 'COMMA')}">27,000</td>
 
-                <!-- 할인금액((정가×할인율)×수량) -->
-                <td th:text="${#numbers.formatInteger((it.unitPrice * it.discountRate / 100) * it.quantity, 3, 'COMMA')}">-1,350</td>
+                <!-- 할인금액(주문 단위 총할인 = 상품할인 + 포인트). 첫 행에만 표시 -->
+                <td th:text="${ st.index == 0
+                               ? '-' + #numbers.formatInteger(totalDiscount, 3, 'COMMA')
+                               : '' }">-0</td>
 
                 <!-- 수량 -->
-                <td th:text="${it.quantity}">1</td>
+                <td th:text="${it.quantity ?: 0}">1</td>
 
                 <!-- 주문금액(판매가×수량 = lineTotal) -->
-                <td style="color:red;" th:text="${#numbers.formatInteger(it.lineTotal, 3, 'COMMA')}">25,650</td>
+                <td style="color:red;"
+                    th:text="${#numbers.formatInteger(it.lineTotal ?: (((it.unitPrice ?: 0) - ((it.unitPrice ?: 0) * ((it.discountRate ?: 0) / 100.0))) * (it.quantity ?: 0)), 3, 'COMMA')}">
+                    25,650
+                </td>
             </tr>
 
             <!-- 비어있을 때 -->
-            <tr th:if="*{items} == null or *{items.isEmpty()}">
+            <tr th:if="${#lists.isEmpty(itemsList)}">
                 <td colspan="6" style="padding:24px;">주문 상품이 없습니다.</td>
             </tr>
-        </form>
-    </table>
+        </table>
+    </div>
 
     <!-- 합계 박스 -->
     <div style="border:1px solid #f2f2f2; width:300px; margin-left:970px; height:148px; padding:20px; background-color:#f2f2f2;">
@@ -110,25 +109,29 @@
             <div style="margin-bottom:6px;">
                 <div>총 상품금액
                     <span style="float:right;"
-                          th:text="|${#numbers.formatInteger(*{summary.subtotalAmount}, 3, 'COMMA')} 원|">27,000 원</span>
+                          th:text="|*{#numbers.formatInteger(summary != null ? summary.subtotalAmount : 0, 3, 'COMMA')} 원|">0 원</span>
                 </div>
             </div>
             <div style="margin-bottom:6px;">
                 <div>총 할인금액
                     <span style="float:right;"
-                          th:text="|-${#numbers.formatInteger((*{summary.discountAmount} + (*{summary.couponAmount} != null ? *{summary.couponAmount} : 0) + (*{summary.pointUse} != null ? *{summary.pointUse} : 0)), 3, 'COMMA')} 원|">-1,350 원</span>
+                          th:text="|-*{#numbers.formatInteger(
+                               (summary != null ? summary.discountAmount : 0) +
+                               (summary != null ? (summary.couponAmount ?: 0) : 0) +
+                               (summary != null ? (summary.pointUse    ?: 0) : 0)
+                             , 3, 'COMMA')} 원|">-0 원</span>
                 </div>
             </div>
             <div style="margin-bottom:6px;">
                 <div>배송비
                     <span style="float:right;"
-                          th:text="|${#numbers.formatInteger(*{summary.delichar}, 3, 'COMMA')} 원|">0 원</span>
+                          th:text="|*{#numbers.formatInteger(summary != null ? (summary.delichar ?: 0) : 0, 3, 'COMMA')} 원|">0 원</span>
                 </div>
             </div>
             <div style="margin-bottom:6px;">
                 <div>총 결제금액
                     <span style="float:right; color:red;"
-                          th:text="|${#numbers.formatInteger(*{summary.totalPayable}, 3, 'COMMA')} 원|">25,650 원</span>
+                          th:text="|*{#numbers.formatInteger(summary != null ? summary.totalPayable : 0, 3, 'COMMA')} 원|">0 원</span>
                 </div>
             </div>
         </div>
@@ -146,18 +149,18 @@
             <div>연락처</div>
         </div>
         <div style="padding-left:19px; display:flex; justify-content:center; flex-direction:column;">
-            <!-- ✅ orderCode → orderId 로 바인딩 (쿼리에서 orderId를 내려줌) -->
-            <div style="margin-bottom:7px;" th:text="*{orderId}">1000121121</div>
-            <div style="margin-bottom:7px;" th:text="*{payMethod}">신용카드</div>
-            <div style="margin-bottom:7px;" th:text="*{buyerName}">홍길동</div>
-            <div style="margin-bottom:4px;" th:text="*{buyerPhone}">010-1234-1234</div>
+            <!-- DTO의 기본키(id) 사용 -->
+            <div style="margin-bottom:7px;" th:text="*{id != null ? id : ''}">1000121121</div>
+            <div style="margin-bottom:7px;" th:text="*{payMethod ?: ''}">신용카드</div>
+            <div style="margin-bottom:7px;" th:text="*{buyerName ?: ''}">홍길동</div>
+            <div style="margin-bottom:4px;" th:text="*{buyerPhone ?: ''}">010-1234-1234</div>
         </div>
         <div style="display:flex; align-items:end; margin-left:auto;">
             <div style="width:210px; margin-right:45px; margin-bottom:8px;">
                 <span>총 결제금액</span>
                 <span style="float:right;">원</span>
                 <span style="color:red; float:right;"
-                      th:text="${#numbers.formatInteger(*{summary.totalPayable}, 3, 'COMMA')}">24,650</span>
+                      th:text="*{#numbers.formatInteger(summary != null ? summary.totalPayable : 0, 3, 'COMMA')}">0</span>
             </div>
         </div>
     </div>
@@ -173,13 +176,14 @@
             <div>배송지 주소</div>
         </div>
         <div style="padding-left:19px; display:flex; justify-content:center; flex-direction:column;">
-            <div style="margin-bottom:7px;" th:text="*{shipping.recipient}">홍길동</div>
-            <div style="margin-bottom:7px;" th:text="*{shipping.delicom}">010-1234-1234</div>
+            <div style="margin-bottom:7px;" th:text="*{shipping != null ? shipping.recipient : ''}">홍길동</div>
+            <div style="margin-bottom:7px;" th:text="*{shipping != null ? shipping.delicom : ''}">010-1234-1234</div>
 
-            <!-- 주소 문자열: 선택 객체(*{})만으로 삼항 정리 -->
-            <div th:text="*{shipping.zipcode != null ? '#' + shipping.zipcode + ' ' + shipping.address + (shipping.address2 != null ? ' ' + shipping.address2 : '') : shipping.address + (shipping.address2 != null ? ' ' + shipping.address2 : '')}">
-                부산 금정구 123-11 10층
-            </div>
+            <div th:text="*{shipping != null ?
+                ((shipping.zipcode != null ? '#' + shipping.zipcode + ' ' : '') +
+                 (shipping.address  != null ? shipping.address : '') +
+                 (shipping.address2 != null ? ' ' + shipping.address2 : ''))
+               : ''}">부산 금정구 123-11 10층</div>
         </div>
     </div>
 </div>
