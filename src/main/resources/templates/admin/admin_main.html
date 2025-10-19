@@ -10,12 +10,12 @@
     canvas{width: 100% !important;
         height: 100% !important;}
     .chart-legend{font-size:12px !important;}
-    .status-table{width:850px;border-collapse:collapse;text-align:center;font-size:14px;margin-top:10px;margin-left:30px;table-layout:fixed;}
+    .status-table{width: 969px;;border-collapse:collapse;text-align:center;font-size:14px;margin-top:10px;margin-left:30px;table-layout:fixed;}
     .status-table th{border-top:2px solid #ccc;border-right:1px solid #ccc;padding-top:10px;}
     .status-table td{border-bottom:1px solid #ccc;border-right:1px solid #ccc;padding:10px;}
     .status-table td.value{color:#d0021b;font-weight:bold;}
     .status-gap{height:15px;border:none;}
-    .board-wrapper{width:850px;display:flex;gap:20px;margin-left:30px;box-sizing:border-box;}
+    .board-wrapper{width:947px;display:flex;gap:20px;margin-left:30px;box-sizing:border-box;}
     .board-section{flex:1;}
     .board-section ul{list-style:none;padding:0;margin:0;}
     .board-section li{display:flex;justify-content:space-between;border-bottom:1px solid #ccc;font-size:14px;padding:12px;}
@@ -129,7 +129,7 @@
         </aside>
         </div>
         <div style="border-left:1px solid #e2e2e2;"></div>
-        <div style="width:900px; margin-left:40px;">
+        <div style="width:969px; margin-left:40px;">
 
   <!-- 메인 콘텐츠 -->
   <div class="title-line" style="border-bottom: 2px solid #ccc;">
@@ -216,11 +216,12 @@
             </li>
 
             <!-- 데이터 있는 경우 -->
-            <li th:each="n : ${notices}">
-                <span th:text="${n.pinned} ? '📌 ' : ''"></span>
-                <a th:href="@{/admin/announcement/view(id=${n.id})}"
+            <li th:each="n : ${notices}" class="board-item">
+                <a class="board-title"
+                   th:href="@{/admin/announcement/view(id=${n.id})}"
                    th:text="${n.title}">공지 타이틀</a>
-                <span th:text="${n.createdAt}"></span>
+                <span class="board-date"
+                        th:text="${n.createdAt != null ? #strings.substring(n.createdAt, 0, 10) : ''}"></span>
             </li>
         </ul>
     </div>
@@ -235,19 +236,56 @@
                 등록된 문의가 없습니다.
             </li>
 
-            <li th:each="q : ${inquiries}">
-                <span th:text="${q.qnaStatus == 'NEW' ? '[ 미답변 ]' : '[ 답변완료 ]'}"></span>
-                <a th:href="@{/admin/inquiry/view(id=${q.id})}"
+            <li th:each="q : ${inquiries}" class="board-item">
+                <span class="qna-badge"
+                      th:text="${q.qnaStatus == 'NEW' ? '[ 미답변 ]' : '[ 답변완료 ]'}"></span>
+                <a class="board-title"
+                   th:href="@{/admin/inquiry/view(id=${q.id})}"
                    th:text="${q.title}">문의 제목</a>
-                <span th:text="${q.userId}">user</span>
-                <span th:text="${q.createdAt}">25.09.30</span>
+                <span class="board-user" th:text="${q.userId == null ? '' : q.userId.replaceAll('(?<=..).','*')}">user</span>
+                <span class="board-date" th:text="${q.createdAt != null ? #strings.substring(q.createdAt, 0, 10) : ''}">25.09.30</span>
             </li>
         </ul>
     </div>
   </div>
   </div>
   </main>
+<style>
+    /* 행 레이아웃(그대로 사용) */
+    .board-section li.board-item{
+        display:flex;
+        align-items:center;
+        gap:12px;
+    }
 
+    /* 레이블: 폭 고정, 가운데 정렬, 줄바꿈 금지, 줄어들지 않음 */
+    .qna-badge {
+        display:inline-block;
+        min-width:70px;           /* 줄 안 밀리게 최소 폭만 확보 */
+        white-space:nowrap;       /* 줄바꿈 방지 */
+        flex:0 0 auto;            /* flex 줄어듦 방지 */
+        font-weight:500;
+        color:#333;               /* 글자색 */
+        padding-right:4px;        /* 너무 붙지 않게 살짝 여유 */
+    }
+
+    /* 제목: 남은 영역 사용 + 말줄임 */
+    .board-title{
+        flex:1 1 auto;
+        min-width:0;
+        overflow:hidden;
+        white-space:nowrap;
+        text-overflow:ellipsis;
+    }
+
+    /* 아이디/날짜: 한 줄 고정, 오른쪽 정렬 */
+    .board-user,
+    .board-date{
+        white-space:nowrap;
+        flex:0 0 auto;
+    }
+    .board-date{ margin-left:auto; }   /* 날짜는 맨 오른쪽으로 */
+</style>
 <script>
     /* ========== 차트 렌더 함수들 ========== */
     let _barChart = null;
