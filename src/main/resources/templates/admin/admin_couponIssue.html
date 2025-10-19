@@ -108,16 +108,8 @@
                                 style="color:red;">
                             미사용
                         </td>
-                        <td th:text="${admin.used_at == null ? '-' :
-                                      (#strings.contains(admin.used_at, 'T')
-                                        ? T(java.time.OffsetDateTime).parse(admin.used_at)
-                                            .format(T(java.time.format.DateTimeFormatter).ofPattern('yyyy-MM-dd HH:mm:ss'))
-                                        : T(java.time.LocalDateTime).parse(
-                                            admin.used_at,
-                                            T(java.time.format.DateTimeFormatter).ofPattern('yyyy-MM-dd HH:mm:ss[.SSS][.SS][.S]')
-                                          ).format(T(java.time.format.DateTimeFormatter).ofPattern('yyyy-MM-dd HH:mm:ss'))
-                                      )
-                                    }">-</td>
+                        <td th:with="u=${admin.used_at == null ? null : (#strings.contains(admin.used_at,'T') ? #strings.replace(admin.used_at,'T',' ') : admin.used_at)}"
+                                th:text="${u == null ? '-' : (#strings.length(u) >= 19 ? #strings.substring(u,0,19) : u)}">-</td>
                         <td><button class="stop-btn" style="height:30px; border: 1px solid #e2e2e2;">중단</button></td>
                         <!-- ▼ 배송입력 모달 콘텐츠 템플릿 -->
                         <template class="shipFormTemplate" th:inline="text">
