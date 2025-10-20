@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html lang="ko" xmlns:th="http://www.thymeleaf.org">
 <head>
+    <meta name="category-id" th:if="${categoryId}" th:content="${categoryId}">
     <meta name="_csrf" th:content="${_csrf != null ? _csrf.token : ''}">
     <meta name="_csrf_header" th:content="${_csrf != null ? _csrf.headerName : ''}">
     <meta charset="UTF-8">
@@ -301,7 +302,7 @@
                         <button type="button" onclick="addToCart()"
                                 style="cursor:pointer;color:#fff; height:35px; background:#bfbfbf; border:none; font-size:13px; font-weight:300; width:47%;">장바구니</button>
                         <button type="button" onclick="buyNow()"
-                                style="cursor:pointer;margin-left:auto; color:#fff; background:#5e8fd7; border:none; font-size:13px; font-weight:300; width:47%;">구매하기</button>
+                                style="cursor:pointer;margin-left:auto; color:#fff; background:black; border:none; font-size:13px; font-weight:300; width:47%;">구매하기</button>
                     </div>
 
                     <div class="banner-box" id="bannerBox" style="height:100px !important;">

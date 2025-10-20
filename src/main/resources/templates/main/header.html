@@ -105,6 +105,15 @@
             -moz-osx-font-smoothing: grayscale;
         }
         .title-didone.ko{font-family: 'Noto Serif KR','Bodoni Moda',serif; font-weight:300;}
+        /* 왼쪽 대분류 활성화 */
+        .overlay__menu a[data-cat].is-active {
+            font-weight: 700; text-decoration: underline;
+        }
+        /* 오른쪽 소분류 활성화 */
+        .menu-grid a.is-current {
+            text-decoration: underline;
+            font-weight: 700;
+        }
     </style>
     <html xmlns:th="http://www.thymeleaf.org"
           xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
@@ -295,60 +304,86 @@
   </aside>
 
     <script>
-    const body     = document.body;
-    const menuBtn  = document.getElementById('menuBtn');
-    const closeBtn = document.getElementById('closeBtn');
-    const overlay  = document.getElementById('menuOverlay');
+        const body     = document.body;
+        const menuBtn  = document.getElementById('menuBtn');
+        const closeBtn = document.getElementById('closeBtn');
+        const overlay  = document.getElementById('menuOverlay');
 
-    function openMenu(){
-        overlay.classList.add('open');
-        overlay.setAttribute('aria-hidden', 'false');
-        menuBtn.setAttribute('aria-expanded', 'true');
-        body.style.overflow = 'hidden'; // 뒤 스크롤 잠금
-    }
-    function closeMenu(){
-        overlay.classList.remove('open');
-        overlay.setAttribute('aria-hidden', 'true');
-        menuBtn.setAttribute('aria-expanded', 'false');
-        body.style.overflow = '';
-    }
+        function openMenu(){
+            overlay.classList.add('open');
+            overlay.setAttribute('aria-hidden', 'false');
+            menuBtn.setAttribute('aria-expanded', 'true');
+            body.style.overflow = 'hidden';
+        }
+        function closeMenu(){
+            overlay.classList.remove('open');
+            overlay.setAttribute('aria-hidden', 'true');
+            menuBtn.setAttribute('aria-expanded', 'false');
+            body.style.overflow = '';
+        }
 
-    menuBtn.addEventListener('click', openMenu);
-    closeBtn.addEventListener('click', closeMenu);
-    overlay.addEventListener('click', (e) => {
-        // 빈 배경 클릭 시 닫기 (메뉴 콘텐츠 클릭은 무시)
-        if(e.target === overlay) closeMenu();
-    });
-    // Esc 키로 닫기
-    window.addEventListener('keydown', (e)=>{
-        if(e.key === 'Escape' && overlay.classList.contains('open')) closeMenu();
-    });
-    // ====== 새로 추가: 카테고리 클릭 시 페이드인 ======
-    // 매핑은 data-cat 값과 data-sub 값을 동일 키로 연결
-    const catLinks = document.querySelectorAll('.overlay__menu a[data-cat]');
-    const panels   = document.querySelectorAll('#subcol .panel');
+        menuBtn.addEventListener('click', openMenu);
+        closeBtn.addEventListener('click', closeMenu);
+        overlay.addEventListener('click', (e) => { if(e.target === overlay) closeMenu(); });
+        window.addEventListener('keydown', (e)=>{ if(e.key === 'Escape' && overlay.classList.contains('open')) closeMenu(); });
 
-    function setActiveCat(target){
-        catLinks.forEach(a => a.classList.remove('is-active'));
-        if(target) target.classList.add('is-active');
-    }
+        // ===== 카테고리 패널 제어 =====
+        const catLinks = document.querySelectorAll('.overlay__menu a[data-cat]');
+        const panels   = document.querySelectorAll('#subcol .panel');
 
-    function showPanel(key){
-        panels.forEach(p => p.classList.toggle('show', p.dataset.key === key));
-    }
+        function setActiveCat(target){
+            catLinks.forEach(a => a.classList.remove('is-active'));
+            if(target) target.classList.add('is-active');
+        }
+        function showPanel(key){
+            panels.forEach(p => p.classList.toggle('show', p.dataset.key === key));
+        }
 
-    catLinks.forEach(link => {
-    link.addEventListener('click', (e) => {
-            e.preventDefault();
-            const key = link.getAttribute('data-cat');
-            setActiveCat(link);
-            showPanel(key);
+        catLinks.forEach(link => {
+            link.addEventListener('click', (e) => {
+                e.preventDefault();
+                const key = link.getAttribute('data-cat');
+                setActiveCat(link);
+                showPanel(key);
+            });
         });
-    });
 
-    // 기본으로 한 패널 오픈(원하는 키로 바꾸세요)
-    setActiveCat(document.querySelector('.overlay__menu a[data-cat="fashion"]'));
-    showPanel('fashion');
+        // ========== NEW: categoryId가 있으면 해당 분류/소분류 자동 선택 ==========
+        // (1) 서버에서 심어준 categoryId 읽기 (없으면 null)
+        const catIdMeta = document.querySelector('meta[name="category-id"]');
+        const currentCategoryId = catIdMeta ? Number(catIdMeta.content) : null;
+
+        // (2) categoryId → 대분류 키 매핑
+        const catById = {
+            2:'fashion', 3:'fashion', 4:'fashion', 5:'fashion',
+            7:'beauty',  8:'beauty',
+            10:'electronics', 11:'electronics',
+            13:'home', 14:'home',
+            16:'leisure', 17:'leisure'
+        };
+
+        // (3) 대분류/소분류 자동 활성화
+        (function initCategoryUI(){
+            let defaultKey = 'fashion'; // categoryId가 없을 때 기본
+            if(Number.isInteger(currentCategoryId) && catById[currentCategoryId]){
+                const key = catById[currentCategoryId];
+
+                // 대분류 활성화 + 패널 오픈
+                const leftLink = document.querySelector(`.overlay__menu a[data-cat="${key}"]`);
+                setActiveCat(leftLink);
+                showPanel(key);
+
+                // 소분류(우측) 강조: 해당 categoryId를 포함하는 링크 찾아 표시
+                const subLink = document.querySelector(`#subcol .panel[data-key="${key}"] a[href*="categoryId=${currentCategoryId}"]`);
+                if(subLink){
+                    subLink.classList.add('is-current');
+                }
+            } else {
+                // 기존 기본 동작
+                setActiveCat(document.querySelector('.overlay__menu a[data-cat="fashion"]'));
+                showPanel(defaultKey);
+            }
+        })();
     </script>
 
 
