@@ -20,7 +20,7 @@ public interface PointMapper {
                   ORDER BY created_at DESC, id DESC )
          WHERE ROWNUM = 1
     """)
-    long findLatestBalanceByNumericId(@Param("userId") int userId);
+    Long findLatestBalanceByNumericId(@Param("userId") long userId);
 
     // users.user_id(문자 아이디)로 조회
     @Select("""
@@ -31,7 +31,7 @@ public interface PointMapper {
                   ORDER BY created_at DESC, id DESC )
          WHERE ROWNUM = 1
     """)
-    long findLatestBalanceByUserId(@Param("userId") String userId);
+    Long findLatestBalanceByUserId(@Param("userId") String userId);
 
     @Select("""
         SELECT
