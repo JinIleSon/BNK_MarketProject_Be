@@ -219,6 +219,81 @@ outline-offset:2px;
 
     /* 게시판 아래버튼 부분 끝 */
 
+    /* ========== Overlay Category: underline only ========== */
+
+    /* 좌측 대분류: 기본은 밑줄 0 → 호버/포커스 시 차오름 */
+    .overlay__menu a[data-cat]{
+        position: relative;
+        display: inline-block;
+        color:#111;
+        text-decoration: none;
+        background: linear-gradient(currentColor,currentColor) left bottom / 0 1px no-repeat;
+        transition: background-size .25s ease;
+    }
+
+    /* 활성 대분류(클릭된 항목)는 밑줄 유지 */
+    .overlay__menu a[data-cat].is-active{
+        background-size: 100% 1px;
+        font-weight: 700;                 /* 기존 표시 방식은 유지 */
+    }
+
+    /* 호버/키보드 포커스 시 밑줄이 왼→오로 채워짐 */
+    .overlay__menu a[data-cat]:hover,
+    .overlay__menu a[data-cat]:focus-visible{
+        background-size: 100% 1px;
+        outline: none;
+    }
+
+    /* 우측 소분류 링크도 동일한 밑줄 모션만 적용 */
+    .menu-grid a, .menu-grid li a{
+        position: relative;
+        display: inline-block;
+        padding: 6px 0;
+        color:#111;
+        text-decoration: none;
+        background: linear-gradient(currentColor,currentColor) left bottom / 0 1px no-repeat;
+        transition: background-size .25s ease;
+    }
+
+    /* 소분류: 현재 카테고리 강조 */
+    .menu-grid a.is-current{
+        background-size: 100% 1px;
+        font-weight: 700;
+    }
+
+    /* 호버/포커스 시 밑줄만 */
+    .menu-grid a:hover,
+    .menu-grid a:focus-visible{
+        background-size: 100% 1px;
+        outline: none;
+    }
+    /* 밑줄 위치(아래에서 얼마나 띄울지) */
+    :root{ --underline-offset: 6px; } /* ↑ 값만 조절해서 미세 조정(3~8px 권장) */
+
+    /* 좌측 대분류 + 우측 소분류 공통 */
+    .overlay__menu a[data-cat],
+    .menu-grid a, .menu-grid li a{
+        background-position: left calc(100% - var(--underline-offset));
+        /* 기존 background-size 전환(hover)은 그대로 둡니다 */
+    }
+
+    /* 좌측 대분류 */
+    .overlay__menu a[data-cat].is-active,
+    .overlay__menu a[data-cat].is-active:hover,
+    .overlay__menu a[data-cat].is-active:focus-visible{
+        font-weight: 700;
+        text-decoration: none !important;   /* 초기 스타일의 underline 제거 */
+        background: none !important;        /* 우리가 만든 gradient-underline 제거 */
+    }
+
+    /* 우측 소분류 */
+    .menu-grid a.is-current,
+    .menu-grid a.is-current:hover,
+    .menu-grid a.is-current:focus-visible{
+        font-weight: 700;
+        text-decoration: none !important;
+        background: none !important;
+    }
 </style>
 <header class="site-header">
     <div style="margin-left:2%; width:98%; box-sizing: border-box; margin-top:2%; display:flex; height:230px;">
@@ -319,11 +394,21 @@ outline-offset:2px;
         <div style="display: flex; margin-left:20%; margin-top:1%; width:100%;">
             <nav class="overlay__menu" style="width:100%;">
                 <div style="padding-top: 31px;">
-                    <a href="#" data-cat="fashion" style="margin-bottom: 10px;">패션</a>
-                    <a href="#" data-cat="beauty" style="margin-bottom: 10px;">뷰티</a>
-                    <a href="#" data-cat="electronics" style="margin-bottom: 10px;">전자제품</a>
-                    <a href="#" data-cat="home" style="margin-bottom: 10px;">홈</a>
-                    <a href="#" data-cat="leisure" style="margin-bottom: 10px;">레저</a>
+                    <div>
+                        <a href="#" data-cat="fashion" style="margin-bottom: 10px;">패션</a>
+                    </div>
+                    <div>
+                        <a href="#" data-cat="beauty" style="margin-bottom: 10px;">뷰티</a>
+                    </div>
+                    <div>
+                        <a href="#" data-cat="electronics" style="margin-bottom: 10px;">전자제품</a>
+                    </div>
+                    <div>
+                        <a href="#" data-cat="home" style="margin-bottom: 10px;">홈</a>
+                    </div>
+                    <div>
+                        <a href="#" data-cat="leisure" style="margin-bottom: 10px;">레저</a>
+                    </div>
                 </div>
                 <div id="subcol">
                     <!-- 패션 패널 -->
