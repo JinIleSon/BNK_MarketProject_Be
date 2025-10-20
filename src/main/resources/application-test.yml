@@ -1,0 +1,18 @@
+spring:
+  datasource:
+    url: jdbc:h2:mem:testdb;MODE=Oracle;DB_CLOSE_DELAY=-1;DATABASE_TO_UPPER=false
+    driver-class-name: org.h2.Driver
+    username: sa
+    password:
+  sql:
+    init:
+      mode: always     # schema.sql 항상 실행 (스키마 생성)
+  jpa:
+    hibernate:
+      ddl-auto: create-drop
+    open-in-view: false
+    properties:
+      hibernate:
+        hbm2ddl.create_namespaces: true  # 스키마 자동 생성 (백업 플랜)
+        default_schema: NICHIYA          # 기본 스키마 지정
+        dialect: org.hibernate.dialect.H2Dialect
