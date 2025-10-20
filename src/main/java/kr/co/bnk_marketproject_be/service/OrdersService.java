@@ -6,9 +6,9 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.List;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -45,7 +45,10 @@ public class OrdersService {
 
             subtotal  += unit * r.getQuantity();
             discount  += unitDiscount * r.getQuantity();
+
+            // 라인당 1회만 합산(수량과 무관)
             if (!free) delicharTotal += deliVal;
+
             itemCount += r.getQuantity();
         }
 
@@ -74,7 +77,7 @@ public class OrdersService {
         var coupons = ordersMapper.selectAvailableCoupons(userId);
         var point   = ordersMapper.selectAvailablePoint(userId);     // 최근 balance
 
-        // 🔧 변경: 반환 타입을 DeliveriesDTO로 명시
+        // 반환 타입 DeliveriesDTO
         DeliveriesDTO ship = ordersMapper.selectDefaultShipping(userId);
 
         return ProductOrderDTO.builder()
@@ -83,7 +86,7 @@ public class OrdersService {
                 .availableCoupons(coupons)
                 .availablePoint(point == null ? 0 : point)
                 .paymentMethods(List.of("신용카드", "계좌이체", "휴대폰결제", "카카오페이"))
-                .defaultShipping(ship) // <-- ProductOrderDTO가 DeliveriesDTO를 받도록 정의되어 있어야 함
+                .defaultShipping(ship)
                 .build();
     }
 
@@ -154,7 +157,7 @@ public class OrdersService {
                 .status("결제완료")
                 .build());
 
-        // 8) 배송 정보 스냅샷
+        // 8) 배송 정보 스냅샷(장바구니에서 계산한 배송비 저장)
         var ship = submit.getShipping();
         ordersMapper.insertDelivery(DeliveriesDTO.builder()
                 .orders_id(orderId)
@@ -163,12 +166,12 @@ public class OrdersService {
                 .zipcode(ship.getZipcode())
                 .address(ship.getAddress())
                 .address2(ship.getAddress2())
-                .delichar(shipping)
+                .delichar(shipping)   // ← 라인별 합산된 배송비 스냅샷
                 .status("배송준비")
                 .note(ship.getMemo())
                 .build());
 
-        // 9) 쿠폰/포인트 반영  (⚠️ markCouponUsed에 userId 추가)
+        // 9) 쿠폰/포인트 반영
         if (couponId != 0) ordersMapper.markCouponUsed(userId, couponId, orderId);
         if (pointUse > 0)  ordersMapper.consumePoint(userId, pointUse, orderId);
 
@@ -176,91 +179,80 @@ public class OrdersService {
         int reward = (int) Math.floor(finalPay * 0.01);
         if (reward > 0) ordersMapper.addRewardPoint(userId, reward, orderId);
 
-        // 장바구니 비우기 호출 없음 (같은 주문 레코드를 승격했으므로)
         return orderId;
     }
 
+    /** 주문완료 화면 */
     @Transactional(readOnly = true)
     public ProductCompleteDTO getComplete(int orderId) {
         var header = ordersMapper.selectOrderCompleteHeader(orderId);
-        if (header == null) throw new IllegalStateException("주문을 찾을 수 없습니다: orderId=" + orderId);
+        if (header == null) throw new IllegalStateException("주문을 찾을 수 없습니다: " + orderId);
 
-        var lines  = ordersMapper.selectOrderLines(orderId);
+        var lines = ordersMapper.selectOrderLines(orderId);
 
-        int subtotal = 0, itemsDiscount = 0, totalQty = 0;
+        int subtotal = 0;
+        int itemsDiscount = 0;
+        int totalQty = 0;
+
+        // ✅ 배송비: "각 라인에 1회"씩 합산(수량과 무관)
+        int delichar = 0;
 
         for (var r : lines) {
             int unit = r.getUnitPrice();
-            int rate = Math.max(0, Math.min(100, r.getDiscountRate()));
-            int unitDiscount = (int)Math.round(unit * (rate / 100.0));
-            int unitSale     = unit - unitDiscount;
-            int line         = unitSale * r.getQuantity();
 
-            r.setUnitDiscount(unitDiscount);   // 추가 필드
-            r.setUnitSalePrice(unitSale);      // 추가 필드
-            r.setLineTotal(line);
+            int rate = Math.max(0, Math.min(100, r.getDiscountRate()));
+            int unitDiscount = (r.getUnitDiscount() != null)
+                    ? r.getUnitDiscount()
+                    : (int) Math.round(unit * (rate / 100.0));
+
+            int unitSale = (r.getUnitSalePrice() != null)
+                    ? r.getUnitSalePrice()
+                    : unit - unitDiscount;
+
+            // lineTotal은 primitive int 이므로 null 비교 금지 → 항상 재계산
+            int lineTotal = unitSale * r.getQuantity();
+
+            r.setUnitDiscount(unitDiscount);
+            r.setUnitSalePrice(unitSale);
+            r.setLineTotal(lineTotal);
 
             subtotal      += unit * r.getQuantity();
             itemsDiscount += unitDiscount * r.getQuantity();
             totalQty      += r.getQuantity();
-        }
 
-        header.setItems(lines);
-
-        // 배송비(스냅샷) - 필드명 호환 처리
-        int delichar = 0;
-        var ship = header.getShipping();
-        if (ship != null) {
-            try {
-                var m = ship.getClass().getMethod("getDeliChar"); // deliChar
-                Object v = m.invoke(ship);
-                if (v != null) delichar = Integer.parseInt(v.toString());
-            } catch (Exception e1) {
-                try {
-                    var m2 = ship.getClass().getMethod("getDelichar"); // delichar
-                    Object v2 = m2.invoke(ship);
-                    if (v2 != null) delichar = Integer.parseInt(v2.toString());
-                } catch (Exception ignore) {}
+            Integer lineDeli = r.getDelichar();
+            if (lineDeli != null && lineDeli > 0) {
+                delichar += lineDeli; // 라인당 1회만 합산
             }
         }
+        header.setItems(lines);
 
-        // ✅ 포인트/쿠폰: Mapper 메서드가 있으면 사용, 없으면 0
-        int pointUse = 0;
-        int couponAmount = 0;
-        try {
-            var m = ordersMapper.getClass().getMethod("selectUsedPoint", int.class);
-            Object v = m.invoke(ordersMapper, orderId);
-            if (v != null) pointUse = Integer.parseInt(v.toString());
-        } catch (Exception ignore) { /* 메서드 없거나 실패 → 0 */ }
+        // ✅ 확정된 사용 포인트/쿠폰 금액 조회 (없으면 0)
+        Integer usedPoint  = ordersMapper.selectUsedPoint(orderId);
+        Integer usedCoupon = ordersMapper.selectUsedCouponAmount(orderId);
+        int pointUse  = usedPoint  == null ? 0 : usedPoint;
+        int couponAmt = usedCoupon == null ? 0 : usedCoupon;
 
-        try {
-            var m = ordersMapper.getClass().getMethod("selectCouponAmount", int.class);
-            Object v = m.invoke(ordersMapper, orderId);
-            if (v != null) couponAmount = Integer.parseInt(v.toString());
-        } catch (Exception ignore) { /* 메서드 없거나 실패 → 0 */ }
-
-        int totalPayable = subtotal - (itemsDiscount + couponAmount + pointUse) + delichar;
-        if (totalPayable < 0) totalPayable = 0;
+        // ✅ 합계(확정 기준)
+        int totalPayable = Math.max(0, subtotal - itemsDiscount - couponAmt - pointUse + delichar);
 
         var sum = OrderPageSummaryDTO.builder()
                 .itemCount(lines.size())
+                .totalQuantity(totalQty)
                 .subtotalAmount(subtotal)
-                .discountAmount(itemsDiscount)      // 상품 자체 할인
-                .couponAmount(couponAmount)         // (있으면 값, 없으면 0)
-                .pointUse(pointUse)                 // (있으면 값, 없으면 0)
-                .delichar(delichar)
+                .discountAmount(itemsDiscount) // 상품 자체 할인 합
+                .couponAmount(couponAmt)
+                .pointUse(pointUse)
+                .delichar(delichar)            // ← 라인별 배송비 합산
                 .totalPayable(totalPayable)
-                .rewardPoint((int)Math.floor((subtotal - (itemsDiscount + couponAmount)) * 0.01))
-                .totalQuantity(totalQty)            // 추가 필드
-                .itemsDiscountAmount(itemsDiscount) // 추가 필드
+                .rewardPoint((int) Math.floor(totalPayable * 0.01))
+                .itemsDiscountAmount(itemsDiscount)
                 .build();
 
         header.setSummary(sum);
-        header.setOrderId(orderId); // 템플릿 호환
-
+        header.setOrderId(orderId);
         return header;
     }
-
 
     /** 장바구니 담기 */
     @Transactional

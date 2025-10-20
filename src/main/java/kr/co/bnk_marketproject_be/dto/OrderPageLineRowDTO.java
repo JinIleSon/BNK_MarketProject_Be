@@ -1,14 +1,12 @@
 package kr.co.bnk_marketproject_be.dto;
 
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 @Builder
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
+@ToString
 public class OrderPageLineRowDTO {
     private int order_item_id;
     private int id;          // products.id
