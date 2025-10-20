@@ -13,6 +13,9 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.security.SecureRandom;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeParseException;
 import java.util.Map;
 import java.util.List;
 import java.util.UUID;
@@ -41,6 +44,7 @@ public class UserService {
 
         // DTO를 Entity로 변환
         User user = modelMapper.map(userDTO, User.class);
+        user.setBirth(parseBirthToLdt(userDTO.getBirth())); // ✅ 동일 처리
 
         userRepository.save(user);
     }
@@ -130,14 +134,13 @@ public class UserService {
         // user.setRole("ROLE_USER");// 5) DTO -> Entity 변환
         // Oracle 제약조건 위반의 원인임.
 
-        // 이 형태가 위반이 안됨.
+        // birth 변환 (문자열 → LocalDateTime)
+        user.setBirth(parseBirthToLdt(userDTO.getBirth()));
+
+        // role 세팅 (그대로 유지)
         user.setRole(userDTO.getRole());
 
-        if (userDTO.getBirth() != null) {
-            user.setBirth(userDTO.getBirth());
-        }
-
-        // 7) 저장
+        // 저장
         userRepository.save(user);
 
         // 8) 선택사항: 세션 인증 상태 초기화
@@ -438,6 +441,16 @@ public class UserService {
         return sb.toString();
     }
 
+    // === 생년월일 문자열을 LocalDateTime으로 변환 ===
+    private static final DateTimeFormatter BIRTH_FMT = DateTimeFormatter.ISO_LOCAL_DATE; // "yyyy-MM-dd"
 
+    private LocalDateTime parseBirthToLdt(String s) {
+        if (s == null || s.isBlank()) return null;
+        try {
+            return LocalDate.parse(s.trim(), BIRTH_FMT).atStartOfDay(); // 00:00:00
+        } catch (DateTimeParseException e) {
+            throw new IllegalArgumentException("birth 형식은 yyyy-MM-dd 이어야 합니다.");
+        }
+    }
 
 }

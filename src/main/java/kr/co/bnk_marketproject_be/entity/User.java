@@ -25,7 +25,7 @@ public class User{
     private String password;
     private String name;
     private String gender;
-    private String birth;
+    private java.time.LocalDateTime birth;
     private String email;
     private String phone;
     private String postcode;
