@@ -8,11 +8,493 @@
     <link rel="stylesheet" th:href="@{/css/style.css}">
     <link rel="stylesheet" th:href="@{/css/common.css}">
     <link rel="stylesheet" th:href="@{/css/write.css}">
+    <style>
+        /* 게시판 아래버튼 부분 */
+        .icon-btn {
+            background:none;
+            border:1px solid #000;
+            cursor:pointer;
+            width:40px;
+            height:40px;
+            display:grid;
+            place-items:center;
+        }
+        .title-didone{
+            text-align:center;
+            font-family: 'Bodoni Moda','Didot','Bodoni 72','Times New Roman',serif;
+            margin-left:45px;
+            font-weight:400;
+            letter-spacing:.02em;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+        }
+        .title-didone.ko{font-family: 'Noto Serif KR','Bodoni Moda',serif; font-weight:300;}
+
+        /* 1) 스크림(배경) - 화면 전체 덮음 + 블러 */
+        .overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(255,255,255,0.28);
+            backdrop-filter: blur(1px);
+            -webkit-backdrop-filter: blur(1px);
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity .25s ease;
+            z-index: 1000;
+        }
+        .overlay.open {
+            opacity: 1;
+            pointer-events: auto;
+        }
+
+        /* 2) 왼쪽에서 나오는 패널 */
+        .overlay__panel {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 50vw;
+            max-width: 900px;
+            height: 100%;
+            background: white;
+            transform: translateX(-100%);
+            transition: transform .35s ease;
+            will-change: transform;
+            display: flex;
+            flex-direction: column;
+        }
+        .overlay.open .overlay__panel {
+            transform: translateX(0);
+        }
+
+        /* 상단 닫기 버튼과 로고 영역 */
+        .overlay__top {
+            display:flex;
+            align-items:center;
+            gap:24px;
+            padding:20px;
+        }
+        .overlay__close {
+            background:none;
+            border:none;
+            width:100px;
+            height:50px;
+            cursor:pointer;
+            position:relative;
+            margin-left:0.3%;
+        }
+        .overlay__close::before,
+        .overlay__close::after {
+            content:"";
+            position:absolute;
+            left:15px;
+            right:10px;
+            top:25px;
+            height:2px;
+            background:#000;
+        }
+        .overlay__close::before {
+            transform:rotate(45deg);
+        }
+        .overlay__close::after {
+            transform:rotate(-45deg);
+        }
+
+        /* 메뉴 그리드 */
+        .overlay__menu {
+            display:grid;
+            grid-template-columns: 180px auto;
+            gap:24px;
+            padding:40px 20px;
+            font-size:16px;
+        }
+        .overlay__menu a {
+            text-decoration:none;
+            color:#000;
+            display:block;
+            padding:8px 0;
+        }
+        .overlay__menu strong {
+            font-weight:700;
+        }
+        .overlay__menu a[data-cat].is-active {
+            font-weight:700;
+            text-decoration: underline;
+        }
+
+        /* 메뉴 오른쪽 서브패널 관련 */
+        .sub {
+            opacity: 0;
+            transform: translateY(6px);
+            pointer-events: none;
+            transition: opacity .28s ease, transform .28s ease;
+            display: none;
+        }
+        .sub.show {
+            display: block;
+            opacity: 1;
+            transform: translateY(0);
+            pointer-events: auto;
+        }
+
+        #subcol {
+            grid-row: span 2;
+            height:900px;
+            position: relative;
+            padding: 0;
+        }
+        #subcol .sub {
+            padding:0;
+            margin:0;
+        }
+        #subcol .panel {
+            position: absolute;
+            inset: 0;
+            padding: 20px;
+            overflow: auto;
+            opacity: 0;
+            transform: translateY(6px);
+            transition: opacity .35s ease, transform .35s ease;
+            visibility: hidden;
+            pointer-events: none;
+        }
+        #subcol .panel.show {
+            opacity: 1;
+            transform: none;
+            visibility: visible;
+            pointer-events: auto;
+        }
+
+        .menu-grid {
+            display: grid;
+            grid-template-columns: repeat(2, auto);
+            column-gap: 50px;
+            row-gap: 6px;
+            padding: 0;
+            margin: 0;
+            justify-content: start;
+        }
+        .menu-grid li {
+            list-style: none;
+        }
+
+        /* Pagination */
+        .pagination {
+            text-align: center;
+        }
+
+        .pagination a {
+            display: inline-block;
+            min-width: 40px;
+            height: 35px;
+            line-height: 35px;
+            border: 1px solid #ddd;
+            color: #555;
+            text-decoration: none;
+            margin: 0 2px;
+            text-align: center;
+            box-sizing: border-box;
+            font-size: 14px;
+        }
+
+        .pagination a.on {
+            background-color: #333;
+            color: #fff;
+            border-color: #333;
+        }
+        /* ========== Overlay Category: underline only ========== */
+
+        /* 좌측 대분류: 기본은 밑줄 0 → 호버/포커스 시 차오름 */
+        .overlay__menu a[data-cat]{
+            --underline-offset: 4px !important;
+            position: relative;
+            display: inline-block;
+            color:#111;
+            text-decoration: none;
+            background: linear-gradient(currentColor,currentColor) left bottom / 0 1px no-repeat;
+            transition: background-size .25s ease;
+        }
+
+        /* 활성 대분류(클릭된 항목)는 밑줄 유지 */
+        .overlay__menu a[data-cat].is-active{
+            background-size: 100% 1px;
+            font-weight: 700;                 /* 기존 표시 방식은 유지 */
+        }
+
+        /* 호버/키보드 포커스 시 밑줄이 왼→오로 채워짐 */
+        .overlay__menu a[data-cat]:hover,
+        .overlay__menu a[data-cat]:focus-visible{
+            background-size: 100% 1px;
+            outline: none;
+        }
+
+        /* 우측 소분류 링크도 동일한 밑줄 모션만 적용 */
+        .menu-grid a, .menu-grid li a{
+            position: relative;
+            display: inline-block;
+            padding: 6px 0;
+            color:#111;
+            text-decoration: none;
+            background: linear-gradient(currentColor,currentColor) left bottom / 0 1px no-repeat;
+            transition: background-size .25s ease;
+        }
+
+        /* 소분류: 현재 카테고리 강조 */
+        .menu-grid a.is-current{
+            background-size: 100% 1px;
+            font-weight: 700;
+        }
+
+        /* 호버/포커스 시 밑줄만 */
+        .menu-grid a:hover,
+        .menu-grid a:focus-visible{
+            background-size: 100% 1px;
+            outline: none;
+        }
+        /* 밑줄 위치(아래에서 얼마나 띄울지) */
+        :root{ --underline-offset: 6px; } /* ↑ 값만 조절해서 미세 조정(3~8px 권장) */
+
+        /* 좌측 대분류 + 우측 소분류 공통 */
+        .overlay__menu a[data-cat],
+        .menu-grid a, .menu-grid li a{
+            background-position: left calc(100% - var(--underline-offset));
+            /* 기존 background-size 전환(hover)은 그대로 둡니다 */
+        }
+
+        /* 좌측 대분류 */
+        .overlay__menu a[data-cat].is-active,
+        .overlay__menu a[data-cat].is-active:hover,
+        .overlay__menu a[data-cat].is-active:focus-visible{
+            font-weight: 700;
+            text-decoration: none !important;   /* 초기 스타일의 underline 제거 */
+            background: none !important;        /* 우리가 만든 gradient-underline 제거 */
+        }
+
+        .overlay__menu a:not([data-cat]) {
+            position: relative;
+            display: inline-block;
+            background: linear-gradient(currentColor,currentColor)
+            left calc(100% - var(--underline-offset)) / 0 1px no-repeat;
+            transition: background-size .25s ease;
+        }
+        .overlay__menu a:not([data-cat]):hover,
+        .overlay__menu a:not([data-cat]):focus-visible{
+            background-size: 100% 1px;
+            outline: none;
+        }
+        /* 우측 소분류 */
+        .menu-grid a.is-current,
+        .menu-grid a.is-current:hover,
+        .menu-grid a.is-current:focus-visible{
+            font-weight: 700;
+            text-decoration: none !important;
+            background: none !important;
+        }
+        /* 현재 페이지(자주묻는질문) — 밑줄 막고 굵게만 */
+        .overlay__menu a.nav-current,
+        .overlay__menu a.nav-current:hover,
+        .overlay__menu a.nav-current:focus-visible{
+            font-weight: 700;
+            background: none !important;     /* gradient 밑줄 제거 */
+            text-decoration: none !important;
+        }
+        /* 좌측 대분류(모든 data-cat 링크) 밑줄 높이 통일 */
+        .overlay__menu a[data-cat]{
+            --underline-offset: 3px;   /* 숫자만 바꿔서 높이 미세조정 */
+        }
+        /* 오른쪽 패널 제목 링크(h3 감싼 a) 공통 적용 */
+        #subcol .panel > a{
+            --underline-offset: 3px;
+            display: inline-block; /* (안정성) */
+        }
+        #subcol .panel > a h3{
+            margin: 0;
+            line-height: 1.2;
+        }
+        /* 오버레이 오른쪽 2차 카테고리만 밑줄 간격 조정 */
+        #subcol .menu-grid a{
+            --underline-offset: 3px;  /* ↑ 숫자 키울수록 밑줄이 더 아래로 떨어짐(예: 8~12px 권장) */
+        }
+    </style>
 </head>
 <body>
-<div th:replace="~{main/header.html}"></div>
+<header th:replace="~{main/header :: header}"></header>
+<aside id="menuOverlay" class="overlay" aria-hidden="true">
+    <div class="overlay__panel">
+        <div class="overlay__top">
+            <button id="closeBtn" class="overlay__close" aria-label="메뉴 닫기"></button>
+            <div style="font-size:72px; font-weight:800; letter-spacing:-10px; "class="title-didone">NICHIYA</div>
+        </div>
 
-<div id="header"></div>
+        <div style="display:flex; margin-left:20%; margin-top:1%; width:100%;">
+            <nav class="overlay__menu" style="width:100%;">
+                <div>
+                    <div>
+                        <a th:href="@{/cs/notice/list}">공지사항</a>
+                    </div>
+                    <div>
+                        <a th:href="@{/cs/faq/list}">자주묻는질문</a>
+                    </div>
+                    <div style="margin-bottom:20px;">
+                        <a th:href="@{/cs/qna/list}" class="nav-current">QNA</a><br>
+                    </div>
+                    <div>
+                        <a href="#" data-cat="member">회원</a>
+                    </div>
+                    <div style="">
+                        <a href="#" data-cat="coupon">쿠폰/이벤트</a>
+                    </div>
+                    <div>
+                        <a href="#" data-cat="order">주문/결제</a>
+                    </div>
+                    <div>
+                        <a href="#" data-cat="delivery">배송</a>
+                    </div>
+                    <div>
+                        <a href="#" data-cat="return">취소/반품/교환</a>
+                    </div>
+                    <div>
+                        <a href="#" data-cat="travel">여행/숙박/항공</a>
+                    </div>
+                    <div>
+                        <a href="#" data-cat="safe">안전거래</a>
+                    </div>
+                </div>
+
+                <div id="subcol">
+                    <!-- 회원 -->
+                    <section class="panel" data-key="member">
+                        <a th:href="@{/cs/qna/list(boardType2='member')}"><h3>회원</h3></a><br>
+                        <ul class="menu-grid" style="margin-top:20px;">
+                            <li th:classappend="${boardType3 == 'login'} ? 'on'">
+                                <a th:href="@{/cs/qna/list(boardType2='member', boardType3='login')}">로그인</a>
+                            </li>
+                            <li th:classappend="${boardType3 == 'signup'} ? 'on'">
+                                <a th:href="@{/cs/qna/list(boardType2='member', boardType3='signup')}">가입</a>
+                            </li>
+                            <li th:classappend="${boardType3 == 'withdraw'} ? 'on'">
+                                <a th:href="@{/cs/qna/list(boardType2='member', boardType3='withdraw')}">탈퇴</a>
+                            </li>
+                            <li th:classappend="${boardType3 == 'account'} ? 'on'">
+                                <a th:href="@{/cs/qna/list(boardType2='member', boardType3='account')}">회원정보</a>
+                            </li>
+                        </ul>
+                    </section>
+
+                    <!-- 쿠폰/이벤트 -->
+                    <section class="panel" data-key="coupon">
+                        <a th:href="@{/cs/qna/list(boardType2='event')}"><h3>쿠폰/이벤트</h3></a><br>
+                        <ul class="menu-grid" style="margin-top:20px;">
+                            <li th:classappend="${boardType3 == 'couponissue'} ? 'on'">
+                                <a th:href="@{/cs/qna/list(boardType2='event', boardType3='couponissue')}">쿠폰발급</a>
+                            </li>
+                            <li th:classappend="${boardType3 == 'couponuse'} ? 'on'">
+                                <a th:href="@{/cs/qna/list(boardType2='event', boardType3='couponuse')}">쿠폰사용</a>
+                            </li>
+                            <li th:classappend="${boardType3 == 'eventjoin'} ? 'on'">
+                                <a th:href="@{/cs/qna/list(boardType2='event', boardType3='eventjoin')}">이벤트참여</a>
+                            </li>
+                            <li th:classappend="${boardType3 == 'winnercheck'} ? 'on'">
+                                <a th:href="@{/cs/qna/list(boardType2='event', boardType3='winnercheck')}">당첨확인</a>
+                            </li>
+                        </ul>
+                    </section>
+
+                    <!-- 주문/결제 -->
+                    <section class="panel" data-key="order">
+                        <a th:href="@{/cs/qna/list(boardType2='pay')}"><h3>주문/결제</h3></a><br>
+                        <ul class="menu-grid" style="margin-top:20px;">
+                            <li th:classappend="${boardType3 == 'orderguide'} ? 'on'">
+                                <a th:href="@{/cs/qna/list(boardType2='pay', boardType3='orderguide')}">주문방법</a>
+                            </li>
+                            <li th:classappend="${boardType3 == 'paymentmethod'} ? 'on'">
+                                <a th:href="@{/cs/qna/list(boardType2='pay', boardType3='paymentmethod')}">결제수단</a>
+                            </li>
+                            <li th:classappend="${boardType3 == 'paymenterror'} ? 'on'">
+                                <a th:href="@{/cs/qna/list(boardType2='pay', boardType3='paymenterror')}">결제오류</a>
+                            </li>
+                            <li th:classappend="${boardType3 == 'receipt'} ? 'on'">
+                                <a th:href="@{/cs/qna/list(boardType2='pay', boardType3='receipt')}">영수증/증빙</a>
+                            </li>
+                        </ul>
+                    </section>
+
+                    <!-- 배송 -->
+                    <section class="panel" data-key="delivery">
+                        <a th:href="@{/cs/qna/list(boardType2='delivery')}"><h3>배송</h3></a><br>
+                        <ul class="menu-grid" style="margin-top:20px;">
+                            <li th:classappend="${boardType3 == 'tracking'} ? 'on'">
+                                <a th:href="@{/cs/qna/list(boardType2='delivery', boardType3='tracking')}">배송조회</a>
+                            </li>
+                            <li th:classappend="${boardType3 == 'deliverytime'} ? 'on'">
+                                <a th:href="@{/cs/qna/list(boardType2='delivery', boardType3='deliverytime')}">배송기간</a>
+                            </li>
+                            <li th:classappend="${boardType3 == 'deliveryfee'} ? 'on'">
+                                <a th:href="@{/cs/qna/list(boardType2='delivery', boardType3='deliveryfee')}">배송비</a>
+                            </li>
+                            <li th:classappend="${boardType3 == 'globalshipping'} ? 'on'">
+                                <a th:href="@{/cs/qna/list(boardType2='delivery', boardType3='globalshipping')}">해외배송</a>
+                            </li>
+                        </ul>
+                    </section>
+
+                    <!-- 취소/반품/교환 -->
+                    <section class="panel" data-key="return">
+                        <a th:href="@{/cs/qna/list(boardType2='cancel')}"><h3>취소/반품/교환</h3></a><br>
+                        <ul class="menu-grid" style="margin-top:20px;">
+                            <li th:classappend="${boardType3 == 'ordercancel'} ? 'on'">
+                                <a th:href="@{/cs/qna/list(boardType2='cancel', boardType3='ordercancel')}">주문취소</a>
+                            </li>
+                            <li th:classappend="${boardType3 == 'refund'} ? 'on'">
+                                <a th:href="@{/cs/qna/list(boardType2='cancel', boardType3='refund')}">반품</a>
+                            </li>
+                            <li th:classappend="${boardType3 == 'exchange'} ? 'on'">
+                                <a th:href="@{/cs/qna/list(boardType2='cancel', boardType3='exchange')}">교환</a>
+                            </li>
+                            <li th:classappend="${boardType3 == 'refundprocess'} ? 'on'">
+                                <a th:href="@{/cs/qna/list(boardType2='cancel', boardType3='refundprocess')}">환불처리</a>
+                            </li>
+                        </ul>
+                    </section>
+
+                    <!-- 여행/숙박/항공 -->
+                    <section class="panel" data-key="travel">
+                        <a th:href="@{/cs/qna/list(boardType2='trip')}"><h3>여행/숙박/항공</h3></a><br>
+                        <ul class="menu-grid" style="margin-top:20px;">
+                            <li th:classappend="${boardType3 == 'payment'} ? 'on'">
+                                <a th:href="@{/cs/qna/list(boardType2='trip', boardType3='payment')}">결제</a>
+                            </li>
+                            <li th:classappend="${boardType3 == 'reservation'} ? 'on'">
+                                <a th:href="@{/cs/qna/list(boardType2='trip', boardType3='reservation')}">예약</a>
+                            </li>
+                            <li th:classappend="${boardType3 == 'changecancel'} ? 'on'">
+                                <a th:href="@{/cs/qna/list(boardType2='trip', boardType3='changecancel')}">변경/취소</a>
+                            </li>
+                        </ul>
+                    </section>
+
+                    <!-- 안전거래 -->
+                    <section class="panel" data-key="safe">
+                        <a th:href="@{/cs/qna/list(boardType2='safe')}"><h3>안전거래</h3></a><br>
+                        <ul class="menu-grid" style="margin-top:20px;">
+                            <li th:classappend="${boardType3 == 'security'} ? 'on'">
+                                <a th:href="@{/cs/qna/list(boardType2='safe', boardType3='security')}">보안공지</a>
+                            </li>
+                            <li th:classappend="${boardType3 == 'alert'} ? 'on'">
+                                <a th:href="@{/cs/qna/list(boardType2='safe', boardType3='alert')}">사기주의</a>
+                            </li>
+                            <li th:classappend="${boardType3 == 'safepayment'} ? 'on'">
+                                <a th:href="@{/cs/qna/list(boardType2='safe', boardType3='safepayment')}">안전결제</a>
+                            </li>
+                            <li th:classappend="${boardType3 == 'privacy'} ? 'on'">
+                                <a th:href="@{/cs/qna/list(boardType2='safe', boardType3='privacy')}">개인정보보호</a>
+                            </li>
+                        </ul>
+                    </section>
+                </div>
+            </nav>
+        </div>
+    </div>
+</aside>
 
 <div id="content" class="cs_qna_write_wrap">
     <h1>문의하기</h1>
@@ -260,7 +742,7 @@
                     <div class="qna_btn_area">
                         <a th:href="@{/cs/qna/list(boardType2=${boardType2}, boardType3=${boardType3})}"
                            class="qna_btn_cancel">취소하기</a>
-                        <button type="submit" class="qna_btn_submit">등록하기</button>
+                        <button type="submit" class="qna_btn_submit" style="background:black; border:1px solid;">등록하기</button>
                     </div>
 
                 </form>
@@ -271,64 +753,71 @@
 </div>
 
 <script>
-    const subCategories = {
-        member: [
-            { value: "login", text: "로그인" },
-            { value: "signup", text: "가입" },
-            { value: "withdraw", text: "탈퇴" },
-            { value: "account", text: "회원정보" },
-        ],
-        event: [
-            { value: "couponissue", text: "쿠폰발급" },
-            { value: "couponuse", text: "쿠폰사용" },
-            { value: "eventjoin", text: "이벤트참여" },
-            { value: "winnercheck", text: "당첨확인" },
-        ],
-        pay: [
-            { value: "orderguide", text: "주문방법" },
-            { value: "paymentmethod", text: "결제수단" },
-            { value: "paymenterror", text: "결제오류" },
-            { value: "receipt", text: "영수증/증빙" },
-        ],
-        delivery: [
-            { value: "tracking", text: "배송조회" },
-            { value: "deliverytime", text: "배송기간" },
-            { value: "deliveryfee", text: "배송비" },
-            { value: "globalshipping", text: "해외배송" },
-        ],
-        cancel: [
-            { value: "ordercancel", text: "주문취소" },
-            { value: "refund", text: "반품" },
-            { value: "exchange", text: "교환" },
-            { value: "refundprocess", text: "환불처리" },
-        ],
-        trip: [
-            { value: "payment", text: "결제" },
-            { value: "reservation", text: "예약" },
-            { value: "changecancel", text: "변경/취소" },
-        ],
-        safe: [
-            { value: "security", text: "보안공지" },
-            { value: "alert", text: "사기주의" },
-            { value: "safepayment", text: "안전결제" },
-            { value: "privacy", text: "개인정보보호" },
-        ],
-    };
+    // --- 요소 가져오기 ---
+    const body     = document.body;
+    const menuBtn  = document.getElementById('menuBtn');   // 왼쪽 상단 버튼
+    const closeBtn = document.getElementById('closeBtn');  // X 버튼
+    const overlay  = document.getElementById('menuOverlay'); // 전체 오버레이
 
-    const mainSelect = document.getElementById("qna_type");
-    const subSelect  = document.getElementById("qna_subtype");
-
-    function fillSubOptions(main) {
-        subSelect.innerHTML = '<option value="">2차 선택</option>';
-        (subCategories[main] || []).forEach(({value, text}) => {
-            const opt = document.createElement("option");
-            opt.value = value;        // ✅ 영문 코드
-            opt.textContent = text;   // 표시용 한글
-            subSelect.appendChild(opt);
-        });
+    // --- 메뉴 열기 ---
+    function openMenu(){
+        overlay.classList.add('open');  // CSS .open 적용 → 왼쪽에서 패널 슬라이드
+        overlay.setAttribute('aria-hidden', 'false');
+        menuBtn.setAttribute('aria-expanded', 'true');
+        body.style.overflow = 'hidden'; // 배경 스크롤 막음
     }
 
-    mainSelect.addEventListener("change", () => fillSubOptions(mainSelect.value));
+    // --- 메뉴 닫기 ---
+    function closeMenu(){
+        overlay.classList.remove('open');
+        overlay.setAttribute('aria-hidden', 'true');
+        menuBtn.setAttribute('aria-expanded', 'false');
+        body.style.overflow = ''; // 스크롤 다시 가능
+    }
+
+    // --- 이벤트 연결 ---
+    if(menuBtn && closeBtn && overlay){
+        menuBtn.addEventListener('click', openMenu); // 버튼 클릭 시 열기
+        closeBtn.addEventListener('click', closeMenu); // X 버튼 클릭 시 닫기
+
+        // 배경 클릭 시 닫기
+        overlay.addEventListener('click', (e) => {
+            if(e.target === overlay) closeMenu();
+        });
+
+        // ESC 키 눌렀을 때 닫기
+        window.addEventListener('keydown', (e)=>{
+            if(e.key === 'Escape' && overlay.classList.contains('open')) closeMenu();
+        });
+    }
+</script>
+
+<script>
+    // --- 왼쪽 카테고리 클릭 시 오른쪽 패널 열기 ---
+    const menuLinks = document.querySelectorAll('.overlay__menu a[data-cat]');
+    const panels    = document.querySelectorAll('#subcol .panel');
+
+    menuLinks.forEach(link => {
+        link.addEventListener('click', (e) => {
+            e.preventDefault();
+
+            // 1. 모든 패널 숨기기
+            panels.forEach(p => p.classList.remove('show'));
+
+            // 2. 클릭한 카테고리 가져오기
+            const key = link.getAttribute('data-cat');
+            const panel = document.querySelector(`#subcol .panel[data-key="${key}"]`);
+
+            // 3. 해당 패널만 보이기
+            if (panel) {
+                panel.classList.add('show');
+            }
+
+            // 4. 왼쪽 메뉴 active 처리 (선택사항)
+            menuLinks.forEach(l => l.classList.remove('is-active'));
+            link.classList.add('is-active');
+        });
+    });
     (function () {
         // 현재 경로에서 컨텍스트 경로 추출 (예: /NICHIYA/... -> /NICHIYA/)
         var path = window.location.pathname;               // 예: "/NICHIYA/main/main/page"
