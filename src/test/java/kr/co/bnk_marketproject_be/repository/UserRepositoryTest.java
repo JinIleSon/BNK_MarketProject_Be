@@ -9,7 +9,8 @@ import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-@SpringBootTest
+@org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest
+@org.springframework.test.context.ActiveProfiles("test")
 class UserRepositoryTest {
 
     @Autowired
