@@ -311,6 +311,15 @@
             }
             .menu-grid li{ list-style: none; }
             #header{ display: contents; }
+            /* 1차(좌측 대분류) 밑줄 높이 */
+            .overlay__menu a[data-cat]{
+                --underline-offset: 2px;   /* 두 번째 코드와 동일 */
+            }
+
+            /* 2차(우측 소분류) 밑줄 높이 */
+            #subcol .menu-grid a{
+                --underline-offset: 1px;   /* 두 번째 코드와 동일 */
+            }
         </style>
 
         <div style="display: flex; margin-left:20%; margin-top:1%; width:100%;">
