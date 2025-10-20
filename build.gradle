@@ -79,6 +79,9 @@ dependencies {
     implementation 'com.solapi:sdk:1.0.3'
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
 
+    // 테스트용 배포
+    implementation 'com.h2database:h2'
+
 }
 
 tasks.named('test') {
@@ -106,4 +109,6 @@ test {
         events 'passed', 'skipped', 'failed', 'standardOut', 'standardError'
         showStandardStreams = true   // Gradle 7 이전 호환 옵션
     }
+    useJUnitPlatform()
+    systemProperty "spring.profiles.active", "test"
 }
