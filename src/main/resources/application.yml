@@ -2,8 +2,6 @@
 spring:
   application:
     name: NICHIYA
-  profiles:
-    active: prod
 
 mybatis:
   mapper-locations: classpath:/mapper/**/*.xml
@@ -26,7 +24,8 @@ app:
 ---
 spring:
   config:
-    activate.on-profile: local
+    activate:
+      on-profile: local
   datasource:
     url: jdbc:oracle:thin:@localhost:1521/xe
     username: NICHIYA
@@ -42,12 +41,16 @@ logging:
   level:
     org.hibernate.SQL: debug
     org.mybatis: info
+solapi:
+  enabled: false           # 로컬에서 실제 문자 테스트할 거면 true
+  # api.key/secret/number는 환경변수에서 주입 (없으면 빈 문자열)
 
 # ===== prod (운영) =====
 ---
 spring:
   config:
-    activate.on-profile: prod
+    activate:
+      on-profile: prod
   datasource:
     url: jdbc:oracle:thin:@//43.200.69.114:1522/XEPDB1   # Service name 방식
     username: NICHIYA
@@ -107,8 +110,8 @@ spring:
   mail:
     host: smtp.gmail.com
     port: 587
-    username: machinemayou@gmail.com
-    password: xpdgopkyeyxqotpz
+    username: ${MAIL_USERNAME}
+    password: ${MAIL_PASSWORD}
     properties:
       mail:
         smtp:
@@ -116,11 +119,18 @@ spring:
           timeout: 5000
           starttls:
             required: true
-            enable: ture
+            enable: true
           ssl:
             trust: smtp.gmail.com
-
-# 어드민 로고 업로드 경로 (배포용 세현 수정)
+# sms 인증 ( 모든API허용했기때문에 보안유지!!)
+# Solapi 공통키 정의는 하지 않고, 프로필 별로 enabled 플래그만 사용
+solapi:
+  enabled: true    # 기본은 꺼둠(테스트 안전)
+  api:
+    key: ${SOLAPI_API_KEY:}
+    secret: ${SOLAPI_API_SECRET:}
+    number: ${SOLAPI_NUMBER:}
+  mock: false # 통신사 인증 작동시 false로 하면 됨
 app:
   upload:
     dir: upload
@@ -129,3 +139,24 @@ app:
 mybatis:
   configuration:
     map-underscore-to-camel-case: false
+# =====test(CI)===========
+---
+spring:
+  config:
+    activate:
+      on-profile: test
+  datasource:
+    url: jdbc:h2:mem:testdb;MODE=Oracle;DB_CLOSE_DELAY=-1;DATABASE_TO_UPPER=false
+    driver-class-name: org.h2.Driver
+    username: sa
+    password:
+  jpa:
+    hibernate:
+      ddl-auto: create-drop
+    open-in-view: false
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.H2Dialect
+
+solapi:
+  enabled: false
