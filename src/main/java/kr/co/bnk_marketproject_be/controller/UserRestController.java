@@ -26,11 +26,23 @@ public class UserRestController {
         log.info("API register request user_id={}", userDTO.getUserId());
         try {
             userService.register(userDTO);
-            return ResponseEntity.ok(Map.of("success", true));
-        }
-        catch (Exception e) {
+            return ResponseEntity.ok(Map.of(
+                    "ok", true,
+                    "message", "회원가입이 완료되었습니다."
+            ));
+        } catch (IllegalStateException e) { // 유효성/중복 등 비즈니스 오류
+            log.warn("Register business error: {}", e.getMessage());
+            // 프론트가 일관되게 처리할 수 있도록 200에 ok=false로 내려도 됨
+            return ResponseEntity.ok(Map.of(
+                    "ok", false,
+                    "message", e.getMessage()
+            ));
+        } catch (Exception e) { // 서버 예외
             log.error("Register failed", e);
-            return ResponseEntity.badRequest().body(Map.of("ok", false, "error", e.getMessage()));
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(Map.of(
+                    "ok", false,
+                    "message", "서버 오류가 발생했습니다."
+            ));
         }
     }
 
