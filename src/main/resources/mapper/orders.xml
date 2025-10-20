@@ -55,8 +55,6 @@
     <update id="markCouponUsed">
         UPDATE coupons
         SET status = '종료'
-        <!-- , used_order_id = #{orderId}   -->
-        <!-- , used_at = SYSTIMESTAMP       -->
         WHERE id = #{couponId}
         AND users_id = #{userId}
         AND status = '발급중'
@@ -206,23 +204,87 @@
     </delete>
 
     <!-- 완료 화면 -->
-    <select id="selectOrderLines" parameterType="int" resultType="kr.co.bnk_marketproject_be.dto.OrderPageLineRowDTO">
+    <select id="selectOrderLines"
+            parameterType="int"
+            resultType="kr.co.bnk_marketproject_be.dto.OrderPageLineRowDTO">
         SELECT
-        pr.id           AS id,
-        pr.product_code AS product_code,
-        pr.product_name AS product_name,
-        po.option_name  AS option_name,
-        oi.quantity     AS quantity,
-        pr.price        AS unitPrice,
-        pr.discount     AS discountRate,
-        img.url         AS url,
-        pr.delichar     AS delichar
+        oi.id                     AS order_item_id,
+        p.id                      AS id,
+        p.product_code            AS product_code,
+        p.product_name            AS product_name,
+        po.option_name            AS option_name,
+        NVL(oi.quantity, 0)       AS quantity,
+        NVL(p.price, 0)           AS unitPrice,
+
+        /* 할인율(%): 0~100은 %로, 100 초과는 금액을 %로 환산 */
+        CASE
+        WHEN p.discount BETWEEN 0 AND 100 THEN ROUND(p.discount)
+        WHEN p.discount > 100 AND NVL(p.price,0) > 0 THEN ROUND((p.discount / p.price) * 100)
+        ELSE 0
+        END                       AS discountRate,
+
+        /* 1개당 할인액(클램프: 0 ~ unitPrice) */
+        LEAST(
+        GREATEST(
+        CASE
+        WHEN p.discount BETWEEN 0 AND 100
+        THEN ROUND(NVL(p.price,0) * (p.discount / 100.0))
+        WHEN p.discount > 100
+        THEN ROUND(p.discount)
+        ELSE 0
+        END,
+        0
+        ),
+        NVL(p.price,0)
+        )                          AS unitDiscount,
+
+        /* 1개당 판매가 = unitPrice - unitDiscount */
+        ( NVL(p.price,0) -
+        LEAST(
+        GREATEST(
+        CASE
+        WHEN p.discount BETWEEN 0 AND 100
+        THEN ROUND(NVL(p.price,0) * (p.discount / 100.0))
+        WHEN p.discount > 100
+        THEN ROUND(p.discount)
+        ELSE 0
+        END,
+        0
+        ),
+        NVL(p.price,0)
+        )
+        )                          AS unitSalePrice,
+
+        /* 라인합계 = unitSalePrice × quantity */
+        ( ( NVL(p.price,0) -
+        LEAST(
+        GREATEST(
+        CASE
+        WHEN p.discount BETWEEN 0 AND 100
+        THEN ROUND(NVL(p.price,0) * (p.discount / 100.0))
+        WHEN p.discount > 100
+        THEN ROUND(p.discount)
+        ELSE 0
+        END,
+        0
+        ),
+        NVL(p.price,0)
+        )
+        ) * NVL(oi.quantity,0)
+        )                          AS lineTotal,
+
+        img.url                    AS url,
+        CAST(p.delichar AS NUMBER) AS delichar,        -- DTO: Integer
+        CASE WHEN NVL(p.delichar,0) = 0 THEN 1 ELSE 0 END AS freeShipping -- DTO: boolean
+
         FROM order_items oi
-        JOIN products pr           ON pr.id = oi.products_id
-        LEFT JOIN product_options po ON po.id = oi.product_options_id
-        LEFT JOIN product_images img ON img.products_id = pr.id AND img.is_main = 'Y'
+        JOIN products p               ON p.id = oi.products_id
+        LEFT JOIN product_options po  ON po.id = oi.product_options_id
+        LEFT JOIN product_images img  ON img.products_id = p.id AND img.is_main = 'Y'
         WHERE oi.orders_id = #{orderId}
+        ORDER BY oi.id
     </select>
+
 
     <!-- 완료 화면 헤더: 주문/결제/구매자 + 배송 스냅샷 -->
     <select id="selectOrderCompleteHeader"
@@ -230,19 +292,18 @@
             resultType="kr.co.bnk_marketproject_be.dto.ProductCompleteDTO">
         SELECT
         /* 주문/결제/구매자 */
-        o.id                                     AS orderId,
+        o.order_code                             AS orderCode,
         p.method                                 AS payMethod,
         u.name                                   AS buyerName,
         u.phone                                  AS buyerPhone,
         TO_CHAR(o.created_at, 'YYYY-MM-DD HH24:MI:SS') AS completedAt,
 
-        /* 배송지(orders_id에 저장된 스냅샷) — 실제 컬럼명으로 매핑 */
-        d.recipient                              AS "deliveries.recipient",
-        /* delicom이 수취인 연락처라면 그대로, 없을 수 있으니 보강(Optional) */
-        NVL(d.delicom, u.phone)                  AS "deliveries.delicom",
-        d.zipcode                                AS "deliveries.zipcode",
-        d.address                                AS "deliveries.address",
-        d.address2                               AS "deliveries.address2"
+        /* 배송지(orders_id에 저장된 스냅샷) — ProductCompleteDTO.shipping 으로 매핑 */
+        d.recipient                              AS "shipping.recipient",
+        NVL(d.delicom, u.phone)                  AS "shipping.delicom",
+        d.address                                AS "shipping.address",
+        d.address2                               AS "shipping.address2",
+        d.delichar                               AS "shipping.delichar"   -- 옵션
 
         FROM orders o
         JOIN users u           ON u.id = o.users_id
@@ -348,4 +409,63 @@
         AND status = '결제대기'
     </update>
 
+    <select id="selectUsedPoint" parameterType="int" resultType="int">
+        SELECT NVL(SUM(
+        CASE
+        WHEN TO_NUMBER(REPLACE(TRIM(pl.change_amount), ',', '')) &lt; 0
+        THEN -TO_NUMBER(REPLACE(TRIM(pl.change_amount), ',', ''))
+        ELSE 0
+        END), 0)
+        FROM point_ledgers pl
+        WHERE pl.users_id = (
+        SELECT NVL((SELECT u.user_id FROM users u WHERE u.id = o.users_id), TO_CHAR(o.users_id))
+        FROM orders o WHERE o.id = #{orderId}
+        )
+        AND pl.board_type = 'ORDER_USE'
+        AND pl.description = TO_CHAR(#{orderId})
+        AND TRANSLATE(REPLACE(TRIM(pl.change_amount), ',', ''), '0123456789-', 'XXXXXXXXXXX') IS NULL
+    </select>
+
+    <select id="selectUsedCouponAmount" parameterType="int" resultType="int">
+        <![CDATA[
+    SELECT COALESCE(SUM(c.discount_value), 0)
+    FROM coupons c
+    WHERE c.users_id = (
+      SELECT o.users_id
+      FROM orders o
+      WHERE o.id = #{orderId}
+    )
+  ]]>
+    </select>
+
+    <select id="selectOrderSummary"
+            parameterType="int"
+            resultType="map">
+        SELECT
+        /* 총 상품금액: 정가 × 수량 */
+        SUM( NVL(p.price,0) * NVL(oi.quantity,0) )                                            AS subtotalAmount,
+
+        /* 총 할인금액: (단가 할인액) × 수량 */
+        SUM(
+        LEAST(
+        GREATEST(
+        CASE
+        WHEN p.discount BETWEEN 0 AND 100
+        THEN ROUND(NVL(p.price,0) * (p.discount/100.0))
+        WHEN p.discount > 100
+        THEN ROUND(p.discount)
+        ELSE 0
+        END,
+        0
+        ),
+        NVL(p.price,0)
+        ) * NVL(oi.quantity,0)
+        )                                                                                     AS discountAmount,
+
+        /* 배송비 합계: 각 라인의 상품 배송비를 1회씩 합산(수량과 무관) */
+        SUM( NVL(p.delichar,0) )                                                              AS delichar
+        FROM order_items oi
+        JOIN products p ON p.id = oi.products_id
+        WHERE oi.orders_id = #{orderId}
+    </select>
 </mapper>

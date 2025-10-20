@@ -70,4 +70,7 @@ public interface OrdersMapper {
             @Param("couponId") int couponId,
             @Param("orderId") int orderId   // 사용 주문을 기록할 수 있으면 같이 전달
     );
+
+    Integer selectUsedPoint(int orderId);            // 사용 포인트 총합(양수) 반환
+    Integer selectUsedCouponAmount(int orderId);     // 사용 쿠폰 금액(양수) 반환
 }
