@@ -63,7 +63,7 @@
             <form method="get" style="display:flex; align-items:center;" th:action="@{/product/header/search}">
                 <input name="keyword" style="border:1px solid #ddd; width:170px; height:32px;" th:value="${query.keyword}"
                        type="text">
-                <button style="margin:0 30px; background:#000; color:#fff; border:none; height:34px; width:57px;">검색
+                <button style="cursor:pointer;margin:0 30px; background:#000; color:#fff; border:none; height:34px; width:57px;">검색
                 </button>
                 <label><input name="searchType" th:checked="${query.searchType}=='name'" type="radio" value="name"> 상품명</label>
                 <!-- ★ 현재 카테고리 유지 - 추가 손진일 -->
@@ -117,26 +117,26 @@
     <hr style="border:none; border-top:1px solid black;">
     <div style="color:gray; margin-left:7.6%; margin-bottom:30px;">
         <a th:classappend="${sort}=='sales' ? ' active'"
-           th:href="@{/product/header/search(sort='sales',     keyword=${query.keyword}, searchType=${query.searchType}, minPrice=${query.minPrice}, maxPrice=${query.maxPrice}, pg=1, size=${pageResponseProductDTO.size}, categoryId=${categoryId})}">판매많은순</a>&nbsp;|&nbsp;
+           th:href="@{/product/header/search(sort='sales',     keyword=${query.keyword}, searchType=${query.searchType}, minPrice=${query.minPrice}, maxPrice=${query.maxPrice}, pg=1, size=${pageResponseProductDTO.size}, categoryId=${categoryId})}">판매많은순</a>&nbsp; <span style="color:black;">|</span>&nbsp;
 
         <a th:classappend="${sort}=='priceAsc' ? ' active'"
-           th:href="@{/product/header/search(sort='priceAsc',  keyword=${query.keyword}, searchType=${query.searchType}, minPrice=${query.minPrice}, maxPrice=${query.maxPrice}, pg=1, size=${pageResponseProductDTO.size}, categoryId=${categoryId})}">낮은가격순</a>&nbsp;|&nbsp;
+           th:href="@{/product/header/search(sort='priceAsc',  keyword=${query.keyword}, searchType=${query.searchType}, minPrice=${query.minPrice}, maxPrice=${query.maxPrice}, pg=1, size=${pageResponseProductDTO.size}, categoryId=${categoryId})}">낮은가격순</a> &nbsp;<span style="color:black;">|</span>&nbsp;
 
         <a th:classappend="${sort}=='priceDesc' ? ' active'"
-           th:href="@{/product/header/search(sort='priceDesc', keyword=${query.keyword}, searchType=${query.searchType}, minPrice=${query.minPrice}, maxPrice=${query.maxPrice}, pg=1, size=${pageResponseProductDTO.size}, categoryId=${categoryId})}">높은가격순</a>&nbsp;|&nbsp;
+           th:href="@{/product/header/search(sort='priceDesc', keyword=${query.keyword}, searchType=${query.searchType}, minPrice=${query.minPrice}, maxPrice=${query.maxPrice}, pg=1, size=${pageResponseProductDTO.size}, categoryId=${categoryId})}">높은가격순</a>&nbsp; <span style="color:black;">|</span>&nbsp;
 
         <a th:classappend="${sort}=='rating' ? ' active'"
-           th:href="@{/product/header/search(sort='rating',    keyword=${query.keyword}, searchType=${query.searchType}, minPrice=${query.minPrice}, maxPrice=${query.maxPrice}, pg=1, size=${pageResponseProductDTO.size}, categoryId=${categoryId})}">평점높은순</a>&nbsp;|&nbsp;
+           th:href="@{/product/header/search(sort='rating',    keyword=${query.keyword}, searchType=${query.searchType}, minPrice=${query.minPrice}, maxPrice=${query.maxPrice}, pg=1, size=${pageResponseProductDTO.size}, categoryId=${categoryId})}">평점높은순</a> &nbsp;<span style="color:black;">|</span>&nbsp;
 
         <a th:classappend="${sort}=='review' ? ' active'"
-           th:href="@{/product/header/search(sort='review',    keyword=${query.keyword}, searchType=${query.searchType}, minPrice=${query.minPrice}, maxPrice=${query.maxPrice}, pg=1, size=${pageResponseProductDTO.size}, categoryId=${categoryId})}">후기많은순</a>&nbsp;|&nbsp;
+           th:href="@{/product/header/search(sort='review',    keyword=${query.keyword}, searchType=${query.searchType}, minPrice=${query.minPrice}, maxPrice=${query.maxPrice}, pg=1, size=${pageResponseProductDTO.size}, categoryId=${categoryId})}">후기많은순</a> &nbsp;<span style="color:black;">|</span>&nbsp;
 
         <a th:classappend="${sort}=='recent' ? ' active'"
            th:href="@{/product/header/search(sort='recent',    keyword=${query.keyword}, searchType=${query.searchType}, minPrice=${query.minPrice}, maxPrice=${query.maxPrice}, pg=1, size=${pageResponseProductDTO.size}, categoryId=${categoryId})}">최근등록순</a>
     </div>
     <style>.active {
         font-weight: 700;
-        text-decoration: underline;
+        text-decoration: none;
         color: #000;
     }</style>
     <div style="display:flex; gap:80px; justify-content:center; flex-wrap:wrap;">
@@ -145,7 +145,7 @@
                 <img style="width:40vw;"
                      th:src="${p.url} != null ? (@{/__${p.url}__}) : @{/images/placeholder.png}">
 
-                <div style="display:flex; justify-content:space-between; align-items:flex-end; width: 853px;">
+                <div style="display:flex; justify-content:space-between; align-items:flex-end; width: 0px;">
                     <!-- 좌측: 텍스트 영역 -->
                     <div style="flex:1; display:flex; flex-direction:column;"
                          th:with="
