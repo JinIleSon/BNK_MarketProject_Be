@@ -1,15 +1,20 @@
 package kr.co.bnk_marketproject_be;
 
-import kr.co.bnk_marketproject_be.support.TestBeansConfig;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
-import org.springframework.context.annotation.Import;
+import org.springframework.boot.test.mock.mockito.MockBean;
 
 @SpringBootTest
 @ActiveProfiles("test")
-@Import(TestBeansConfig.class)   // ✅ 목 빈 주입
 class BnkMarketProjectBeApplicationTests {
+
+    @MockBean
+    private kr.co.bnk_marketproject_be.service.EmailService emailService; // ✅ 추가
+
+    @MockBean
+    private kr.co.bnk_marketproject_be.service.SolapiSmsService solapiSmsService; // ✅ 추가
+
     @Test
     void contextLoads() {
     }
