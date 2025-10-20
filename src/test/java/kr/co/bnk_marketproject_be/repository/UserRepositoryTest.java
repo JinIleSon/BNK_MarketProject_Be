@@ -4,6 +4,7 @@ import kr.co.bnk_marketproject_be.entity.User;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.context.annotation.Import;
 
 import java.util.Optional;
 
@@ -11,6 +12,7 @@ import static org.junit.jupiter.api.Assertions.*;
 
 @org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest
 @org.springframework.test.context.ActiveProfiles("test")
+@Import(kr.co.bnk_marketproject_be.config.QueryDslConfig.class)
 class UserRepositoryTest {
 
     @Autowired
