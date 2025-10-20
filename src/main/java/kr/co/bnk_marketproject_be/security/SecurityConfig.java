@@ -32,7 +32,7 @@ public class SecurityConfig {
         http.formLogin(form -> form
                 .loginPage("/member/login")            // 로그인 페이지
                 .loginProcessingUrl("/member/login")   // 로그인 요청 처리 URL (form action과 동일)
-                .defaultSuccessUrl("/NICHIYA/main/main/page", true) // 로그인 성공 시
+                .defaultSuccessUrl("/main/main/page", true) // 로그인 성공 시
                 // 로그인 실패 성공 시 핸들러
                 .failureHandler((request, response, ex) -> {
                     String reason = "unknown";
@@ -46,13 +46,15 @@ public class SecurityConfig {
                         reason = "expired";       // 비밀번호 만료
                     }
                     // 필요시: 로그인 시도 아이디 로깅
+                    String ctx = request.getContextPath();        // "/NICHIYA"
                     System.out.println("❌ 로그인 실패: userId=" + request.getParameter("userId") + ", reason=" + reason);
-                    response.sendRedirect("/NICHIYA/member/login?error=" + reason);
+                    response.sendRedirect(ctx + "/member/login?error=" + reason);
                 })
                 .successHandler((request, response, authentication) -> {
+                    String ctx = request.getContextPath();
                     String username = authentication.getName();
                     System.out.println("✅ 로그인 성공: 아이디=" + username);
-                    response.sendRedirect("/NICHIYA/main/main/page");
+                    response.sendRedirect(ctx + "/main/main/page");
                 })
                 .usernameParameter("userId")
                 .passwordParameter("password")
@@ -119,16 +121,18 @@ public class SecurityConfig {
                 .loginPage("/member/login")
 
                 .successHandler((request, response, authentication) -> {
+                    String ctx = request.getContextPath();
                     String email = authentication.getName(); // 보통 이메일
                     org.slf4j.LoggerFactory.getLogger("OAuth2")
                             .info("OAuth2 authentication success: user={}", email);
                     // 컨텍스트(/NICHIYA)는 자동으로 붙으니 앞에 쓰지 말고 루트부터!
-                    response.sendRedirect("/main/main/page");
+                    response.sendRedirect(ctx + "/main/main/page");  // ← ctx 붙이기
                 })
                 .failureHandler((request, response, ex) -> {
+                    String ctx = request.getContextPath();
                     org.slf4j.LoggerFactory.getLogger("OAuth2")
                             .warn("OAuth2 authentication failed: {}", ex.getMessage());
-                    response.sendRedirect("/member/login?error=social");
+                    response.sendRedirect(ctx + "/member/login?error=social"); // ← ctx 붙이기
                 })
         );
 
