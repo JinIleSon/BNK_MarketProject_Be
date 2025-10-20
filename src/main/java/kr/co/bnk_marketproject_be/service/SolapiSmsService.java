@@ -9,10 +9,12 @@ import com.solapi.sdk.message.dto.response.MultipleDetailMessageSentResponse;
 import com.solapi.sdk.message.model.Message;
 import com.solapi.sdk.message.service.DefaultMessageService;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.stereotype.Service;
 import java.util.Random;
 
 @Service
+@ConditionalOnProperty(prefix = "solapi", name = "enabled", havingValue = "true", matchIfMissing = false)
 public class SolapiSmsService {
 
     @Value("${solapi.api.key}")
