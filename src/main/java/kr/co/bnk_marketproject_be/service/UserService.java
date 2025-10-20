@@ -188,9 +188,25 @@ public class UserService {
                 userOpt = userRepository.findByNameAndEmail(name.toUpperCase(), email);
             }
         } else {
-            userOpt = userRepository.findByNameAndPhone(name, phone);
+            // ✅ 전화번호 비교 시 하이픈/공백 제거 (백엔드에서 정규화)
+            String cleanPhone = phone.replaceAll("[^0-9]", ""); // 숫자만 남김
+
+            // 1️⃣ 이름으로 사용자 목록 조회
+            List<User> allUsers = userRepository.findByName(name);
+
+            // 2️⃣ 전화번호 비교 (DB의 phone 값도 숫자만 추출)
+            userOpt = allUsers.stream()
+                    .filter(u -> u.getPhone() != null &&
+                            u.getPhone().replaceAll("[^0-9]", "").equals(cleanPhone))
+                    .findFirst();
+
+            // 3️⃣ 대문자 이름으로도 재시도 (혹시 DB에 대문자로 저장된 경우 대비)
             if (userOpt.isEmpty()) {
-                userOpt = userRepository.findByNameAndPhone(name.toUpperCase(), phone);
+                allUsers = userRepository.findByName(name.toUpperCase());
+                userOpt = allUsers.stream()
+                        .filter(u -> u.getPhone() != null &&
+                                u.getPhone().replaceAll("[^0-9]", "").equals(cleanPhone))
+                        .findFirst();
             }
         }
 
@@ -200,11 +216,18 @@ public class UserService {
     // 아이디 + 이메일로 사용자 검증
     public boolean verifyUserForPasswordReset(String userId, String email, String phone) {
         Optional<User> userOpt = Optional.empty();
+
         if (email != null && !email.isBlank()) {
             userOpt = userRepository.findByUserIdAndEmail(userId, email);
         } else if (phone != null && !phone.isBlank()) {
-            userOpt = userRepository.findByUserIdAndPhone(userId, phone);
+            String cleanPhone = phone.replaceAll("-", "");
+            List<User> allUsers = userRepository.findAll();
+            userOpt = allUsers.stream()
+                    .filter(u -> u.getUserId().equalsIgnoreCase(userId))
+                    .filter(u -> u.getPhone() != null && u.getPhone().replaceAll("-", "").equals(cleanPhone))
+                    .findFirst();
         }
+
         return userOpt.isPresent();
     }
 

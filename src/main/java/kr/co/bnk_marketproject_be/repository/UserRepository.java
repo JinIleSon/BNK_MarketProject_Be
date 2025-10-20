@@ -6,6 +6,7 @@ import kr.co.bnk_marketproject_be.mapper.UserMapper;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
 import java.util.Optional;
 
 @Repository
@@ -32,6 +33,9 @@ public interface UserRepository extends JpaRepository<User, Integer> {
 
     // ✅ 소셜 업서트를 위해 추가
     Optional<User> findByEmail(String email);
+
+    // 아이디찾기시 핸드폰번호(- 하이픈제거) 통과를 위한 추가
+    List<User> findByName(String name);
 
 }
 
