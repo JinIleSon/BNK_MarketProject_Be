@@ -138,13 +138,13 @@
                 <div style="display: flex; justify-content: flex-end; margin-top:30px;">
                 <input type="button" value="삭제"
                        th:onclick="|if(confirm('정말로 삭제하시겠습니까?')) location.href='@{/admin/inquiry/delete(id=${adminInquiryDTO.id})}';|"
-                        style="cursor:pointer;border:none; width: 80px; height: 40px; background-color: #760c0c; color: #ffffff; margin-left:8px;">
+                       style="cursor: pointer; margin-right: 4px; border:none; background-color: black; color:white; font-size: 10px; font-weight: 300; height:25px; width:62px;">
                 <input type="submit" value="답변등록"
-                        style="cursor:pointer;border:none; width: 80px; height: 40px; background-color: #000; color: #ffffff; margin-left:8px;">
+                       style="cursor: pointer; margin-right: 4px; border:none; background-color: black; color:white; font-size: 10px; font-weight: 300; height:25px; width:62px;">
                     </form>
                 <input type="button" value="목록"
                        th:onclick="|location.href='@{/admin/inquiry/list}'|"
-                        style="cursor:pointer;border:none; width: 80px; height: 40px; background-color: #000; color: #ffffff; margin-left:8px;">
+                       style="cursor: pointer; border:none; background-color: black; color:white; font-size: 10px; font-weight: 300; height:25px; width:62px;">
                 </div>
     </main>
 

@@ -127,16 +127,15 @@
           </table>
 
             <div style="text-align:end; margin-right:8px;">
-              <button style="cursor: pointer; border:none; background-color: #760c0c; color:white; font-size: 10px; font-weight: 300; height:25px; width:62px;"
+              <button style="cursor: pointer; border:none; background-color: black; color:white; font-size: 10px; font-weight: 300; height:25px; width:62px;"
                       th:onclick="|if(confirm('정말로 삭제하시겠습니까?')) location.href='@{/admin/announcement/delete(id=${adminAnnouncementDTO.id})}';|">삭제</button>
-              <button style="cursor: pointer; border:none; background-color: #760c0c; color:white; font-size: 10px; font-weight: 300; height:25px; width:62px;"
+              <button style="cursor: pointer; border:none; background-color: black; color:white; font-size: 10px; font-weight: 300; height:25px; width:62px;"
               th:onclick="|location.href='@{/admin/announcement/modify/list(id=${adminAnnouncementDTO.id})}'|">수정</button>
               <button style="cursor: pointer; margin-left:auto; border:none; background-color: black; color:white; font-size: 10px; font-weight: 300; height:25px; width:62px;"
               th:onclick="|location.href='@{/admin/announcement/list}'|">목록</button>
             </div>
           </div>
           
-    </main>
 
     <style>
         .euro-nav__list {
