@@ -293,6 +293,11 @@
         const $ = (s) => document.querySelector(s);
         const $$ = (s) => Array.from(document.querySelectorAll(s));
 
+        // 패스워드와 형식 맞추기위해 추가된 trim 3줄
+        const nameOK = () => $('#name').value.trim().length >= 2;
+        const isValidEmail = v => /.+@.+\..+/.test(v.trim());
+        const isValidPhone = v => /^01[0-9]{8,9}$/.test(v.trim());
+
         const emailSection = $('#emailSection');
         const phoneSection = $('#phoneSection');
         const nextBtn = $('#nextBtn');
@@ -377,16 +382,78 @@
         });
 
         // SMS 인증번호 전송
-        $('#sendSmsCode').addEventListener('click', async () => {
-            const name = $('#name').value.trim();
-            if (name.length < 2) { alert('이름을 입력해 주세요.'); $('#name').focus(); return; }
+        // $('#sendSmsCode').addEventListener('click', async () => {
+        //     const name = $('#name').value.trim();
+        //     if (name.length < 2) { alert('이름을 입력해 주세요.'); $('#name').focus(); return; }
+        //     const phone = $('#phone').value.trim();
+        //     if (!/^01[0-9]{8,9}$/.test(phone)) { alert('휴대폰 번호를 정확히 입력해 주세요.'); return; }
+        //     await pseudoSend();
+        //     state.smsCode = String(Math.floor(100000 + Math.random() * 900000));
+        //     console.log('[DEV] sms code:', state.smsCode);
+        //     $('#phoneVerifyGroup').classList.remove('hidden');
+        //     alert('인증 번호를 전송했습니다!');
+        // });
+
+
+        // SMS 인증번호 전송 (Solapi 연동)
+        $('#sendSmsCode').addEventListener('click', async()=>{
+            const phoneNum=$('#phone').value.trim();
+            if(!nameOK()||!isValidPhone(phoneNum))return alert('휴대폰 번호를 정확히 입력하세요.');
+            try{
+                const res=await fetch('/NICHIYA/api/sms/send',{
+                    method:'POST',
+                    headers:{'Content-Type':'application/json'},
+                    body:JSON.stringify({phoneNumber:phoneNum})
+                });
+                const text=await res.text();
+                if(res.ok || text.includes('인증') || text.includes('전송')){
+                    $('#phoneVerifyGroup').classList.remove('hidden');
+                    alert('인증번호를 전송했습니다.');
+                } else alert('전송 실패.');
+            }catch(e){alert('서버 오류로 전송 실패.');}
+        });
+
+        // ===========================
+        // 🔐 인증번호 확인 (Solapi + Mock 대응)
+        // ===========================
+        $('#verifySmsCode').addEventListener('click', async () => {
             const phone = $('#phone').value.trim();
-            if (!/^01[0-9]{8,9}$/.test(phone)) { alert('휴대폰 번호를 정확히 입력해 주세요.'); return; }
-            await pseudoSend();
-            state.smsCode = String(Math.floor(100000 + Math.random() * 900000));
-            console.log('[DEV] sms code:', state.smsCode);
-            $('#phoneVerifyGroup').classList.remove('hidden');
-            alert('인증 번호를 전송했습니다!');
+            const code = $('#smsCode').value.trim();
+            if (!code) return alert('인증번호를 입력하세요.');
+
+            try {
+                const res = await fetch('/NICHIYA/api/sms/verify', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ phoneNumber: phone, code })
+                });
+
+                const raw = await res.text(); // ✅ body 한 번만 읽기
+                let data;
+                try {
+                    data = JSON.parse(raw);
+                } catch {
+                    data = raw;
+                }
+
+                console.log('✅ 인증 응답:', data);
+
+                if (
+                    res.ok &&
+                    (data.matched === true || (typeof data === 'string' && data.includes('인증 성공')))
+                ) {
+                    state.phoneVerified = true;
+                    updateNextAvailability();
+                    alert('휴대폰 인증 완료 ✅');
+                } else {
+                    state.phoneVerified = false;
+                    alert('인증번호가 일치하지 않습니다.');
+                }
+            } catch (err) {
+                console.error('🚨 인증 확인 오류:', err);
+                state.phoneVerified = false;
+                alert('서버 오류로 검증 실패.');
+            }
         });
 
         // 이메일 인증번호 확인 (서버 검증)
@@ -431,8 +498,8 @@
             const payload = {
                 name: $('#name').value.trim(),
                 method: state.method,
-                email: state.method === 'email' ? $('#email').value.trim() : null,
-                phone: state.method === 'phone' ? $('#phone').value.trim() : null
+                email: state.method === 'email' ? $('#email').value.trim() : "",
+                phone: state.method === 'phone' ? $('#phone').value.trim() : ""
             };
 
             try {
