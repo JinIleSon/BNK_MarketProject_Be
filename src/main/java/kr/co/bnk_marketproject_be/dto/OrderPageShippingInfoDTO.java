@@ -11,7 +11,7 @@ import lombok.NoArgsConstructor;
 @Builder
 public class OrderPageShippingInfoDTO {
     private String recipient;
-    private String delicom;
+    private String hp;
     private String zipcode;
     private String address;
     private String address2;

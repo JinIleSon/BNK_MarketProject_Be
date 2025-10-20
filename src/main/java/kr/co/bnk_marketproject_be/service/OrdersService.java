@@ -26,25 +26,28 @@ public class OrdersService {
     public ProductCartDTO getCart(int userId) {
         var rows = ordersMapper.selectCartLineRows(userId);
 
-        int subtotal = 0, discount = 0, delicharTotal = 0, itemCount = 0;
+        int subtotal = 0;
+        int discount = 0;       // 상품 자체 할인(= unitDiscount 합)
+        int delicharTotal = 0;  // 라인당 1회 합산
+        int itemCount = 0;
 
         for (var r : rows) {
             int unit = r.getUnitPrice();
-            int rate = Math.max(0, Math.min(100, r.getDiscountRate()));
 
-            int unitDiscount = (int) Math.round(unit * (rate / 100.0));
-            int sale = unit - unitDiscount;
-
-            int line = sale * r.getQuantity();
-            r.setLineTotal(line);
+            // Mapper에서 계산해온 unitDiscount/ unitSalePrice / lineTotal 을 우선 사용
+            int unitDiscount = (r.getUnitDiscount() != null) ? r.getUnitDiscount() : 0;
+            int unitSale     = (r.getUnitSalePrice() != null) ? r.getUnitSalePrice() : Math.max(0, unit - unitDiscount);
+            int lineTotal    = unitSale * r.getQuantity();
+            r.setUnitSalePrice(unitSale);
+            r.setLineTotal(lineTotal);
 
             Integer deli = r.getDelichar();
             int deliVal = (deli == null ? 0 : deli);
             boolean free = (deliVal == 0);
             r.setFreeShipping(free);
 
-            subtotal  += unit * r.getQuantity();
-            discount  += unitDiscount * r.getQuantity();
+            subtotal += unit * r.getQuantity();
+            discount += unitDiscount * r.getQuantity();
 
             // 라인당 1회만 합산(수량과 무관)
             if (!free) delicharTotal += deliVal;
@@ -55,10 +58,10 @@ public class OrdersService {
         var summary = OrderPageSummaryDTO.builder()
                 .itemCount(itemCount)
                 .subtotalAmount(subtotal)
-                .discountAmount(discount)
-                .delichar(delicharTotal)
+                .discountAmount(discount)             // 상품 자체 할인 합
+                .delichar(delicharTotal)              // 라인별 배송비 합
                 .couponAmount(0)
-                .pointUse(0)
+                .pointUse(0)                          // 장바구니에서는 아직 미사용
                 .totalPayable(subtotal - discount + delicharTotal)
                 .rewardPoint((int) Math.floor((subtotal - discount) * 0.01))
                 .build();
@@ -75,9 +78,8 @@ public class OrdersService {
     public ProductOrderDTO getOrderPage(int userId) {
         var cart    = getCart(userId);
         var coupons = ordersMapper.selectAvailableCoupons(userId);
-        var point   = ordersMapper.selectAvailablePoint(userId);     // 최근 balance
+        var point   = ordersMapper.selectAvailablePoint(userId); // 최근 balance
 
-        // 반환 타입 DeliveriesDTO
         DeliveriesDTO ship = ordersMapper.selectDefaultShipping(userId);
 
         return ProductOrderDTO.builder()
@@ -86,7 +88,7 @@ public class OrdersService {
                 .availableCoupons(coupons)
                 .availablePoint(point == null ? 0 : point)
                 .paymentMethods(List.of("신용카드", "계좌이체", "휴대폰결제", "카카오페이"))
-                .defaultShipping(ship)
+                .defaultShipping(null)
                 .build();
     }
 
@@ -102,14 +104,14 @@ public class OrdersService {
 
         // 1) 쿠폰 검증/할인액
         int couponAmt = 0;
-        int couponId  = submit.getCoupon_id();
-        if (couponId != 0) {
-            CouponsDTO c = ordersMapper.selectCouponForUser(userId, couponId);
+        int couponNowId = submit.getCoupon_id();
+        if (couponNowId != 0) {
+            CouponsNowDTO c = ordersMapper.selectCouponForUser(userId, couponNowId);
             if (c == null) throw new IllegalArgumentException("사용할 수 없는 쿠폰입니다.");
 
             int base = Math.max(0, subtotal - prodDiscount);
             if ("RATE".equalsIgnoreCase(c.getDiscount_type())) {
-                couponAmt = (int) Math.floor(base * (c.getDiscount_value() / 100.0));
+                couponAmt = (int)Math.floor(base * (c.getDiscount_value() / 100.0));
             } else {
                 couponAmt = Math.min(c.getDiscount_value(), base);
             }
@@ -130,13 +132,13 @@ public class OrdersService {
         if (orderIdObj == null) throw new IllegalStateException("결제대기 중인 주문이 없습니다.");
         int orderId = orderIdObj;
 
-        // 5) 헤더를 '결제완료'로 승격 (새 INSERT 금지)
+        // 5) 헤더를 '결제완료'로 승격
         int affected = ordersMapper.finalizeOrder(userId, orderId, finalPay);
         if (affected == 0) throw new IllegalStateException("주문 상태 변경 실패(동시성 또는 상태 불일치).");
 
         // 6) 재고 차감
         for (var r : cart.getItems()) {
-            ordersMapper.decreaseStock(r.getId(), r.getQuantity()); // r.getId() = products.id
+            ordersMapper.decreaseStock(r.getId(), r.getQuantity());
         }
 
         // 7) 결제 정보
@@ -162,17 +164,17 @@ public class OrdersService {
         ordersMapper.insertDelivery(DeliveriesDTO.builder()
                 .orders_id(orderId)
                 .recipient(ship.getRecipient())
-                .delicom(ship.getDelicom())
+                .hp(ship.getHp())
                 .zipcode(ship.getZipcode())
                 .address(ship.getAddress())
                 .address2(ship.getAddress2())
-                .delichar(shipping)   // ← 라인별 합산된 배송비 스냅샷
+                .delichar(shipping)   // 라인별 합산된 배송비 스냅샷
                 .status("배송준비")
                 .note(ship.getMemo())
                 .build());
 
         // 9) 쿠폰/포인트 반영
-        if (couponId != 0) ordersMapper.markCouponUsed(userId, couponId, orderId);
+        if (couponNowId != 0) ordersMapper.markCouponUsed(userId, couponNowId, orderId);
         if (pointUse > 0)  ordersMapper.consumePoint(userId, pointUse, orderId);
 
         // 10) 적립 포인트
@@ -191,26 +193,16 @@ public class OrdersService {
         var lines = ordersMapper.selectOrderLines(orderId);
 
         int subtotal = 0;
-        int itemsDiscount = 0;
+        int itemsDiscount = 0; // 상품 자체 할인 합계
         int totalQty = 0;
-
-        // ✅ 배송비: "각 라인에 1회"씩 합산(수량과 무관)
-        int delichar = 0;
+        int delichar = 0;      // 라인당 1회 배송비 합산
 
         for (var r : lines) {
             int unit = r.getUnitPrice();
 
-            int rate = Math.max(0, Math.min(100, r.getDiscountRate()));
-            int unitDiscount = (r.getUnitDiscount() != null)
-                    ? r.getUnitDiscount()
-                    : (int) Math.round(unit * (rate / 100.0));
-
-            int unitSale = (r.getUnitSalePrice() != null)
-                    ? r.getUnitSalePrice()
-                    : unit - unitDiscount;
-
-            // lineTotal은 primitive int 이므로 null 비교 금지 → 항상 재계산
-            int lineTotal = unitSale * r.getQuantity();
+            int unitDiscount = (r.getUnitDiscount() != null) ? r.getUnitDiscount() : 0;
+            int unitSale     = (r.getUnitSalePrice() != null) ? r.getUnitSalePrice() : Math.max(0, unit - unitDiscount);
+            int lineTotal    = unitSale * r.getQuantity();
 
             r.setUnitDiscount(unitDiscount);
             r.setUnitSalePrice(unitSale);
@@ -221,29 +213,30 @@ public class OrdersService {
             totalQty      += r.getQuantity();
 
             Integer lineDeli = r.getDelichar();
-            if (lineDeli != null && lineDeli > 0) {
-                delichar += lineDeli; // 라인당 1회만 합산
-            }
+            if (lineDeli != null && lineDeli > 0) delichar += lineDeli; // 라인당 1회
         }
         header.setItems(lines);
 
-        // ✅ 확정된 사용 포인트/쿠폰 금액 조회 (없으면 0)
-        Integer usedPoint  = ordersMapper.selectUsedPoint(orderId);
-        Integer usedCoupon = ordersMapper.selectUsedCouponAmount(orderId);
+        // 확정 쿠폰/포인트 사용액
+        Integer usedPoint  = ordersMapper.selectUsedPoint(orderId); // 표시에만 사용
+        Integer usedCoupon = ordersMapper.selectUsedCouponAmount(orderId); // 총 할인금액에 포함
         int pointUse  = usedPoint  == null ? 0 : usedPoint;
         int couponAmt = usedCoupon == null ? 0 : usedCoupon;
 
-        // ✅ 합계(확정 기준)
-        int totalPayable = Math.max(0, subtotal - itemsDiscount - couponAmt - pointUse + delichar);
+        // 총 할인금액 = 상품할인 + 쿠폰할인 (포인트 제외)
+        int totalDiscountForDisplay = itemsDiscount + couponAmt;
+
+        // 총 결제금액 = 총 상품금액 - (상품+쿠폰 할인) + 배송비 (포인트 제외)
+        int totalPayable = Math.max(0, subtotal - (itemsDiscount + couponAmt + pointUse) + delichar);
 
         var sum = OrderPageSummaryDTO.builder()
                 .itemCount(lines.size())
                 .totalQuantity(totalQty)
                 .subtotalAmount(subtotal)
-                .discountAmount(itemsDiscount) // 상품 자체 할인 합
-                .couponAmount(couponAmt)
-                .pointUse(pointUse)
-                .delichar(delichar)            // ← 라인별 배송비 합산
+                .discountAmount(totalDiscountForDisplay) // 화면의 "총 할인금액"
+                .couponAmount(couponAmt)                 // 참고용
+                .pointUse(pointUse)                      // 화면의 "포인트 할인" 라인에 표시만
+                .delichar(delichar)
                 .totalPayable(totalPayable)
                 .rewardPoint((int) Math.floor(totalPayable * 0.01))
                 .itemsDiscountAmount(itemsDiscount)
