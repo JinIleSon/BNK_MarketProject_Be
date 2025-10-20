@@ -13,6 +13,8 @@ import java.util.List;
 @AllArgsConstructor
 public class ProductCompleteDTO {
     private int id;          // orders.id
+    private String orderCode;
+    private Integer orderId;             // ★ 템플릿 호환용(추가)
     private String payMethod;          // payments.method
     private String buyerName;          // 주문자 이름(표시용)
     private String buyerPhone;         // 주문자 연락처(표시용)

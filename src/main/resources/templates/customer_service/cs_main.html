@@ -18,7 +18,7 @@
         <div class="cs_section notice_section">
             <h2 class="section_title">
                 NOTICE
-                <a th:href="@{/cs/notice/list}" class="more_link">All</a>
+                <a th:href="@{/cs/notice/list}" class="more_link" style="color:#ccc;">All</a>
             </h2>
             <div class="section_list">
                 <ul th:each="notice, stat: ${pageResponseAdminAnnouncementDTO.dtoList}"
@@ -33,7 +33,7 @@
         <div class="cs_section faq_section">
             <h2 class="section_title">
                 FAQ
-                <a th:href="@{/cs/faq/list}" class="more_link">All</a>
+                <a th:href="@{/cs/faq/list}" class="more_link"style="color:#ccc;">All</a>
             </h2>
             <div class="faq_category">
                 <a th:href="@{/cs/faq/list?boardType=회원}">
@@ -66,7 +66,7 @@
         <div class="cs_section qna_section">
             <h2 class="section_title">
                 ASK NICHIYA
-                <a th:href="@{/cs/qna/list}" class="more_link">All</a>
+                <a th:href="@{/cs/qna/list}" class="more_link"style="color:#ccc;">All</a>
             </h2>
             <div class="section_list">
                 <ul th:each="ask, stat: ${pageResponseAdminInquiryDTO.dtoList}"
@@ -102,6 +102,77 @@
             
         </div>
 
+        <style>
+            /* 버튼 기본 형태 */
+            .section_title .more_link{
+                margin-left:auto;
+                position:relative;
+                display:inline-grid;       /* 한가운데 정렬 */
+                place-items:center;
+                height:28px;
+                padding:0 14px;            /* 가운데 정렬이라 별도 여백 필요 X */
+                border-radius:999px;
+                line-height:1;
+                color:#777 !important;     /* 기본 글자색 */
+                text-decoration:none;
+                transition: color .2s ease;
+                isolation:isolate;         /* z-index 제어 안정화 */
+                z-index:0;
+            }
+
+            /* 테두리/배경 */
+            .section_title .more_link::before{
+                content:"";
+                position:absolute; inset:0;
+                border:1px solid #000;
+                border-radius:inherit;
+                background:transparent;
+                opacity:.25;
+                transform:scale(.96);
+                transition: background .28s ease, opacity .28s ease, transform .28s ease;
+                z-index:-1;                /* 글자 뒤로 */
+            }
+
+            /* 화살표: 텍스트와 정확히 같은 중앙 위치(처음엔 숨김) */
+            .section_title .more_link::after{
+                content:"→";
+                position:absolute;
+                left:50%; top:50%;
+                transform:translate(-50%,-50%) scale(.96);
+                opacity:0;
+                transition: transform .28s ease, opacity .22s ease, color .2s ease;
+                z-index:1;                 /* 항상 위 */
+            }
+
+            /* 호버: 배경 채우고, 텍스트는 투명, 화살표만 보이도록 */
+            .section_title .more_link:hover,
+            .section_title .more_link:focus-visible{
+                color: transparent !important;       /* ← 텍스트만 사라짐 */
+            }
+            .section_title .more_link:hover::before,
+            .section_title .more_link:focus-visible::before{
+                background:#000; opacity:1; transform:scale(1);
+            }
+            .section_title .more_link:hover::after,
+            .section_title .more_link:focus-visible::after{
+                opacity:1; color:#fff;               /* 화살표만 남음(흰색) */
+                transform:translate(-50%,-50%) scale(1);
+            }
+
+            /* (선택) 포커스 테두리 */
+            .section_title .more_link:focus-visible{
+                outline:2px solid #000; outline-offset:2px;
+            }
+
+            /* 모션 최소화 환경 */
+            @media (prefers-reduced-motion: reduce){
+                .section_title .more_link,
+                .section_title .more_link::before,
+                .section_title .more_link::after{ transition:none; }
+            }
+
+
+        </style>
     </div>
 <div th:replace="~{main/footer.html}"></div>
     </body>

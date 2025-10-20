@@ -105,6 +105,90 @@
             -moz-osx-font-smoothing: grayscale;
         }
         .title-didone.ko{font-family: 'Noto Serif KR','Bodoni Moda',serif; font-weight:300;}
+        /* 왼쪽 대분류 활성화 */
+        .overlay__menu a[data-cat].is-active {
+            font-weight: 700; text-decoration: underline;
+        }
+        /* 오른쪽 소분류 활성화 */
+        .menu-grid a.is-current {
+            text-decoration: underline;
+            font-weight: 700;
+        }
+        /* ========== Overlay Category: underline only ========== */
+
+        /* 좌측 대분류: 기본은 밑줄 0 → 호버/포커스 시 차오름 */
+        .overlay__menu a[data-cat]{
+            position: relative;
+            display: inline-block;
+            color:#111;
+            text-decoration: none;
+            background: linear-gradient(currentColor,currentColor) left bottom / 0 1px no-repeat;
+            transition: background-size .25s ease;
+        }
+
+        /* 활성 대분류(클릭된 항목)는 밑줄 유지 */
+        .overlay__menu a[data-cat].is-active{
+            background-size: 100% 1px;
+            font-weight: 700;                 /* 기존 표시 방식은 유지 */
+        }
+
+        /* 호버/키보드 포커스 시 밑줄이 왼→오로 채워짐 */
+        .overlay__menu a[data-cat]:hover,
+        .overlay__menu a[data-cat]:focus-visible{
+            background-size: 100% 1px;
+            outline: none;
+        }
+
+        /* 우측 소분류 링크도 동일한 밑줄 모션만 적용 */
+        .menu-grid a, .menu-grid li a{
+            position: relative;
+            display: inline-block;
+            padding: 6px 0;
+            color:#111;
+            text-decoration: none;
+            background: linear-gradient(currentColor,currentColor) left bottom / 0 1px no-repeat;
+            transition: background-size .25s ease;
+        }
+
+        /* 소분류: 현재 카테고리 강조 */
+        .menu-grid a.is-current{
+            background-size: 100% 1px;
+            font-weight: 700;
+        }
+
+        /* 호버/포커스 시 밑줄만 */
+        .menu-grid a:hover,
+        .menu-grid a:focus-visible{
+            background-size: 100% 1px;
+            outline: none;
+        }
+        /* 밑줄 위치(아래에서 얼마나 띄울지) */
+        :root{ --underline-offset: 6px; } /* ↑ 값만 조절해서 미세 조정(3~8px 권장) */
+
+        /* 좌측 대분류 + 우측 소분류 공통 */
+        .overlay__menu a[data-cat],
+        .menu-grid a, .menu-grid li a{
+            background-position: left calc(100% - var(--underline-offset));
+            /* 기존 background-size 전환(hover)은 그대로 둡니다 */
+        }
+
+        /* 좌측 대분류 */
+        .overlay__menu a[data-cat].is-active,
+        .overlay__menu a[data-cat].is-active:hover,
+        .overlay__menu a[data-cat].is-active:focus-visible{
+            font-weight: 700;
+            text-decoration: none !important;   /* 초기 스타일의 underline 제거 */
+            background: none !important;        /* 우리가 만든 gradient-underline 제거 */
+        }
+
+        /* 우측 소분류 */
+        .menu-grid a.is-current,
+        .menu-grid a.is-current:hover,
+        .menu-grid a.is-current:focus-visible{
+            font-weight: 700;
+            text-decoration: none !important;
+            background: none !important;
+        }
     </style>
     <html xmlns:th="http://www.thymeleaf.org"
           xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
@@ -141,7 +225,6 @@
                     <!-- ② 로그인(관리자 아님: user/seller) -->
                     <th:block sec:authorize="isAuthenticated() and !hasAuthority('admin')">
                         <li><a th:href="@{/member/logout}"         style="text-decoration:none; color:black; font-size:14px;">로그아웃</a></li>
-                        <li><a th:href="@{/member/join}"           style="text-decoration:none; color:black; font-size:14px;">회원가입</a></li>
                         <li><a th:href="@{/mypage/mypage/main}"    style="text-decoration:none; color:black; font-size:14px;">마이페이지</a></li>
                         <li><a th:href="@{/product/cart}"                style="text-decoration:none; color:black; font-size:14px;">바스켓백</a></li>
                     </th:block>
@@ -228,16 +311,35 @@
             }
             .menu-grid li{ list-style: none; }
             #header{ display: contents; }
+            /* 1차(좌측 대분류) 밑줄 높이 */
+            .overlay__menu a[data-cat]{
+                --underline-offset: 2px;   /* 두 번째 코드와 동일 */
+            }
+
+            /* 2차(우측 소분류) 밑줄 높이 */
+            #subcol .menu-grid a{
+                --underline-offset: 1px;   /* 두 번째 코드와 동일 */
+            }
         </style>
 
         <div style="display: flex; margin-left:20%; margin-top:1%; width:100%;">
             <nav class="overlay__menu" style="width:100%;">
                 <div style="padding-top: 31px;">
-                    <a href="#" data-cat="fashion" style="margin-bottom: 10px;">패션</a>
-                    <a href="#" data-cat="beauty" style="margin-bottom: 10px;">뷰티</a>
-                    <a href="#" data-cat="electronics" style="margin-bottom: 10px;">전자제품</a>
-                    <a href="#" data-cat="home" style="margin-bottom: 10px;">홈</a>
-                    <a href="#" data-cat="leisure" style="margin-bottom: 10px;">레저</a>
+                    <div>
+                        <a href="#" data-cat="fashion" style="margin-bottom: 10px;">패션</a>
+                    </div>
+                    <div>
+                        <a href="#" data-cat="beauty" style="margin-bottom: 10px;">뷰티</a>
+                    </div>
+                    <div>
+                        <a href="#" data-cat="electronics" style="margin-bottom: 10px;">전자제품</a>
+                    </div>
+                    <div>
+                        <a href="#" data-cat="home" style="margin-bottom: 10px;">홈</a>
+                    </div>
+                    <div>
+                        <a href="#" data-cat="leisure" style="margin-bottom: 10px;">레저</a>
+                    </div>
                 </div>
                 <div id="subcol">
                     <!-- 패션 패널 -->
@@ -296,60 +398,86 @@
   </aside>
 
     <script>
-    const body     = document.body;
-    const menuBtn  = document.getElementById('menuBtn');
-    const closeBtn = document.getElementById('closeBtn');
-    const overlay  = document.getElementById('menuOverlay');
+        const body     = document.body;
+        const menuBtn  = document.getElementById('menuBtn');
+        const closeBtn = document.getElementById('closeBtn');
+        const overlay  = document.getElementById('menuOverlay');
 
-    function openMenu(){
-        overlay.classList.add('open');
-        overlay.setAttribute('aria-hidden', 'false');
-        menuBtn.setAttribute('aria-expanded', 'true');
-        body.style.overflow = 'hidden'; // 뒤 스크롤 잠금
-    }
-    function closeMenu(){
-        overlay.classList.remove('open');
-        overlay.setAttribute('aria-hidden', 'true');
-        menuBtn.setAttribute('aria-expanded', 'false');
-        body.style.overflow = '';
-    }
+        function openMenu(){
+            overlay.classList.add('open');
+            overlay.setAttribute('aria-hidden', 'false');
+            menuBtn.setAttribute('aria-expanded', 'true');
+            body.style.overflow = 'hidden';
+        }
+        function closeMenu(){
+            overlay.classList.remove('open');
+            overlay.setAttribute('aria-hidden', 'true');
+            menuBtn.setAttribute('aria-expanded', 'false');
+            body.style.overflow = '';
+        }
 
-    menuBtn.addEventListener('click', openMenu);
-    closeBtn.addEventListener('click', closeMenu);
-    overlay.addEventListener('click', (e) => {
-        // 빈 배경 클릭 시 닫기 (메뉴 콘텐츠 클릭은 무시)
-        if(e.target === overlay) closeMenu();
-    });
-    // Esc 키로 닫기
-    window.addEventListener('keydown', (e)=>{
-        if(e.key === 'Escape' && overlay.classList.contains('open')) closeMenu();
-    });
-    // ====== 새로 추가: 카테고리 클릭 시 페이드인 ======
-    // 매핑은 data-cat 값과 data-sub 값을 동일 키로 연결
-    const catLinks = document.querySelectorAll('.overlay__menu a[data-cat]');
-    const panels   = document.querySelectorAll('#subcol .panel');
+        menuBtn.addEventListener('click', openMenu);
+        closeBtn.addEventListener('click', closeMenu);
+        overlay.addEventListener('click', (e) => { if(e.target === overlay) closeMenu(); });
+        window.addEventListener('keydown', (e)=>{ if(e.key === 'Escape' && overlay.classList.contains('open')) closeMenu(); });
 
-    function setActiveCat(target){
-        catLinks.forEach(a => a.classList.remove('is-active'));
-        if(target) target.classList.add('is-active');
-    }
+        // ===== 카테고리 패널 제어 =====
+        const catLinks = document.querySelectorAll('.overlay__menu a[data-cat]');
+        const panels   = document.querySelectorAll('#subcol .panel');
 
-    function showPanel(key){
-        panels.forEach(p => p.classList.toggle('show', p.dataset.key === key));
-    }
+        function setActiveCat(target){
+            catLinks.forEach(a => a.classList.remove('is-active'));
+            if(target) target.classList.add('is-active');
+        }
+        function showPanel(key){
+            panels.forEach(p => p.classList.toggle('show', p.dataset.key === key));
+        }
 
-    catLinks.forEach(link => {
-    link.addEventListener('click', (e) => {
-            e.preventDefault();
-            const key = link.getAttribute('data-cat');
-            setActiveCat(link);
-            showPanel(key);
+        catLinks.forEach(link => {
+            link.addEventListener('click', (e) => {
+                e.preventDefault();
+                const key = link.getAttribute('data-cat');
+                setActiveCat(link);
+                showPanel(key);
+            });
         });
-    });
 
-    // 기본으로 한 패널 오픈(원하는 키로 바꾸세요)
-    setActiveCat(document.querySelector('.overlay__menu a[data-cat="fashion"]'));
-    showPanel('fashion');
+        // ========== NEW: categoryId가 있으면 해당 분류/소분류 자동 선택 ==========
+        // (1) 서버에서 심어준 categoryId 읽기 (없으면 null)
+        const catIdMeta = document.querySelector('meta[name="category-id"]');
+        const currentCategoryId = catIdMeta ? Number(catIdMeta.content) : null;
+
+        // (2) categoryId → 대분류 키 매핑
+        const catById = {
+            2:'fashion', 3:'fashion', 4:'fashion', 5:'fashion',
+            7:'beauty',  8:'beauty',
+            10:'electronics', 11:'electronics',
+            13:'home', 14:'home',
+            16:'leisure', 17:'leisure'
+        };
+
+        // (3) 대분류/소분류 자동 활성화
+        (function initCategoryUI(){
+            let defaultKey = 'fashion'; // categoryId가 없을 때 기본
+            if(Number.isInteger(currentCategoryId) && catById[currentCategoryId]){
+                const key = catById[currentCategoryId];
+
+                // 대분류 활성화 + 패널 오픈
+                const leftLink = document.querySelector(`.overlay__menu a[data-cat="${key}"]`);
+                setActiveCat(leftLink);
+                showPanel(key);
+
+                // 소분류(우측) 강조: 해당 categoryId를 포함하는 링크 찾아 표시
+                const subLink = document.querySelector(`#subcol .panel[data-key="${key}"] a[href*="categoryId=${currentCategoryId}"]`);
+                if(subLink){
+                    subLink.classList.add('is-current');
+                }
+            } else {
+                // 기존 기본 동작
+                setActiveCat(document.querySelector('.overlay__menu a[data-cat="fashion"]'));
+                showPanel(defaultKey);
+            }
+        })();
     </script>
 
 

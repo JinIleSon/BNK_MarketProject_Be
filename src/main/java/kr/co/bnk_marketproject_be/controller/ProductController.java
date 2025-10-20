@@ -5,9 +5,11 @@ import kr.co.bnk_marketproject_be.mapper.ProductsMapper;
 import kr.co.bnk_marketproject_be.security.MyUserDetails;
 import kr.co.bnk_marketproject_be.service.OrdersService;
 import kr.co.bnk_marketproject_be.service.ProductService;
+import kr.co.bnk_marketproject_be.service.impl.ProductServiceImpl;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
@@ -16,6 +18,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import java.security.Principal;
 import java.util.List;
 import java.util.Map;
 
@@ -27,6 +30,7 @@ public class ProductController {
     private final ProductsMapper productsMapper;
     private final ProductService productService;
     private final OrdersService ordersService;
+    private final ProductServiceImpl  productServiceImpl;
 
     /** 현재 로그인 사용자의 DB PK(id) 반환. 미로그인 시 401 */
     private int currentUserIdOr401(Authentication auth) {
@@ -81,6 +85,7 @@ public class ProductController {
     public String product_views(@RequestParam int id,
                                 @RequestParam(defaultValue = "1") int rpg,
                                 @RequestParam(defaultValue = "5") int rsize,
+                                @RequestParam(required=false) Integer categoryId,
                                 Model model) {
 
         ProductViewsDTO dto = productService.getProductDetail(id);
@@ -93,9 +98,24 @@ public class ProductController {
         PageResponseProductDTO<ProductBoardsDTO> reviewPage =
                 productService.getProductReviewPage(id, req);
 
+        ProductsDTO seller = productServiceImpl.selectProductSeller(id);
+
+        model.addAttribute("categoryId", categoryId);
         model.addAttribute("product", dto);
         model.addAttribute("reviewPage", reviewPage);
+        model.addAttribute("seller",seller);
         return "product/product_views";
+    }
+
+    @PostMapping("/product/coupons/claim")
+    public ResponseEntity<?> claimCoupon(Principal principal) {
+        if (principal == null) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+                    .body(Map.of("ok", false, "reason", "UNAUTHORIZED"));
+        }
+        // user_id = principal.getName()
+        int inserted = productServiceImpl.insertCouponUser(principal.getName()); // 1이면 성공
+        return ResponseEntity.ok(Map.of("ok", inserted > 0));
     }
 
     /* 장바구니 */
@@ -184,42 +204,20 @@ public class ProductController {
                                @ModelAttribute OrderPageSubmitDTO submit,
                                RedirectAttributes ra) {
         int uid = currentUserIdOr401(auth);
-        try {
-            int orderId = ordersService.checkout(uid, submit);
-            ra.addAttribute("orderId", orderId);
-            return "redirect:/product/complete";
-        } catch (IllegalArgumentException e) {
-            ra.addFlashAttribute("error", e.getMessage());
-            return "redirect:/product/order";
-        } catch (Exception e) {
-            ra.addFlashAttribute("error", "주문 처리 중 오류가 발생했습니다. 잠시 후 다시 시도해 주세요.");
-            return "redirect:/product/order";
-        }
+        int orderId = ordersService.checkout(uid, submit);
+
+        ra.addAttribute("orderId", orderId);           // {orderId} 바인딩
+        return "redirect:/product/complete/{orderId}"; // ★ 경로변수 사용
     }
 
     /* 주문 완료 */
-    @GetMapping("/product/complete")
-    public String product_complete(Authentication auth,
-                                   @RequestParam int orderId,
-                                   Model model,
-                                   RedirectAttributes ra) {
-        currentUserIdOr401(auth); // 소유자 검증 추가하려면 서비스에서 검사
-        try {
-            ProductCompleteDTO complete = ordersService.getComplete(orderId);
-            if (complete == null) {
-                ra.addFlashAttribute("error", "해당 주문을 찾을 수 없거나 접근 권한이 없습니다.");
-                return "redirect:/product/order";
-            }
-            model.addAttribute("complete", complete);
-            return "product/product_complete";
-        } catch (IllegalArgumentException e) {
-            ra.addFlashAttribute("error", e.getMessage());
-            return "redirect:/product/order";
-        } catch (Exception e) {
-            ra.addFlashAttribute("error", "주문 완료 정보를 불러오지 못했습니다. 잠시 후 다시 시도해 주세요.");
-            return "redirect:/product/order";
-        }
+    @GetMapping("/product/complete/{orderId}")
+    public String complete(@PathVariable int orderId, Model model) {
+        var vm = ordersService.getComplete(orderId);
+        model.addAttribute("order", vm);
+        return "product/product_complete"; // 템플릿 이
     }
+
 
     /* 상품 검색*/
     @GetMapping("/product/header/search")
@@ -255,6 +253,8 @@ public class ProductController {
         int total = productsMapper.selectProductSearchTotal(req);
 
         var page = new PageResponseProductDTO<>(req, list, total);
+
+
 
         model.addAttribute("pageResponseProductDTO", page);
         model.addAttribute("sort", sort);

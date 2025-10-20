@@ -18,4 +18,8 @@ public class OrderPageSummaryDTO {
     private int delichar;      // 배송비
     private int totalPayable;     // 최종 결제금액
     private int rewardPoint;      // 적립 포인트
+
+    private Integer totalQuantity;        // Σ quantity (총 수량)
+    private Integer itemsDiscountAmount;  // Σ (unitDiscount * quantity) ← 행 할인 합(쿠폰/포인트 제외)
+
 }

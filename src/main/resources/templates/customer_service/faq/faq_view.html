@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="ko">
+<html xmlns:th="http://www.thymeleaf.org" lang="ko">
 <head>
     <meta charset="UTF-8" />
     <title>FAQ 상세 보기</title>
@@ -8,6 +8,351 @@
 </head>
 <style>
 
+    /* ============ 공통 버튼 ============ */
+    .icon-btn {
+        background:none;
+        border:1px solid #000;
+        cursor:pointer;
+        width:40px;
+        height:40px;
+        display:grid;
+        place-items:center;
+    }
+    .title-didone{
+        text-align:center;
+        font-family: 'Bodoni Moda','Didot','Bodoni 72','Times New Roman',serif;
+        margin-left:45px;
+        font-weight:400;
+        letter-spacing:.02em;
+        -webkit-font-smoothing: antialiased;
+        -moz-osx-font-smoothing: grayscale;
+    }
+    .title-didone.ko{font-family: 'Noto Serif KR','Bodoni Moda',serif; font-weight:300;}
+
+    /* 1) 스크림(배경) - 화면 전체 덮음 + 블러 */
+    .overlay {
+        position: fixed;
+        inset: 0;
+        background: rgba(255,255,255,0.28);
+        backdrop-filter: blur(1px);
+        -webkit-backdrop-filter: blur(1px);
+        opacity: 0;
+        pointer-events: none;
+        transition: opacity .25s ease;
+        z-index: 1000;
+    }
+    .overlay.open {
+        opacity: 1;
+        pointer-events: auto;
+    }
+
+    /* 2) 왼쪽에서 나오는 패널 */
+    .overlay__panel {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 50vw;
+        max-width: 900px;
+        height: 100%;
+        background: white;
+        transform: translateX(-100%);
+        transition: transform .35s ease;
+        will-change: transform;
+        display: flex;
+        flex-direction: column;
+    }
+    .overlay.open .overlay__panel {
+        transform: translateX(0);
+    }
+
+    /* 상단 닫기 버튼과 로고 영역 */
+    .overlay__top {
+        display:flex;
+        align-items:center;
+        gap:24px;
+        padding:20px;
+    }
+    .overlay__close {
+        background:none;
+        border:none;
+        width:100px;
+        height:50px;
+        cursor:pointer;
+        position:relative;
+        margin-left:0.3%;
+    }
+    .overlay__close::before,
+    .overlay__close::after {
+        content:"";
+        position:absolute;
+        left:15px;
+        right:10px;
+        top:25px;
+        height:2px;
+        background:#000;
+    }
+    .overlay__close::before {
+        transform:rotate(45deg);
+    }
+    .overlay__close::after {
+        transform:rotate(-45deg);
+    }
+
+    /* 메뉴 그리드 */
+    .overlay__menu {
+        display:grid;
+        grid-template-columns: 180px auto;
+        gap:24px;
+        padding:40px 20px;
+        font-size:16px;
+    }
+    .overlay__menu a {
+        text-decoration:none;
+        color:#000;
+        display:block;
+        padding:8px 0;
+    }
+    .overlay__menu strong {
+        font-weight:700;
+    }
+    .overlay__menu a[data-cat].is-active {
+        font-weight:700;
+        text-decoration: underline;
+    }
+
+    /* 메뉴 오른쪽 서브패널 관련 */
+    .sub {
+        opacity: 0;
+        transform: translateY(6px);
+        pointer-events: none;
+        transition: opacity .28s ease, transform .28s ease;
+        display: none;
+    }
+    .sub.show {
+        display: block;
+        opacity: 1;
+        transform: translateY(0);
+        pointer-events: auto;
+    }
+
+    #subcol {
+        grid-row: span 2;
+        height:900px;
+        position: relative;
+        padding: 0;
+    }
+    #subcol .sub {
+        padding:0;
+        margin:0;
+    }
+    #subcol .panel {
+        position: absolute;
+        inset: 0;
+        padding: 20px;
+        overflow: auto;
+        opacity: 0;
+        transform: translateY(6px);
+        transition: opacity .35s ease, transform .35s ease;
+        visibility: hidden;
+        pointer-events: none;
+    }
+    #subcol .panel.show {
+        opacity: 1;
+        transform: none;
+        visibility: visible;
+        pointer-events: auto;
+    }
+
+    .menu-grid {
+        display: grid;
+        grid-template-columns: repeat(2, auto);
+        column-gap: 50px;
+        row-gap: 6px;
+        padding: 0;
+        margin: 0;
+        justify-content: start;
+    }
+    .menu-grid li {
+        list-style: none;
+    }
+
+    /* FAQ 전용 영역 스타일 */
+    body {
+        font-family: 'Malgun Gothic', '맑은 고딕', sans-serif;
+        font-size: 14px;
+        color: #333;
+        line-height: 1.5;
+        background-color: #f8f8f8;
+    }
+    a{ color:inherit; text-decoration:none; }
+    .faq-item {
+        border-bottom: 1px solid #ccc;
+        padding: 10px 0;
+    }
+    .faq-item .faq-title {
+        width: 100%;
+        text-align: left;
+        padding: 15px;
+        background-color: #fff;
+        border: none;
+        font-size: 15px;
+        font-weight: bold;
+        color: #333;
+        cursor: pointer;
+        position: relative;
+    }
+    .faq-item .faq-content {
+        display: none;
+        padding: 20px 15px;
+        background-color: #f9f9f9;
+        font-size: 13px;
+        line-height: 1.6;
+        color: #555;
+    }
+    .btn_area {
+        margin-top: 20px;
+        text-align: center;
+    }
+    .btn_more {
+        padding: 10px 20px;
+        background-color: #007BFF;
+        color: white;
+        border: none;
+        cursor: pointer;
+        border-radius: 4px;
+    }
+    .faq-title::before {
+        content: "Q.";
+        color: #007bff;
+        font-weight: bold;
+        margin-left: 6px;
+        margin-right: 6px;
+    }
+
+    body {
+        font-family: 'Malgun Gothic', '맑은 고딕', sans-serif;
+        font-size: 14px;
+        color: #333;
+        line-height: 1.5;
+        background-color: #f8f8f8;
+    }
+
+    h1 {
+        font-size: 24px;
+        font-weight: bold;
+        color: #000;
+        margin-bottom: 20px;
+    }
+
+    table {
+        width: 100%;
+        border-collapse: collapse;
+    }
+
+    table th, table td {
+        padding: 15px;
+        text-align: center;
+        border-bottom: 1px solid #ddd;
+    }
+
+    table th {
+        background-color: #f4f4f4;
+        font-weight: bold;
+    }
+
+    .btn_area {
+        text-align: right;
+        margin-top: 20px;
+    }
+
+    .btn_area .btn_write, .btn_area .btn_cancel, .btn_area .btn_submit, .btn_area .btn_list, .btn_area .btn_more {
+        display: inline-block;
+        padding: 10px 20px;
+        font-size: 14px;
+        text-decoration: none;
+        border: 1px solid #ccc;
+        background-color: #eee;
+        color: #333;
+        cursor: pointer;
+    }
+
+    .btn_area .btn_write {
+        background-color: #555;
+        color: #fff;
+        border-color: #555;
+    }
+
+    .btn_area .btn_submit {
+        background-color: #007bff;
+        color: #fff;
+        border-color: #007bff;
+    }
+
+    .faq_section h2 {
+        font-size: 20px;
+        font-weight: bold;
+        color: #555;
+        margin-bottom: 15px;
+    }
+
+    .faq_item .faq_q {
+        width: 100%;
+        text-align: left;
+        padding: 15px;
+        background-color: #fff;
+        border: none;
+        font-size: 15px;
+        font-weight: bold;
+        color: #333;
+        cursor: pointer;
+        position: relative;
+    }
+
+    .faq_item .faq_q:before {
+        content: 'Q.';
+        color: #007bff;
+        font-weight: bold;
+        margin-right: 5px;
+    }
+
+    .faq_item .faq_q:after {
+        content: '+';
+        position: absolute;
+        right: 15px;
+        font-size: 20px;
+        font-weight: normal;
+    }
+
+    .faq_item.open .faq_q:after {
+        content: '-';
+    }
+
+    .faq_item .faq_a {
+        display: none;
+        padding: 20px 15px;
+        background-color: #f9f9f9;
+        font-size: 13px;
+        line-height: 1.6;
+        color: #555;
+    }
+
+    .faq_item.open .faq_a {
+        display: block;
+    }
+
+    .btn_area {
+        margin-top: 20px;
+        text-align: center;
+    }
+
+    .btn_more {
+        padding: 10px 20px;
+        background-color: #007BFF; /* 파란색 */
+        color: white;
+        border: none;
+        cursor: pointer;
+        border-radius: 4px;
+    }
     .faq-title {
         font-size: 20px;
         font-weight: bold;
@@ -52,11 +397,239 @@
         text-decoration: none;
         transition: background .25s ease;
     }
-    
+    /* ========== Overlay Category: underline only ========== */
+
+    /* 좌측 대분류: 기본은 밑줄 0 → 호버/포커스 시 차오름 */
+    .overlay__menu a[data-cat]{
+        --underline-offset: 4px !important;
+        position: relative;
+        display: inline-block;
+        color:#111;
+        text-decoration: none;
+        background: linear-gradient(currentColor,currentColor) left bottom / 0 1px no-repeat;
+        transition: background-size .25s ease;
+    }
+
+    /* 활성 대분류(클릭된 항목)는 밑줄 유지 */
+    .overlay__menu a[data-cat].is-active{
+        background-size: 100% 1px;
+        font-weight: 700;                 /* 기존 표시 방식은 유지 */
+    }
+
+    /* 호버/키보드 포커스 시 밑줄이 왼→오로 채워짐 */
+    .overlay__menu a[data-cat]:hover,
+    .overlay__menu a[data-cat]:focus-visible{
+        background-size: 100% 1px;
+        outline: none;
+    }
+
+    /* 우측 소분류 링크도 동일한 밑줄 모션만 적용 */
+    .menu-grid a, .menu-grid li a{
+        position: relative;
+        display: inline-block;
+        padding: 6px 0;
+        color:#111;
+        text-decoration: none;
+        background: linear-gradient(currentColor,currentColor) left bottom / 0 1px no-repeat;
+        transition: background-size .25s ease;
+    }
+
+    /* 소분류: 현재 카테고리 강조 */
+    .menu-grid a.is-current{
+        background-size: 100% 1px;
+        font-weight: 700;
+    }
+
+    /* 호버/포커스 시 밑줄만 */
+    .menu-grid a:hover,
+    .menu-grid a:focus-visible{
+        background-size: 100% 1px;
+        outline: none;
+    }
+    /* 밑줄 위치(아래에서 얼마나 띄울지) */
+    :root{ --underline-offset: 6px; } /* ↑ 값만 조절해서 미세 조정(3~8px 권장) */
+
+    /* 좌측 대분류 + 우측 소분류 공통 */
+    .overlay__menu a[data-cat],
+    .menu-grid a, .menu-grid li a{
+        background-position: left calc(100% - var(--underline-offset));
+        /* 기존 background-size 전환(hover)은 그대로 둡니다 */
+    }
+
+    /* 좌측 대분류 */
+    .overlay__menu a[data-cat].is-active,
+    .overlay__menu a[data-cat].is-active:hover,
+    .overlay__menu a[data-cat].is-active:focus-visible{
+        font-weight: 700;
+        text-decoration: none !important;   /* 초기 스타일의 underline 제거 */
+        background: none !important;        /* 우리가 만든 gradient-underline 제거 */
+    }
+
+    .overlay__menu a:not([data-cat]) {
+        position: relative;
+        display: inline-block;
+        background: linear-gradient(currentColor,currentColor)
+        left calc(100% - var(--underline-offset)) / 0 1px no-repeat;
+        transition: background-size .25s ease;
+    }
+    .overlay__menu a:not([data-cat]):hover,
+    .overlay__menu a:not([data-cat]):focus-visible{
+        background-size: 100% 1px;
+        outline: none;
+    }
+    /* 우측 소분류 */
+    .menu-grid a.is-current,
+    .menu-grid a.is-current:hover,
+    .menu-grid a.is-current:focus-visible{
+        font-weight: 700;
+        text-decoration: none !important;
+        background: none !important;
+    }
+    /* 현재 페이지(자주묻는질문) — 밑줄 막고 굵게만 */
+    .overlay__menu a.nav-current,
+    .overlay__menu a.nav-current:hover,
+    .overlay__menu a.nav-current:focus-visible{
+        font-weight: 700;
+        background: none !important;     /* gradient 밑줄 제거 */
+        text-decoration: none !important;
+    }
+    /* 좌측 대분류(모든 data-cat 링크) 밑줄 높이 통일 */
+    .overlay__menu a[data-cat]{
+        --underline-offset: 3px;   /* 숫자만 바꿔서 높이 미세조정 */
+    }
+    /* 오른쪽 패널 제목 링크(h3 감싼 a) 공통 적용 */
+    #subcol .panel > a{
+        --underline-offset: 3px;
+        display: inline-block; /* (안정성) */
+    }
+    #subcol .panel > a h3{
+        margin: 0;
+        line-height: 1.2;
+    }
+    /* 오버레이 오른쪽 2차 카테고리만 밑줄 간격 조정 */
+    #subcol .menu-grid a{
+        --underline-offset: 3px;  /* ↑ 숫자 키울수록 밑줄이 더 아래로 떨어짐(예: 8~12px 권장) */
+    }
 </style>
 
 <body>
-<div th:replace="~{main/header.html}"></div>
+<header th:replace="~{main/header :: header}"></header>
+
+<aside id="menuOverlay" class="overlay" aria-hidden="true">
+    <div class="overlay__panel">
+        <div class="overlay__top">
+            <button id="closeBtn" class="overlay__close" aria-label="메뉴 닫기"></button>
+            <div style="font-size:72px; font-weight:800; letter-spacing:-10px; "class="title-didone">NICHIYA</div>
+        </div>
+
+        <div style="display:flex; margin-left:20%; margin-top:1%; width:100%;">
+            <nav class="overlay__menu" style="width:100%;">
+                <div>
+                    <div>
+                        <a th:href="@{/cs/notice/list}">공지사항</a>
+                    </div>
+                    <div>
+                        <a th:href="@{/cs/faq/list}" class="nav-current"><b>자주묻는질문</b></a>
+                    </div>
+                    <div style="margin-bottom:20px;">
+                        <a th:href="@{/cs/qna/list}">QNA</a><br>
+                    </div>
+                    <div>
+                        <a href="#" data-cat="member">회원</a>
+                    </div>
+                    <div style="">
+                        <a href="#" data-cat="coupon">쿠폰/이벤트</a>
+                    </div>
+                    <div>
+                        <a href="#" data-cat="order">주문/결제</a>
+                    </div>
+                    <div>
+                        <a href="#" data-cat="delivery">배송</a>
+                    </div>
+                    <div>
+                        <a href="#" data-cat="return">취소/반품/교환</a>
+                    </div>
+                    <div>
+                        <a href="#" data-cat="travel">여행/숙박/항공</a>
+                    </div>
+                    <div>
+                        <a href="#" data-cat="safe">안전거래</a>
+                    </div>
+                </div>
+                <div id="subcol">
+                    <!-- 회원 -->
+                    <section class="panel" data-key="member">
+                        <a th:href="@{/cs/faq/list(boardType='회원')}"><h3>회원</h3></a>
+                        <ul class="menu-grid" style="margin-top:20px;">
+                            <li><a th:href="@{/cs/faq/list(boardType='회원', subType='로그인')}">로그인</a></li>
+                            <li><a th:href="@{/cs/faq/list(boardType='회원', subType='가입')}">가입</a></li>
+                            <li><a th:href="@{/cs/faq/list(boardType='회원', subType='탈퇴')}">탈퇴</a></li>
+                        </ul>
+                    </section>
+
+                    <!-- 쿠폰/이벤트 -->
+                    <section class="panel" data-key="coupon">
+                        <a th:href="@{/cs/faq/list(boardType='쿠폰/이벤트')}"><h3>쿠폰/이벤트</h3></a>
+                        <ul class="menu-grid" style="margin-top:20px;">
+                            <li><a th:href="@{/cs/faq/list(boardType='쿠폰/이벤트', subType='쿠폰발급')}">쿠폰발급</a></li>
+                            <li><a th:href="@{/cs/faq/list(boardType='쿠폰/이벤트', subType='쿠폰사용')}">쿠폰사용</a></li>
+                            <li><a th:href="@{/cs/faq/list(boardType='쿠폰/이벤트', subType='이벤트참여')}">이벤트참여</a></li>
+                            <li><a th:href="@{/cs/faq/list(boardType='쿠폰/이벤트', subType='당첨확인')}">당첨확인</a></li>
+                        </ul>
+                    </section>
+
+                    <!-- 주문/결제 -->
+                    <section class="panel" data-key="order">
+                        <a th:href="@{/cs/faq/list(boardType='주문/결제')}"><h3>주문/결제</h3></a>
+                        <ul class="menu-grid" style="margin-top:20px;">
+                            <li><a th:href="@{/cs/faq/list(boardType='주문/결제', subType='주문방법')}">주문방법</a></li>
+                            <li><a th:href="@{/cs/faq/list(boardType='주문/결제', subType='결제수단')}">결제수단</a></li>
+                            <li><a th:href="@{/cs/faq/list(boardType='주문/결제', subType='결제오류')}">결제오류</a></li>
+                        </ul>
+                    </section>
+
+                    <!-- 배송 -->
+                    <section class="panel" data-key="delivery">
+                        <a th:href="@{/cs/faq/list(boardType='배송')}"><h3>배송</h3></a>
+                        <ul class="menu-grid" style="margin-top:20px;">
+                            <li><a th:href="@{/cs/faq/list(boardType='배송', subType='배송조회')}">배송조회</a></li>
+                            <li><a th:href="@{/cs/faq/list(boardType='배송', subType='배송비')}">배송비</a></li>
+                            <li><a th:href="@{/cs/faq/list(boardType='배송', subType='해외배송')}">해외배송</a></li>
+                        </ul>
+                    </section>
+
+                    <!-- 취소/반품/교환 -->
+                    <section class="panel" data-key="return">
+                        <a th:href="@{/cs/faq/list(boardType='취소/반품/교환')}"><h3>취소/반품/교환</h3></a>
+                        <ul class="menu-grid" style="margin-top:20px;">
+                            <li><a th:href="@{/cs/faq/list(boardType='취소/반품/교환', subType='주문취소')}">주문취소</a></li>
+                            <li><a th:href="@{/cs/faq/list(boardType='취소/반품/교환', subType='반품')}">반품</a></li>
+                            <li><a th:href="@{/cs/faq/list(boardType='취소/반품/교환', subType='교환')}">교환</a></li>
+                        </ul>
+                    </section>
+
+                    <!-- 여행/숙박/항공 -->
+                    <section class="panel" data-key="travel">
+                        <a th:href="@{/cs/faq/list(boardType='여행/숙박/항공')}"><h3>여행/숙박/항공</h3></a>
+                        <ul class="menu-grid" style="margin-top:20px;">
+                            <li><a th:href="@{/cs/faq/list(boardType='여행/숙박/항공', subType='예약')}">예약</a></li>
+                            <li><a th:href="@{/cs/faq/list(boardType='여행/숙박/항공', subType='변경/취소')}">변경/취소</a></li>
+                        </ul>
+                    </section>
+
+                    <!-- 안전거래 -->
+                    <section class="panel" data-key="safe">
+                        <a th:href="@{/cs/faq/list(boardType='안전거래')}"><h3>안전거래</h3></a>
+                        <ul class="menu-grid" style="margin-top:20px;">
+                            <li><a th:href="@{/cs/faq/list(boardType='안전거래', subType='안전결제')}">안전결제</a></li>
+                            <li><a th:href="@{/cs/faq/list(boardType='안전거래', subType='사기주의')}">사기주의</a></li>
+                        </ul>
+                    </section>
+                </div>
+            </nav>
+        </div>
+    </div>
+</aside>
 
 <div class="cs_faq_list_wrap">
     <h1 id="category-title">FAQ</h1>
@@ -221,32 +794,142 @@
 <div id="footer"></div>
 <!--슬라이드-->
 <script>
-    document.querySelectorAll('.main-slider').forEach((slider) => {
-        const slides = slider.querySelector('.main-slides');
-        const viewport = slider.querySelector('.viewport');
+    document.addEventListener("DOMContentLoaded", () => {
+        const items = document.querySelectorAll(".faq-item");
+        const moreBtn = document.getElementById("btn-more");
+        const lessBtn = document.getElementById("btn-less");
 
-        let index = 0;
-        const items = Array.from(slides.children); // <a> 단위를 슬라이드로
-        let prevBtn = slider.querySelector('.prev');
-        let nextBtn = slider.querySelector('.next');
-        const total = items.length;
+        let visible = 3;
+        const step = 3;
+        const max = 10;
 
-        function update() {
-            const width = viewport.clientWidth;
-            slides.style.transform = `translateX(-${index * width}px)`;
+        function render() {
+            items.forEach((item, i) => {
+                item.style.display = i < visible ? "block" : "none";
+            });
+            moreBtn.style.display = visible < Math.min(items.length, max) ? "inline-block" : "none";
+            lessBtn.style.display = visible >= Math.min(items.length, max) ? "inline-block" : "none";
         }
 
-        // 각 슬라이드 폭 고정
-        items.forEach(el => {
-            el.style.flex = '0 0 100%';
+        moreBtn.addEventListener("click", () => {
+            visible = Math.min(visible + step, max, items.length);
+            render();
         });
 
-        nextBtn?.addEventListener('click', () => { index = (index + 1) % total; update(); });
-        prevBtn?.addEventListener('click', () => { index = (index - 1 + total) % total; update(); });
+        lessBtn.addEventListener("click", () => {
+            visible = 3;
+            render();
+            window.scrollTo({ top: 0, behavior: "smooth" });
+        });
 
-        window.addEventListener('resize', update);
-        update();
+        render();
     });
+
+    // Q/A 토글 기능
+    function toggleContent(btn) {
+        const content = btn.nextElementSibling;
+        content.style.display = content.style.display === "block" ? "none" : "block";
+    }
+</script>
+
+<!-- 구분선 -->
+<script>
+    // --- 요소 가져오기 ---
+    const body     = document.body;
+    const menuBtn  = document.getElementById('menuBtn');   // 왼쪽 상단 버튼
+    const closeBtn = document.getElementById('closeBtn');  // X 버튼
+    const overlay  = document.getElementById('menuOverlay'); // 전체 오버레이
+
+    // --- 메뉴 열기 ---
+    function openMenu(){
+        overlay.classList.add('open');  // CSS .open 적용 → 왼쪽에서 패널 슬라이드
+        overlay.setAttribute('aria-hidden', 'false');
+        menuBtn.setAttribute('aria-expanded', 'true');
+        body.style.overflow = 'hidden'; // 배경 스크롤 막음
+    }
+
+    // --- 메뉴 닫기 ---
+    function closeMenu(){
+        overlay.classList.remove('open');
+        overlay.setAttribute('aria-hidden', 'true');
+        menuBtn.setAttribute('aria-expanded', 'false');
+        body.style.overflow = ''; // 스크롤 다시 가능
+    }
+
+    // --- 이벤트 연결 ---
+    if(menuBtn && closeBtn && overlay){
+        menuBtn.addEventListener('click', openMenu); // 버튼 클릭 시 열기
+        closeBtn.addEventListener('click', closeMenu); // X 버튼 클릭 시 닫기
+
+        // 배경 클릭 시 닫기
+        overlay.addEventListener('click', (e) => {
+            if(e.target === overlay) closeMenu();
+        });
+
+        // ESC 키 눌렀을 때 닫기
+        window.addEventListener('keydown', (e)=>{
+            if(e.key === 'Escape' && overlay.classList.contains('open')) closeMenu();
+        });
+    }
+</script>
+
+<script>
+    // --- 왼쪽 카테고리 클릭 시 오른쪽 패널 열기 ---
+    const menuLinks = document.querySelectorAll('.overlay__menu a[data-cat]');
+    const panels    = document.querySelectorAll('#subcol .panel');
+
+    menuLinks.forEach(link => {
+        link.addEventListener('click', (e) => {
+            e.preventDefault();
+
+            // 1. 모든 패널 숨기기
+            panels.forEach(p => p.classList.remove('show'));
+
+            // 2. 클릭한 카테고리 가져오기
+            const key = link.getAttribute('data-cat');
+            const panel = document.querySelector(`#subcol .panel[data-key="${key}"]`);
+
+            // 3. 해당 패널만 보이기
+            if (panel) {
+                panel.classList.add('show');
+            }
+
+            // 4. 왼쪽 메뉴 active 처리 (선택사항)
+            menuLinks.forEach(l => l.classList.remove('is-active'));
+            link.classList.add('is-active');
+        });
+    });
+    (function () {
+        // 현재 경로에서 컨텍스트 경로 추출 (예: /NICHIYA/... -> /NICHIYA/)
+        var path = window.location.pathname;               // 예: "/NICHIYA/main/main/page"
+        var segs = path.split('/').filter(Boolean);        // ["NICHIYA","main","main","page"]
+        var ctx = segs.length ? ('/' + segs[0] + '/') : '/'; // "/NICHIYA/" 또는 "/"
+
+        // favicon 절대경로 구성
+        var href = ctx + 'favicon.ico';
+
+        // 캐시 무효화(개발 중에만 유지)
+        var ver = Date.now();
+
+        // 기존 아이콘 링크 제거
+        document.head.querySelectorAll('link[rel="icon"], link[rel="shortcut icon"]').forEach(function(n){ n.remove(); });
+
+        // 새 아이콘 링크 주입
+        var l1 = document.createElement('link');
+        l1.rel = 'icon';
+        l1.type = 'image/x-icon';
+        l1.href = href + '?v=' + ver;
+        document.head.appendChild(l1);
+
+        var l2 = document.createElement('link');
+        l2.rel = 'shortcut icon';
+        l2.type = 'image/x-icon';
+        l2.href = href + '?v=' + ver;
+        document.head.appendChild(l2);
+    })();
+
+    // 공유 title 조각
+    document.title = 'NICHIYA';
 </script>
 <script>
     /* 탭으로 패널 전환 */
@@ -271,6 +954,37 @@
         /* 초기 상태 */
         setActive(0);
     })();
+    (function () {
+        // 현재 경로에서 컨텍스트 경로 추출 (예: /NICHIYA/... -> /NICHIYA/)
+        var path = window.location.pathname;               // 예: "/NICHIYA/main/main/page"
+        var segs = path.split('/').filter(Boolean);        // ["NICHIYA","main","main","page"]
+        var ctx = segs.length ? ('/' + segs[0] + '/') : '/'; // "/NICHIYA/" 또는 "/"
+
+        // favicon 절대경로 구성
+        var href = ctx + 'favicon.ico';
+
+        // 캐시 무효화(개발 중에만 유지)
+        var ver = Date.now();
+
+        // 기존 아이콘 링크 제거
+        document.head.querySelectorAll('link[rel="icon"], link[rel="shortcut icon"]').forEach(function(n){ n.remove(); });
+
+        // 새 아이콘 링크 주입
+        var l1 = document.createElement('link');
+        l1.rel = 'icon';
+        l1.type = 'image/x-icon';
+        l1.href = href + '?v=' + ver;
+        document.head.appendChild(l1);
+
+        var l2 = document.createElement('link');
+        l2.rel = 'shortcut icon';
+        l2.type = 'image/x-icon';
+        l2.href = href + '?v=' + ver;
+        document.head.appendChild(l2);
+    })();
+
+    // 공유 title 조각
+    document.title = 'NICHIYA';
 </script>
 <div th:replace="~{main/footer.html}"></div>
 </body>

@@ -13,7 +13,7 @@
             o.status,
             o.total_amount,
             TO_CHAR(o.created_at, 'YYYY-MM-DD') AS created_at,
-            o.order_code,
+            o.order_code AS order_code,
 
             u.user_id AS userId,
             u.name AS user_name,
@@ -23,7 +23,11 @@
             oi.id AS order_item_id,
             oi.products_id AS products_id,
             pr.product_name AS product_name,
-            pr.price AS price,
+            -- ✅ NVL을 사용해 NULL → 0으로 변환하고 CASE 처리
+            (CASE
+                 WHEN NVL(oi.price, 0) != 0 THEN oi.price
+                 ELSE pr.price
+                END) AS price_fixed,
             oi.quantity AS quantity,
             pi.url AS url
         FROM ORDERS o
@@ -50,11 +54,11 @@
         <result property="method" column="method"/>
         <result property="company_name" column="company_name"/>
 
-        <collection property="orderItems" ofType="kr.co.bnk_marketproject_be.dto.OrderItemsDTO">
+        <collection property="orderItems" ofType="kr.co.bnk_marketproject_be.dto.OrderItemsDTO" autoMapping="false">
             <id property="id" column="order_item_id"/>
             <result property="products_id" column="products_id"/>
             <result property="productName" column="product_name"/>
-            <result property="price" column="price"/>
+            <result property="price" column="price_fixed"/>
             <result property="quantity" column="quantity"/>
             <result property="url" column="url"/>
         </collection>
@@ -174,15 +178,19 @@
 
     <select id="findOrderItemsByOrderId" resultType="kr.co.bnk_marketproject_be.dto.OrderItemsDTO">
         SELECT
-            oi.id,
-            oi.orders_id,
-            oi.products_id,
-            oi.product_options_id,
-            oi.quantity,
-            oi.price,
-            pr.product_name AS productName
+        oi.id,
+        oi.orders_id,
+        oi.products_id,
+        oi.product_options_id,
+        oi.quantity,
+        oi.price,
+        pr.product_name AS productName,
+        pi.url AS url
         FROM ORDER_ITEMS oi
-                 JOIN PRODUCTS pr ON pr.id = oi.products_id
+        JOIN PRODUCTS pr ON pr.id = oi.products_id
+        LEFT JOIN PRODUCT_IMAGES pi
+        ON pi.products_id = pr.id
+        AND pi.IS_MAIN = 'Y'   <!-- ✅ 이 위치가 중요 -->
         WHERE oi.orders_id = #{orderId}
     </select>
 

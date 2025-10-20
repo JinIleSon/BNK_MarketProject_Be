@@ -1,6 +1,9 @@
 <!DOCTYPE html>
 <html lang="ko" xmlns:th="http://www.thymeleaf.org">
 <head>
+    <meta name="category-id" th:if="${categoryId}" th:content="${categoryId}">
+    <meta name="_csrf" th:content="${_csrf != null ? _csrf.token : ''}">
+    <meta name="_csrf_header" th:content="${_csrf != null ? _csrf.headerName : ''}">
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>product_views</title>
@@ -59,6 +62,46 @@
         #subcol .panel.show{ opacity:1; transform:none; visibility:visible; pointer-events:auto; }
         .menu-grid{ display:grid; grid-template-columns:repeat(2,auto); column-gap:50px; row-gap:6px; padding:0; margin:0; justify-content:start; }
         .menu-grid li{ list-style:none; }
+        /* 토스트 컨테이너는 기존 그대로 사용 */
+        .toast-container{
+            position: fixed;
+            right: 16px;
+            bottom: 16px;
+            z-index: 2000;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            pointer-events: none;
+        }
+
+        /* 토스트 박스 */
+        .toast{
+            min-width: 180px;   /* 크기 ↓ */
+            max-width: 300px;   /* 크기 ↓ */
+            padding: 12px 16px; /* 여백 ↑ */
+            border-radius: 12px;/* 둥글게 */
+            color: #fff;
+            box-shadow: 0 12px 28px rgba(0,0,0,.20);
+            font-size: 14px;
+            line-height: 1.45;
+            opacity: 0;
+            transform: translateY(8px);
+            backdrop-filter: blur(2px);
+            animation: toast-in .28s ease forwards, toast-out .28s ease forwards var(--leave, 1.8s);
+            pointer-events: auto; /* 호버 일시정지용 */
+        }
+        .toast.toast--info   { background: #3e3e3e; }
+        .toast.toast--success{ background: #2e7d32; }
+        .toast.toast--error  { background: #b63b3b; } /* 톤 약간 다운 */
+        .toast.toast--warn   { background: #b26a00; }
+
+        @keyframes toast-in{
+            from{ opacity:0; transform: translateY(8px); }
+            to  { opacity:1; transform: translateY(0); }
+        }
+        @keyframes toast-out{
+            to{ opacity:0; transform: translateY(8px); }
+        }
     </style>
 </head>
 
@@ -78,20 +121,32 @@
 <div style="height:100%; display:flex; flex-direction:column; justify-content:center; align-items:center; margin:0 auto;">
     <div style="display:flex; width:100%; max-width:1270px;">
         <div style="font-size:18px; margin-right:auto;"><b>상품목록</b></div>
-        <div>HOME > 패션 · 의류 · 뷰티 > <b>남성의류</b></div>
+        <div>HOME > <span
+                th:utext="${categoryId == 4 ? '패션 > <b>여성의류</b>' :
+                            (categoryId == 3 ? '패션 > <b>남성의류</b>' :
+                            (categoryId == 2 ? '패션 > <b>키즈의류</b>' :
+                            (categoryId == 5 ? '패션 > <b>스포츠의류</b>' :
+                            (categoryId == 7 ? '뷰티 > <b>화장품</b>' :
+                            (categoryId == 8 ? '뷰티 > <b>향수</b>' :
+                            (categoryId == 10 ? '전자제품 > <b>생활기기</b>' :
+                            (categoryId == 11 ? '전자제품 > <b>음향기기</b>' :
+                            (categoryId == 13 ? '홈 > <b>대형가구</b>' :
+                            (categoryId == 14 ? '홈 > <b>소형가구</b>' :
+                            (categoryId == 16 ? '레저 > <b>스터프</b>' :
+                            (categoryId == 17 ? '레저 > <b>탈것</b>' : '<b>전체상품</b>')))))))))))}"></span></div>
     </div>
     <hr style="border:none; border-top:1px solid #000; margin-bottom:40px; width:100%; max-width:1270px;">
 
     <div style="display:flex; gap:100px; width:1270px;">
         <!-- 메인 이미지 -->
         <img id="mainImage"
-             style="width:700px; height:700px; object-fit:contain; background:#f3f3f3;"
+             style="width:700px; height:700px; object-fit:cover;"
              alt="메인 이미지"
              th:with="mi=*{mainImage}"
              th:src="${mi} != null ? @{|/${mi}|} : @{/images/placeholder.png}"/>
 
         <!-- 우측 패널 -->
-        <div style="width:463px; margin-top:100px;">
+        <div style="width:500px; margin-top:100px;">
             <div style="margin-top:10px;">
         <span style="font-size:14px; font-weight:800; letter-spacing:-1px; color:gray;"
               th:text="|상품번호 : *{product_code}|">상품번호</span>
@@ -107,9 +162,37 @@
                 <span style="float:right;">
           <span th:with="avg=${product.rating_avg} ?: 0.0"
                 th:text="${#numbers.formatDecimal(avg,1,1)}">0.0</span>
-          <a href="#" style="text-decoration-line:underline; color:blue;"
+          <a href="#reviews" id="reviewLink" class="review-link"
              th:text="'상품평보기'">상품평보기</a>
         </span>
+                <style>
+                    .review-link {
+                        position: relative;
+                        font-weight: 500;
+                        color: #555;
+                        text-decoration: none;
+                        transition: color 0.3s ease;
+                    }
+
+                    .review-link::after {
+                        content: "";
+                        position: absolute;
+                        bottom: -2px;
+                        left: 0;
+                        width: 0;
+                        height: 2px;
+                        background: linear-gradient(90deg, #2c3e50, #34495e); /* 어두운 네이비 그라데이션 */
+                        transition: width 0.3s ease;
+                    }
+
+                    .review-link:hover {
+                        color: #2c3e50; /* hover 시 어두운 네이비로 */
+                    }
+
+                    .review-link:hover::after {
+                        width: 100%;
+                    }
+                </style>
             </div>
 
             <hr style="border:none; border-top:1px solid #ddd;">
@@ -119,7 +202,10 @@
         </span>
                 <font color="red" th:if="*{discount_rate} > 0"
                       th:text="|&nbsp;&nbsp;*{discount_rate}%↓|">&nbsp;&nbsp;10%↓</font>
-                <a href="#"><div style="border:1px red solid; color:red; margin-left:23px; margin-right:28px; font-size:12px;">쿠폰받기</div></a>
+                <button type="button" id="claimCouponBtn"
+                        style="cursor:pointer;border:1px red solid; color:red; margin-left:23px; margin-right:28px; font-size:12px;">
+                    쿠폰받기
+                </button>
                 <span>💳무이자할부 💳카드추가혜택</span>
             </div>
 
@@ -212,19 +298,90 @@
                          th:text="|총 상품금액 ₩ ${#numbers.formatInteger(unit,3,'COMMA')}|">총 상품금액 ₩ 135,000</div>
 
                     <br>
-                    <div style="display:flex; width:100%; gap:10px; margin-top:10px;">
+                    <div style="display:flex; width:100%; gap:10px; margin-top:10px; margin-bottom:97px;">
                         <button type="button" onclick="addToCart()"
-                                style="color:#fff; height:35px; background:#bfbfbf; border:none; font-size:13px; font-weight:300; width:47%;">장바구니</button>
+                                style="cursor:pointer;color:#fff; height:35px; background:#bfbfbf; border:none; font-size:13px; font-weight:300; width:47%;">장바구니</button>
                         <button type="button" onclick="buyNow()"
-                                style="margin-left:auto; color:#fff; background:#5e8fd7; border:none; font-size:13px; font-weight:300; width:47%;">구매하기</button>
+                                style="cursor:pointer;margin-left:auto; color:#fff; background:black; border:none; font-size:13px; font-weight:300; width:47%;">구매하기</button>
                     </div>
 
-                    <div style="width:100%; height:64px; background:gray; margin-top:5px;">배너 광고 이미지 필요</div>
+                    <div class="banner-box" id="bannerBox" style="height:100px !important;">
+                        <img th:src="@{/images/product_view1.jpg}"
+                        alt="배너광고"
+                        style="width:487px; height:100px;">
+                    </div>
+                    <div style="font-size: 11px;">Image by <a href="https://www.freepik.com/">Freepik</a></div>
                 </form>
             </div>
+            <style>
+                .banner-box{
+                    width:100%;
+                    height:100px;
+                    overflow:hidden;        /* 튀어나가는 부분 자르기 */
+                    background:#000;        /* 배너가 어두운 톤이면 블랙, 필요시 바꾸세요 */
+                    border-radius:4px;
+                }
+                .banner-box img{
+                    width:100%;
+                    height:100%;
+                    object-fit:cover;       /* 가득 채우고 넘치는 건 잘라냄 */
+                    display:block;
+                }
+            </style>
 
-            <!-- 컨트롤러 연동 (URL은 전부 타임리프가 생성) -->
             <script th:inline="javascript">
+                const CLAIM_COUPON_URL = /*[[@{/product/coupons/claim}]]*/ '/NICHIYA/product/coupons/claim';
+
+                async function claimCoupon(){
+                    const btn = document.getElementById('claimCouponBtn');
+                    const { headerName, token } = getCsrf();
+
+                    // 서버가 폼 전송을 기대하는 경우 대비 (파라미터가 없어도 바디는 빈 값으로 보냄)
+                    const body = new URLSearchParams(); // 필요하면 body.append('couponId', '...');
+
+                    try{
+                        const res = await fetch(CLAIM_COUPON_URL, {
+                            method: 'POST',
+                            credentials: 'same-origin',  // 쿠키(세션) 확실히 포함
+                            headers: {
+                                'Accept': 'application/json, text/plain, */*',
+                                'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8',
+                                'X-Requested-With': 'XMLHttpRequest',
+                                ...(token ? { [headerName]: token } : {})
+                            },
+                            body
+                        });
+
+                        // 상태코드별 사용자 메시지
+                        if (res.status === 401){ toast('로그인이 필요합니다.', 'error'); return; }
+                        if (res.status === 403){ toast('보안 토큰이 만료되었습니다. 새로고침 후 다시 시도해 주세요.', 'error'); return; }
+                        if (res.status === 404){ toast('쿠폰 발급 경로를 찾을 수 없습니다. 관리자에게 문의해 주세요.', 'error'); return; }
+                        if (res.status === 409){ toast('이미 발급된 쿠폰입니다.', 'warn'); return; }
+                        if (!res.ok){ toast('쿠폰 발급에 실패했습니다. (' + res.status + ')', 'error'); return; }
+
+                        // 응답이 JSON일 수도/아닐 수도 있으니 안전하게 처리
+                        let data = null, text = null;
+                        const ctype = res.headers.get('content-type') || '';
+                        if (ctype.includes('application/json')) data = await res.json();
+                        else text = await res.text();
+
+                        // 서버 표준 응답 케이스
+                        if (data && data.ok === false){ toast(data.message || '이미 발급되었거나 조건 미충족입니다.', 'warn'); return; }
+
+                        toast('쿠폰이 발급되었습니다!', 'success');
+                        if (btn) btn.disabled = true;
+                    }catch(err){
+                        console.error('claimCoupon error:', err);
+                        toast('쿠폰 발급에 실패했습니다.', 'error');
+                    }
+                }
+
+
+                document.addEventListener('DOMContentLoaded', () => {
+                    const btn = document.getElementById('claimCouponBtn');
+                    if (btn) btn.addEventListener('click', claimCoupon);
+                });
+                <!-- 컨트롤러 연동 (URL은 전부 타임리프가 생성) -->
                 // 엔드포인트 (컨텍스트/uid 자동 포함)
                 const ADD_TO_CART_URL = /*[[@{/product/cart(uid=${uid})}]]*/ '/NICHIYA/product/cart';
                 const ADD_AND_GO_URL  = /*[[@{/product/cart/add-and-go(uid=${uid})}]]*/ '/NICHIYA/product/cart/add-and-go';
@@ -252,17 +409,53 @@
                 function readProductId(){ const el = document.querySelector('input[name="productId"]'); return el ? el.value : ''; }
                 function readUid(){ return document.getElementById('uidHidden')?.value || ''; }
 
-                // 토스트
-                function toast(msg, danger){
-                    const t = document.createElement('div');
-                    t.textContent = msg;
-                    t.style.cssText = `
-            position:fixed; right:16px; bottom:16px; z-index:2000;
-            padding:10px 14px; border-radius:8px; color:#fff;
-            background:${danger ? '#d64545' : '#333'};
-            box-shadow:0 6px 14px rgba(0,0,0,.15); font-size:14px;`;
-                    document.body.appendChild(t); setTimeout(()=>t.remove(),1500);
+                // ───── 토스트: X 없이 자동소멸 ─────
+                function getToastContainer(){
+                    let c = document.querySelector('.toast-container');
+                    if(!c){
+                        c = document.createElement('div');
+                        c.className = 'toast-container';
+                        c.setAttribute('aria-live','polite');
+                        c.setAttribute('aria-atomic','true');
+                        document.body.appendChild(c);
+                    }
+                    return c;
                 }
+
+                /**
+                 * toast(message, typeOrDanger?, durationMs?)
+                 * type: 'info' | 'success' | 'error' | 'warn'
+                 * 기존처럼 boolean(true=error)도 지원
+                 */
+                function toast(msg, typeOrDanger, duration){
+                    let type = 'info';
+                    if (typeof typeOrDanger === 'string') type = typeOrDanger;
+                    if (typeof typeOrDanger === 'boolean') type = typeOrDanger ? 'error' : 'info';
+
+                    const dur = Number.isFinite(duration) ? duration : 1600;
+
+                    const wrap = getToastContainer();
+                    const t = document.createElement('div');
+                    t.className = `toast toast--${type}`;
+                    t.style.setProperty('--leave', `${dur/1000}s`);
+                    t.textContent = String(msg);
+
+                    const closeEl = t.querySelector('.toast__close');
+                    if (closeEl) closeEl.addEventListener('click', () => removeToast(t));
+
+                    let timer = setTimeout(() => removeToast(t), dur + 250);
+                    t.addEventListener('mouseenter', () => { t.style.animationPlayState = 'paused'; clearTimeout(timer); });
+                    t.addEventListener('mouseleave', () => { t.style.animationPlayState = 'running'; timer = setTimeout(() => removeToast(t), 600); });
+
+                    wrap.appendChild(t);
+                }
+
+                function removeToast(el){
+                    if(!el) return;
+                    el.style.animation = 'toast-out .25s ease forwards';
+                    el.addEventListener('animationend', () => el.remove(), { once:true });
+                }
+                // ────────────────── 새 토스트 구현 끝 ──────────────────
 
                 // 파라미터
                 function buildParams(){
@@ -342,6 +535,43 @@
                 window.increase=increase; window.decrease=decrease;
                 window.swapMain=swapMain; window.addToCart=addToCart; window.buyNow=buyNow;
                 render();
+                (function(){
+                    const GAP = 100; // 더 아래로 내릴 픽셀 (원하는 만큼 조정)
+
+                    function scrollToReviews(extra = GAP) {
+                        const target = document.getElementById('reviews-start');
+                        const header = document.querySelector('.site-header');
+                        if (!target) return;
+
+                        const headerOffset = (header?.offsetHeight || 0) + 10;
+                        const y = target.getBoundingClientRect().top + window.pageYOffset
+                            - headerOffset + extra;   // ← 추가 여백
+                        window.scrollTo({ top: y, behavior: 'smooth' });
+                    }
+
+                    // "상품평보기" 클릭 (이벤트 한 번만 등록)
+                    document.addEventListener('click', (e) => {
+                        const a = e.target.closest('#reviewLink');
+                        if (!a) return;
+                        e.preventDefault();
+                        scrollToReviews();
+                    });
+
+                    // 해시/쿼리로 진입 시 자동 스크롤
+                    function needScroll() {
+                        const h = location.hash;
+                        const q = new URLSearchParams(location.search);
+                        return h === '#reviews' || h === '#reviews-start' || q.get('scroll') === 'reviews';
+                    }
+
+                    function kickoffScroll() {
+                        if (!needScroll()) return;
+                        // 레이아웃/이미지 로딩 지연 대비 여러 번 시도
+                        [0, 120, 350, 800].forEach(ms => setTimeout(scrollToReviews, ms));
+                    }
+
+                    document.addEventListener('DOMContentLoaded', kickoffScroll);
+                })();
             </script>
 
             <!-- 썸네일 -->
@@ -355,13 +585,12 @@
     </div>
 
     <!-- 전폭 상품정보/리뷰 섹션 -->
-    <div style="width:1265px; margin-top:5px; margin-bottom:5px;">
-        <span style="font-size:16px; font-weight:600; display:block;">상품정보</span>
-        <hr style="border:none; border-top:1px solid #ddd;">
-        <div style="background:gray; color:black; height:300px; margin-top:5px;">
-            <img src="#" alt="이미지 넣기" style="width:100%">
-        </div>
-
+    <div id="reviews" style="width:1265px; margin-top:5px; margin-bottom:5px;">
+        <style>
+            html { scroll-behavior: smooth; }
+            #reviews { scroll-margin-top: 120px; } /* 헤더 높이에 맞춰 숫자 조절 */
+            #reviews-start{ scroll-margin-top: 120px; }
+        </style>
         <div style="display:flex; margin-top:5px; margin-bottom:5px;">
             <div style="letter-spacing:-1px; font-size:16px; font-weight:600;">상품정보 제공고시</div>
             <div style="letter-spacing:-1px; font-size:14px; color:gray; margin-left:20px; padding-top:4px;">[전자상거래에 관한 상품정보 제공에 관한 고시] 항목에 의거 등록된 정보입니다.</div>
@@ -383,16 +612,72 @@
 
         <hr style="border:none; border-top:1px solid #ddd; margin-top:2px; margin-bottom:2px;">
         <table style="border-collapse:collapse; border:1px solid; width:1252px; font-size:14px; margin-left:7px;">
-            <tr style="border:1px solid;"><td style="border-right:1px solid; width:250px; height:35px; padding-left:11px;">제조자 / 수입국</td><td style="padding-left:11px;">상세정보 직접입력</td></tr>
-            <tr style="border:1px solid; height:35px;"><td style="border-right:1px solid; padding-left:11px;">제조국</td><td style="padding-left:11px;">상세정보 직접입력</td></tr>
-            <tr style="border:1px solid; height:35px;"><td style="border-right:1px solid; padding-left:11px;">취급 시 주의사항</td><td style="padding-left:11px;">상세정보 직접입력</td></tr>
-            <tr style="border:1px solid; height:35px;"><td style="border-right:1px solid; padding-left:11px;">제조연월</td><td style="padding-left:11px;">상세정보 직접입력</td></tr>
-            <tr style="border:1px solid; height:35px;"><td style="border-right:1px solid; padding-left:11px;">품질보증기준</td><td style="padding-left:11px;">상세정보 직접입력</td></tr>
-            <tr style="border:1px solid; height:35px;"><td style="border-right:1px solid; padding-left:11px;">A/S 책임자</td><td style="padding-left:11px;">상세정보 직접입력</td></tr>
-            <tr style="border:1px solid; height:35px;"><td style="border-right:1px solid; padding-left:11px;">전화번호</td><td style="padding-left:11px;">상세정보 직접입력</td></tr>
+            <tr style="border:1px solid;"><td style="border-right:1px solid; width:250px; height:35px; padding-left:11px;">제조자 / 수입국</td><td style="padding-left:11px;"><span th:text="${seller.name}"></span> / 대한민국</td></tr>
+            <tr style="border:1px solid; height:35px;"><td style="border-right:1px solid; padding-left:11px;">제조국</td><td style="padding-left:11px;"><span th:text="${product.origin}"></span></td></tr>
+            <tr style="border:1px solid; height:35px;"><td style="border-right:1px solid; padding-left:11px;">취급 시 주의사항</td><td style="padding-left:11px;"><span th:text="${product.prodcondition}"></span></td></tr>
+            <tr style="border:1px solid; height:35px;"><td style="border-right:1px solid; padding-left:11px;">제조연월</td><td style="padding-left:11px;"><span th:text="${#strings.substring(product.created_at, 0, 7)}"></span></td></tr>
+            <tr style="border:1px solid; height:35px;"><td style="border-right:1px solid; padding-left:11px;">품질보증기준</td><td style="padding-left:11px;">본 제품의 품질보증기준은 공정거래위원회 고시 소비자분쟁해결기준에 따릅니다.</td></tr>
+            <tr style="border:1px solid; height:35px;"><td style="border-right:1px solid; padding-left:11px;">A/S 책임자</td><td style="padding-left:11px;">NICHIYA</td></tr>
+            <tr style="border:1px solid; height:35px;"><td style="border-right:1px solid; padding-left:11px;">전화번호</td><td style="padding-left:11px;">080-123-4567</td></tr>
         </table>
+        <div id="reviews-start"></div>
 
-        <div th:with="rp=${reviewPage}">
+        <div th:with="rp=${reviewPage}" style="margin-top: 30px;">
+            <!-- 리뷰 없음 -->
+            <div th:if="${rp == null or #lists.isEmpty(rp.dtoList)}"
+                 class="empty-review empty--highlight">
+                <div class="empty-review__icon">📝</div>
+                <div>
+                    <div class="empty-review__title">해당 상품에 등록된 리뷰가 없습니다.</div>
+                    <div class="empty-review__desc">
+                        첫 리뷰의 주인공이 되어 주세요! <span>구매하신 후 후기를 남기시면 혜택이 제공될 수 있어요.</span>
+                    </div>
+                </div>
+            </div>
+
+            <style>
+                .empty-review{
+                    position:relative;
+                    display:flex; align-items:center; gap:18px;
+                    padding:26px 28px;
+                    border:1.5px solid #e1e3e6;
+                    border-radius:6px;
+                    background:#fff;
+                    box-shadow:0 2px 6px rgba(0,0,0,.04);
+                    margin:10px 0 30px 0;
+                }
+                .empty--highlight::before{
+                    content:""; position:absolute; inset:0 0 0 0;
+                    border-left:6px solid #3b5bdb;   /* 💙 강조 포인트 (진한 네이비 블루) */
+                    border-radius:6px 0 0 6px;
+                }
+                .empty-review__icon{
+                    width:46px; height:46px;
+                    display:grid; place-items:center;
+                    background:#f4f6fb;
+                    border-radius:8px;
+                    font-size:22px;
+                    color:#3b5bdb;
+                    flex-shrink:0;
+                }
+                .empty-review__title{
+                    font-weight:800;
+                    font-size:18px;
+                    color:#222;
+                    letter-spacing:-.3px;
+                }
+                .empty-review__desc{
+                    margin-top:6px;
+                    font-size:15px;
+                    color:#555;
+                    line-height:1.5;
+                }
+                .empty-review__desc span{
+                    color:#3b5bdb;
+                    font-weight:500;
+                }
+            </style>
+
             <!-- 리뷰들 -->
             <div th:each="rv : ${rp != null ? rp.dtoList : T(java.util.Collections).emptyList()}">
                 <div th:with="r=${rv?.rating} ?: 0"
@@ -405,16 +690,50 @@
                           th:text="|${rv?.user_id} ${rv?.created_at}|">someId 2025-10-13</span>
                 </div>
 
-                <div style="margin-top:10px;">
-                    <div style="display:flex; margin-top:5px;">
-                        <div style="width:135px; height:75px; background:gray;"></div>
-                        <div style="margin-left:15px; color:gray; letter-spacing:0;"
-                             th:text="${rv?.content}">리뷰 내용</div>
+                <div style="display:flex; margin-top:5px; gap:15px; align-items:flex-start; padding-top:20px;">
+                    <!-- 리뷰 썸네일: 상품 메인 이미지(제품 이미지) 고정 사용 -->
+                    <div class="rv-photo-wrap">
+                        <img class="rv-photo"
+                             th:with="mi=*{mainImage}"
+                             th:src="${mi} != null ? @{|/${mi}|} : @{/images/placeholder.png}"
+                             alt="상품 메인 이미지">
                     </div>
+
+                    <!-- 리뷰 내용 -->
+                    <div style="color:gray; letter-spacing:0;" th:text="${rv?.content}">리뷰 내용</div>
                 </div>
                 <hr style="border:none; border-top:1px solid #ddd; margin-top:13px;">
             </div>
 
+            <style>
+                /* 리뷰 썸네일 공통 프레임 */
+                .rv-photo-wrap{
+                    width:110px;          /* 썸네일 너비 (원하면 조정) */
+                    aspect-ratio: 2 / 3;  /* 고정 비율: 2:3  (1/1, 3/4 등으로 변경 가능) */
+                    position:relative;
+                    overflow:hidden;      /* 넘치는 부분은 자름 */
+                    border:1px solid #ddd;
+                    border-radius:8px;
+                    background:#f5f5f5;
+                    flex:0 0 auto;
+                }
+
+                /* 이미지가 프레임을 100% 덮도록 */
+                .rv-photo{
+                    position:absolute;
+                    inset:0;              /* top/right/bottom/left: 0 */
+                    width:100%;
+                    height:100%;
+                    object-fit:cover;     /* 비율 유지 + 프레임 꽉 채움 (잘림 허용) */
+                    object-position:center;
+                    display:block;
+                }
+
+                /* 모바일 크기 조절 예시 */
+                @media (max-width: 768px){
+                    .rv-photo-wrap{ width:90px; }
+                }
+            </style>
             <!-- 페이지네이션: uid 유지 -->
             <div style="height:100px; margin-top:40px; display:flex; justify-content:center;">
                 <input class="prev-page"
@@ -440,6 +759,29 @@
             .num { cursor: pointer; border: 1px solid #ddd; color: #555; height: 30px; width: 30px; margin-right: 7px; line-height: 1; }
             .euro-nav__list { max-height: 0; overflow: hidden; transition: max-height 0.15s ease; }
             .euro-nav__group.open .euro-nav__list { max-height: 500px; }
+
+            /* 상품정보 영역 대표 이미지 박스 */
+            .product-info-image{
+                width:100%;
+                aspect-ratio: 3 / 2;     /* 필요하면 16/9, 4/5 등으로 바꾸세요 */
+                overflow:hidden;
+                background:#f0f0f0;      /* 로딩/여백 색 */
+                display:flex;
+                align-items:center;
+                justify-content:center;
+            }
+            .product-info-image img{
+                width:100%;
+                height:100%;
+                object-fit:cover;        /* 비율 유지하며 꽉 채우기(잘림 허용) */
+                object-position:center;
+                display:block;
+            }
+
+            /* 모바일에서 세로형 비율이 더 보기 좋게 하고 싶다면 */
+            @media (max-width: 768px){
+                .product-info-image{ aspect-ratio: 4 / 5; }
+            }
         </style>
     </div>
 </div>

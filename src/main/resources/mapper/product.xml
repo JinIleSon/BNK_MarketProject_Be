@@ -31,19 +31,16 @@
     p.delichar,
     -- 메인 이미지
     pi.url                                AS url,
-
     -- 파생 지표
     NVL(sales.sales_cnt, 0)               AS salesCount,   -- 판매량
     ROUND(NVL(rv.avg_rating, 0), 2)       AS ratingAvg,    -- 평균 별점
-    NVL(rv.review_cnt, 0)                 AS ratingCnt     -- 리뷰 수
-
+    NVL(rv.review_cnt, 0)                 AS ratingCnt,     -- 리뷰 수
+    s.BRAND_NAME AS brand_name
     FROM products p
-
     /* 메인 이미지 조인 */
     LEFT JOIN product_images pi
     ON pi.products_id = p.id
     AND pi.is_main = 'Y'
-
     /* 판매량: 주문 아이템에서 제품별 수량 합계 */
     LEFT JOIN (
     SELECT oi.products_id,
@@ -52,7 +49,6 @@
     GROUP BY oi.products_id
     ) sales
     ON sales.products_id = p.id
-
     LEFT JOIN (
     SELECT pb.products_id,
     AVG(pb.rating) AS avg_rating,
@@ -62,6 +58,8 @@
     GROUP BY pb.products_id
     ) rv
     ON rv.products_id = p.id
+    JOIN sellers s
+    ON p.SELLERS_ID = s.id
     <where>
         <if test="categoryId != null">
             AND p.categories_id = #{categoryId}
@@ -112,7 +110,8 @@
     to_char(p.created_at,'YYYY-MM-DD HH24:MI:SS') as created_at,
     pi.url AS url,
     NVL(r.rating_avg,0)   AS ratingAvg,
-    NVL(r.rating_cnt,0)   AS ratingCnt
+    NVL(r.rating_cnt,0)   AS ratingCnt,
+    s.BRAND_NAME          AS brand_name
     FROM products p
     LEFT JOIN product_images pi
     ON pi.products_id = p.id AND pi.is_main = 'Y'
@@ -125,6 +124,8 @@
     WHERE UPPER(type) = 'REVIEW'      -- ← 여기
     GROUP BY products_id
     ) r ON r.products_id = p.id
+    JOIN sellers s
+    ON p.SELLERS_ID = s.id
     <where>
         <!-- 키워드: 미선택/blank → name, price → name, explain → 설명 -->
         <if test="req.keyword != null and req.keyword != ''">
@@ -236,7 +237,10 @@
     SELECT COUNT(1)
     FROM product_boards pb
     WHERE pb.type='REVIEW' AND pb.products_id = p.id
-    )                            AS rating_cnt
+    )                            AS rating_cnt,
+    p.prodcondition,
+    p.origin,
+    p.make
     FROM products p
     LEFT JOIN sellers s ON s.id = p.sellers_id   <!-- ★ 연결 -->
     WHERE p.id = #{id}
@@ -344,4 +348,25 @@
     ]]>
 </select>
 
+    <select id="selectProductSeller" resultType="kr.co.bnk_marketproject_be.dto.ProductsDTO">
+        SELECT
+        u.name
+        FROM PRODUCTS p
+        JOIN SELLERS s
+        ON p.SELLERS_ID = s.id
+        JOIN USERS u
+        ON s.USERS_ID = u.id
+        WHERE p.id = #{id}
+    </select>
+
+    <insert id="insertCouponUser" parameterType="string">
+        INSERT INTO COUPONS_NOW (issue_id, users_id, status, coupons_id)
+        VALUES (
+        (SELECT NVL(MAX(issue_id), 0) + 1 FROM COUPONS_NOW),
+        (SELECT u.id
+        FROM USERS u
+        WHERE u.USER_ID = #{user_id}),
+        '미사용', 4)
+    </insert>
+    
 </mapper>

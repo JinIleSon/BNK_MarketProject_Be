@@ -21,7 +21,7 @@ public class ProductOrderDTO {
     private List<String> paymentMethods;        // ["신용카드","체크카드","계좌이체","휴대폰결제","카카오페이"...]
 
     // 기본 배송지
-    private OrderPageShippingInfoDTO defaultShipping;
+    private DeliveriesDTO defaultShipping;
 
     // 폼 바인딩(POST)
     private OrderPageSubmitDTO submit;

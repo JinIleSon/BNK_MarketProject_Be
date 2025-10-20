@@ -9,7 +9,7 @@ springBoot {
 }
 
 group = 'kr.co.bnk_marketproject_be'
-version = '0.0.5-SNAPSHOT'
+version = '0.0.6-SNAPSHOT'
 description = 'BNK_MarketProject_Be'
 
 processResources {
@@ -70,6 +70,14 @@ dependencies {
     // 구글 로그인
     implementation 'org.springframework.boot:spring-boot-starter-security'
     implementation 'org.springframework.boot:spring-boot-starter-oauth2-client'
+
+    // layout 공통
+    implementation 'nz.net.ultraq.thymeleaf:thymeleaf-layout-dialect:3.3.0'
+
+    // sms 로그인
+    implementation 'org.springframework.boot:spring-boot-starter-web'
+    implementation 'com.solapi:sdk:1.0.3'
+    testImplementation 'org.springframework.boot:spring-boot-starter-test'
 
 }
 

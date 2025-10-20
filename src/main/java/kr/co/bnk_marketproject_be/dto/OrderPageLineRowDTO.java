@@ -1,14 +1,12 @@
 package kr.co.bnk_marketproject_be.dto;
 
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 @Builder
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
+@ToString
 public class OrderPageLineRowDTO {
     private int order_item_id;
     private int id;          // products.id
@@ -22,4 +20,7 @@ public class OrderPageLineRowDTO {
     private String url;        // product_images.url (대표)
     private Integer delichar;       // 배송비(건별), null이면 0로 처리
     private boolean freeShipping;   // delichar==null || delichar==0
+
+    private Integer unitDiscount;   // 단가 기준 "금액" 할인 (스냅샷)
+    private Integer unitSalePrice;  // 판매 단가 = unitPrice - unitDiscount
 }

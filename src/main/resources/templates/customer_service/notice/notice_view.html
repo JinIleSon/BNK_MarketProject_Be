@@ -2,7 +2,9 @@
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
-    <title>공지사항 보기</title>
+    <title th:text="${pageTitle} ?: 'NICHIYA'">NICHIYA</title>
+    <link rel="icon" th:href="@{/favicon.ico}">
+    <link rel="shortcut icon" th:href="@{/favicon.ico}">
 </head>
 <body>
 
@@ -233,6 +235,119 @@
         #content.cs_notice_view_wrap {
             padding: 30px;
         }
+        /* ========== Overlay Category: underline only ========== */
+
+        /* 좌측 대분류: 기본은 밑줄 0 → 호버/포커스 시 차오름 */
+        .overlay__menu a[data-cat]{
+            --underline-offset: 4px !important;
+            position: relative;
+            display: inline-block;
+            color:#111;
+            text-decoration: none;
+            background: linear-gradient(currentColor,currentColor) left bottom / 0 1px no-repeat;
+            transition: background-size .25s ease;
+        }
+
+        /* 활성 대분류(클릭된 항목)는 밑줄 유지 */
+        .overlay__menu a[data-cat].is-active{
+            background-size: 100% 1px;
+            font-weight: 700;                 /* 기존 표시 방식은 유지 */
+        }
+
+        /* 호버/키보드 포커스 시 밑줄이 왼→오로 채워짐 */
+        .overlay__menu a[data-cat]:hover,
+        .overlay__menu a[data-cat]:focus-visible{
+            background-size: 100% 1px;
+            outline: none;
+        }
+
+        /* 우측 소분류 링크도 동일한 밑줄 모션만 적용 */
+        .menu-grid a, .menu-grid li a{
+            position: relative;
+            display: inline-block;
+            padding: 6px 0;
+            color:#111;
+            text-decoration: none;
+            background: linear-gradient(currentColor,currentColor) left bottom / 0 1px no-repeat;
+            transition: background-size .25s ease;
+        }
+
+        /* 소분류: 현재 카테고리 강조 */
+        .menu-grid a.is-current{
+            background-size: 100% 1px;
+            font-weight: 700;
+        }
+
+        /* 호버/포커스 시 밑줄만 */
+        .menu-grid a:hover,
+        .menu-grid a:focus-visible{
+            background-size: 100% 1px;
+            outline: none;
+        }
+        /* 밑줄 위치(아래에서 얼마나 띄울지) */
+        :root{ --underline-offset: 6px; } /* ↑ 값만 조절해서 미세 조정(3~8px 권장) */
+
+        /* 좌측 대분류 + 우측 소분류 공통 */
+        .overlay__menu a[data-cat],
+        .menu-grid a, .menu-grid li a{
+            background-position: left calc(100% - var(--underline-offset));
+            /* 기존 background-size 전환(hover)은 그대로 둡니다 */
+        }
+
+        /* 좌측 대분류 */
+        .overlay__menu a[data-cat].is-active,
+        .overlay__menu a[data-cat].is-active:hover,
+        .overlay__menu a[data-cat].is-active:focus-visible{
+            font-weight: 700;
+            text-decoration: none !important;   /* 초기 스타일의 underline 제거 */
+            background: none !important;        /* 우리가 만든 gradient-underline 제거 */
+        }
+
+        .overlay__menu a:not([data-cat]) {
+            position: relative;
+            display: inline-block;
+            background: linear-gradient(currentColor,currentColor)
+            left calc(100% - var(--underline-offset)) / 0 1px no-repeat;
+            transition: background-size .25s ease;
+        }
+        .overlay__menu a:not([data-cat]):hover,
+        .overlay__menu a:not([data-cat]):focus-visible{
+            background-size: 100% 1px;
+            outline: none;
+        }
+        /* 우측 소분류 */
+        .menu-grid a.is-current,
+        .menu-grid a.is-current:hover,
+        .menu-grid a.is-current:focus-visible{
+            font-weight: 700;
+            text-decoration: none !important;
+            background: none !important;
+        }
+        /* 현재 페이지(자주묻는질문) — 밑줄 막고 굵게만 */
+        .overlay__menu a.nav-current,
+        .overlay__menu a.nav-current:hover,
+        .overlay__menu a.nav-current:focus-visible{
+            font-weight: 700;
+            background: none !important;     /* gradient 밑줄 제거 */
+            text-decoration: none !important;
+        }
+        /* 좌측 대분류(모든 data-cat 링크) 밑줄 높이 통일 */
+        .overlay__menu a[data-cat]{
+            --underline-offset: 3px;   /* 숫자만 바꿔서 높이 미세조정 */
+        }
+        /* 오른쪽 패널 제목 링크(h3 감싼 a) 공통 적용 */
+        #subcol .panel > a{
+            --underline-offset: 3px;
+            display: inline-block; /* (안정성) */
+        }
+        #subcol .panel > a h3{
+            margin: 0;
+            line-height: 1.2;
+        }
+        /* 오버레이 오른쪽 2차 카테고리만 밑줄 간격 조정 */
+        #subcol .menu-grid a{
+            --underline-offset: 3px;  /* ↑ 숫자 키울수록 밑줄이 더 아래로 떨어짐(예: 8~12px 권장) */
+        }
     </style>
 
     <header th:replace="~{main/header :: header}">
@@ -338,15 +453,31 @@
         <div style="display: flex; margin-left:20%; margin-top:1%; width:100%;">
             <nav class="overlay__menu" style="width:100%;">
                 <div style="">
-                    <a th:href="@{/cs/notice/list}"><b>공지사항</b></a>
-                    <a th:href="@{/cs/faq/list}"><b>자주묻는질문</b></a>
-                    <a th:href="@{/cs/qna/list}"><b>Qna</b></a>
+                    <div>
+                        <a th:href="@{/cs/notice/list}" class="nav-current"><b>공지사항</b></a>
+                    </div>
+                    <div>
+                        <a th:href="@{/cs/faq/list}">자주묻는질문</a>
+                    </div>
+                    <div>
+                        <a th:href="@{/cs/qna/list}">QnA</a>
+                    </div>
                     <br>
-                    <a th:href="@{/cs/notice/list}">전체</a>
-                    <a th:href="@{/cs/notice/list(boardType='서비스')}">고객서비스</a>
-                    <a th:href="@{/cs/notice/list(boardType='안전거래')}">안전거래</a>
-                    <a th:href="@{/cs/notice/list(boardType='판매중지')}">위해상품</a>
-                    <a th:href="@{/cs/notice/list(boardType='당첨자')}">이벤트당첨</a>
+                    <div>
+                        <a th:href="@{/cs/notice/list}">전체</a>
+                    </div>
+                    <div>
+                        <a th:href="@{/cs/notice/list(boardType='서비스')}">고객서비스</a>
+                    </div>
+                    <div>
+                        <a th:href="@{/cs/notice/list(boardType='안전거래')}">안전거래</a>
+                    </div>
+                    <div>
+                        <a th:href="@{/cs/notice/list(boardType='판매중지')}">위해상품</a>
+                    </div>
+                    <div>
+                        <a th:href="@{/cs/notice/list(boardType='당첨자')}">이벤트당첨</a>
+                    </div>
                 </div>
             </nav>
         </div>
@@ -449,18 +580,58 @@
     <div th:replace="~{main/footer :: footer}"></div>
 
     <script>
+        document.addEventListener("DOMContentLoaded", () => {
+            const items = document.querySelectorAll(".faq-item");
+            const moreBtn = document.getElementById("btn-more");
+            const lessBtn = document.getElementById("btn-less");
+
+            let visible = 3;
+            const step = 3;
+            const max = 10;
+
+            function render() {
+                items.forEach((item, i) => {
+                    item.style.display = i < visible ? "block" : "none";
+                });
+                moreBtn.style.display = visible < Math.min(items.length, max) ? "inline-block" : "none";
+                lessBtn.style.display = visible >= Math.min(items.length, max) ? "inline-block" : "none";
+            }
+
+            moreBtn.addEventListener("click", () => {
+                visible = Math.min(visible + step, max, items.length);
+                render();
+            });
+
+            lessBtn.addEventListener("click", () => {
+                visible = 3;
+                render();
+                window.scrollTo({ top: 0, behavior: "smooth" });
+            });
+
+            render();
+        });
+
+        // Q/A 토글 기능
+        function toggleContent(btn) {
+            const content = btn.nextElementSibling;
+            content.style.display = content.style.display === "block" ? "none" : "block";
+        }
+    </script>
+
+    <!-- 구분선 -->
+    <script>
         // --- 요소 가져오기 ---
         const body     = document.body;
-        const menuBtn  = document.getElementById('menuBtn');
-        const closeBtn = document.getElementById('closeBtn');
-        const overlay  = document.getElementById('menuOverlay');
+        const menuBtn  = document.getElementById('menuBtn');   // 왼쪽 상단 버튼
+        const closeBtn = document.getElementById('closeBtn');  // X 버튼
+        const overlay  = document.getElementById('menuOverlay'); // 전체 오버레이
 
         // --- 메뉴 열기 ---
         function openMenu(){
-            overlay.classList.add('open');
+            overlay.classList.add('open');  // CSS .open 적용 → 왼쪽에서 패널 슬라이드
             overlay.setAttribute('aria-hidden', 'false');
             menuBtn.setAttribute('aria-expanded', 'true');
-            body.style.overflow = 'hidden';
+            body.style.overflow = 'hidden'; // 배경 스크롤 막음
         }
 
         // --- 메뉴 닫기 ---
@@ -468,13 +639,13 @@
             overlay.classList.remove('open');
             overlay.setAttribute('aria-hidden', 'true');
             menuBtn.setAttribute('aria-expanded', 'false');
-            body.style.overflow = '';
+            body.style.overflow = ''; // 스크롤 다시 가능
         }
 
         // --- 이벤트 연결 ---
         if(menuBtn && closeBtn && overlay){
-            menuBtn.addEventListener('click', openMenu);
-            closeBtn.addEventListener('click', closeMenu);
+            menuBtn.addEventListener('click', openMenu); // 버튼 클릭 시 열기
+            closeBtn.addEventListener('click', closeMenu); // X 버튼 클릭 시 닫기
 
             // 배경 클릭 시 닫기
             overlay.addEventListener('click', (e) => {
@@ -486,6 +657,65 @@
                 if(e.key === 'Escape' && overlay.classList.contains('open')) closeMenu();
             });
         }
+    </script>
+
+    <script>
+        // --- 왼쪽 카테고리 클릭 시 오른쪽 패널 열기 ---
+        const menuLinks = document.querySelectorAll('.overlay__menu a[data-cat]');
+        const panels    = document.querySelectorAll('#subcol .panel');
+
+        menuLinks.forEach(link => {
+            link.addEventListener('click', (e) => {
+                e.preventDefault();
+
+                // 1. 모든 패널 숨기기
+                panels.forEach(p => p.classList.remove('show'));
+
+                // 2. 클릭한 카테고리 가져오기
+                const key = link.getAttribute('data-cat');
+                const panel = document.querySelector(`#subcol .panel[data-key="${key}"]`);
+
+                // 3. 해당 패널만 보이기
+                if (panel) {
+                    panel.classList.add('show');
+                }
+
+                // 4. 왼쪽 메뉴 active 처리 (선택사항)
+                menuLinks.forEach(l => l.classList.remove('is-active'));
+                link.classList.add('is-active');
+            });
+        });
+        (function () {
+            // 현재 경로에서 컨텍스트 경로 추출 (예: /NICHIYA/... -> /NICHIYA/)
+            var path = window.location.pathname;               // 예: "/NICHIYA/main/main/page"
+            var segs = path.split('/').filter(Boolean);        // ["NICHIYA","main","main","page"]
+            var ctx = segs.length ? ('/' + segs[0] + '/') : '/'; // "/NICHIYA/" 또는 "/"
+
+            // favicon 절대경로 구성
+            var href = ctx + 'favicon.ico';
+
+            // 캐시 무효화(개발 중에만 유지)
+            var ver = Date.now();
+
+            // 기존 아이콘 링크 제거
+            document.head.querySelectorAll('link[rel="icon"], link[rel="shortcut icon"]').forEach(function(n){ n.remove(); });
+
+            // 새 아이콘 링크 주입
+            var l1 = document.createElement('link');
+            l1.rel = 'icon';
+            l1.type = 'image/x-icon';
+            l1.href = href + '?v=' + ver;
+            document.head.appendChild(l1);
+
+            var l2 = document.createElement('link');
+            l2.rel = 'shortcut icon';
+            l2.type = 'image/x-icon';
+            l2.href = href + '?v=' + ver;
+            document.head.appendChild(l2);
+        })();
+
+        // 공유 title 조각
+        document.title = 'NICHIYA';
     </script>
 
 </body>

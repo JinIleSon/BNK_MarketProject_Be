@@ -53,10 +53,13 @@ public class MypageAllOrderServiceImpl implements MypageAllOrderService {
     public List<OrdersDTO> findAllOrdersByUserId(String userId) {
         List<OrdersDTO> orders = orderMapper.findAllOrdersByUserId(userId);
 
+
+
+        // ✅ 여기 아래 추가!
         for (OrdersDTO order : orders) {
-            List<OrderItemsDTO> items = orderMapper.findOrderItemsByOrderId(order.getId());
-            if (items == null) items = new ArrayList<>();
-            order.setOrderItems(items);
+            for (OrderItemsDTO item : order.getOrderItems()) {
+                System.out.println("[DEBUG] orderId=" + order.getId() + ", imageUrl=" + item.getUrl());
+            }
         }
 
         return orders;

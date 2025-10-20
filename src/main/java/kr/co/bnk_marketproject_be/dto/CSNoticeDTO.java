@@ -23,5 +23,7 @@ public class CSNoticeDTO {
     // 문의하기_뷰 댓글출력
     private int cid;
 
+    // write hits값 고정
+    private int hits;
 
 }

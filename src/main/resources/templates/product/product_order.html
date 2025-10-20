@@ -1,282 +1,368 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
     <title>product_order</title>
+
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Bodoni+Moda:opsz,wght@6..96,400;500&family=Noto+Serif+KR:wght@300;400&display=swap" rel="stylesheet">
+
     <style>
         html{ scrollbar-gutter: stable; }
-        .icon-btn {
-            background:none; border:1px solid #000; cursor:pointer;
-            width:40px; height:40px; display:grid; place-items:center;
-        }
+        *{ box-sizing:border-box }
+        body{ margin:0; font-family:system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif }
+        a{ color:inherit; text-decoration:none }
 
-        /* 1) 스크림(배경) - 화면 전체 덮음 + 블러 */
-        .overlay {
-            position: fixed; inset: 0;
-            background: rgba(255,255,255,0.28);      /* 반투명이어야 blur 보임 */
-            backdrop-filter: blur(1px);
-            -webkit-backdrop-filter: blur(1px); /* 사파리용 */
-            opacity: 0; 
-            pointer-events: none;
-            transition: opacity .25s ease;
-            z-index: 1000;
-        }
-        .overlay.open { opacity: 1; pointer-events: auto; }
+        .icon-btn{ background:none; border:1px solid #000; cursor:pointer; width:40px; height:40px; display:grid; place-items:center; }
 
-        /* 2) 왼쪽에서 나오는 패널 */
-        .overlay__panel {
-            position: absolute; top:0; left:0;
-            width: 50vw;                 /* 화면 절반 */
-            max-width: 900px;            /*(선택) 최대 폭 제한 */
-            height: 100%;
-            background: white;         /* 패널 자체는 불투명해도 OK */
-            transform: translateX(-100%); /* 화면 밖에서 시작 */
-            transition: transform .35s ease;
-            will-change: transform;
-            display: flex; flex-direction: column;
-        }
-        .overlay.open .overlay__panel { transform: translateX(0); }
+        .site-header{ position:sticky; top:0; z-index:900 }
+        .site-header::before{ content:""; position:absolute; inset:0; background:rgba(255,255,255,0); transition:background .4s ease; z-index:-1; pointer-events:none }
+        .site-header:hover::before{ background:rgba(255,255,255,.7) }
+        .site-header .inner{ position:relative; z-index:1; display:flex; align-items:center; gap:24px; padding:16px 24px; border-bottom:1px solid #000 }
 
-        /* 상단 닫기 버튼과 로고 영역 */
-        .overlay__top {
-            display:flex; align-items:center; gap:24px;
-            padding:20px;
-        }
-        .overlay__close {
-            background:none; border:1px solid; width:100px; height:50px; cursor:pointer;
-            position:relative;
-            border:none;
-            margin-left:0.3%;
-        }
-        .overlay__close::before,
-        .overlay__close::after{
-            content:""; position:absolute; left:15px; right:10px; top:25px; height:2px; background:#000;
-        }
-        .overlay__close::before{ transform:rotate(45deg); }
-        .overlay__close::after { transform:rotate(-45deg); }
+        .title-didone{ text-align:center; font-family:'Bodoni Moda','Didot','Bodoni 72','Times New Roman',serif; margin-left:45px; font-weight:400; letter-spacing:.02em; -webkit-font-smoothing:antialiased; -moz-osx-font-smoothing:grayscale }
+        .title-didone.ko{ font-family:'Noto Serif KR','Bodoni Moda',serif; font-weight:300 }
 
-        /* 메뉴 그리드 */
-        .overlay__menu {
-            display:grid; grid-template-columns: 180px auto; gap:24px;
-            padding:40px 20px; font-size:16px;
-        }
-        .overlay__menu a {
-            text-decoration:none; color:#000; display:block; padding:8px 0;
-        }
-        .overlay__menu strong { font-weight:700; }
-        /* Header Sticky 및 background 적용 */
-        :root{
-            --glass-bg: rgba(255,255,255,.55); /* 호버 시 배경 투명도 */
-            --glass-blur: 8px;                 /* 블러 정도 */
-        }
-        *{ box-sizing: border-box; }
-        body{ margin:0; font-family:system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif; }
-        a{ color:inherit; text-decoration:none; }
-        ul{ margin:0; padding:0; list-style:none; }
+        table{ border-collapse:collapse; width:1270px; text-align:center }
+        th,td{ padding:10px 6px }
+        tr.head{ height:50px; border-top:4px solid #000; border-bottom:1px solid #ddd }
+        tr.row{ border-bottom:1px solid #ddd }
 
-        /* ===== 헤더 (처음엔 투명, hover 시 반투명) ===== */
-        .site-header{
-            position: sticky;      /* 스크롤해도 상단 고정 */
-            top: 0;
-            z-index: 900;          /* 오버레이(1000)보다 낮게 */
+        .grid{ display:flex; gap:58px; margin-top:40px }
+        .col-left{ width:910px }
+        .section{ width:450px }
+        .section h3{ font-size:18px; margin:12px 0 7px }
+        .section hr{ border:none; border-top:1px solid #ddd; margin:7px 0 19px }
+
+        /* ▼ 최종결제정보: 이전 CSS로 복구 */
+        .summary{
+            border:1px solid #dddddd;
+            width:300px;
+            margin-top:14px;
+            height:345px; /* 고정 높이 */
         }
-        .site-header::before{
-            content:"";
-            position:absolute; inset:0;
-            background: rgba(255,255,255,0);            /* 기본 완전 투명 */
-            transition: background 0.4s ease;
-            z-index: -1;
-            pointer-events: none;                        /* 클릭 방해 금지 */
+        .summary h3{
+            font-size:18px;
+            padding-top:12px;
+            padding-left:20px;
+            padding-right:20px;
+            margin:0;
         }
-        .site-header:hover::before{
-            background: rgba(255,255,255,0.7);                /* 마우스 올리면 반투명 */
+        .summary .divider{
+            border:none; border-top:1px solid #dddddd; margin:7px 20px 19px;
         }
-        .site-header .inner{
-            position: relative; z-index: 1;             /* ::before 아래로 깔리게 */
-            display:flex; align-items:center; gap:24px;
-            padding: 16px 24px;
-            border-bottom: 1px solid #000;              /* 필요 없으면 제거 */
-        }
-        footer a {
-            text-decoration: none;
-            font-weight: 300;
-            color:black;
-        }
-        /* 페이지네이션 */
-        /* 게시판 아래버튼 부분 */
-        .prev-page{
-            background-color: white;
-            border: none;
-            margin-right: 15px;
-            width: 50px;
-            height: 30px;
-        }
-        .next-page{
-            background-color: white;
-            border: none;
-            margin-left: 15px;
-            width: 50px;
-            height: 30px;
-            margin-right:3px;
-        }
-        
-        /* 게시판 아래버튼 부분 끝 */
-        .title-didone{
-            text-align:center;
-            font-family: 'Bodoni Moda','Didot','Bodoni 72','Times New Roman',serif;
-            margin-left:45px;
-            font-weight:400;                 
-            letter-spacing:.02em;
-            -webkit-font-smoothing: antialiased;
-            -moz-osx-font-smoothing: grayscale;
-        }
-        .title-didone.ko{font-family: 'Noto Serif KR','Bodoni Moda',serif; font-weight:300;}
+        .summary .box{ padding-left:27px; padding-right:27px; }
+        .summary .line{ margin-bottom:6px }
+
+        .btn-primary{ display:inline-block; height:40px; line-height:40px; background:#000; color:#fff; font-size:20px; font-weight:300; border:none; width:190px; text-align:center; cursor:pointer }
+        input[type="text"]{ border:none; border-bottom:1px solid #ddd; outline:none }
+        textarea{ border:1px solid #ddd; resize:none; outline:none }
+        select,button{ border:1px solid #ddd }
     </style>
 </head>
 
 <body>
 <div th:replace="~{main/header.html}"></div>
-    <div style="height:100%; display: flex; flex-direction: column; justify-content: center; align-items: center;  margin: 0 auto;">
-        <div style="display: flex;">
-            <div style="font-size:18px; margin-right:1200px;"><b>주문하기</b></div>
-        </div>
-        <hr style="border:none; border-top:1px solid black; margin-bottom:40px; width:100%;">
-        <table style="border-collapse: collapse; border:none; width:1270px; text-align: center;">
-            <form action="" method="">
-                <tr style="height:50px;border-top: 4px solid black; border-bottom: 1px solid #dddddd;">
-                    <td style="width:50px;"><input type="checkbox"></td>
-                    <td style="width:450px;">상품명</td>
-                    <td style="width:92px;">수량</td>
-                    <td style="width:136px;">판매가</td>
-                    <td style="width:92px;">할인</td>
-                    <td style="width:136px;">포인트</td>
-                    <td style="width:179px;">배송비</td>
-                    <td style="">총합</td>
-                </tr>
-                <tr style=" border-bottom: 1px solid #dddddd;">
-                    <td><input type="checkbox"></td>
-                    <td style="  display: flex;">
-                        <div style="margin:10px;width:80px; height:75px; background-color: #dddddd;">
-                            <img src="#" alt="이미지">
-                        </div>
-                        <div style="padding-left:18px; display:flex; font-size:14px; align-items: flex-start; justify-content: center; flex-direction: column;">
-                            <div style="margin-bottom:6px;">상품명</div><div style="color: gray; font-size:12px;">상품설명</div>
-                        </div>
-                    </td>
-                    <td>1</td>
-                    <td>27,000</td>
-                    <td>5%</td>
-                    <td>270</td>
-                    <td>무료배송</td>
-                    <td style="color:red;">25,650</td>
-                </tr>
-            </form>
-        </table>
-        <div style=" display:flex; gap: 58px;  margin-top:40px;">
-            <div style=" width:910px;">
-                <div style=" width:450px;">
-                    <div style="font-size:18px; padding-top:12px; width:450px;">
-                        <b>배송정보</b>
-                        <hr style="border:none; border-top:1px solid #dddddd; margin-top:7px; margin-bottom:19px;">
-                    </div>
+
+<div style="height:100%; display:flex; flex-direction:column; justify-content:center; align-items:center; margin:0 auto;">
+    <div style="display:flex;">
+        <div style="font-size:18px; margin-right:1200px;"><b>주문하기</b></div>
+    </div>
+    <hr style="border:none; border-top:1px solid #000; margin-bottom:40px; width:100%;">
+
+    <!-- ===== 상품 목록 ===== -->
+    <table>
+        <tr class="head">
+            <td style="width:50px;"><input type="checkbox" disabled></td>
+            <td style="width:450px;">상품명</td>
+            <td style="width:92px;">수량</td>
+            <td style="width:136px;">판매가</td>
+            <td style="width:92px;">할인</td>
+            <td style="width:136px;">포인트</td>
+            <td style="width:179px;">배송비</td>
+            <td>총합</td>
+        </tr>
+
+        <!-- 리스트 렌더링 -->
+        <tr class="row" th:each="r : ${order != null ? order.items : {}}">
+            <td><input type="checkbox" disabled></td>
+            <td style="display:flex; align-items:center; text-align:left;">
+                <div style="margin:10px; width:80px; height:75px; background:#ddd;">
+                    <img th:src="${r.url} != null ? @{|/${r.url}|} : @{/images/placeholder.png}"
+                         alt="이미지" style="width:80px; height:75px; object-fit:cover;">
+                </div>
+                <div style="padding-left:18px; display:flex; font-size:14px; flex-direction:column;">
+                    <div style="margin-bottom:6px;" th:text="${r.product_name}">상품명</div>
+                    <div style="color:gray; font-size:12px;" th:text="${r.option_name != null ? r.option_name : ''}">옵션</div>
+                </div>
+            </td>
+            <td th:text="${r.quantity}">1</td>
+            <td th:text="|${#numbers.formatInteger(r.unitPrice,3,'COMMA')}|">27,000</td>
+            <td th:text="|${r.discountRate}%|">5%</td>
+            <td th:text="${#numbers.formatInteger(T(java.lang.Math).floor(r.unitPrice * 0.01 * r.quantity),0)}">270</td>
+            <td>
+                <span th:if="${r.freeShipping}">무료배송</span>
+                <span th:unless="${r.freeShipping}" th:text="|${#numbers.formatInteger(r.delichar,3,'COMMA')}|">0</span>
+            </td>
+            <td style="color:red;" th:text="|${#numbers.formatInteger(r.lineTotal,3,'COMMA')}|">25,650</td>
+        </tr>
+
+        <!-- 비어있을 때 -->
+        <tr th:if="${order == null || order.items == null || #lists.isEmpty(order.items)}" class="row">
+            <td colspan="8" style="padding:30px 0;">주문할 상품이 없습니다.</td>
+        </tr>
+    </table>
+
+    <!-- ===== 본문(좌: 입력/우: 합계) ===== -->
+    <div class="grid">
+        <!-- 좌측: 입력 폼 -->
+        <div class="col-left">
+            <form id="orderForm" th:action="@{/product/order}" method="post">
+                <!-- CSRF: 있을 때만 렌더 -->
+                <input type="hidden" th:if="${_csrf != null}" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>
+
+                <!-- 배송정보 -->
+                <div class="section">
+                    <h3><b>배송정보</b></h3><hr/>
                     <div style="padding-left:14px;">
-                        <div style="margin-top:6px;"><span style="margin-right:100px;">수령자</span><input type="text" style="width:160px; border:none; border-bottom:1px solid #dddddd;outline: none;"></div>
-                        <div style="margin-top:6px;"><span style="margin-right:100px;">휴대폰</span><input type="text" style="width:160px; border:none; border-bottom:1px solid #dddddd;outline: none;"></div>
-                        <div style="margin-top:6px;"><span style="margin-right:85px;">우편번호</span><input type="text" style="width:160px; border:none; border-bottom:1px solid #dddddd;outline: none;"><button style="border:1px solid #dddddd; width:60px; margin-left:10px;">검색</button></div>
-                        <div style="margin-top:6px;"><span style="margin-right:85px;">기본주소</span><input type="text" style="width:270px; border:none; border-bottom:1px solid #dddddd;outline: none;"></div>
-                        <div style="margin-top:6px;"><span style="margin-right:85px;">상세주소</span><input type="text" style="width:270px; border:none; border-bottom:1px solid #dddddd;outline: none;"></div>
-                        <div style="margin-top:6px;display: flex; align-items: top;"><span style="margin-right:118px;">기타</span><textarea name="" id="" style="width:270px; height:50px;  border:1px solid #dddddd; resize:none;outline: none;"></textarea></div>
+                        <div style="margin-top:6px;">
+                            <span style="display:inline-block; width:100px;">수령자</span>
+                            <input type="text" name="shipping.recipient" style="width:160px"
+                                   th:value="${order.defaultShipping != null ? order.defaultShipping.recipient : ''}">
+                        </div>
+                        <div style="margin-top:6px;">
+                            <span style="display:inline-block; width:100px;">휴대폰</span>
+                            <input type="text" name="shipping.delicom" style="width:160px"
+                                   th:value="${order.defaultShipping != null ? order.defaultShipping.delicom : ''}">
+                        </div>
+                        <div style="margin-top:6px;">
+                            <span style="display:inline-block; width:100px;">우편번호</span>
+                            <input id="postcode" type="text" name="shipping.zipcode" style="width:160px"
+                                   th:value="${order.defaultShipping != null ? order.defaultShipping.zipcode : ''}" readonly>
+                            <button type="button" style="width:60px; margin-left:10px;" onclick="execDaumPostcode()">검색</button>
+                        </div>
+                        <div style="margin-top:6px;">
+                            <span style="display:inline-block; width:100px;">기본주소</span>
+                            <input id="address" type="text" name="shipping.address" style="width:270px"
+                                   th:value="${order.defaultShipping != null ? order.defaultShipping.address : ''}" readonly>
+                        </div>
+                        <div style="margin-top:6px;">
+                            <span style="display:inline-block; width:100px;">상세주소</span>
+                            <input id="detailAddress" type="text" name="shipping.address2" style="width:270px"
+                                   th:value="${order.defaultShipping != null ? order.defaultShipping.address2 : ''}">
+                        </div>
+                        <div style="margin-top:6px; display:flex; align-items:flex-start;">
+                            <span style="display:inline-block; width:100px;">기타</span>
+                            <textarea name="shipping.memo" style="width:270px; height:50px;"></textarea>
+                        </div>
                     </div>
                 </div>
-                <div style="width:450px; margin-top:30px;">
-                    <div style="font-size:18px; padding-top:12px; width:450px;">
-                        <b>할인정보</b>
-                        <hr style="border:none; border-top:1px solid #dddddd; margin-top:7px; margin-bottom:19px;">
-                    </div>
+
+                <!-- 할인정보 -->
+                <div class="section" style="margin-top:30px;">
+                    <h3><b>할인정보</b></h3><hr/>
                     <div style="padding-left:14px;">
-                        <div>현재포인트 : 7200점 <input type="text" style="border:1px solid #dddddd; width:80px;"><button style="border:1px solid #dddddd; margin-left:7px; width:80px;">사용하기</button></div>
-                        <div style="color:gray; font-size: 13px; margin-top:3px; margin-bottom:10px;">포인트 5,000점 이상이면 현금처럼 사용 가능</div>
-                        <div>쿠폰적용
-                            <select name="쿠폰선택" id="" style="border:1px solid #dddddd;">
-                                <option value="select">쿠폰 선택</option>
-                                <option value="50%">50%할인</option>
-                                <option value="30%">30%할인</option>
-                                <option value="20%">20%할인</option>
-                            </select>
-                            <button style="border:1px solid #dddddd; width:80px;">사용하기</button>
-                        </div>
-                    </div>
-                </div>
-                <div style=" width:450px; margin-bottom:100px; margin-top:40px;">
-                    <div style="font-size:18px; padding-top:12px; width:450px;">
-                        <b>결제방법</b>
-                        <hr style="border:none; border-top:1px solid #dddddd; margin-top:7px; margin-bottom:19px;">
-                    </div>
-                    <div style="padding-left:14px;">
-                        
                         <div>
-                            <form>
-                                <div style="margin-bottom:10px;">
-                                    <label style="margin-right:35px;"><input type="radio" name="pay" value="신용카드" style="transform: scale(1.5);"> 신용카드</label>
-                                    <label><input type="radio" name="pay" value="체크카드" style="transform: scale(1.5);"> 체크카드</label>
-                                </div>
-                                <div style="margin-bottom:10px;">
-                                    <label style="margin-right:35px;"><input type="radio" name="pay" value="계좌이체" style="transform: scale(1.5);"> 계좌이체</label>
-                                    <label><input type="radio" name="pay" value="무통장입금" style="transform: scale(1.5);"> 무통장입금</label>
-                                </div>
-                                <div style="margin-bottom:10px;">
-                                    <label style="margin-right:35px;"><input type="radio" name="pay" value="휴대폰결제" style="transform: scale(1.5);"> 휴대폰결제</label>
-                                    <label><input type="radio" name="pay" value="카카오페이" style="transform: scale(1.5);"> 카카오페이
-                                        <img src="#" alt="카카오페이이미지" style="margin-left:10px;">
-                                    </label>
-                                </div>
-                            </form>
+                            현재포인트 :
+                            <b id="availablePoint"
+                               th:attr="data-raw=${order.availablePoint}"
+                               th:text="${#numbers.formatInteger(order.availablePoint,0)}">0</b>점
+                            <input id="usePointInput" type="text" name="usePoint" value="0" style="width:80px; margin-left:6px;">
+                            <button type="button" id="usePointMaxBtn" style="width:80px; margin-left:7px;">사용하기</button>
+                        </div>
+                        <div style="color:gray; font-size:13px; margin-top:3px; margin-bottom:10px;">
+                            포인트는 정책에 맞게 서버에서 최종 검증됩니다.
+                        </div>
+                        <div>
+                            쿠폰적용
+                            <select id="couponSelect" name="coupon_id" style="min-width:180px;">
+                                <option value="0">쿠폰 선택</option>
+                                <option th:each="c : ${order.availableCoupons}"
+                                        th:value="${c.id}"
+                                        th:attr="data-type=${c.discount_type},data-value=${c.discount_value}"
+                                        th:text="${c.coupon_name + ' (' + (c.discount_type=='RATE' ? c.discount_value+'%' : #numbers.formatInteger(c.discount_value,0) + '원') + ')'}">
+                                    쿠폰
+                                </option>
+                            </select>
                         </div>
                     </div>
                 </div>
-            </div>
-            <div style="border:1px solid #dddddd; width:300px; margin-top:14px; height:345px;">
-                <div style="font-size:18px; padding-top:12px; padding-left:20px;padding-right:20px;">
-                    <b>최종결제정보</b>
-                    <hr style="border:none; border-top:1px solid #dddddd; margin-top:7px; margin-bottom:19px;">
+
+                <!-- 결제방법 (원래 형태 유지, name만 서버 DTO와 일치) -->
+                <div class="section" style="margin-top:40px; margin-bottom:100px;">
+                    <h3><b>결제방법</b></h3><hr/>
+                    <div style="padding-left:14px;">
+                        <div style="margin-bottom:10px;">
+                            <label style="margin-right:35px;">
+                                <input type="radio" name="payment_method" value="신용카드" style="transform:scale(1.5);"> 신용카드
+                            </label>
+                            <label>
+                                <input type="radio" name="payment_method" value="체크카드" style="transform:scale(1.5);"> 체크카드
+                            </label>
+                        </div>
+                        <div style="margin-bottom:10px;">
+                            <label style="margin-right:35px;">
+                                <input type="radio" name="payment_method" value="계좌이체" style="transform:scale(1.5);"> 계좌이체
+                            </label>
+                            <label>
+                                <input type="radio" name="payment_method" value="무통장입금" style="transform:scale(1.5);"> 무통장입금
+                            </label>
+                        </div>
+                        <div style="margin-bottom:10px;">
+                            <label style="margin-right:35px;">
+                                <input type="radio" name="payment_method" value="휴대폰결제" style="transform:scale(1.5);"> 휴대폰결제
+                            </label>
+                            <label>
+                                <input type="radio" name="payment_method" value="카카오페이" style="transform:scale(1.5);"> 카카오페이
+                                <img src="#" alt="카카오페이이미지" style="margin-left:10px;">
+                            </label>
+                        </div>
+                    </div>
                 </div>
-                
-                <div style="padding-left:7px;padding-right:7px; padding-left:27px;padding-right:27px;">
-                    <div style="margin-bottom:6px;">
-                        <div>상품수<span style="float:right;">1</span></div>
+            </form>
+        </div>
+
+        <!-- 우측: 최종결제정보 + 결제하기 버튼 -->
+        <div>
+            <!-- 초기값을 data-*로 보관해서 JS 계산에 사용 -->
+            <div class="summary"
+                 th:with="s=${order != null ? order.summary : null}"
+                 th:attr="data-subtotal=${s != null ? s.subtotalAmount : 0},
+                    data-product-discount=${s != null ? s.discountAmount : 0},
+                    data-shipping=${s != null ? s.delichar : 0}">
+                <h3><b>최종결제정보</b></h3>
+                <hr class="divider">
+                <div class="box">
+                    <div class="line">상품수<span style="float:right" th:text="${s != null ? s.itemCount : 0}">0</span></div>
+                    <div class="line">상품금액<span id="sumSubtotal" style="float:right" th:text="|${#numbers.formatInteger(s != null ? s.subtotalAmount : 0,3,'COMMA')}|">0</span></div>
+                    <div class="line">할인금액(상품)<span id="sumProductDiscount" style="float:right" th:text="|-${#numbers.formatInteger(s != null ? s.discountAmount : 0,3,'COMMA')}|">-0</span></div>
+                    <div class="line">배송비<span id="sumShipping" style="float:right" th:text="|${#numbers.formatInteger(s != null ? s.delichar : 0,3,'COMMA')}|">0</span></div>
+                    <div class="line">할인(쿠폰)<span id="sumCoupon" style="float:right" th:text="|-${#numbers.formatInteger(s != null ? s.couponAmount : 0,3,'COMMA')}|">-0</span></div>
+                    <div class="line">포인트 사용<span id="sumPointUse" style="float:right" th:text="|-${#numbers.formatInteger(s != null ? s.pointUse : 0,3,'COMMA')}|">-0</span></div>
+                    <div class="line">전체주문금액
+                        <span id="sumTotal" style="float:right; color:red"
+                              th:text="|${#numbers.formatInteger(s != null ? s.totalPayable : 0,3,'COMMA')}|">0</span>
                     </div>
-                    <div style="margin-bottom:6px;">
-                        <div>상품금액<span style="float:right;">27,000</span></div>
-                    </div>
-                    <div style="margin-bottom:6px;">
-                        <div>할인금액<span style="float:right;">-1,350</span></div>
-                    </div>
-                    <div style="margin-bottom:6px;">
-                        <div>배송비<span style="float:right;">0</span></div>
-                    </div>
-                    <div style="margin-bottom:6px;">
-                        <div>할인<span style="float:right;">-1,000</span></div>
-                    </div>
-                    <div style="margin-bottom:6px;">
-                        <div>전체주문금액<span style="float:right; color:red;">24,650</span></div>
-                    </div>
-                    <div style="margin-bottom:25px;">
-                        <div>적립 포인트<span style="float:right;">270</span></div>
-                    </div>
-                    <div style="display: flex; justify-content: center; margin-bottom:25px;">
-                        <input type="button" value="결제하기" style="height: 40px; background-color: black; color:white; font-size: 20px; font-weight:300; border:none; width:190px;">
+                    <div class="line" style="margin-top:12px;">적립 포인트
+                        <span id="sumReward" style="float:right" th:text="${s != null ? s.rewardPoint : 0}">0</span>
                     </div>
                 </div>
             </div>
+
+            <!-- ▼ 결제하기 버튼: 요약 박스 아래, 폼과 연결 -->
+            <div style="display:flex; justify-content:center; margin-top:25px;">
+                <button type="submit" class="btn-primary" form="orderForm">결제하기</button>
+            </div>
+            <!-- 결제 버튼 바로 아래에 추가 -->
+            <script>
+                (function () {
+                    const form   = document.getElementById('orderForm');
+                    const radios = Array.from(document.querySelectorAll('input[name="payment_method"]'));
+                    const submitBtn = document.querySelector('button.btn-primary[form="orderForm"]');
+
+                    // 기본값: 아무 것도 선택 안 됐으면 첫 번째를 체크
+                    if (radios.length && !radios.some(r => r.checked)) radios[0].checked = true;
+
+                    form.addEventListener('submit', (e) => {
+                        if (!radios.some(r => r.checked)) {
+                            e.preventDefault();
+                            alert('결제 방법을 선택해주세요.');
+                            return;
+                        }
+                        // 중복 제출 방지
+                        submitBtn.disabled = true;
+                        submitBtn.textContent = '처리 중...';
+                    });
+                })();
+            </script>
         </div>
     </div>
+</div>
 
 <div th:replace="~{main/footer.html}"></div>
+
+<!-- 다음 우편번호 API 스크립트 -->
+<script src="//t1.daumcdn.net/mapjsapi/bundle/postcode/prod/postcode.v2.js"></script>
+<script>
+    function execDaumPostcode() {
+        new daum.Postcode({
+            oncomplete: function(data) {
+                var addr = (data.userSelectedType === 'R') ? data.roadAddress : data.jibunAddress;
+                document.getElementById('postcode').value = data.zonecode;
+                document.getElementById('address').value = addr;
+                var detail = document.getElementById('detailAddress');
+                if (detail) detail.focus();
+            }
+        }).open();
+    }
+</script>
+
+<!-- 포인트/쿠폰 실시간 합계 스크립트 -->
+<script>
+    (function(){
+        const fmt = n => (n||0).toLocaleString();
+
+        const $sumBox  = document.querySelector('.summary');
+        const SUBTOTAL = +($sumBox?.dataset.subtotal || 0);
+        const PROD_DIS = +($sumBox?.dataset.productDiscount || 0);
+        const SHIPPING = +($sumBox?.dataset.shipping || 0);
+
+        const $availEl = document.getElementById('availablePoint');
+        const AVAIL_PT = +($availEl?.dataset.raw || 0);
+
+        const $useInput = document.getElementById('usePointInput');
+        const $maxBtn   = document.getElementById('usePointMaxBtn');
+        const $coupon   = document.getElementById('couponSelect');
+
+        const $sumCoupon   = document.getElementById('sumCoupon');
+        const $sumPoint    = document.getElementById('sumPointUse');
+        const $sumTotal    = document.getElementById('sumTotal');
+        const $sumReward   = document.getElementById('sumReward');
+
+        function currentCouponDiscount() {
+            if (!$coupon) return 0;
+            const opt = $coupon.options[$coupon.selectedIndex];
+            const type = opt?.dataset.type;
+            const val  = +(opt?.dataset.value || 0);
+            const base = Math.max(0, SUBTOTAL - PROD_DIS);
+            if (!type) return 0;
+            if (type.toUpperCase() === 'RATE') {
+                return Math.floor(base * (val / 100));
+            } else {
+                return Math.min(val, base); // 정액
+            }
+        }
+
+        function recalc() {
+            const coupon = currentCouponDiscount();
+            const beforePoint = Math.max(0, SUBTOTAL - PROD_DIS - coupon + SHIPPING);
+
+            let want = parseInt($useInput?.value || '0', 10);
+            if (isNaN(want) || want < 0) want = 0;
+
+            const usePoint = Math.min(want, AVAIL_PT, beforePoint);
+            const total = Math.max(0, beforePoint - usePoint);
+            const reward = Math.floor(total * 0.01); // 정책에 맞게 조정 가능
+
+            $sumCoupon.textContent = '-' + fmt(coupon);
+            $sumPoint.textContent  = '-' + fmt(usePoint);
+            $sumTotal.textContent  = fmt(total);
+            $sumReward.textContent = fmt(reward);
+        }
+
+        $coupon?.addEventListener('change', recalc);
+        $useInput?.addEventListener('input', recalc);
+        $maxBtn?.addEventListener('click', () => {
+            const coupon = currentCouponDiscount();
+            const beforePoint = Math.max(0, SUBTOTAL - PROD_DIS - coupon + SHIPPING);
+            $useInput.value = Math.min(AVAIL_PT, beforePoint);
+            recalc();
+        });
+
+        recalc();
+    })();
+</script>
 </body>
 </html>
-
-

@@ -13,6 +13,12 @@ import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import org.springframework.core.env.Environment;
 
+import javax.imageio.ImageIO;
+import java.awt.image.BufferedImage;
+import java.io.InputStream;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.List;
 
 @Slf4j
@@ -34,6 +40,15 @@ public class AdminBasicController {
         AdminSiteConfigDTO config = siteConfigService.get();
         if (config == null) config = new AdminSiteConfigDTO();  // 프리필 비어도 에러는 안 나게
 
+        Path staticRoot  = Paths.get("src/main/resources/static");
+        Path imagesDir   = staticRoot.resolve("images");
+        Path logoPath    = imagesDir.resolve("logo.png");
+        Path faviconPath = staticRoot.resolve("favicon.ico");
+
+        // 실제 파일이 있을 때만 경로 세팅
+        config.setHeaderLogo(Files.exists(logoPath)    ? "/images/logo.png" : null);
+        config.setFavicon(   Files.exists(faviconPath) ? "/favicon.ico"     : null);
+
         model.addAttribute("config", config);
         model.addAttribute("appVersion",
                 environment.getProperty("spring.application.version", "unknown"));
@@ -45,62 +60,87 @@ public class AdminBasicController {
     public String updateAdminBasic(
             @ModelAttribute("config") AdminSiteConfigDTO form,
             @RequestParam(required = false) MultipartFile headerLogoFile,
-            @RequestParam(required = false) MultipartFile footerLogoFile,
+            @RequestParam(required = false) MultipartFile footerLogoFile, // 사용 안 함(그대로 유지)
             @RequestParam(required = false) MultipartFile faviconFile,
             @RequestParam(required = false) String removeHeaderLogo,
-            @RequestParam(required = false) String removeFooterLogo,
+            @RequestParam(required = false) String removeFooterLogo, // 사용 안 함(그대로 유지)
             @RequestParam(required = false) String removeFavicon,
             RedirectAttributes ra) {
-        // 디버그 로그
+
         log.info("POST /admin/admin_basic form = {}", form);
 
-        // 0) 현재 DB값 조회
+        // 텍스트 필드 병합
         AdminSiteConfigDTO current = siteConfigService.get();
         if (current == null) current = new AdminSiteConfigDTO();
 
-        // 1) 텍스트 필드 머지 (빈 값이면 기존 유지)
-        String siteTitle = blankToNull(form.getSiteTitle());
-        String siteSubtitle = blankToNull(form.getSiteSubtitle());
-        String version = blankToNull(form.getVersion());
+        form.setSiteTitle(  isBlank(form.getSiteTitle())      ? current.getSiteTitle()   : form.getSiteTitle());
+        form.setSiteSubtitle(isBlank(form.getSiteSubtitle())  ? current.getSiteSubtitle(): form.getSiteSubtitle());
+        form.setVersion(    isBlank(form.getVersion())        ? current.getVersion()     : form.getVersion());
 
-        form.setSiteTitle(siteTitle != null ? siteTitle : current.getSiteTitle());
-        form.setSiteSubtitle(siteSubtitle != null ? siteSubtitle : current.getSiteSubtitle());
-        form.setVersion(version != null ? version : current.getVersion());
+        // === 고정 저장 경로 ===
+        Path staticRoot  = Paths.get("src/main/resources/static");
+        Path imagesDir   = staticRoot.resolve("images");
+        Path logoPath    = imagesDir.resolve("logo.png");     // 항상 이 파일명
+        Path faviconPath = staticRoot.resolve("favicon.ico"); // 항상 이 파일명
 
-        // 2) 파일 처리 (제거 > 새 업로드 > 기존 유지)
         try {
-            // HEADER LOGO
-            if (removeHeaderLogo != null) { // 체크박스 선택 시 "on"
-                if (current.getHeaderLogo() != null)
-                    storageService.deleteFile(current.getHeaderLogo());
-                form.setHeaderLogo(null); // DB null 처리
+            Files.createDirectories(imagesDir);
+
+            // ── 로고 (항상 PNG, 파일명 고정: images/logo.png) ──
+            if (removeHeaderLogo != null) {
+                Files.deleteIfExists(logoPath);
+                // 화면은 고정 경로로 불러오므로 DB null이어도 무방하지만 일관성 위해 null
+                form.setHeaderLogo(null);
             } else if (headerLogoFile != null && !headerLogoFile.isEmpty()) {
-                form.setHeaderLogo(storageService.saveAndReturnUrl(headerLogoFile, "header"));
+                // PNG가 아니어도 PNG로 변환해서 저장
+                try (InputStream in = headerLogoFile.getInputStream()) {
+                    BufferedImage img = ImageIO.read(in);
+                    if (img == null) {
+                        ra.addFlashAttribute("msg", "로고 파일을 읽을 수 없습니다. PNG/JPG 등 이미지 파일을 업로드해주세요.");
+                        return "redirect:/admin/admin_basic";
+                    }
+                    // 무조건 PNG로 저장
+                    ImageIO.write(img, "png", logoPath.toFile());
+                }
+                // 뷰/DB엔 고정 URL
+                form.setHeaderLogo("/images/logo.png");
             } else {
-                form.setHeaderLogo(current.getHeaderLogo());
+                // 업로드 없으면 경로 고정
+                form.setHeaderLogo("/images/logo.png");
             }
 
-            // FOOTER LOGO
-            if (removeFooterLogo != null) {
-                if (current.getFooterLogo() != null)
-                    storageService.deleteFile(current.getFooterLogo());
-                form.setFooterLogo(null);
-            } else if (footerLogoFile != null && !footerLogoFile.isEmpty()) {
-                form.setFooterLogo(storageService.saveAndReturnUrl(footerLogoFile, "footer"));
-            } else {
-                form.setFooterLogo(current.getFooterLogo());
-            }
-
-            // FAVICON
+            // ── 파비콘 (항상 ICO, 파일명 고정: /favicon.ico) ──
             if (removeFavicon != null) {
-                if (current.getFavicon() != null)
-                    storageService.deleteFile(current.getFavicon());
+                Files.deleteIfExists(faviconPath);
                 form.setFavicon(null);
             } else if (faviconFile != null && !faviconFile.isEmpty()) {
-                form.setFavicon(storageService.saveAndReturnUrl(faviconFile, "favicon"));
+                String originalName = faviconFile.getOriginalFilename();
+                boolean looksIco = originalName != null && originalName.toLowerCase().endsWith(".ico");
+                String ct = faviconFile.getContentType() != null ? faviconFile.getContentType() : "";
+                boolean mimeIco = ct.equalsIgnoreCase("image/x-icon") || ct.equalsIgnoreCase("image/vnd.microsoft.icon");
+
+                if (!(looksIco || mimeIco)) {
+                    ra.addFlashAttribute("msg", "파비콘은 .ico 파일만 가능합니다. (예: favicon.ico)");
+                    return "redirect:/admin/admin_basic";
+                }
+
+                // ★ 덮어쓰기 확정 방식 1: 삭제 후 스트림 복사
+                try (InputStream in = faviconFile.getInputStream()) {
+                    Files.deleteIfExists(faviconPath);         // 기존 파일 제거
+                    Files.copy(in, faviconPath);               // 새 파일 복사
+                }
+
+                // 덮어쓰기 확정 방식 2 (대안): 바이트 쓰기
+                // Files.write(faviconPath, faviconFile.getBytes(),
+                //        StandardOpenOption.CREATE, StandardOpenOption.TRUNCATE_EXISTING);
+
+                form.setFavicon("/favicon.ico");
             } else {
-                form.setFavicon(current.getFavicon());
+                form.setFavicon("/favicon.ico");
             }
+
+            // footerLogo는 그대로 유지(요청 미대상)
+            form.setFooterLogo(current.getFooterLogo());
 
         } catch (Exception e) {
             log.error("File upload error", e);
@@ -108,21 +148,7 @@ public class AdminBasicController {
             return "redirect:/admin/admin_basic";
         }
 
-
-        // 파일 처리 끝난 직후
-        log.info("==== DEBUG CHECK ====");
-        log.info("form(after file) siteTitle    = {}", form.getSiteTitle());
-        log.info("form(after file) siteSubtitle = {}", form.getSiteSubtitle());
-        log.info("form(after file) version      = {}", form.getVersion());
-        log.info("form(after file) headerLogo   = {}", form.getHeaderLogo());
-        log.info("form(after file) footerLogo   = {}", form.getFooterLogo());
-        log.info("form(after file) favicon      = {}", form.getFavicon());
-        log.info("==== DEBUG CHECK END ====");
-
-
-        log.info("form(after merge) = {}", form);
-
-        // 3) upsert
+        // 저장
         int updated = siteConfigService.upsert(form);
         log.info("updated rows = {}", updated);
 
@@ -130,7 +156,5 @@ public class AdminBasicController {
         return "redirect:/admin/admin_basic";
     }
 
-    private String blankToNull(String s) {
-        return (s == null || s.isBlank()) ? null : s;
-    }
+    private boolean isBlank(String s) { return s == null || s.isBlank(); }
 }
