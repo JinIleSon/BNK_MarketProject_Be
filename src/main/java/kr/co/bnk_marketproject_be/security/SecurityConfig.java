@@ -81,6 +81,7 @@ public class SecurityConfig {
                         "/", "/index",
                         "/css/**", "/js/**", "/images/**", "/fonts/**",
                         "/favicon.ico","/NICHIYA/favicon.ico", "/error",
+                        "/oauth2/**", "/login/oauth2/**", "/NICHIYA/login/oauth2/**",
                         "/user/**",
                         "/email/**",
                         "/member/**",
@@ -112,6 +113,25 @@ public class SecurityConfig {
 //        );
 
         http.csrf(csrf -> csrf.disable());
+
+        http.oauth2Login(oauth -> oauth
+                // 소셜 로그인도 같은 커스텀 로그인 페이지를 쓰고 싶다면(선택)
+                .loginPage("/member/login")
+
+                .successHandler((request, response, authentication) -> {
+                    String email = authentication.getName(); // 보통 이메일
+                    org.slf4j.LoggerFactory.getLogger("OAuth2")
+                            .info("OAuth2 authentication success: user={}", email);
+                    // 컨텍스트(/NICHIYA)는 자동으로 붙으니 앞에 쓰지 말고 루트부터!
+                    response.sendRedirect("/main/main/page");
+                })
+                .failureHandler((request, response, ex) -> {
+                    org.slf4j.LoggerFactory.getLogger("OAuth2")
+                            .warn("OAuth2 authentication failed: {}", ex.getMessage());
+                    response.sendRedirect("/member/login?error=social");
+                })
+        );
+
 
 
         // ✅ remember-me (자동 로그인)
