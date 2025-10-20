@@ -19,15 +19,11 @@ public interface OrdersMapper {
 
     // ===== 체크아웃(주문생성) =====
     void insertOrder(OrdersDTO order);
-    void insertOrderItemFromCart(@Param("orderId") int orderId,
-                                 @Param("orderItemId") int orderItemId);
     void recalcOrderTotal(@Param("orderId") int orderId);
     void decreaseStock(@Param("productId") int productId,
                        @Param("qty") int qty);
     void insertPayment(PaymentsDTO payment);
     void insertDelivery(DeliveriesDTO delivery);
-    void markCouponUsed(@Param("couponId") int couponId,
-                        @Param("orderId") int orderId);
     void consumePoint(@Param("userId") int userId,
                       @Param("amount") int amount,
                       @Param("orderId") int orderId);
@@ -56,8 +52,8 @@ public interface OrdersMapper {
 
     int deleteOrderIfEmpty(@Param("orderId") int orderId);
 
-    CouponsDTO selectCouponForUser(@Param("userId") int userId,
-                                   @Param("couponId") int couponId);
+    CouponsNowDTO selectCouponForUser(@Param("userId") int userId,
+                                      @Param("couponNowId") int couponNowId);
 
     int finalizeOrder(
             @Param("userId") int userId,
@@ -65,12 +61,11 @@ public interface OrdersMapper {
             @Param("totalAmount") int totalAmount
     );
 
-    int markCouponUsed(
-            @Param("userId") int userId,
-            @Param("couponId") int couponId,
-            @Param("orderId") int orderId   // 사용 주문을 기록할 수 있으면 같이 전달
+    int markCouponUsed(@Param("userId") int userId,
+                       @Param("couponNowId") int couponNowId,
+                       @Param("orderId") int orderId   // 사용 주문을 기록할 수 있으면 같이 전달
     );
 
-    Integer selectUsedPoint(int orderId);            // 사용 포인트 총합(양수) 반환
-    Integer selectUsedCouponAmount(int orderId);     // 사용 쿠폰 금액(양수) 반환
+    Integer selectUsedPoint(@Param("orderId") int orderId);
+    Integer selectUsedCouponAmount(@Param("orderId") int orderId);
 }

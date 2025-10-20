@@ -297,6 +297,11 @@
 
         const state = { method: 'email', emailCode: null, smsCode: null, emailVerified: false, phoneVerified: false };
 
+        // 패스워드와 형식 맞추기위해 추가된 trim 3줄
+        const nameOK = () => $('#name').value.trim().length >= 2;
+        const isValidEmail = v => /.+@.+\..+/.test(v.trim());
+        const isValidPhone = v => /^01[0-9]{8,9}$/.test(v.trim());
+
         const emailSection = $('#emailSection');
         const phoneSection = $('#phoneSection');
         const nextBtn      = $('#nextBtn');
@@ -430,8 +435,8 @@
             const payload = {
                 name: $('#name').value.trim(),
                 method: state.method,
-                email: state.method === 'email' ? $('#email').value.trim() : null,
-                phone: state.method === 'phone' ? $('#phone').value.trim() : null
+                email: state.method === 'email' ? $('#email').value.trim() : "",
+                phone: state.method === 'phone' ? $('#phone').value.trim() : ""
             };
 
             try {

@@ -22,7 +22,7 @@ public class DeliveriesDTO {
     private String shipped_at;
     private String delivered_at;
     private String invoice;
-    private String delicom;
+    private String hp;
     private String recipient;
     private Integer delichar;
     private String receipt;

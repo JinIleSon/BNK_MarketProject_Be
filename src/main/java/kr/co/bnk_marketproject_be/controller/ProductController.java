@@ -9,6 +9,7 @@ import kr.co.bnk_marketproject_be.service.impl.ProductServiceImpl;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -188,6 +189,7 @@ public class ProductController {
         int removed = ordersService.removeFromCart(userId, itemIds);
         return Map.of("ok", true, "removed", removed);
     }
+
 
     /* 주문정보 가져오기 */
     @GetMapping("/product/order")
