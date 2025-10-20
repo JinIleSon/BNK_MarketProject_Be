@@ -74,6 +74,11 @@ dependencies {
     // layout 공통
     implementation 'nz.net.ultraq.thymeleaf:thymeleaf-layout-dialect:3.3.0'
 
+    // sms 로그인
+    implementation 'org.springframework.boot:spring-boot-starter-web'
+    implementation 'com.solapi:sdk:1.0.3'
+    testImplementation 'org.springframework.boot:spring-boot-starter-test'
+
 }
 
 tasks.named('test') {

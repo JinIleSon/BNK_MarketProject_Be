@@ -91,7 +91,8 @@ public class SecurityConfig {
                         "/product/**",
                         "/cs/**",
                         "/member/**",
-                        "/mypage/**"
+                        "/mypage/**",
+                        "/api/sms/**"  // 여기 이것 추가!!!!
                 ).permitAll()
 
                 // 🔹 일반 회원, 셀러 접근 허용
