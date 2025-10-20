@@ -1,5 +1,3 @@
-package kr.co.bnk_marketproject_be.config;
-
 import org.mockito.Mockito;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
