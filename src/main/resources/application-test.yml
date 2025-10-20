@@ -1,13 +1,27 @@
 spring:
   datasource:
-    url: jdbc:h2:mem:testdb;MODE=Oracle;DB_CLOSE_DELAY=-1;DATABASE_TO_UPPER=false;INIT=CREATE SCHEMA IF NOT EXISTS NICHIYA\;SET SCHEMA NICHIYA
+    url: jdbc:h2:mem:testdb;MODE=Oracle;DB_CLOSE_DELAY=-1;DATABASE_TO_UPPER=false;INIT=CREATE SCHEMA IF NOT EXISTS NICHIYA
     driver-class-name: org.h2.Driver
     username: sa
     password:
   jpa:
     hibernate:
       ddl-auto: create-drop
+    open-in-view: false
     properties:
       hibernate:
+        dialect: org.hibernate.dialect.H2Dialect
         default_schema: NICHIYA
         hbm2ddl.create_namespaces: true
+  security:
+    oauth2:
+      client:
+        registration:
+          google:
+            client-id: test
+            client-secret: test
+            redirect-uri: "{baseUrl}/login/oauth2/code/google"
+            scope: email, profile
+  sql:
+    init:
+      mode: never
