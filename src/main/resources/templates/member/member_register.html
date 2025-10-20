@@ -283,7 +283,7 @@
 
     <script th:inline="javascript">
         // 컨텍스트 패스 얻기
-        const ctx = /*[[@{/}]]*/ '';
+        const ctx = /*[[@{/}]]*/ '/';
         // ---------- 상태 ----------
         let emailVerified = false;
         let phoneVerified = false;
@@ -462,7 +462,7 @@
             }
 
             try {
-                const res = await fetch(`${location.origin}/NICHIYA/api/sms/send`, {
+                const res = await fetch(`${ctx}api/sms/send`, {
                     method: "POST",
                     headers: { "Content-Type": "application/json" },
                     body: JSON.stringify({ phoneNumber: phone })
@@ -479,10 +479,7 @@
 
                 console.log("📱 서버 응답:", data);
 
-                if (
-                    res.ok &&
-                    (data.success === true || (typeof data === "string" && data.includes("인증번호 전송 완료")))
-                ) {
+                if (res.ok && (data.ok === true || data.success === true || (typeof data === "string" && data.includes("인증번호 전송 완료")))) {
                     const codeMatch = typeof data === "string" ? data.match(/\d{4,6}/) : null;
                     smsCode = codeMatch ? codeMatch[0] : null;
 
@@ -516,7 +513,7 @@
             }
 
             try {
-                const res = await fetch(`${location.origin}/NICHIYA/api/sms/verify`, {
+                const res = await fetch(`${ctx}api/sms/verify`, {
                     method: "POST",
                     headers: { "Content-Type": "application/json" },
                     body: JSON.stringify({
@@ -536,10 +533,7 @@
 
                 console.log("✅ 인증 응답:", data);
 
-                if (
-                    res.ok &&
-                    ((data.matched === true) || (typeof data === "string" && data.includes("인증 성공")))
-                ) {
+                if (res.ok && (data.ok === true || data.matched === true || (typeof data === "string" && data.includes("인증 성공")))) {
                     phoneVerified = true;
                     phoneStatus.textContent = "휴대폰 인증 완료 ✅";
                     phoneStatus.className = "success";
@@ -662,7 +656,7 @@
                     location.href = `${ctx}member/join`;
                 }
                 } else {
-                    alert("회원가입 실패: " + (body.error || "알 수 없는 오류"));
+                    alert("회원가입 실패: " + (body.message || "알 수 없는 오류"));
                 }
             } catch (err) {
                 console.error(err);
