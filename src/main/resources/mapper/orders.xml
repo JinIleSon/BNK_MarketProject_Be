@@ -50,31 +50,37 @@
 
     <!-- 쿠폰/포인트/기본배송지 -->
     <select id="selectAvailableCoupons" resultType="kr.co.bnk_marketproject_be.dto.OrderPageCouponViewDTO">
-        SELECT
-        id,
-        coupon_name,
-        discount_type,
-        discount_value,
-        company,
-        note,
-        TO_CHAR(valid_from,'YYYY-MM-DD HH24:MI') AS valid_from,
-        TO_CHAR(valid_to,'YYYY-MM-DD HH24:MI')   AS valid_to,
-        status
-        FROM coupons
-        WHERE users_id = #{userId}
-        AND status IN ('발급중')  <!-- 필요 상태만 남기세요 -->
-        AND SYSDATE BETWEEN valid_from AND valid_to
-        ORDER BY id DESC
+        <![CDATA[
+    SELECT
+      cn.id                                AS id,               -- COUPONS_NOW PK (선택 값)
+      c.coupon_name                        AS coupon_name,      -- COUPONS
+      c.discount_type                      AS discount_type,
+      c.discount_value                     AS discount_value,
+      c.company                            AS company,
+      c.note                               AS note,
+      TO_CHAR(c.valid_from,'YYYY-MM-DD HH24:MI') AS valid_from, -- 화면 표시용
+      TO_CHAR(c.valid_to  ,'YYYY-MM-DD HH24:MI') AS valid_to,
+      cn.status                            AS status            -- COUPONS_NOW 상태(미사용/사용)
+    FROM coupons_now cn
+    JOIN coupons c ON c.id = cn.coupons_id
+   WHERE cn.users_id = #{userId}
+     AND cn.status   = '미사용'
+     AND SYSDATE BETWEEN c.valid_from AND c.valid_to
+   ORDER BY cn.id DESC
+  ]]>
     </select>
 
     <update id="markCouponUsed">
-        UPDATE coupons
-        SET status = '종료',
-        used_order_id = #{orderId}   <!-- 새 컬럼 -->
-        WHERE id = #{couponId}
-        AND users_id = #{userId}
-        AND status = '발급중'
+        <![CDATA[
+    UPDATE coupons_now
+       SET status         = '사용',
+           used_at        = SYSTIMESTAMP
+     WHERE id       = #{couponNowId}
+       AND users_id = #{userId}
+       AND status   = '미사용'
+  ]]>
     </update>
+
 
     <select id="selectAvailablePoint" resultType="int">
         SELECT NVL(balance, 0)
@@ -147,7 +153,7 @@
             resultType="kr.co.bnk_marketproject_be.dto.DeliveriesDTO">
         SELECT
         d.recipient,
-        d.delicom,
+        d.hp,
         d.zipcode,
         d.address,
         d.address2,
@@ -178,9 +184,9 @@
 
     <insert id="insertDelivery" parameterType="kr.co.bnk_marketproject_be.dto.DeliveriesDTO">
         INSERT INTO deliveries
-        (orders_id, recipient, delicom, zipcode, address, address2, status, delichar, note)
+        (orders_id, recipient, hp, zipcode, address, address2, status, delichar, note)
         VALUES
-        (#{orders_id}, #{recipient}, #{delicom}, #{zipcode}, #{address}, #{address2}, #{status}, #{delichar}, #{note})
+        (#{orders_id}, #{recipient}, #{hp}, #{zipcode}, #{address}, #{address2}, #{status}, #{delichar}, #{note})
     </insert>
 
     <update id="recalcOrderTotal" parameterType="int">
@@ -306,7 +312,7 @@
 
         /* 배송지(orders_id에 저장된 스냅샷) — ProductCompleteDTO.shipping 으로 매핑 */
         d.recipient                              AS "shipping.recipient",
-        NVL(d.delicom, u.phone)                  AS "shipping.delicom",
+        NVL(d.hp, u.phone)                  AS "shipping.hp",
         d.address                                AS "shipping.address",
         d.address2                               AS "shipping.address2",
         d.delichar                               AS "shipping.delichar"   -- 옵션
@@ -381,27 +387,28 @@
     </delete>
 
     <select id="selectCouponForUser"
-            resultType="kr.co.bnk_marketproject_be.dto.CouponsDTO">
-        SELECT
-        id,
-        users_id,
-        code,
-        discount_type,
-        discount_value,
-        company,
-        valid_from,
-        valid_to,
-        status,
-        coupon_name,
-        issuecount,
-        usercount,
-        created_at,
-        note
-        FROM coupons
-        WHERE id = #{couponId}
-        AND users_id = #{userId}
-        AND status = '발급중'
-        AND SYSDATE BETWEEN valid_from AND valid_to
+            resultType="kr.co.bnk_marketproject_be.dto.CouponsNowDTO">
+        <![CDATA[
+      SELECT
+        cn.id            AS id,
+        cn.users_id      AS users_id,
+        cn.status        AS status,
+        cn.coupons_id    AS coupons_id,
+        c.code           AS code,
+        c.discount_type  AS discount_type,
+        c.discount_value AS discount_value,
+        c.coupon_name    AS coupon_name,
+        c.company        AS company,
+        c.note           AS note,
+        c.valid_from     AS valid_from,
+        c.valid_to       AS valid_to
+      FROM coupons_now cn
+      JOIN coupons c ON c.id = cn.coupons_id
+     WHERE cn.id       = #{couponNowId}
+       AND cn.users_id = #{userId}
+       AND cn.status   = '미사용'
+       AND SYSDATE BETWEEN c.valid_from AND c.valid_to
+    ]]>
     </select>
 
     <!-- 헤더 결제완료 승격 -->
@@ -415,19 +422,12 @@
         AND status = '결제대기'
     </update>
 
-    <select id="selectUsedPointByOrder" parameterType="int" resultType="int">
+    <select id="selectUsedPoint" parameterType="int" resultType="int">
         <![CDATA[
-  SELECT NVL(SUM(
-           CASE
-             WHEN REGEXP_LIKE(TRIM(change_amount), '^-?[0-9,]+$')
-              AND TO_NUMBER(REPLACE(TRIM(change_amount), ',', '')) < 0
-             THEN ABS(TO_NUMBER(REPLACE(TRIM(change_amount), ',', '')))
-             ELSE 0
-           END
-         ), 0)
-    FROM point_ledgers
-   WHERE board_type = 'ORDER_USE'
-     AND description = TO_CHAR(#{orderId})
+    SELECT NVL(-SUM(CASE WHEN change_amount < 0 THEN change_amount ELSE 0 END), 0)
+      FROM point_ledgers
+     WHERE board_type = 'ORDER_USE'
+       AND description = TO_CHAR(#{orderId})
   ]]>
     </select>
 

@@ -88,7 +88,7 @@ public class OrdersService {
                 .availableCoupons(coupons)
                 .availablePoint(point == null ? 0 : point)
                 .paymentMethods(List.of("신용카드", "계좌이체", "휴대폰결제", "카카오페이"))
-                .defaultShipping(ship)
+                .defaultShipping(null)
                 .build();
     }
 
@@ -104,14 +104,14 @@ public class OrdersService {
 
         // 1) 쿠폰 검증/할인액
         int couponAmt = 0;
-        int couponId  = submit.getCoupon_id();
-        if (couponId != 0) {
-            CouponsDTO c = ordersMapper.selectCouponForUser(userId, couponId);
+        int couponNowId = submit.getCoupon_id();
+        if (couponNowId != 0) {
+            CouponsNowDTO c = ordersMapper.selectCouponForUser(userId, couponNowId);
             if (c == null) throw new IllegalArgumentException("사용할 수 없는 쿠폰입니다.");
 
             int base = Math.max(0, subtotal - prodDiscount);
             if ("RATE".equalsIgnoreCase(c.getDiscount_type())) {
-                couponAmt = (int) Math.floor(base * (c.getDiscount_value() / 100.0));
+                couponAmt = (int)Math.floor(base * (c.getDiscount_value() / 100.0));
             } else {
                 couponAmt = Math.min(c.getDiscount_value(), base);
             }
@@ -164,7 +164,7 @@ public class OrdersService {
         ordersMapper.insertDelivery(DeliveriesDTO.builder()
                 .orders_id(orderId)
                 .recipient(ship.getRecipient())
-                .delicom(ship.getDelicom())
+                .hp(ship.getHp())
                 .zipcode(ship.getZipcode())
                 .address(ship.getAddress())
                 .address2(ship.getAddress2())
@@ -174,7 +174,7 @@ public class OrdersService {
                 .build());
 
         // 9) 쿠폰/포인트 반영
-        if (couponId != 0) ordersMapper.markCouponUsed(userId, couponId, orderId);
+        if (couponNowId != 0) ordersMapper.markCouponUsed(userId, couponNowId, orderId);
         if (pointUse > 0)  ordersMapper.consumePoint(userId, pointUse, orderId);
 
         // 10) 적립 포인트
@@ -218,7 +218,7 @@ public class OrdersService {
         header.setItems(lines);
 
         // 확정 쿠폰/포인트 사용액
-        Integer usedPoint  = ordersMapper.selectUsedPointByOrder(orderId); // 표시에만 사용
+        Integer usedPoint  = ordersMapper.selectUsedPoint(orderId); // 표시에만 사용
         Integer usedCoupon = ordersMapper.selectUsedCouponAmount(orderId); // 총 할인금액에 포함
         int pointUse  = usedPoint  == null ? 0 : usedPoint;
         int couponAmt = usedCoupon == null ? 0 : usedCoupon;
@@ -227,7 +227,7 @@ public class OrdersService {
         int totalDiscountForDisplay = itemsDiscount + couponAmt;
 
         // 총 결제금액 = 총 상품금액 - (상품+쿠폰 할인) + 배송비 (포인트 제외)
-        int totalPayable = Math.max(0, subtotal - totalDiscountForDisplay + delichar);
+        int totalPayable = Math.max(0, subtotal - (itemsDiscount + couponAmt + pointUse) + delichar);
 
         var sum = OrderPageSummaryDTO.builder()
                 .itemCount(lines.size())

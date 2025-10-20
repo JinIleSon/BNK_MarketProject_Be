@@ -134,8 +134,8 @@
                         </div>
                         <div style="margin-top:6px;">
                             <span style="display:inline-block; width:100px;">휴대폰</span>
-                            <input type="text" name="shipping.delicom" style="width:160px"
-                                   th:value="${order.defaultShipping != null ? order.defaultShipping.delicom : ''}">
+                            <input type="text" name="shipping.hp" style="width:160px"
+                                   th:value="${order.defaultShipping != null ? order.defaultShipping.hp : ''}">
                         </div>
                         <div style="margin-top:6px;">
                             <span style="display:inline-block; width:100px;">우편번호</span>
@@ -360,6 +360,62 @@
         });
 
         recalc();
+    })();
+</script>
+<script>
+    (function(){
+        const form = document.getElementById('orderForm');
+        const btn  = document.querySelector('button.btn-primary[form="orderForm"]');
+        if (!form || !btn) return;
+
+        // 필수: 상세/메모 제외
+        const requiredNames = [
+            'shipping.recipient',
+            'shipping.hp',
+            'shipping.zipcode',
+            'shipping.address'
+        ];
+
+        let isSubmitting = false;
+
+        form.addEventListener('submit', function(e){
+            // 0) 아직 비활성화/라벨 변경하지 말고 먼저 검증
+            // 필수 입력 확인
+            const emptyName = requiredNames.find(n => {
+                const el = form.elements[n];
+                return !(el && typeof el.value === 'string' && el.value.trim());
+            });
+            if (emptyName) {
+                e.preventDefault();
+                alert('배송정보를 입력하십시오!');
+                form.elements[emptyName]?.focus();
+                // 혹시 이전 시도에서 버튼이 잠겼다면 복구
+                btn.disabled = false;
+                btn.textContent = '결제하기';
+                return;
+            }
+
+            // 결제수단 선택 확인
+            const payOK = Array.from(document.querySelectorAll('input[name="payment_method"]'))
+                .some(r => r.checked);
+            if (!payOK) {
+                e.preventDefault();
+                alert('결제 방법을 선택해주세요.');
+                btn.disabled = false;
+                btn.textContent = '결제하기';
+                return;
+            }
+
+            // 1) 여기서만 잠금/라벨 변경
+            if (isSubmitting) {
+                // 중복 클릭 방지
+                e.preventDefault();
+                return;
+            }
+            isSubmitting = true;
+            btn.disabled = true;
+            btn.textContent = '처리 중...';
+        });
     })();
 </script>
 </body>

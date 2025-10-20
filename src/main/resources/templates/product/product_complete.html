@@ -83,20 +83,20 @@
                     </td>
 
                     <!-- 상품금액(정가 × 수량) -->
-                    <td th:text="${#numbers.formatInteger((r.unitPrice != null ? r.unitPrice : 0) * (r.quantity != null ? r.quantity : 0), 3, 'COMMA')}">0</td>
+                    <td th:text="${#numbers.formatInteger((r.unitPrice != null ? r.unitPrice : 0) * (r.quantity != null ? r.quantity : 0), 3, 'COMMA')} + '원'">0</td>
 
                     <!-- 할인가(수량 반영) -->
                     <td th:text="${
                           (r.unitDiscount != null ? r.unitDiscount : 0) > 0
                           ? '-' + #numbers.formatInteger(T(java.lang.Math).round((r.unitDiscount != null ? r.unitDiscount : 0) * (r.quantity != null ? r.quantity : 0) * 1.0), 3, 'COMMA')
                           : '0'
-                        }">-0</td>
+                        } + '원'">-0</td>
 
                     <!-- 수량 -->
                     <td th:text="${r.quantity != null ? r.quantity : 0}">1</td>
 
                     <!-- 주문금액(판매가×수량 = lineTotal) -->
-                    <td style="color:red;" th:text="${#numbers.formatInteger((r.lineTotal != null ? r.lineTotal : 0), 3, 'COMMA')}">0</td>
+                    <td style="color:red;" th:text="${#numbers.formatInteger((r.lineTotal != null ? r.lineTotal : 0), 3, 'COMMA')} + '원'">0</td>
                 </tr>
             </th:block>
 
@@ -108,7 +108,7 @@
     </div>
 
     <!-- 합계 박스 -->
-    <div style="border:1px solid #f2f2f2; width:300px; margin-left:970px; height:148px; padding:20px; background-color:#f2f2f2;">
+    <div style="border:1px solid #f2f2f2; width:300px; margin-left:970px; height:168px; padding:20px; background-color:#f2f2f2;">
         <div style="padding-left:7px; padding-right:7px;">
             <div style="margin-bottom:6px;">
                 <div>총 상품금액
@@ -124,13 +124,10 @@
             </div>
             <div style="margin-bottom:6px;">
                 <div>
-                    포인트 할인
+                    (포인트 할인
                     <span style="float:right;"
-                          th:text="${(order != null and order.summary != null and order.summary.pointUse != null and order.summary.pointUse > 0)
-                   ? '-' + #numbers.formatInteger(order.summary.pointUse, 'COMMA') + ' 원'
-                   : '0 원'}">
-    0 원
-  </span>
+                          th:text="${'-' + #numbers.formatInteger((order != null and order.summary != null and order.summary.pointUse != null ? order.summary.pointUse : 0), 3, 'COMMA') + ' 원)'}">
+</span>
                 </div>
             </div>
             <div style="margin-bottom:6px;">
@@ -148,16 +145,6 @@
         </div>
     </div>
 
-    <div style="font:12px/1.2 monospace; color:#888; background:#f7f7f7; padding:6px; border:1px dashed #ccc;"
-         th:if="${order != null}" th:inline="text">
-        DEBUG — orderId=[[${order.orderId}]]
-        | pointUse=[[${order.summary != null ? order.summary.pointUse : 'null'}]]
-        | items+coupon(discountAmount)=[[${order.summary != null ? order.summary.discountAmount : 'null'}]]
-        | couponAmount=[[${order.summary != null ? order.summary.couponAmount : 'null'}]]
-        | subtotal=[[${order.summary != null ? order.summary.subtotalAmount : 'null'}]]
-        | delichar=[[${order.summary != null ? order.summary.delichar : 'null'}]]
-    </div>
-    
     <!-- 주문정보 -->
     <div style="display:flex; margin-top:14px; margin-bottom:10px;">
         <div style="font-size:18px; margin-right:1200px;"><b>주문정보</b></div>
@@ -202,7 +189,7 @@
 
             <!-- 연락처 -->
             <div style="margin-bottom:7px;"
-                 th:text="*{shipping != null ? shipping.delicom : ''}">010-1234-1234</div>
+                 th:text="*{shipping != null ? shipping.hp : ''}">010-1234-1234</div>
 
             <!-- 배송지 주소: [#우편번호] 기본주소 + 상세주소 -->
             <div th:text="*{shipping != null ?

@@ -15,13 +15,22 @@ import java.util.List;
 public class PointService {
     private final PointMapper pointMapper;
 
-    // 전체 포인트 내역 조회
     public List<MyPagePointLedgerDTO> findLedgers(String userId) {
         return pointMapper.findLedgers(userId);
     }
 
-    // 현재 포인트 합계 (balance)
+    // 기존: 숫자 PK로 조회
+    public long getBalance(int userId) {
+        return pointMapper.findLatestBalanceByNumericId(userId);
+    }
+
+    // 추가: 문자열 아이디가 들어와도 안전하게 처리
     public long getBalance(String userId) {
-        return pointMapper.getBalance(userId);
+        if (userId == null || userId.isBlank()) return 0L;
+        String s = userId.trim();
+        if (s.matches("\\d+")) {                    // "123" 처럼 전부 숫자면 PK 취급
+            return getBalance(Integer.parseInt(s));
+        }
+        return pointMapper.findLatestBalanceByUserId(s); // 그 외는 users.user_id 취급
     }
 }
