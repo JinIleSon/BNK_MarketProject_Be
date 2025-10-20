@@ -170,10 +170,9 @@
                                th:attr="data-raw=${order.availablePoint}"
                                th:text="${#numbers.formatInteger(order.availablePoint,0)}">0</b>점
                             <input id="usePointInput" type="text" name="usePoint" value="0" style="width:80px; margin-left:6px;">
-                            <button type="button" id="usePointMaxBtn" style="width:80px; margin-left:7px;">사용하기</button>
                         </div>
                         <div style="color:gray; font-size:13px; margin-top:3px; margin-bottom:10px;">
-                            포인트는 정책에 맞게 서버에서 최종 검증됩니다.
+                            포인트를 입력하시면 자동으로 금액에 반영됩니다.
                         </div>
                         <div>
                             쿠폰적용
@@ -216,7 +215,6 @@
                             </label>
                             <label>
                                 <input type="radio" name="payment_method" value="카카오페이" style="transform:scale(1.5);"> 카카오페이
-                                <img src="#" alt="카카오페이이미지" style="margin-left:10px;">
                             </label>
                         </div>
                     </div>

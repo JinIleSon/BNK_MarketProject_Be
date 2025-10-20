@@ -123,6 +123,17 @@
                 </div>
             </div>
             <div style="margin-bottom:6px;">
+                <div>
+                    포인트 할인
+                    <span style="float:right;"
+                          th:text="${(order != null and order.summary != null and order.summary.pointUse != null and order.summary.pointUse > 0)
+                   ? '-' + #numbers.formatInteger(order.summary.pointUse, 'COMMA') + ' 원'
+                   : '0 원'}">
+    0 원
+  </span>
+                </div>
+            </div>
+            <div style="margin-bottom:6px;">
                 <div>배송비
                     <span style="float:right;"
                           th:text="${#numbers.formatInteger(order != null and order.summary != null ? (order.summary.delichar != null ? order.summary.delichar : 0) : 0, 3, 'COMMA') + ' 원'}">0 원</span>
@@ -137,6 +148,16 @@
         </div>
     </div>
 
+    <div style="font:12px/1.2 monospace; color:#888; background:#f7f7f7; padding:6px; border:1px dashed #ccc;"
+         th:if="${order != null}" th:inline="text">
+        DEBUG — orderId=[[${order.orderId}]]
+        | pointUse=[[${order.summary != null ? order.summary.pointUse : 'null'}]]
+        | items+coupon(discountAmount)=[[${order.summary != null ? order.summary.discountAmount : 'null'}]]
+        | couponAmount=[[${order.summary != null ? order.summary.couponAmount : 'null'}]]
+        | subtotal=[[${order.summary != null ? order.summary.subtotalAmount : 'null'}]]
+        | delichar=[[${order.summary != null ? order.summary.delichar : 'null'}]]
+    </div>
+    
     <!-- 주문정보 -->
     <div style="display:flex; margin-top:14px; margin-bottom:10px;">
         <div style="font-size:18px; margin-right:1200px;"><b>주문정보</b></div>
