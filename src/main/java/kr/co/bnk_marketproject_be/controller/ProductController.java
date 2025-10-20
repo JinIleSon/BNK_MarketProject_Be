@@ -204,41 +204,18 @@ public class ProductController {
                                @ModelAttribute OrderPageSubmitDTO submit,
                                RedirectAttributes ra) {
         int uid = currentUserIdOr401(auth);
-        try {
-            int orderId = ordersService.checkout(uid, submit);
-            ra.addAttribute("orderId", orderId);
-            return "redirect:/product/complete";
-        } catch (IllegalArgumentException e) {
-            ra.addFlashAttribute("error", e.getMessage());
-            return "redirect:/product/order";
-        } catch (Exception e) {
-            ra.addFlashAttribute("error", "주문 처리 중 오류가 발생했습니다. 잠시 후 다시 시도해 주세요.");
-            return "redirect:/product/order";
-        }
+        int orderId = ordersService.checkout(uid, submit);
+
+        ra.addAttribute("orderId", orderId);           // {orderId} 바인딩
+        return "redirect:/product/complete/{orderId}"; // ★ 경로변수 사용
     }
 
     /* 주문 완료 */
-    @GetMapping("/product/complete")
-    public String product_complete(Authentication auth,
-                                   @RequestParam int orderId,
-                                   Model model,
-                                   RedirectAttributes ra) {
-        currentUserIdOr401(auth); // 소유자 검증 추가하려면 서비스에서 검사
-        try {
-            ProductCompleteDTO complete = ordersService.getComplete(orderId);
-            if (complete == null) {
-                ra.addFlashAttribute("error", "해당 주문을 찾을 수 없거나 접근 권한이 없습니다.");
-                return "redirect:/product/order";
-            }
-            model.addAttribute("complete", complete);
-            return "product/product_complete";
-        } catch (IllegalArgumentException e) {
-            ra.addFlashAttribute("error", e.getMessage());
-            return "redirect:/product/order";
-        } catch (Exception e) {
-            ra.addFlashAttribute("error", "주문 완료 정보를 불러오지 못했습니다. 잠시 후 다시 시도해 주세요.");
-            return "redirect:/product/order";
-        }
+    @GetMapping("/product/complete/{orderId}")
+    public String complete(@PathVariable int orderId, Model model) {
+        var vm = ordersService.getComplete(orderId);
+        model.addAttribute("order", vm);
+        return "product/product_complete"; // 템플릿 이
     }
 
 

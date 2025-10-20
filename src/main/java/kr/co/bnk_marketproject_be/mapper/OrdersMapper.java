@@ -15,7 +15,7 @@ public interface OrdersMapper {
     // ===== 주문화면용 쿠폰/포인트/기본배송지 =====
     List<OrderPageCouponViewDTO> selectAvailableCoupons(@Param("userId") int userId);
     Integer selectAvailablePoint(@Param("userId") int userId);
-    OrderPageShippingInfoDTO selectDefaultShipping(@Param("userId") int userId);
+    DeliveriesDTO selectDefaultShipping(@Param("userId") int userId);
 
     // ===== 체크아웃(주문생성) =====
     void insertOrder(OrdersDTO order);
@@ -55,4 +55,19 @@ public interface OrdersMapper {
     int countItemsInOrder(@Param("orderId") int orderId);
 
     int deleteOrderIfEmpty(@Param("orderId") int orderId);
+
+    CouponsDTO selectCouponForUser(@Param("userId") int userId,
+                                   @Param("couponId") int couponId);
+
+    int finalizeOrder(
+            @Param("userId") int userId,
+            @Param("orderId") int orderId,
+            @Param("totalAmount") int totalAmount
+    );
+
+    int markCouponUsed(
+            @Param("userId") int userId,
+            @Param("couponId") int couponId,
+            @Param("orderId") int orderId   // 사용 주문을 기록할 수 있으면 같이 전달
+    );
 }

@@ -22,4 +22,7 @@ public class OrderPageLineRowDTO {
     private String url;        // product_images.url (대표)
     private Integer delichar;       // 배송비(건별), null이면 0로 처리
     private boolean freeShipping;   // delichar==null || delichar==0
+
+    private Integer unitDiscount;   // 단가 기준 "금액" 할인 (스냅샷)
+    private Integer unitSalePrice;  // 판매 단가 = unitPrice - unitDiscount
 }
