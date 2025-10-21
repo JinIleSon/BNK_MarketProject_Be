@@ -13,24 +13,19 @@ import java.util.List;
 @Mapper
 public interface MypageAllOrderMapper {
 
-    // 사용자명으로 user_id 조회
     @Select("SELECT id FROM USERS WHERE USER_ID = #{username}")
     int findUserIdByUsername(String username);
 
-    // 전체 주문 목록 조회
     List<OrdersDTO> findAllOrdersByUserId(@Param("userId") String userId);
 
-    // 단일 주문 상세
-    OrdersDTO findOrderDetailById(@Param("orderId") int orderId);
+    List<OrdersDTO> findOrderDetailByCode(@Param("orderCode") String orderCode);
 
-    // 페이징 주문 목록
     List<OrdersDTO> findPagedOrders(@Param("userId") String userId,
                                     @Param("pageRequest") PageRequestDTO pageRequest);
 
     int countOrdersByUserId(@Param("userId") String userId);
 
-    // 주문별 상품 목록 조회
-    List<OrderItemsDTO> findOrderItemsByOrderId(@Param("orderId") int orderId);
-    // 상품평 등록
     int insertProductBoard(ProductBoardsDTO dto);
+
+    List<OrdersDTO> findRecentOrdersByUserId(@Param("userId") String userId);
 }

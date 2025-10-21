@@ -9,6 +9,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Map;
 
 @Slf4j
 @Service
@@ -44,5 +45,9 @@ public class MypageReturnExchangeServiceImpl implements MypageReturnExchangeServ
     public List<MypageExchangeRequestDTO> findExchangeList(Long userId) {
         log.info("📋 [Service] 교환신청 목록 조회 userId={}", userId);
         return mapper.findExchangeList(userId);
+    }
+
+    public Map<String, Object> findOrderItemDetail(Long orderItemId) {
+        return mapper.findOrderItemDetail(orderItemId);
     }
 }

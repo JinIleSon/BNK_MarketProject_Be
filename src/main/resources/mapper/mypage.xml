@@ -47,6 +47,7 @@
 <!--    푸시용 주석-->
     <select id="selectUser" resultType="kr.co.bnk_marketproject_be.dto.UserDTO">
         SELECT
+        id,  <!-- ✅ 이 줄 추가 -->
         user_id as user_id,
         email,
         password,

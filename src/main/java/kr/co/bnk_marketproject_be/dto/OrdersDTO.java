@@ -81,6 +81,26 @@ public class OrdersDTO {
 
     private List<OrderItemsDTO> orderItems;
 
+    @Transient
+    private String seller_id;           // SELLERS.SELLER_ID
+    @Transient
+    private String seller_rep;          // USERS.NAME
+    @Transient
+    private String seller_tel;          // USERS.PHONE
+    @Transient
+    private String seller_email;        // USERS.EMAIL
+    @Transient
+    private String seller_bizno;        // SELLERS.BIZ_REGISTRATION_NUMBER
+    @Transient
+    private String seller_mailnum;      // SELLERS.MAIL_ORDER_NUMBER
+    @Transient
+    private String seller_addr;         // USERS.ADDRESS + USERS.DETAILADDRESS
+    private String delivery_company;
+    private String invoice;
+    private String delivery_status;
+    private String delivery_phone;
+    private int payment_amount;
+
 
 
 }

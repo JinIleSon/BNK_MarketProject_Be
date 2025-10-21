@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="kr.co.bnk_marketproject_be.mapper.MypageInquiryMapper">
+
+    <!-- 문의 등록 -->
+    <insert id="insertInquiry" parameterType="kr.co.bnk_marketproject_be.dto.MypageInquiryDTO">
+        INSERT INTO HTE_MY_PAGE_INQUIRY (
+        USER_ID, SELLER_ID, ORDER_ITEM_ID,
+        QTYPE, EMAIL, SUBJECT, CONTENT, STATUS, CREATED_AT
+        ) VALUES (
+        #{userId, jdbcType=NUMERIC},
+        #{sellerId, jdbcType=NUMERIC},
+        #{orderItemId, jdbcType=NUMERIC},
+        #{qtype},
+        #{email},
+        #{subject},
+        #{content},
+        NVL(#{status}, '대기중'),
+        SYSTIMESTAMP
+        )
+    </insert>
+
+</mapper>

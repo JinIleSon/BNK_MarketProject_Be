@@ -33,7 +33,7 @@
     }
     /* 상단 바 */
     .modal-header {
-        background: #2f7ee6; color:#fff;
+        background: #000000; color:#fff;
         padding: 4px 16px; font-weight: 700;
         display: flex; align-items: center; justify-content: space-between;
     }
@@ -365,8 +365,8 @@
                                                 <div th:if="${itemStat.index == 0}" style="margin-bottom:5px; color:#888; font-size:13px;">
                                                     주문번호 : <span th:text="${o.order_code}"></span>
                                                 </div>
-                                                <div th:if="${itemStat.index == 0}" style="margin-bottom:5px; color:#888; font-size:13px;">
-                                                    판매자 : <span th:text="${o.company_name != null ? o.company_name : '(주) 상호명'}"></span>
+                                                <div style="margin-bottom:5px; color:#888; font-size:13px;">
+                                                    판매자 : <span th:text="${item.company_name != null ? item.company_name : '(주) 상호명'}"></span>
                                                 </div>
 
                                                 <!-- 상품명 / 수량 / 가격 -->
@@ -411,12 +411,11 @@
                                 </td>
 
                                 <!-- 상태 -->
-                                <td th:text="${o.status}" style="vertical-align:top; padding-top:20px; font-weight:600; color:#2f7ee6;"></td>
+                                <td th:text="${o.status}" style="vertical-align:top; padding-top:20px; font-weight:600; color:#000000;"></td>
 
                                 <!-- 확인 -->
                                 <td style="vertical-align:top; padding-top:20px;">
                                     <button class="confirm-purchase"
-                                            th:attr="data-order-id=${o.order_code}"
                                             style="background-color:#000; color:#fff; width:100px; height:34px; border:none; cursor:pointer;">
                                         구매확정
                                     </button>
@@ -633,7 +632,7 @@
                     ※ 위 정보는 전자상거래법 제20조 제2항 및 시행령 제25조 제2항에 의거하여 소비자보호에 의거 공개합니다.
                 </div>
                 <div style="display:flex; justify-content:center; margin-top:14px;">
-                    <button type="button" id="openInquiryBtn" style="width:120px; height:36px; border:0; background:#2f7ee6; color:#fff; font-weight:300;">문의하기</button>
+                    <button type="button" id="openInquiryBtn" style="width:120px; height:36px; border:0; background:#000000; color:#fff; font-weight:300;">문의하기</button>
                 </div>
             </div>
         </div>
@@ -753,7 +752,7 @@
 
                 <div style="display:flex; justify-content:center; gap:10px; margin-top:16px;">
                     <button type="submit"
-                            style="min-width:120px; height:38px; border:0; background:#2f7ee6; color:#fff; font-weight:300;">
+                            style="min-width:120px; height:38px; border:0; background:#000000; color:#fff; font-weight:300;">
                         등록하기
                     </button>
                     <button type="button" id="inquiryCancelBtn"
@@ -854,7 +853,7 @@
 
             <div style="display:flex; justify-content:center; gap:10px; margin-top:18px;">
                 <button type="button" id="buyOk"
-                        style="min-width:120px; height:38px; border:0; background:#2f7ee6; color:#fff; font-weight:300;">
+                        style="min-width:120px; height:38px; border:0; background:#000000; color:#fff; font-weight:300;">
                     확인
                 </button>
                 <button type="button" id="buyCancel"
@@ -993,7 +992,7 @@
 
             <div class="review-actions">
                 <button type="submit"
-                        style="min-width:120px; height:38px; border:0; background:#2f7ee6; color:#fff; font-weight:300;">
+                        style="min-width:120px; height:38px; border:0; background:#000000; color:#fff; font-weight:300;">
                     작성완료
                 </button>
                 <button type="button" id="reviewCancel"
@@ -1252,7 +1251,7 @@
                         }
 
                         .btn-file:hover{ filter:brightness(0.95); }
-                        .btn-file:focus-visible{ outline:2px solid #2f7ee6; outline-offset:2px; }
+                        .btn-file:focus-visible{ outline:2px solid #000000; outline-offset:2px; }
 
                         #rtFile1Name{ margin-left:8px; color:#666; }
 
@@ -1268,7 +1267,7 @@
 
                 <div style="display:flex; justify-content:center; gap:10px; margin-top:16px;">
                     <button type="button" id="rtSubmit"
-                            style="min-width:120px; height:38px; border:0; background:#2f7ee6; color:#fff; font-weight:300;">반품신청</button>
+                            style="min-width:120px; height:38px; border:0; background:#000000; color:#fff; font-weight:300;">반품신청</button>
                     <button type="button" id="rtCancel"
                             style="min-width:120px; height:38px; border:0; background:#ccc; color:#fff;">취소</button>
                 </div>
@@ -1368,7 +1367,7 @@
 
                 <div style="display:flex; justify-content:center; gap:10px; margin-top:16px;">
                     <button type="button" id="exSubmit"
-                            style="min-width:120px; height:38px; border:0; background:#2f7ee6; color:#fff; font-weight:300;">교환신청</button>
+                            style="min-width:120px; height:38px; border:0; background:#000000; color:#fff; font-weight:300;">교환신청</button>
                     <button type="button" id="exCancel"
                             style="min-width:120px; height:38px; border:0; background:#ccc; color:#fff;">취소</button>
                 </div>
@@ -1380,6 +1379,7 @@
 </div>
 </body>
 <script>
+    // ===== 반품신청 모달 제어 =====
     const rtModal     = document.getElementById('returnModal');
     const rtBackdrop  = document.getElementById('returnModalBackdrop');
     const rtClose     = document.getElementById('returnClose');
@@ -1389,67 +1389,83 @@
 
     function setText(id, v){ const el=document.getElementById(id); if(el) el.textContent = v; }
     function setSrc(id, v){ const el=document.getElementById(id); if(el) el.src = v; }
+    // === 공통 이미지 경로 처리 ===
+    function resolveImageUrl(imgPath) {
+        if (!imgPath) return `${ctxPath}/images/no_image.jpg`;
+        if (imgPath.startsWith('http')) return imgPath;
+        return `${ctxPath}/${imgPath.replace(/^\/+/, '')}`;
+    }
 
-    function openReturnModal(fromBtn){
-        const productBlock = fromBtn.closest('div'); // ✅ 버튼이 포함된 상품 영역
-        const row = fromBtn.closest('tr');
 
-        const date   = row?.querySelector('td:first-child')?.textContent?.trim() || '0000-00-00';
-        const orderA = row?.querySelector('.order-link');
-        const seller = row?.querySelector('.seller-link')?.textContent?.trim() || '(주) 상호명';
-        const name   = fromBtn.dataset.productName || '상품명';
-        const qtyTxt = row?.querySelector('td:nth-child(2) div:nth-child(4)')?.textContent?.trim() || '수량 : 1개';
-        const price  = row?.querySelector('td:nth-child(2) div[style*="font-size"]')?.textContent?.trim() || '0원';
-        const status = row?.querySelector('td:nth-child(3)')?.textContent?.trim() || '-';
+    // ✅ DB에서 반품 상품 상세 불러오기
+    async function openReturnModal(fromBtn){
+        const productBlock = fromBtn.closest('div');
+        const orderItemId = fromBtn.dataset.orderItemId;
+        const userId = document.getElementById('userData')?.dataset.userId || null;
         // ✅ 버튼에서 직접 img 추적
         const thumb = productBlock?.querySelector('img')?.getAttribute('src') ||
             fromBtn.dataset.productImg ||
             '/NICHIYA/images/no_image.jpg';
 
-        console.log("📦 [DEBUG] 열기 시작 - fromBtn:", fromBtn);
-        console.log("📦 [DEBUG] dataset.productImg =", fromBtn.dataset.productImg);
-        console.log("📦 [DEBUG] 최종 thumb =", thumb);
-        console.log("📦 [DEBUG] rtThumb element =", document.getElementById('rtThumb'));
 
-
-        setText('rtDate', date);
-        setText('rtOrderNo', orderA?.dataset.orderId || '-');
-        setText('rtSeller', seller);
-        setText('rtName', name);
-        setText('rtQty', qtyTxt);
-        setText('rtPrice', price);
-        setText('rtStatus', status);
         setSrc('rtThumb', thumb);
 
-        setTimeout(() => {
-            console.log("🧩 [CHECK] 모달 내 이미지 src =", document.getElementById('rtThumb')?.getAttribute('src'));
-        }, 300);
 
-        const rtPayEl = document.getElementById('rtPay');
-        rtPayEl.innerHTML = `
-            <div style="display:flex; margin-bottom:5px;">
-                <div>판매가</div>
-                <div style="margin-left:auto;">${price}</div>
-            </div>
-            <div style="display:flex; margin-bottom:28px;">
-                <div>할인</div>
-                <div style="margin-left:auto;">-3,000원</div>
-            </div>
-            <div style="display:flex;">
-                <div>결제금액</div>
-                <div style="margin-left:auto; font-weight:800;">31,000원</div>
-            </div>
-        `;
+        console.log("📦 [DEBUG] 반품 버튼 클릭됨:", orderItemId, "현재 userId:", userId);
 
-        document.querySelectorAll('input[name="rtType"]').forEach(r=> r.checked=false);
-        document.getElementById('rtReason').value = '';
-        document.getElementById('rtFile1').value = '';
-        document.getElementById('rtFile1Name').textContent = '선택된 파일 없음';
+        try {
+            const res = await fetch(`${ctxPath}/api/mypage/exchange/item/${orderItemId}`);
+            if (!res.ok) throw new Error('상품 정보를 불러오지 못했습니다.');
+            const data = await res.json();
 
-        rtModal.classList.add('is-open');
-        rtBackdrop.classList.add('is-open');
-        rtModal.querySelector('.modal-dialog').focus();
-        document.body.style.overflow = 'hidden';
+            console.log("📦 [DEBUG] DB조회 결과:", data);
+
+            // ✅ 모달 데이터 세팅
+            setText('rtDate', data.ORDER_DATE);
+            setText('rtOrderNo', data.ORDER_CODE);
+            setText('rtSeller', `(주) ${data.COMPANY_NAME}`);
+            setText('rtName', data.PRODUCT_NAME);
+            setText('rtQty', `수량 : ${data.QUANTITY}개`);
+            setText('rtPrice', `${Number(data.ORIGINAL_PRICE).toLocaleString()}원`);
+            setText('rtStatus', data.ORDER_STATUS);
+            setSrc('rtThumb', resolveImageUrl(data.url) || '/NICHIYA/images/no_image.jpg'); // ✅ 수정됨
+
+            // ✅ 가격표시
+            const rtPayEl = document.getElementById('rtPay');
+            const discount = Number(data.DISCOUNT_PRICE) < 0 ? data.DISCOUNT_PRICE : `-${data.DISCOUNT_PRICE}`;
+            const total = Number(data.PAID_PRICE).toLocaleString();
+
+            rtPayEl.innerHTML = `
+                <div style="display:flex; margin-bottom:5px;">
+                    <div>판매가</div><div style="margin-left:auto;">${Number(data.ORIGINAL_PRICE).toLocaleString()}원</div>
+                </div>
+                <div style="display:flex; margin-bottom:28px;">
+                    <div>할인</div><div style="margin-left:auto;">${discount}원</div>
+                </div>
+                <div style="display:flex;">
+                    <div>결제금액</div><div style="margin-left:auto; font-weight:800;">${total}원</div>
+                </div>
+            `;
+
+            // 입력 초기화
+            document.querySelectorAll('input[name="rtType"]').forEach(r=> r.checked=false);
+            document.getElementById('rtReason').value = '';
+            document.getElementById('rtFile1').value = '';
+            document.getElementById('rtFile1Name').textContent = '선택된 파일 없음';
+
+            // ✅ 모달 오픈
+            rtModal.classList.add('is-open');
+            rtBackdrop.classList.add('is-open');
+            rtModal.querySelector('.modal-dialog').focus();
+            document.body.style.overflow = 'hidden';
+
+            const rtNameEl = document.getElementById('rtName');
+            if (rtNameEl) rtNameEl.dataset.orderItemId = orderItemId;
+
+        } catch (err) {
+            console.error("❌ [DEBUG] 반품 모달 데이터 불러오기 실패:", err);
+            alert("상품 정보를 불러올 수 없습니다.");
+        }
     }
 
     function closeReturnModal(){
@@ -1479,41 +1495,31 @@
         const type = document.querySelector('input[name="rtType"]:checked')?.value || '';
         const reason = document.getElementById('rtReason').value.trim();
         const userId = document.getElementById('userData')?.dataset.userId || null;
-        const productName = document.getElementById('rtName').textContent.trim();
-        const fileInput = document.getElementById('rtFile1'); // ✅ 위로 이동 (순서 중요)
+        const orderItemId = document.getElementById('rtName')?.dataset.orderItemId;
+        const fileInput = document.getElementById('rtFile1');
 
         if (!type) return alert('반품유형을 선택해주세요.');
         if (reason.length < 10) return alert('사유를 최소 10자 이상 입력해주세요.');
         if (!userId) return alert('로그인 정보가 없습니다.');
-
-        // ✅ order_item_id 매칭
-        const btn = document.querySelector(`.return-btn[data-product-name="${productName}"]`);
-        const orderItemId = btn?.dataset.orderItemId;
         if (!orderItemId) return alert('상품 ID를 찾을 수 없습니다.');
 
-        // ✅ FormData 구성
         const formData = new FormData();
         formData.append("order_item_id", orderItemId);
         formData.append("user_id", userId);
         formData.append("reason_text", reason);
         formData.append("reason_code", type);
         formData.append("status", "REQUESTED");
-        formData.append("pickupAddres", ""); // 선택사항
+        formData.append("pickupAddress", "");
 
         if (fileInput.files.length > 0) {
             formData.append("evidence_urls", fileInput.files[0]);
         }
-
-        console.log("📦 [DEBUG] FormData ↓↓↓");
-        for (let [k,v] of formData.entries()) console.log("▶", k, "=", v);
 
         try {
             const res = await fetch(`${ctxPath}/api/mypage/return`, {
                 method: 'POST',
                 body: formData
             });
-            console.log("📥 Response:", res.status);
-
             if (!res.ok) throw new Error('서버 오류');
             alert('반품신청이 접수되었습니다.');
             closeReturnModal();
@@ -1523,69 +1529,79 @@
         }
     });
 </script>
+
+
 <script>
     let userId = null;
 
     // ===== 교환신청 모달 제어 =====
-    const exModal     = document.getElementById('exchangeModal');
-    const exBackdrop  = document.getElementById('exchangeModalBackdrop');
-    const exClose     = document.getElementById('exClose');
-    const exCancel    = document.getElementById('exCancel');
-    const exSubmit    = document.getElementById('exSubmit');
-    const exSentinel  = document.getElementById('exchangeSentinel');
 
-    function exSetText(id, v){ const el=document.getElementById(id); if(el) el.textContent=v; }
-    function exSetSrc(id, v){ const el=document.getElementById(id); if(el) el.src=v; }
+        const exModal     = document.getElementById('exchangeModal');
+        const exBackdrop  = document.getElementById('exchangeModalBackdrop');
+        const exClose     = document.getElementById('exClose');
+        const exCancel    = document.getElementById('exCancel');
+        const exSubmit    = document.getElementById('exSubmit');
+        const exSentinel  = document.getElementById('exchangeSentinel');
 
-    function openExchangeModal(fromBtn){
+        function exSetText(id, v){ const el=document.getElementById(id); if(el) el.textContent=v; }
+        function exSetSrc(id, v){ const el=document.getElementById(id); if(el) el.src=v; }
+    // === 공통 이미지 경로 처리 ===
+    function resolveImageUrl(imgPath) {
+        if (!imgPath) return `${ctxPath}/images/no_image.jpg`;
+        if (imgPath.startsWith('http')) return imgPath;
+        return `${ctxPath}/${imgPath.replace(/^\/+/, '')}`;
+    }
+
+
+
+
+    async function openExchangeModal(fromBtn){
         const productBlock = fromBtn.closest('div');
-        const row = fromBtn.closest('tr');
-        const exNameEl = document.getElementById('exName');
-        if (exNameEl) exNameEl.dataset.productId = fromBtn.dataset.productId || '';
-        const date   = row?.querySelector('td:first-child')?.textContent?.trim() || '0000-00-00';
-        const orderA = row?.querySelector('.order-link');
-        const seller = row?.querySelector('.seller-link')?.textContent?.trim() || '(주) 상호명';
-        const nameA  = row?.querySelector('td:nth-child(2) a[href="#"]:not(.order-link):not(.seller-link)');
-        const name = fromBtn.dataset.productName || '상품명';
-        console.log("🧩 교환 버튼 클릭됨:", name);
-        const qtyTxt = row?.querySelector('td:nth-child(2) div:nth-child(4)')?.textContent?.trim() || '수량 : 1개';
-        const price  = row?.querySelector('td:nth-child(2) div[style*="font-size"]')?.textContent?.trim() || '0원';
-        const status = row?.querySelector('td:nth-child(3)')?.textContent?.trim() || '-';
+        const orderItemId = fromBtn.dataset.orderItemId;
+        const userId = document.getElementById('userData')?.dataset.userId || null;
+        // ✅ 버튼에서 직접 img 추적
         const thumb = productBlock?.querySelector('img')?.getAttribute('src') ||
             fromBtn.dataset.productImg ||
             '/NICHIYA/images/no_image.jpg';
-        const userId = document.getElementById('userData')?.dataset.userId || null;
-        console.log("🧩 현재 로그인 userId:", userId);
 
-
-        const discount = '-3,000원'; // 데모
-        const total    = '31,000원'; // 데모
-
-        exSetText('exDate', date);
-        exSetText('exOrderNo', orderA?.dataset.orderId || '-');
-        exSetText('exSeller', seller);
-        exSetText('exName', name);
-        exSetText('exQty', qtyTxt);
-        exSetText('exPrice', price);
-        exSetText('exStatus', status);
         exSetSrc('exThumb', thumb);
 
-        const exPayEl = document.getElementById('exPay');
-        exPayEl.innerHTML = `
-    <div style="display:flex; margin-bottom:5px;">
-        <div>판매가</div>
-        <div style="margin-left:auto;">${price}</div>
-    </div>
-    <div style="display:flex; margin-bottom:28px;">
-        <div>할인</div>
-        <div style="margin-left:auto;">${discount}</div>
-    </div>
-    <div style="display:flex;">
-        <div>결제금액</div>
-        <div style="margin-left:auto; font-weight:800;">${total}</div>
-    </div>
-`;
+        console.log("🧩 교환 버튼 클릭됨:", orderItemId, "현재 userId:", userId);
 
+        try {
+        // ✅ 백엔드에서 상품 상세 조회
+        const res = await fetch(`${ctxPath}/api/mypage/exchange/item/${orderItemId}`);
+        if (!res.ok) throw new Error('상품 정보를 불러오지 못했습니다.');
+        const data = await res.json();
+
+        console.log("📦 [DEBUG] DB조회 결과:", data);
+
+        // ✅ 모달 데이터 바인딩
+        exSetText('exDate', data.ORDER_DATE);
+        exSetText('exOrderNo', data.ORDER_CODE);
+        exSetText('exSeller', `(주) ${data.COMPANY_NAME}`);
+        exSetText('exName', data.PRODUCT_NAME);
+        exSetText('exQty', `수량 : ${data.QUANTITY}개`);
+        exSetText('exPrice', `${Number(data.ORIGINAL_PRICE).toLocaleString()}원`);
+        exSetText('exStatus', data.ORDER_STATUS);
+        exSetSrc('exThumb', resolveImageUrl(data.url) || '/NICHIYA/images/no_image.jpg');
+
+
+            const exPayEl = document.getElementById('exPay');
+        const discount = Number(data.DISCOUNT_PRICE) < 0 ? data.DISCOUNT_PRICE : `-${data.DISCOUNT_PRICE}`;
+        const total = Number(data.PAID_PRICE).toLocaleString();
+
+        exPayEl.innerHTML = `
+            <div style="display:flex; margin-bottom:5px;">
+                <div>판매가</div><div style="margin-left:auto;">${Number(data.ORIGINAL_PRICE).toLocaleString()}원</div>
+            </div>
+            <div style="display:flex; margin-bottom:28px;">
+                <div>할인</div><div style="margin-left:auto;">${discount}원</div>
+            </div>
+            <div style="display:flex;">
+                <div>결제금액</div><div style="margin-left:auto; font-weight:800;">${total}원</div>
+            </div>
+        `;
 
         // 입력 초기화
         document.querySelectorAll('input[name="exType"]').forEach(r=> r.checked=false);
@@ -1593,123 +1609,89 @@
         document.getElementById('exFile1').value = '';
         document.getElementById('exFile1Name').textContent = '선택된 파일 없음';
 
-        // 오픈
+        // ✅ 모달 오픈
         exModal.classList.add('is-open');
         exBackdrop.classList.add('is-open');
-        exModal.setAttribute('aria-hidden', 'false');   // ✅ 수정됨
+        exModal.setAttribute('aria-hidden', 'false');
         exModal.querySelector('.modal-dialog').focus();
         document.body.style.overflow = 'hidden';
+
+        // ✅ dataset 저장
+        const exNameEl = document.getElementById('exName');
+        if (exNameEl) exNameEl.dataset.orderItemId = orderItemId;
+
+    } catch (err) {
+        console.error("❌ [DEBUG] 교환 모달 데이터 불러오기 실패:", err);
+        alert("상품 정보를 불러올 수 없습니다.");
+    }
     }
 
-    function closeExchangeModal(){
+        // ====== 닫기 ======
+        function closeExchangeModal(){
         exModal.classList.remove('is-open');
         exBackdrop.classList.remove('is-open');
-        exModal.setAttribute('aria-hidden', 'true');    // ✅ 추가
+        exModal.setAttribute('aria-hidden', 'true');
         document.body.style.overflow = '';
     }
 
-    // 버튼 클릭 → 모달 오픈 (이벤트 위임)
-    document.addEventListener('click', (e)=>{
+        // ====== 이벤트 ======
+        document.addEventListener('click', (e)=>{
         const btn = e.target.closest('.exchange-btn');
         if(!btn) return;
         e.preventDefault();
         openExchangeModal(btn);
     });
-
-    // 닫기/취소/백드롭/Esc + 포커스 트랩
-    exClose.addEventListener('click', closeExchangeModal);
-    exCancel.addEventListener('click', closeExchangeModal);
-    exBackdrop.addEventListener('click', closeExchangeModal);
-    document.addEventListener('keydown', (e)=>{
+        exClose.addEventListener('click', closeExchangeModal);
+        exCancel.addEventListener('click', closeExchangeModal);
+        exBackdrop.addEventListener('click', closeExchangeModal);
+        document.addEventListener('keydown', (e)=>{
         if (e.key === 'Escape' && exModal.classList.contains('is-open')) closeExchangeModal();
-
-        if (e.key === 'Tab' && exModal.classList.contains('is-open')){
-            const focusables = exModal.querySelectorAll('button,[href],input,select,textarea,[tabindex]:not([tabindex="-1"])');
-            const first = focusables[0], last = focusables[focusables.length-1];
-            if (e.shiftKey && document.activeElement===first){ last.focus(); e.preventDefault(); }
-            else if (!e.shiftKey && document.activeElement===last){ first.focus(); e.preventDefault(); }
-        }
     });
-    exSentinel.addEventListener('focus', ()=> exModal.querySelector('.modal-close').focus());
 
-    // 파일명 표시
-    document.getElementById('exFile1').addEventListener('change', function(){
+        // 파일명 표시
+        document.getElementById('exFile1').addEventListener('change', function(){
         const nameSpan = document.getElementById('exFile1Name');
         nameSpan.textContent = this.files?.length ? this.files[0].name : '선택된 파일 없음';
     });
 
-    // 제출 — 실제 연동 시 서버로 전송
-    exSubmit.addEventListener('click', async () => {
+        // ====== 제출 ======
+        exSubmit.addEventListener('click', async () => {
         const type = document.querySelector('input[name="exType"]:checked')?.value || '';
         const reason = document.getElementById('exReason').value.trim();
         if (!type) return alert('교환유형을 선택해주세요.');
         if (reason.length < 10) return alert('사유를 최소 10자 이상 입력해주세요.');
 
-        // ✅ 로그인한 사용자 ID를 div에서 정확히 읽기
         const userId = document.getElementById('userData')?.dataset.userId || null;
-
-        // ✅ productId는 그냥 상품 식별용으로만 쓰기
-        const productId = document.getElementById('exName')?.dataset.productId;
-
-        // ✅ 교환 버튼에서 order_item_id 가져오기
-        const btn = document.querySelector(`.exchange-btn[data-product-id="${productId}"]`);
-        const orderItemId = btn?.dataset.orderItemId;
-
-        // ✅ 최종 확인
-        console.log("📦 [DEBUG] userId:", userId);
-        console.log("📦 [DEBUG] orderItemId:", orderItemId);
-
-
-
+        const orderItemId = document.getElementById('exName')?.dataset.orderItemId;
         if (!orderItemId) return alert('상품 ID를 찾을 수 없습니다.');
 
         const formData = new FormData();
-        formData.append("user_id", Number(userId));// ✅ 꼭 추가
+        formData.append("user_id", Number(userId));
         formData.append("order_item_id", orderItemId);
         formData.append("reason_text", reason);
         formData.append("desired_option", type);
-        formData.append("reason_code", "ETC"); // ✅ 추가
+        formData.append("reason_code", "ETC");
         formData.append("status", "REQUESTED");
 
         const fileInput = document.getElementById('exFile1');
         if (fileInput.files.length > 0) {
-            formData.append("evidence_urls", fileInput.files[0]);
-        }
+        formData.append("evidence_urls", fileInput.files[0]);
+    }
 
-        // ✅ 콘솔 디버그 출력
-        console.log("📦 [DEBUG] FormData entries ↓↓↓");
-        for (let pair of formData.entries()) {
-            console.log("▶", pair[0], "=", pair[1]);
-        }
-
-        console.log("📤 [DEBUG] Fetch 전송 준비 완료: ", `${ctxPath}/api/mypage/exchange`);
+        console.log("📤 [DEBUG] FormData 내용:", Array.from(formData.entries()));
 
         try {
-            const res = await fetch(`${ctxPath}/api/mypage/exchange`, {
-                method: 'POST',
-                body: formData, // 절대 headers 직접 지정 ❌
-            });
-
-            console.log("📥 [DEBUG] Response status:", res.status);
-
-            if (!res.ok) throw new Error('서버 오류');
-
-            alert('교환신청이 접수되었습니다.');
-            closeExchangeModal();
-        } catch (err) {
-            console.error("❌ [DEBUG] 교환신청 실패:", err);
-            alert("교환신청 중 오류가 발생했습니다.");
-        }
-
-        console.log("📤 최종 요청 주소:", `${ctxPath}/api/mypage/exchange`);
-        console.log("📤 FormData 내용:", Array.from(formData.entries()));
-
+        const res = await fetch(`${ctxPath}/api/mypage/exchange`, { method: 'POST', body: formData });
+        if (!res.ok) throw new Error('서버 오류');
+        alert('교환신청이 접수되었습니다.');
+        closeExchangeModal();
+    } catch (err) {
+        console.error("❌ [DEBUG] 교환신청 실패:", err);
+        alert("교환신청 중 오류가 발생했습니다.");
+    }
     });
-
-
-
-
 </script>
+
 <script>
     document.addEventListener("DOMContentLoaded", () => {
         const rowsPerPage = 5; // 한 페이지당 보여줄 주문 수
