@@ -165,14 +165,26 @@
                 return;
             }
 
-            document.getElementById("name").textContent = result.name;
-            document.getElementById("username").textContent = result.userId;
-            document.getElementById("email").textContent = result.email;
-            document.getElementById("joined").textContent = result.created_at;
+            // 일반회원(userId) / 판매자(sellerId) 모두 대응
+            const username = result.userId || result.sellerId || "";
 
-            // 이동 링크 수정
-            document.querySelector(".btn-ghost").href = "/NICHIYA/member/login";
+            // 가입일 YYYY-MM-DD로 깔끔하게
+            const joined = (result.created_at || "").toString().slice(0, 10);
+
+            document.getElementById("name").textContent = result.name || "-";
+            document.getElementById("username").textContent = username || "-";
+            document.getElementById("email").textContent = result.email || "-";
+            document.getElementById("joined").textContent = joined || "-";
+
+            // 이동 링크
+            document.querySelector(".btn-ghost").href   = "/NICHIYA/member/login";
             document.querySelector(".btn-primary").href = "/NICHIYA/member/findpassword";
+
+            // (선택) 페이지 떠날 때 결과 비우기
+            window.addEventListener("pageshow", (e) => {
+                if (e.persisted) return; // bfcache 복원 제외
+                localStorage.removeItem("findUserResult");
+            });
         } catch (err) {
             console.error(err);
             alert("페이지를 불러오는 중 오류가 발생했습니다.");

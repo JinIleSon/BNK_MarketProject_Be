@@ -137,5 +137,33 @@ public class UserRestController {
         }
     }
 
+    @PostMapping("/issue-temp-password")
+    public ResponseEntity<?> issueTempPassword(@RequestBody Map<String, String> req) {
+        String userId = req.get("userId");
+        String email  = req.get("email");  // 선택
+        String phone  = req.get("phone");  // 선택
+
+        if (userId == null || userId.isBlank()) {
+            return ResponseEntity.badRequest()
+                    .body(Map.of("ok", false, "message", "userId 누락"));
+        }
+
+        // 안전을 위해 한번 더 사용자 매칭 검증(이메일 또는 전화번호로)
+        if (!userService.verifyUserForPasswordReset(userId, email, phone)) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                    .body(Map.of("ok", false, "message", "회원 정보가 일치하지 않습니다."));
+        }
+
+        try {
+            String temp = userService.issueTempPasswordAndReturnPlain(userId);
+            return ResponseEntity.ok(Map.of(
+                    "ok", true,
+                    "tempPassword", temp
+            ));
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(Map.of("ok", false, "message", "임시 비밀번호 발급 실패"));
+        }
+    }
 
 }

@@ -29,11 +29,13 @@ public interface SellerMybatisRepository {
 
     // 이름 + 이메일 or 전화번호로 ID 찾기
     SellerDTO findByNameAndEmail(@Param("name") String name, @Param("email") String email);
-    SellerDTO findByNameAndPhone(@Param("name") String name, @Param("phone") String phone);
+    SellerDTO findByNameAndPhone(@Param("name") String name,
+                                 @Param("cleanPhone") String cleanPhone);
 
     // sellerId + email/phone으로 비밀번호 찾기 인증
     SellerDTO findBySellerIdAndEmail(@Param("sellerId") String sellerId, @Param("email") String email);
-    SellerDTO findBySellerIdAndPhone(@Param("sellerId") String sellerId, @Param("phone") String phone);
+    SellerDTO findBySellerIdAndPhone(@Param("sellerId") String sellerId,
+                                     @Param("cleanPhone") String cleanPhone);
 
     // 비밀번호 변경
     void updatePassword(@Param("sellerId") String sellerId, @Param("password") String password);
