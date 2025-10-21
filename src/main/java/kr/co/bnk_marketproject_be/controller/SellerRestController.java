@@ -131,4 +131,31 @@ public class SellerRestController {
                     .body(Map.of("ok", false, "message", "비밀번호 변경 중 오류가 발생했습니다."));
         }
     }
+
+    @PostMapping("/issue-temp-password")
+    public ResponseEntity<?> issueTempPassword(@RequestBody Map<String, String> req) {
+        String sellerId = req.get("sellerId");
+        String email    = req.get("email"); // 선택
+        String phone    = req.get("phone"); // 선택
+
+        if (sellerId == null || sellerId.isBlank()) {
+            return ResponseEntity.badRequest()
+                    .body(Map.of("ok", false, "message", "sellerId 누락"));
+        }
+
+        // 이메일 또는 전화번호로 1차 매칭 검증
+        if (!sellerService.verifySellerForPasswordReset(sellerId, email, phone)) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                    .body(Map.of("ok", false, "message", "일치하는 판매자 정보가 없습니다."));
+        }
+
+        try {
+            String temp = sellerService.issueTempPasswordAndReturnPlain(sellerId);
+            return ResponseEntity.ok(Map.of("ok", true, "tempPassword", temp));
+        } catch (Exception e) {
+            log.error("판매자 임시비밀번호 발급 실패", e);
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(Map.of("ok", false, "message", "임시 비밀번호 발급 실패"));
+        }
+    }
 }

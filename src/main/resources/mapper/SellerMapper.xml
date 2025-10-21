@@ -97,8 +97,8 @@
             u.PHONE
         FROM NICHIYA.SELLERS s
                  JOIN NICHIYA.USERS u ON s.USERS_ID = u.ID
-        WHERE u.NAME = #{name}
-          AND u.PHONE = #{phone}
+        WHERE (UPPER(u.NAME) = UPPER(#{name}) OR UPPER(s.BRAND_NAME) = UPPER(#{name}))
+          AND REGEXP_REPLACE(u.PHONE, '[^0-9]', '') = #{cleanPhone}
     </select>
 
     <!-- ============================== -->
@@ -144,7 +144,7 @@
         FROM NICHIYA.SELLERS s
                  JOIN NICHIYA.USERS u ON s.USERS_ID = u.ID
         WHERE s.SELLER_ID = #{sellerId}
-          AND u.PHONE = #{phone}
+          AND REGEXP_REPLACE(u.PHONE, '[^0-9]', '') = #{cleanPhone}
     </select>
 
     <!-- ============================== -->
