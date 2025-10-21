@@ -8,7 +8,7 @@ mybatis:
   type-aliases-package: kr.co.bnk_marketproject_be.dto
 
   configuration:
-    map-underscore-to-camel-case: true
+    map-underscore-to-camel-case: false
 
 server:
   port: 8080
