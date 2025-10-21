@@ -613,73 +613,44 @@
         const node = orderTpl.content.cloneNode(true);
         orderModalBody.appendChild(node);
 
-        const $ = sel => orderModalBody.querySelector(sel);
+        const $  = sel => orderModalBody.querySelector(sel);
         const $$ = sel => orderModalBody.querySelectorAll(sel);
-        const asMoney = v => {
-            if (v == null || v === '') return '';
-            const n = Number(String(v).replace(/[, ]/g, ''));
-            return isNaN(n) ? '' : new Intl.NumberFormat('ko-KR').format(n);
-        };
+        // ❌ 내부 asMoney 선언 지우기
 
-        console.log('dto.delichar =', dto.delichar); // 값 확인용
+        // 요청하신 위치에 꽂기
+        $('#product_code').textContent = dto.product_code ?? '-';
+        $('#product_name').textContent = dto.product_name ?? '-';
+        $('#total_amount').textContent = (dto.total_amount != null) ? asMoney(dto.total_amount) : '-';
+        $('#order_code').textContent   = dto.order_code ?? '-';
 
-        $$('.delichar').forEach(el => {
-            el.textContent = dto.delichar != null ? asMoney(dto.delichar) : '';
-        });
+        $$('.delichar').forEach(el => { el.textContent = dto.delichar != null ? asMoney(dto.delichar) : ''; });
 
-        // ▽ '외 n건' 표기 로직
         const count = Number(dto.item_count || 0);
-        const extra = orderModalBody.querySelector('#extraCount');
-        if (extra) {
-            if (count > 1) {
-                extra.textContent = `외 ${count - 1}건`;
-            } else {
-                extra.textContent = ''; // 1건이면 비워둠
-            }
-        }
+        const extra = $('#extraCount'); if (extra) extra.textContent = (count > 1) ? `외 ${count - 1}건` : '';
+        if (extra) extra.textContent = (count > 1) ? `외 ${count - 1}건` : '';
 
-        /** Thymeleaf의 @{/{p}(p=...)}와 비슷한 규칙으로 변환
-         * - 비어있거나 공백이면  /images/no-image.png 로 대체
-         * - 앞에 / 로 시작하면 (절대경로) 컨텍스트패스만 접두
-         * - 그 외엔 상대경로로 간주하여 컨텍스트패스 + '/' + 경로
-         */
-        function resolveImgSrc(rawUrl) {
+        // 이미지
+        const resolveImgSrc = (rawUrl) => {
             const u = (rawUrl ?? '').trim();
-            if (!u) return `${CTX}/images/no-image.png`;        // /static/images/no-image.png
-            if (u.startsWith('/')) return `${CTX}${u}`;         // "/xxx" → "{CTX}/xxx"
-            return `${CTX}/${u}`;                               // "xxx/yyy" → "{CTX}/xxx/yyy"
-        }
+            if (!u) return `${CTX}/images/no-image.png`;
+            if (u.startsWith('/')) return `${CTX}${u}`;
+            return `${CTX}/${u}`;
+        };
+        const img = $('#url'); // ← 여기만 바꾸면 됨
+        if (img){ img.src = resolveImgSrc(dto.url); img.alt = dto.product_name ? `${dto.product_name} 이미지` : '이미지'; }
 
-        // ▽ 기존 코드 교체
-        const img = document.getElementById('url'); // <img id="url">
-        if (img) {
-            img.src = resolveImgSrc(dto.url);
-            img.alt = dto.product_name ? `${dto.product_name} 이미지` : '이미지';
-            // 스타일은 이미 태그에 있으니 생략(필요 시 추가)
-            // img.style.objectFit = 'cover';
-            // img.style.width = '100%';
-            // img.style.height = '100%';
-        }
-
-        // 상품정보
-        $('#product_code')   && ($('#product_code').textContent   = dto.product_code ?? '');
-        $('#product_name')   && ($('#product_name').textContent   = dto.product_name ?? '');
-        $('#seller')         && ($('#seller').textContent         = (dto.suname ?? dto.seller ?? ''));  // 컬럼 없으면 공란
-        $('#price')          && ($('#price').textContent          = dto.price != null ? asMoney(dto.price) : ''); // 없으면 공란
-        $('#item_count')     && ($('#item_count').textContent     = dto.item_count ?? '');      // count(...) AS item_count
-        $('#discount') && ($('#discount').textContent = dto.discount != null ? fmtDiscount(dto.discount) : '');
-
-        $('#total_amount')   && ($('#total_amount').textContent   = dto.total_amount != null ? asMoney(dto.total_amount) : '');
-
-        // 배송정보
-        $('#order_code')     && ($('#order_code').textContent     = dto.order_code ?? '');
-        $('#recipient')      && ($('#recipient').textContent      = dto.recipient ?? '');
-        $('#phone')          && ($('#phone').textContent          = dto.phone ?? '');
-        $('#address')        && ($('#address').textContent        = dto.address ?? '');
-        $('#delicom')        && ($('#delicom').textContent        = dto.delicom ?? '');
-        $('#invoice')        && ($('#invoice').textContent        = dto.invoice ?? '');
-        $('#note')           && ($('#note').textContent           = dto.note ?? '');
+        // 나머지 필드
+        $('#seller')    && ( $('#seller').textContent    = (dto.suname ?? dto.seller ?? '') );
+        $('#price')     && ( $('#price').textContent     = dto.price != null ? asMoney(dto.price) : '' );
+        $('#discount')  && ( $('#discount').textContent  = dto.discount != null ? ('-' + asMoney(dto.discount)) : '' );
+        $('#recipient') && ( $('#recipient').textContent = dto.recipient ?? '' );
+        $('#phone')     && ( $('#phone').textContent     = dto.phone ?? '' );
+        $('#address')   && ( $('#address').textContent   = dto.address ?? '' );
+        $('#delicom')   && ( $('#delicom').textContent   = dto.delicom ?? '' );
+        $('#invoice')   && ( $('#invoice').textContent   = dto.invoice ?? '' );
+        $('#note')      && ( $('#note').textContent      = dto.note ?? '' );
     }
+
     // [추가] 목록 테이블의 '배송비' 셀을 모달의 배송비로 동기화
     function updateListDeliveryFee(orderCode, fee){
         const nf = new Intl.NumberFormat('ko-KR');
