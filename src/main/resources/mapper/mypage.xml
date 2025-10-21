@@ -163,6 +163,12 @@
         </if>
     </select>
 
-
-
+    <select id="selectOrdersAmount" resultType="int">
+        SELECT
+        count(*) AS orders_amount
+        FROM orders o
+        JOIN users u
+        ON o.USERS_ID = u.id
+        WHERE u.user_id = #{user_id}
+    </select>
 </mapper>

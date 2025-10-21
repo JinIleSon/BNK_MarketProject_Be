@@ -27,7 +27,7 @@ public class MyPageController {
     private final MyPageService myPageService;
     private final MypageAllOrderService mypageAllOrderService; // 추가
     private final MypageInquiryService mypageInquiryService;
-
+    private final MypageAllOrderService orderService;
 
     @GetMapping("/mypage/mypage/main")
     public String mainpage(Model model, Principal principal, PageRequestDTO pageRequestDTO) {

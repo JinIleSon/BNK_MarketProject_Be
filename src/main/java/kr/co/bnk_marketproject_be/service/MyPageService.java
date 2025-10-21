@@ -148,4 +148,8 @@ public class MyPageService {
     public int selectCountTotalInquiryAround(String user_id){
         return myPageMapper.selectCountTotalInquiryAround(user_id);
     }
+
+    public int selectOrdersAmount(String user_id){
+        return myPageMapper.selectOrdersAmount(user_id);
+    }
 }

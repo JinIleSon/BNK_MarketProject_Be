@@ -44,6 +44,9 @@ public class MypageAllOrderController {
         System.out.println("✅ [Controller] 조회된 userId: " + userId);
 
         List<OrdersDTO> orders = orderService.getAllOrdersByUserId(String.valueOf(userId));
+        int ordersCount = (orders != null) ? orders.size() : 0;
+        model.addAttribute("orders_count", ordersCount);
+
         // ✅ 로그 찍기
         for (OrdersDTO o : orders) {
             for (OrderItemsDTO item : o.getOrderItems()) {

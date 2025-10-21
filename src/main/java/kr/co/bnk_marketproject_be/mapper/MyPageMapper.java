@@ -32,4 +32,7 @@ public interface MyPageMapper {
     public int selectCountTotalInquiry(@Param("pageRequestDTO") PageRequestDTO pageRequestDTO, @Param("userId") String userId);
 
     public int selectCountTotalInquiryAround(@Param("user_id") String user_id);
+
+    // 마이페이지- 전체 주문 개수 매핑
+    public int selectOrdersAmount(@Param("user_id") String user_id);
 }
