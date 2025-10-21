@@ -59,4 +59,25 @@
         ORDER BY CREATED_AT DESC
     </select>
 
+    <!-- ✅ 교환신청 모달용 상품 상세 조회 (DTO 없이 Map 리턴) -->
+    <select id="findOrderItemDetail" resultType="map">
+        SELECT
+            o.id              AS order_id,
+            o.order_code      AS order_code,
+            TO_CHAR(o.created_at, 'YYYY-MM-DD') AS order_date,
+            s.brand_name      AS company_name,
+            pr.product_name   AS product_name,
+            pr.price          AS original_price,
+            NVL(oi.price, pr.price) AS paid_price,
+            (NVL(oi.price, pr.price) - pr.price) AS discount_price,
+            oi.quantity       AS quantity,
+            pi.url            AS url,
+            o.status          AS order_status
+        FROM ORDER_ITEMS oi
+                 JOIN ORDERS o ON oi.orders_id = o.id
+                 JOIN PRODUCTS pr ON oi.products_id = pr.id
+                 JOIN SELLERS s ON pr.sellers_id = s.id
+                 LEFT JOIN PRODUCT_IMAGES pi ON pi.products_id = pr.id AND pi.is_main = 'Y'
+        WHERE oi.id = #{orderItemId}
+    </select>
 </mapper>

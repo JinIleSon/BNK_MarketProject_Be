@@ -292,19 +292,22 @@
         const $  = s => document.querySelector(s);
         const $$ = s => Array.from(document.querySelectorAll(s));
 
-        const isValidEmail = v => /.+@.+\..+/.test((v||'').trim());
-        const isValidPhone = v => /^01[0-9]{8,9}$/.test((v||'').trim());
+        // CSRF 헤더 (스프링 시큐리티 사용시)
+        function csrfHeaders() {
+            const token  = document.querySelector('meta[name="_csrf"]')?.content;
+            const header = document.querySelector('meta[name="_csrf_header"]')?.content || 'X-CSRF-TOKEN';
+            return token ? { [header]: token } : {};
+        }
 
-        const state = { method: 'email', emailCode: null, smsCode: null, emailVerified: false, phoneVerified: false };
-
-        // 패스워드와 형식 맞추기위해 추가된 trim 3줄
-        const nameOK = () => $('#name').value.trim().length >= 2;
-        const isValidEmail = v => /.+@.+\..+/.test(v.trim());
-        const isValidPhone = v => /^01[0-9]{8,9}$/.test(v.trim());
+        const state = { method: 'email', emailVerified: false, phoneVerified: false };
 
         const emailSection = $('#emailSection');
         const phoneSection = $('#phoneSection');
         const nextBtn      = $('#nextBtn');
+
+        const isValidEmail = v => /.+@.+\..+/.test((v||'').trim());
+        const isValidPhone = v => /^01[0-9]{8,9}$/.test((v||'').trim());
+        const nameOK       = () => ($('#name')?.value.trim().length || 0) >= 2;
 
         function toggleSections() {
             if (state.method === 'email') {
@@ -318,49 +321,46 @@
             updateNextAvailability();
         }
 
-        function validateBasic() {
-            const nameOk = $('#name').value.trim().length >= 2;
-            if (state.method === 'email') {
-                const emailOk = isValidEmail($('#email').value);
-                return nameOk && emailOk && state.emailVerified;
-            } else {
-                const phoneOk = isValidPhone($('#phone').value);
-                return nameOk && phoneOk && state.phoneVerified;
-            }
-        }
-        function updateNextAvailability(){ nextBtn.disabled = !validateBasic(); }
-
-        // 전송 버튼은 이름 + (해당 입력의 유효성)까지 만족해야 활성화
         function updateSendButtons() {
-            const nameOk = $('#name').value.trim().length >= 2;
+            const nameOk  = nameOK();
             const emailOk = isValidEmail($('#email').value);
             const phoneOk = isValidPhone($('#phone').value);
             $('#sendEmailCode').disabled = !(nameOk && emailOk);
             $('#sendSmsCode').disabled   = !(nameOk && phoneOk);
         }
 
+        function validateBasic() {
+            if (!nameOK()) return false;
+            if (state.method === 'email') {
+                return isValidEmail($('#email').value) && state.emailVerified;
+            } else {
+                return isValidPhone($('#phone').value) && state.phoneVerified;
+            }
+        }
+        function updateNextAvailability(){ nextBtn.disabled = !validateBasic(); }
+
         // 라디오 전환
         $$('input[name="method"]').forEach(r => r.addEventListener('change', e => {
-            state.method = e.target.value; toggleSections();
+            state.method = e.target.value;
+            toggleSections();
         }));
 
         // 입력 변화
-        ['#name', '#email', '#phone', '#emailCode', '#smsCode'].forEach(sel => {
+        ['#name','#email','#phone','#emailCode','#smsCode'].forEach(sel => {
             const el = $(sel); if (!el) return;
             el.addEventListener('input', () => { updateSendButtons(); updateNextAvailability(); });
         });
 
-        // 이메일 인증번호 전송
+        // ========== 이메일 인증 ==========
         $('#sendEmailCode').addEventListener('click', async () => {
-            const name = $('#name').value.trim();
+            if (!nameOK()) return alert('이름을 입력해 주세요.');
             const email = $('#email').value.trim();
-            if (name.length < 2) return alert('이름을 입력해 주세요.');
             if (!isValidEmail(email)) return alert('이메일 형식이 올바르지 않습니다.');
 
             try {
                 const res = await fetch('/NICHIYA/email/send', {
                     method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
+                    headers: { 'Content-Type': 'application/json', ...csrfHeaders() },
                     body: JSON.stringify({ email })
                 });
                 if (res.ok) {
@@ -374,21 +374,20 @@
             }
         });
 
-        // 이메일 인증번호 확인
         $('#verifyEmailCode').addEventListener('click', async () => {
             const code = $('#emailCode').value.trim();
             if (!code) return alert('인증번호를 입력하세요.');
             try {
                 const res = await fetch('/NICHIYA/email/code', {
                     method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
+                    headers: { 'Content-Type': 'application/json', ...csrfHeaders() },
                     body: JSON.stringify({ code })
                 });
-                const data = await res.json();
+                const data = await res.json().catch(()=>({}));
                 if (res.ok && data.isMatched) {
                     state.emailVerified = true;
                     updateNextAvailability();
-                    alert('이메일 인증 완료');
+                    alert('이메일 인증이 완료되었습니다.');
                 } else {
                     alert('인증번호가 일치하지 않습니다.');
                 }
@@ -397,63 +396,83 @@
             }
         });
 
-        // SMS 전송(모의)
+        // ========== 휴대폰 인증 (실제 API 사용) ==========
         $('#sendSmsCode').addEventListener('click', async () => {
-            const name  = $('#name').value.trim();
+            if (!nameOK()) return alert('이름을 입력해 주세요.');
             const phone = $('#phone').value.trim();
-            if (name.length < 2) return alert('이름을 입력해 주세요.');
             if (!isValidPhone(phone)) return alert('휴대폰 번호를 정확히 입력해 주세요.');
-            await new Promise(r => setTimeout(r, 400));
-            state.smsCode = String(Math.floor(100000 + Math.random() * 900000));
-            console.log('[DEV] sms code:', state.smsCode);
-            $('#phoneVerifyGroup').classList.remove('hidden');
-            alert('인증번호를 전송했습니다.');
-        });
 
-        // ★ SMS 인증번호 확인(누락되어 있었음)
-        $('#verifySmsCode').addEventListener('click', () => {
-            const code = $('#smsCode').value.trim();
-            if (!code) return alert('인증번호를 입력하세요.');
-            if (code === state.smsCode) {
-                state.phoneVerified = true;
-                updateNextAvailability();
-                alert('휴대폰 인증 완료');
-            } else {
-                alert('인증번호가 일치하지 않습니다.');
+            try {
+                const res = await fetch('/NICHIYA/api/sms/send', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json', ...csrfHeaders() },
+                    body: JSON.stringify({ phoneNumber: phone })
+                });
+                const data = await res.json().catch(()=>({}));
+                if (res.ok && data.ok === true) {
+                    $('#phoneVerifyGroup').classList.remove('hidden');
+                    alert('인증번호를 전송했습니다. 문자메시지를 확인하세요.');
+                } else {
+                    alert(data.message || '문자 전송 실패. 다시 시도해주세요.');
+                }
+            } catch (e) {
+                console.error(e); alert('서버 오류로 전송 실패.');
             }
         });
 
-        // 다음 → 서버 조회 → localStorage 저장 → 결과 페이지 이동
+        $('#verifySmsCode').addEventListener('click', async () => {
+            const phone = $('#phone').value.trim();
+            const code  = $('#smsCode').value.trim();
+            if (!code) return alert('인증번호를 입력하세요.');
+            try {
+                const res = await fetch('/NICHIYA/api/sms/verify', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json', ...csrfHeaders() },
+                    body: JSON.stringify({ phoneNumber: phone, code })
+                });
+                const data = await res.json().catch(()=>({}));
+                if (res.ok && data.ok === true) {
+                    state.phoneVerified = true;
+                    updateNextAvailability();
+                    alert('휴대폰 인증이 완료되었습니다.');
+                } else {
+                    alert(data.message || '인증번호가 일치하지 않습니다.');
+                }
+            } catch (e) {
+                console.error(e); alert('서버 오류로 검증 실패.');
+            }
+        });
+
+        // ========== 다음: 사용자/판매자 구분해서 아이디 조회 후 결과 페이지로 ==========
         nextBtn.addEventListener('click', async () => {
             if (!validateBasic()) return alert('이름과 연락처 입력 및 인증을 완료해 주세요.');
 
-            const headers = { 'Content-Type': 'application/json' };
-            const csrf  = document.querySelector('meta[name="_csrf"]')?.content;
-            const chdr  = document.querySelector('meta[name="_csrf_header"]')?.content || 'X-CSRF-TOKEN';
-            if (csrf) headers[chdr] = csrf;
+            const memberType = $('#memberType').value;        // 'personal' | 'business'
+            const isSeller   = memberType === 'business';
+            const url        = isSeller ? '/NICHIYA/seller/find-id' : '/NICHIYA/user/find-id';
 
             const payload = {
-                name: $('#name').value.trim(),
+                name  : $('#name').value.trim(),
                 method: state.method,
-                email: state.method === 'email' ? $('#email').value.trim() : "",
-                phone: state.method === 'phone' ? $('#phone').value.trim() : ""
+                email : state.method === 'email' ? $('#email').value.trim() : '',
+                phone : state.method === 'phone' ? $('#phone').value.trim() : ''
             };
 
             try {
-                // 백엔드 컨트롤러 경로: @PostMapping("/find-id") → "/user/find-id"
-                const res  = await fetch('/user/find-id', {
-                    method: 'POST', headers, body: JSON.stringify(payload)
+                const res  = await fetch(url, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json', ...csrfHeaders() },
+                    body: JSON.stringify(payload)
                 });
                 const data = await res.json();
 
                 if (res.ok && data.ok) {
-                    localStorage.setItem('findUserResult', JSON.stringify({
-                        ok: true,
-                        userId: data.userId,
-                        name: data.name,
-                        email: data.email,
-                        created_at: data.created_at
-                    }));
+                    // 결과 저장 후 결과 페이지로 이동
+                    const result = isSeller
+                        ? { ok: true, type: 'seller',  sellerId: data.sellerId, name: data.name, email: data.email, created_at: data.created_at }
+                        : { ok: true, type: 'user',    userId  : data.userId,   name: data.name, email: data.email, created_at: data.created_at };
+
+                    localStorage.setItem('findUserResult', JSON.stringify(result));
                     location.href = '/NICHIYA/member/findresultId';
                 } else {
                     alert(data.message || '해당 정보로 가입된 사용자를 찾을 수 없습니다.');
@@ -463,11 +482,13 @@
             }
         });
 
+        // 초기 표시
         toggleSections();
         updateSendButtons();
         updateNextAvailability();
     });
 </script>
+
 
 
 <div th:replace="~{main/footer.html}"></div>

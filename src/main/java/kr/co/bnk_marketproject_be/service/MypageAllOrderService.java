@@ -6,11 +6,17 @@ import java.util.List;
 public interface MypageAllOrderService {
 
     int findUserIdByUsername(String username);
+
     List<OrdersDTO> getAllOrdersByUserId(String userId);
-    OrdersDTO getOrderDetail(int ordersId);
+
+    List<OrdersDTO> findRecentOrdersByUserId(String userId);
+
+    // ✅ 주문 상세 (주문코드 기반)
+    List<OrdersDTO> getOrderDetailByCode(String orderCode);
+
     PageResponseMypageAllOrderDTO getPagedOrders(PageRequestDTO pageRequestDTO, String userId);
+
     void insertProductBoard(ProductBoardsDTO dto);
 
-    // ✅ 추가
     List<OrdersDTO> findAllOrdersByUserId(String userId);
 }

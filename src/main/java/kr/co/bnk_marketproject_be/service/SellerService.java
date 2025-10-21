@@ -106,26 +106,51 @@ public class SellerService {
 
     // 아이디 찾기 (이름 + 이메일/전화)
     public Optional<SellerDTO> findSellerId(String name, String method, String email, String phone) {
-        SellerDTO seller = ("email".equalsIgnoreCase(method))
-                ? sellerRepo.findByNameAndEmail(name, email)
-                : sellerRepo.findByNameAndPhone(name, phone);
+        SellerDTO seller;
+        if ("email".equalsIgnoreCase(method)) {
+            seller = sellerRepo.findByNameAndEmail(name, email);
+        } else {
+            String clean = phone == null ? null : phone.replaceAll("\\D", "");
+            seller = sellerRepo.findByNameAndPhone(name, clean);
+        }
         return Optional.ofNullable(seller);
     }
 
     // 비밀번호 재설정 전 인증
     public boolean verifySellerForPasswordReset(String sellerId, String email, String phone) {
-        SellerDTO seller = null;
         if (email != null && !email.isBlank()) {
-            seller = sellerRepo.findBySellerIdAndEmail(sellerId, email);
-        } else if (phone != null && !phone.isBlank()) {
-            seller = sellerRepo.findBySellerIdAndPhone(sellerId, phone);
+            return sellerRepo.findBySellerIdAndEmail(sellerId, email) != null;
         }
-        return seller != null;
+
+        if (phone != null && !phone.isBlank()) {
+            String cleanPhone = phone.replaceAll("\\D", ""); // 숫자만 남김
+            return sellerRepo.findBySellerIdAndPhone(sellerId, cleanPhone) != null;
+        }
+
+        return false;
     }
 
     // 비밀번호 변경
     public void resetPassword(String sellerId, String newPassword) {
-        String encoded = passwordEncoder.encode(newPassword);
-        sellerRepo.updatePassword(sellerId, encoded);
+        User user = userRepo.findByUserId(sellerId); // 판매자는 userId = sellerId 로 저장되어 있음
+        if (user == null) {
+            throw new IllegalArgumentException("해당 sellerId의 사용자(USERS)를 찾을 수 없습니다.");
+        }
+        user.setPassword(passwordEncoder.encode(newPassword));
+        userRepo.save(user);
+    }
+
+    public String issueTempPasswordAndReturnPlain(String sellerId) {
+        String temp = generateTempPassword(10);
+        resetPassword(sellerId, temp);  // resetPassword 안에서 이미 암호화 처리
+        return temp;
+    }
+
+    private String generateTempPassword(int len) {
+        final String chars = "ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnpqrstuvwxyz23456789";
+        java.security.SecureRandom r = new java.security.SecureRandom();
+        StringBuilder sb = new StringBuilder(len);
+        for (int i = 0; i < len; i++) sb.append(chars.charAt(r.nextInt(chars.length())));
+        return sb.toString();
     }
 }

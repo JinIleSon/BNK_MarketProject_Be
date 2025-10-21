@@ -2,19 +2,21 @@ package kr.co.bnk_marketproject_be.controller;
 
 import kr.co.bnk_marketproject_be.dto.*;
 import kr.co.bnk_marketproject_be.service.MyPageService;
+import kr.co.bnk_marketproject_be.service.MypageInquiryService;
+import kr.co.bnk_marketproject_be.service.MypageReturnExchangeService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import kr.co.bnk_marketproject_be.service.MypageAllOrderService;//주문내역 서비스
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.*;
 
 import java.security.Principal;
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Map;
 
 @Controller
 @Slf4j
@@ -23,11 +25,49 @@ public class MyPageController {
 
     // 푸시용 주석
     private final MyPageService myPageService;
+    private final MypageAllOrderService mypageAllOrderService; // 추가
+    private final MypageInquiryService mypageInquiryService;
+
 
     @GetMapping("/mypage/mypage/main")
     public String mainpage(Model model, Principal principal, PageRequestDTO pageRequestDTO) {
 
+        if (principal == null) {
+            log.warn("⚠️ 비로그인 상태로 마이페이지 접근");
+            return "redirect:/login"; // 로그인 안 되어 있으면 로그인 페이지로 이동
+        }
+
         String userId = principal.getName();
+        log.info("✅ 로그인 사용자: {}", userId);
+
+        // (추가) 숫자형 userId 구하기
+        int dbUserId = myPageService.selectUser(userId).getId();
+
+        // (추가) 모델에 넣어주기
+        model.addAttribute("userId", dbUserId);
+
+        // 최근 주문내역 조회
+        List<OrdersDTO> recentOrders = mypageAllOrderService.findRecentOrdersByUserId(userId);
+        model.addAttribute("recentOrders", recentOrders);
+        log.info("최근 주문내역 size = {}", recentOrders.size());
+        log.info("최근 주문내역 size 로그 진입");
+        if (recentOrders == null) {
+            log.warn("⚠️ recentOrders == NULL (Mapper에서 null 리턴됨)");
+        } else {
+            log.info("🟡 findRecentOrdersByUserId() 결과: {}", recentOrders);
+            log.info("최근 주문내역 size = {}", recentOrders.size());
+        }
+
+
+        // ✅ 판매자 정보 디버깅 로그
+        for (OrdersDTO order : recentOrders) {
+            log.info("🧾 [주문] 코드={}, 판매자명={}, 전화={}, 이메일={}, 사업자번호={}",
+                    order.getOrder_code(),
+                    order.getSeller_rep(),
+                    order.getSeller_tel(),
+                    order.getSeller_email(),
+                    order.getSeller_bizno());
+        }
 
         // 문의내역 출력_마이페이지_메인#9 포인트적립내역 메인
         PageResponseUserPointDTO pageResponseUserPointDTO = myPageService.selectUserPoint(pageRequestDTO, userId);
@@ -132,6 +172,38 @@ public class MyPageController {
         model.addAttribute("userDTO", userDTO);
         return "mypage/mypage_setUp";
     }
+    @GetMapping("/mypage/order/detail")
+    @ResponseBody
+    public List<OrdersDTO> getOrderDetail(@RequestParam String orderCode) {
+        System.out.println("📩 주문상세 요청 들어옴: " + orderCode);
+        return mypageAllOrderService.getOrderDetailByCode(orderCode);
+    }
+
+    @PostMapping("/api/mypage/inquiry")
+    @ResponseBody
+    public ResponseEntity<String> createInquiry(@RequestBody MypageInquiryDTO dto, Principal principal) {
+        if (principal == null) {
+            return ResponseEntity.status(401).body("로그인이 필요합니다.");
+        }
+
+        String userId = principal.getName();
+        dto.setStatus("대기중");
+
+        // 로그인 유저 정보 세팅
+        int dbUserId = myPageService.selectUser(userId).getId();
+        dto.setUserId((long) dbUserId);
+
+        log.info("📩 문의 등록 요청: {}", dto);
+
+        try {
+            mypageInquiryService.createInquiry(dto);
+            return ResponseEntity.ok("문의가 등록되었습니다.");
+        } catch (Exception e) {
+            log.error("❌ 문의 등록 실패: {}", e.getMessage());
+            return ResponseEntity.internalServerError().body("문의 등록 중 오류 발생");
+        }
+    }
+
 
     @PostMapping("/mypage/mypage/setup")
     public String modify(UserDTO userDTO, Model  model, Principal principal, @RequestParam(required = false) Integer code){
