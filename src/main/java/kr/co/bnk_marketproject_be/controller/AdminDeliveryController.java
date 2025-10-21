@@ -57,6 +57,7 @@ public class AdminDeliveryController {
     @ResponseBody
     public DeliveriesDTO adminOneDelivery(@RequestParam("order_code") String order_code){
         log.info("order_code:{}",order_code);
+        log.info("DeliveriesDTO : {}", adminDeliveryService.selectDelivery(order_code));
 
         return adminDeliveryService.selectDelivery(order_code);
     }

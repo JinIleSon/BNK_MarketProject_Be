@@ -182,18 +182,31 @@
 
     <!--    개별로 작성할 부분(덩어리 구분) -->
 
+    <resultMap id="DeliveriesMap" type="kr.co.bnk_marketproject_be.dto.DeliveriesDTO">
+        <result column="order_code"  property="order_code"/>
+        <result column="product_code" property="product_code"/>
+        <result column="product_name" property="product_name"/>
+        <result column="total_amount" property="total_amount"/>
+        <result column="item_count" property="item_count"/>
+        <!-- 나머지는 기본 매핑 -->
+    </resultMap>
+
     <select id="selectDeliveries" resultType="kr.co.bnk_marketproject_be.dto.DeliveriesDTO">
+        SELECT *
+        FROM (
         SELECT
         pi.url,
-        p.product_code,
-        p.product_name,
+        p.product_code          AS product_code,
+        p.product_name          AS product_name,
         u.name,
         p.price,
-        count(i.orders_id) as item_count,
+        /* 주문번호 기준 전체 건수 */
+        COUNT(*) OVER (PARTITION BY o.order_code) AS item_count,
+
         p.delichar,
         p.discount,
-        ((p.PRICE  - p.DISCOUNT) * i.QUANTITY + p.DELICHAR) AS total_amount,
-        o.order_code as order_code,
+        ((p.PRICE - NVL(p.DISCOUNT,0)) * NVL(i.QUANTITY,1) + NVL(p.DELICHAR,0)) AS total_amount,
+        o.order_code            AS order_code,
         d.recipient,
         u.phone,
         d.address,
@@ -201,42 +214,24 @@
         d.invoice,
         d.note,
         TO_CHAR(d.receipt, 'YYYY-MM-DD HH24:MI:SS') AS receipt,
-        su.name AS suname
+        su.name                 AS suname,
+
+        /* 주문번호별 대표 1행 선택용 */
+        ROW_NUMBER() OVER (
+        PARTITION BY o.order_code
+        ORDER BY i.id /* 필요에 따라 p.id, i.created_at 등으로 변경 */
+        ) AS rn
         FROM deliveries d
-        JOIN orders o
-        on d.orders_id = o.id
-        JOIN users u
-        on u.id = o.users_id
-        JOIN order_items i
-        on o.id = i.orders_id
-        JOIN products p
-        on i.products_id = p.id
-        JOIN product_images pi
-        on pi.product_code = p.product_code
-        JOIN sellers s
-        on s.id = p.sellers_id
-        LEFT JOIN SELLERS s
-        ON s.id = p.SELLERS_ID
-        LEFT JOIN users su
-        ON su.id = s.USERS_ID
+        JOIN orders o         ON d.orders_id = o.id
+        JOIN users u          ON u.id = o.users_id
+        JOIN order_items i    ON o.id = i.orders_id
+        JOIN products p       ON i.products_id = p.id
+        JOIN product_images pi ON pi.product_code = p.product_code
+        LEFT JOIN sellers s   ON s.id = p.sellers_id
+        LEFT JOIN users su    ON su.id = s.users_id
         WHERE o.order_code = #{order_code}
-        group by pi.url,
-        p.product_code,
-        p.product_name,
-        p.delichar,
-        p.discount,
-        ((p.PRICE  - p.DISCOUNT) * i.QUANTITY + p.DELICHAR),
-        o.order_code,
-        d.recipient,
-        u.phone,
-        d.address,
-        d.delicom,
-        d.invoice,
-        d.note,
-        d.receipt,
-        u.name,
-        p.price,
-        su.name
+        )
+        WHERE rn = 1
     </select>
 
 

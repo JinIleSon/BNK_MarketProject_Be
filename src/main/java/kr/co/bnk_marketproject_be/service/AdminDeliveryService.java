@@ -100,6 +100,7 @@ public class AdminDeliveryService {
 
     public DeliveriesDTO selectDelivery(String order_code){
         DeliveriesDTO deliveriesDTO = adminMapper.selectDeliveries(order_code);
+        log.info("deliveries={}",deliveriesDTO);
         return deliveriesDTO;
     }
 }

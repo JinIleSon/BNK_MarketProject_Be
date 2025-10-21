@@ -334,7 +334,7 @@
                                 <td><span
                                 th:text="${point.change_amount}"></span></td>
                                 <td><span
-                                th:text="${point.description}"></span></td>
+                                        th:text="${point.change_amount >= 0 ? '상품 구매 완료' : '포인트 사용'}"></span></td>
                                 <td><span th:text="${ T(java.time.LocalDate)
                                                      .parse(#strings.substring(point.created_at, 0, 10))
                                                      .plusYears(2)
