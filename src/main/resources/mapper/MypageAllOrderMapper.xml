@@ -18,12 +18,20 @@
             u.user_id AS userId,
             u.name AS user_name,
             p.method AS method,
+
+            -- ✅ 판매자 정보 조인 (SELLERS + USERS)
             s.brand_name AS company_name,
+            s.seller_id AS seller_id,
+            s.biz_registration_number AS seller_bizno,
+            s.mail_order_number AS seller_mailnum,
+            us.name AS seller_rep,
+            us.email AS seller_email,
+            us.phone AS seller_tel,
+            (us.address || ' ' || us.detail_address) AS seller_addr,
 
             oi.id AS order_item_id,
             oi.products_id AS products_id,
             pr.product_name AS product_name,
-            -- ✅ NVL을 사용해 NULL → 0으로 변환하고 CASE 처리
             (CASE
                  WHEN NVL(oi.price, 0) != 0 THEN oi.price
                  ELSE pr.price
@@ -36,6 +44,7 @@
                  LEFT JOIN ORDER_ITEMS oi ON oi.orders_id = o.id
                  LEFT JOIN PRODUCTS pr ON oi.products_id = pr.id
                  LEFT JOIN SELLERS s ON pr.sellers_id = s.id
+                 LEFT JOIN USERS us ON s.users_id = us.id
                  LEFT JOIN PRODUCT_IMAGES pi ON pi.products_id = pr.id AND pi.is_main = 'Y'
         WHERE o.users_id = #{userId}
         ORDER BY o.created_at DESC, pr.product_name ASC,oi.id ASC
@@ -52,9 +61,29 @@
         <result property="userId" column="userId"/>
         <result property="user_name" column="user_name"/>
         <result property="method" column="method"/>
-        <result property="company_name" column="company_name"/>
 
-        <collection property="orderItems" ofType="kr.co.bnk_marketproject_be.dto.OrderItemsDTO" autoMapping="false">
+        <!-- ✅ 판매자 정보는 OrdersDTO 에 직접 매핑 -->
+        <result property="company_name" column="company_name"/>
+        <result property="seller_id" column="seller_id"/>
+        <result property="seller_rep" column="seller_rep"/>
+        <result property="seller_tel" column="seller_tel"/>
+        <result property="seller_email" column="seller_email"/>
+        <result property="seller_bizno" column="seller_bizno"/>
+        <result property="seller_mailnum" column="seller_mailnum"/>
+        <result property="seller_addr" column="seller_addr"/>
+
+        <!-- ✅ 배송 정보 매핑 -->
+        <result property="recipient" column="recipient"/>
+        <result property="address" column="address"/>
+        <result property="delivery_company" column="delivery_company"/>
+        <result property="invoice" column="invoice"/>
+        <result property="delivery_status" column="delivery_status"/>
+        <result property="delivery_phone" column="delivery_phone"/>
+
+        <result property="payment_amount" column="payment_amount"/>
+
+
+        <collection property="orderItems" ofType="kr.co.bnk_marketproject_be.dto.OrderItemsDTO" autoMapping="true">
             <id property="id" column="order_item_id"/>
             <result property="products_id" column="products_id"/>
             <result property="productName" column="product_name"/>
@@ -67,36 +96,76 @@
 
 
 
-    <!-- 단일 주문 상세 -->
-    <select id="findOrderDetailById" resultType="kr.co.bnk_marketproject_be.dto.OrdersDTO">
+    <!-- ✅ 단일 주문 상세 조회 -->
+    <select id="findOrderDetailByCode" resultMap="OrderWithItemsMap">
         SELECT
-            o.id,
-            o.users_id,
-            o.status,
-            o.total_amount,
-            TO_CHAR(o.created_at, 'YYYY-MM-DD') AS created_at,
-            o.order_code,
-            u.user_name,
-            u.phone AS ruphone,
-            d.recipient,
-            d.address,
-            d.postcode,
-            d.detail_address,
-            p.method,
-            i.product_code,
-            pr.name AS product_name,
-            i.quantity,
-            i.price,
-            i.discount,
-            i.delichar
+            -- [ORDERS]
+            o.id                     AS order_id,
+            o.users_id               AS users_id,
+            o.status                 AS status,
+            o.total_amount           AS total_amount,
+            TO_CHAR(o.created_at, 'YYYY-MM-DD HH24:MI:SS') AS created_at,
+            o.order_code             AS order_code,
+
+            -- [USERS]
+            u.name                   AS user_name,
+            u.phone                  AS user_phone,
+
+            -- [DELIVERIES]
+            d.recipient              AS recipient,
+            d.hp                     AS delivery_phone,
+            d.address                AS address,
+            d.delicom                AS delivery_company,
+            d.invoice                AS invoice,
+            NVL(d.status, '배송정보 없음') AS delivery_status,
+
+            -- [PAYMENTS]
+            p.method                 AS method,
+
+            -- [SELLERS + 대표자정보]
+            s.brand_name             AS company_name,
+            s.seller_id              AS seller_id,
+            s.biz_registration_number AS seller_bizno,
+            s.mail_order_number      AS seller_mailnum,
+            us.name                  AS seller_rep,
+            us.phone                 AS seller_tel,
+            us.email                 AS seller_email,
+            (us.address || ' ' || us.detail_address) AS seller_addr,
+
+            -- [ORDER_ITEMS + PRODUCTS]
+            oi.id                    AS order_item_id,
+            oi.products_id           AS products_id,
+            oi.quantity              AS quantity,
+            NVL(oi.price, pr.price)  AS price_fixed,
+            pr.product_name          AS product_name,
+
+            -- [PRODUCT_IMAGES]
+            pi.url                   AS url,
+
+            -- ✅ 결제금액 계산식 추가
+            (NVL(oi.price, pr.price) * oi.quantity) AS payment_amount
+
         FROM ORDERS o
                  JOIN USERS u ON o.users_id = u.id
                  LEFT JOIN PAYMENTS p ON p.orders_id = o.id
-                 LEFT JOIN ORDER_ITEMS i ON i.orders_id = o.id
-                 LEFT JOIN PRODUCTS pr ON pr.code = i.product_code
-                 LEFT JOIN DELIVERY d ON d.orders_id = o.id
-        WHERE o.id = #{orderId}
+                 LEFT JOIN ORDER_ITEMS oi ON oi.orders_id = o.id
+                 LEFT JOIN PRODUCTS pr ON oi.products_id = pr.id
+                 LEFT JOIN PRODUCT_IMAGES pi ON pi.products_id = pr.id AND pi.IS_MAIN = 'Y'
+                 LEFT JOIN SELLERS s ON pr.sellers_id = s.id
+                 LEFT JOIN USERS us ON s.users_id = us.id
+                 LEFT JOIN (
+            SELECT *
+            FROM (
+                     SELECT d.*, ROW_NUMBER() OVER (PARTITION BY orders_id ORDER BY id DESC) AS rn
+                     FROM DELIVERIES d
+                 )
+            WHERE rn = 1
+        ) d ON d.orders_id = o.id
+
+        WHERE o.order_code = #{orderCode}
     </select>
+
+
 
     <!-- 페이징된 주문 목록 -->
     <select id="findPagedOrders" resultType="kr.co.bnk_marketproject_be.dto.OrdersDTO">
@@ -193,5 +262,53 @@
         AND pi.IS_MAIN = 'Y'   <!-- ✅ 이 위치가 중요 -->
         WHERE oi.orders_id = #{orderId}
     </select>
+
+    <select id="findRecentOrdersByUserId" resultMap="OrderWithItemsMap">
+<![CDATA[
+        SELECT *
+        FROM (
+                 SELECT
+                     o.id AS order_id,
+                     o.users_id,
+                     o.status,
+                     o.total_amount,
+                     TO_CHAR(o.created_at, 'YYYY-MM-DD') AS created_at,
+                     o.order_code,
+
+                     s.brand_name AS company_name,
+                     s.seller_id AS seller_id,
+                     s.biz_registration_number AS seller_bizno,
+                     s.mail_order_number AS seller_mailnum,
+                     us.name AS seller_rep,
+                     us.phone AS seller_tel,
+                     us.email AS seller_email,
+                     (us.address || ' ' || us.detail_address) AS seller_addr,
+
+                     pr.product_name,
+                     oi.id AS order_item_id,
+                     oi.products_id AS products_id,
+                     pi.url AS url,
+                     oi.quantity,
+                     NVL(oi.price, pr.price) AS price_fixed
+
+                 FROM ORDERS o
+                          JOIN USERS u ON o.users_id = u.id
+                          JOIN ORDER_ITEMS oi ON oi.orders_id = o.id
+                          JOIN PRODUCTS pr ON oi.products_id = pr.id
+                          LEFT JOIN SELLERS s ON pr.sellers_id = s.id
+                          LEFT JOIN USERS us ON s.users_id = us.id
+                          LEFT JOIN PRODUCT_IMAGES pi ON pi.products_id = pr.id AND pi.IS_MAIN = 'Y'
+
+                 -- ✅ 여기 중요: u.user_id (문자열) 대신 o.users_id를 서브쿼리로 비교
+                 WHERE o.users_id = (
+                     SELECT id FROM USERS WHERE user_id = #{userId}
+                 )
+
+                 ORDER BY o.created_at DESC
+             )
+        WHERE ROWNUM <= 3
+        ]]>
+</select>
+
 
 </mapper>

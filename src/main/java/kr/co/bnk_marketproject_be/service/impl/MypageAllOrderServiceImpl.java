@@ -5,8 +5,6 @@ import kr.co.bnk_marketproject_be.mapper.MypageAllOrderMapper;
 import kr.co.bnk_marketproject_be.service.MypageAllOrderService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
-
-import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -22,13 +20,12 @@ public class MypageAllOrderServiceImpl implements MypageAllOrderService {
 
     @Override
     public List<OrdersDTO> getAllOrdersByUserId(String userId) {
-        return this.findAllOrdersByUserId(userId);
-
+        return orderMapper.findAllOrdersByUserId(userId);
     }
 
     @Override
-    public OrdersDTO getOrderDetail(int ordersId) {
-        return orderMapper.findOrderDetailById(ordersId);
+    public List<OrdersDTO> getOrderDetailByCode(String orderCode) {
+        return orderMapper.findOrderDetailByCode(orderCode);
     }
 
     @Override
@@ -48,14 +45,10 @@ public class MypageAllOrderServiceImpl implements MypageAllOrderService {
         orderMapper.insertProductBoard(dto);
     }
 
-    // ✅ 상품평 버튼용 전체 주문 + 상품목록 세팅
     @Override
     public List<OrdersDTO> findAllOrdersByUserId(String userId) {
         List<OrdersDTO> orders = orderMapper.findAllOrdersByUserId(userId);
 
-
-
-        // ✅ 여기 아래 추가!
         for (OrdersDTO order : orders) {
             for (OrderItemsDTO item : order.getOrderItems()) {
                 System.out.println("[DEBUG] orderId=" + order.getId() + ", imageUrl=" + item.getUrl());
@@ -63,5 +56,10 @@ public class MypageAllOrderServiceImpl implements MypageAllOrderService {
         }
 
         return orders;
+    }
+
+    @Override
+    public List<OrdersDTO> findRecentOrdersByUserId(String userId) {
+        return orderMapper.findRecentOrdersByUserId(userId);
     }
 }

@@ -8,6 +8,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.util.Map;
+
 @Slf4j
 @RestController
 @RequiredArgsConstructor
@@ -99,5 +101,13 @@ public class MypageReturnExchangeController {
     public Object getExchangeList(@PathVariable Long userId) {
         log.info("📋 [교환신청 목록 조회] userId={}", userId);
         return service.findExchangeList(userId);
+    }
+
+    // ✅ [신규 추가] 교환 모달용 상품 상세 조회
+    @GetMapping("/exchange/item/{orderItemId}")
+    public ResponseEntity<Map<String, Object>> getOrderItemDetail(@PathVariable Long orderItemId) {
+        log.info("🧾 [교환 모달용 상품 상세조회] orderItemId={}", orderItemId);
+        Map<String, Object> result = service.findOrderItemDetail(orderItemId);
+        return ResponseEntity.ok(result);
     }
 }
