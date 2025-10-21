@@ -9,7 +9,7 @@ springBoot {
 }
 
 group = 'kr.co.bnk_marketproject_be'
-version = '0.0.7-SNAPSHOT'
+version = '1.0.0-RELEASE'
 description = 'BNK_MarketProject_Be'
 
 processResources {
