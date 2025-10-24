@@ -1,4 +1,3 @@
-# BNK_MarketProject_Be
 # NICHIYA (日夜)
 ### High-End Select Shop — Where Night Meets Day
 
