@@ -1,7 +1,8 @@
 # NICHIYA (日夜)
 ### High-End Select Shop — Where Night Meets Day
 
-![image.png](attachment:d829e2d0-8cb6-4902-8af7-0c8a2965534b:image.png)
+<img width="1036" height="581" alt="image" src="https://github.com/user-attachments/assets/68ce378c-c986-424f-a459-00a2061d445f" />
+
 
 **NICHIYA**는 ‘밤낮(日夜)’이라는 이름처럼,  
 시간의 경계를 넘어 언제 어디서나 즐길 수 있는 하이엔드 온라인 편집숍입니다.  
@@ -19,43 +20,53 @@
 
 **맡은 업무**
 
-![image.png](attachment:01e2932f-39cb-4f00-9f27-3b2336422ee8:image.png)
+<img width="447" height="172" alt="image1" src="https://github.com/user-attachments/assets/5d11c680-3a3c-4252-849f-589f82209b24" />
+
 
 # 메인
 
-![image.png](attachment:c79a03c4-8117-4613-9ece-35bb598d4310:image.png)
+<img width="1888" height="1079" alt="image2" src="https://github.com/user-attachments/assets/8a9c5033-5a4b-4a41-bf28-e02fb0aa4f3e" />
+
 
 # 정책
 
-![image.png](attachment:8bc40a76-9de3-4d36-ae42-8df35e5e0d51:image.png)
+<img width="1905" height="1080" alt="image3" src="https://github.com/user-attachments/assets/c1060601-3dd8-4d3a-b71d-4d4d5b2c1f87" />
+
 
 # 고객센터
 
-![image.png](attachment:b55c47e4-dd08-4f87-87d6-209cfe3fc35d:image.png)
+<img width="1905" height="1054" alt="image4" src="https://github.com/user-attachments/assets/1cb5b739-db3b-4479-b06b-256599cb59c3" />
+
 
 # 로그인
 
-![image.png](attachment:2c7fe457-49b0-453b-a40a-23ca576326dc:image.png)
+<img width="1450" height="888" alt="image5" src="https://github.com/user-attachments/assets/5b5c4a40-5736-42bd-896b-75a3da8f8121" />
+
 
 # 상품
 
-![image.png](attachment:d2596595-4d8a-4a22-86af-e45c0ac0ae72:image.png)
+<img width="1905" height="1070" alt="image6" src="https://github.com/user-attachments/assets/6a6ee936-1fc7-4d93-a780-a440f3a47525" />
+
 
 # 마이페이지
 
-![image.png](attachment:0e11ec20-d697-4b98-b8ef-f7d3a60c3e6a:image.png)
+<img width="1902" height="1080" alt="image7" src="https://github.com/user-attachments/assets/dd50f2e6-5f28-4752-b6a6-9e6df2447811" />
+
 
 # 회사소개
 
-![image.png](attachment:2581eda6-2668-4534-bcc2-9e9817e63bf5:image.png)
+<img width="1906" height="950" alt="image8" src="https://github.com/user-attachments/assets/a96293dd-d378-4451-819f-b9f9c1c3636f" />
+
 
 # 관리자
 
-![image.png](attachment:3817eff2-ac9c-4194-a7b8-92324dc85c81:image.png)
+<img width="1905" height="1080" alt="image9" src="https://github.com/user-attachments/assets/1ab574cd-d31c-4d69-9933-7044aac1b487" />
+
 
 # ERD
 
-![image.png](attachment:edc783ea-79e9-497a-9302-0ee6adb7d5fb:image.png)
+<img width="888" height="559" alt="image10" src="https://github.com/user-attachments/assets/f8e783af-27cc-42ae-915f-7fb03f7b6a54" />
+
 
 ### 🛍 프로젝트 개요
 **BNK_MarketProject_Be**  
